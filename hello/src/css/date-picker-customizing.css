@@ -1,0 +1,10 @@
+@charset "utf-8";
+
+.date-picker {
+	position: fixed;
+	left: 50%;
+	top: 90px;
+	z-index: 2;	
+	margin: 0 0 0 -180px;
+	border: 1px solid #efefef;
+}

@@ -1,0 +1,92 @@
+@charset "utf-8";
+/* RESET.CSS */
+*{margin:0; padding:0; box-sizing: border-box; -webkit-box-sizing: border-box; -moz-box-sizing: border-box; -webkit-text-size-adjust:100%;}
+html {height: 100%;margin:0; padding:0; -webkit-text-size-adjust: none; -moz-text-size-adjust: none; -ms-text-size-adjust: none;}
+body {font-family: 'notokr-regular', 'noto-sans','NanumBarunGothic', NanumBarunGothic, Arial; font-size: 13px; height:100%; line-height:1; *zoom:1; }
+label {vertical-align: middle;}
+address,em {font-style:normal}
+strong,b,th {font-weight:bold}
+fieldset,img {border:0; -webkit-border:0; -moz-border:0; -ms-border:0; -o-border:0; vertical-align:middle}
+caption,legend {width:1px; text-align:left; font-size:0; line-height:0; text-indent:-999em}
+ul,ol,dl,dt,dd,li {list-style:none}
+input,textarea/*,select*/ {border:0; color:#666; vertical-align:middle; -webkit-border-radius:0}
+input[type=number] {-moz-appearance: textfield;}/*Chrome*/
+::-webkit-inner-spin-button { -webkit-appearance: none;}
+::-webkit-outer-spin-button { -webkit-appearance: none;}
+input[type='checkbox']{-webkit-appearance:checkbox} /*Safari*/
+input[type='radio']{-webkit-appearance:radio} /*Safari*/
+time,mark,audio,video,article,aside,address,canvas,details,figcaption,figure,footer,header,hgroup,menu,nav,section,summary {display:block;margin: 0;padding: 0;}
+div,h1,h2,h3,h4,h5,h6,ul,ol,li,dl,dt,dd,p,form,iframe,fieldset,input,table,tr,th,td,button,textarea,select, thead, tbody, tfoot, pre, option {margin:0; padding:0; }
+a {color:#666; text-decoration:none;}
+iframe{border: 0;}
+a:hover, a:focus, a:active, a:visited{}
+table {border-spacing:0; border-collapse:collapse;table-layout: fixed;}
+table th {letter-spacing:0px; border-collapse:collapse; font-weight: 500;}
+table td {border-collapse:collapse}
+button {border:none; background:none; cursor:pointer; }
+/*button:focus, button:active{background-image: none;
+  outline: 0;
+  -webkit-box-shadow: none;
+          box-shadow: none;}*/
+/* IR */
+.blind { position:absolute; width:1px; font-size:0; line-height:0; text-align:left; text-indent:-9999px; left:-9999px;}
+.ir { display: inline-block; text-indent: -9999px;overflow: hidden;}
+/* clear */
+.clear {clear: both;}
+.clearfix:after {display: block;clear: both;content:'';}
+/* 한줄 줄임 */
+.srtCut { overflow: hidden; text-overflow: ellipsis; white-space: nowrap;}
+
+
+/* Noto-sans KR */
+
+@font-face {
+    font-family: 'notokr-black';
+    src: url('../fonts/noto-kr/notokr-black.eot');
+    src: url('../fonts/noto-kr/notokr-black.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/noto-kr/notokr-black.woff2') format('woff2'),
+         url('../fonts/noto-kr/notokr-black.woff') format('woff'),
+         url('../fonts/noto-kr/notokr-black.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'notokr-bold';
+    src: url('../fonts/noto-kr/notokr-bold.eot');
+    src: url('../fonts/noto-kr/notokr-bold.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/noto-kr/notokr-bold.woff2') format('woff2'),
+         url('../fonts/noto-kr/notokr-bold.woff') format('woff'),
+         url('../fonts/noto-kr/notokr-bold.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'notokr-medium';
+    src: url('../fonts/noto-kr/notokr-medium.eot');
+    src: url('../fonts/noto-kr/notokr-medium.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/noto-kr/notokr-medium.woff2') format('woff2'),
+         url('../fonts/noto-kr/notokr-medium.woff') format('woff'),
+         url('../fonts/noto-kr/notokr-medium.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'notokr-regular';
+    src: url('../fonts/noto-kr/notokr-regular.eot');
+    src: url('../fonts/noto-kr/notokr-regular.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/noto-kr/notokr-regular.woff2') format('woff2'),
+         url('../fonts/noto-kr/notokr-regular.woff') format('woff'),
+         url('../fonts/noto-kr/notokr-regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'notokr-light';
+    src: url('../fonts/noto-kr/notokr-light.eot');
+    src: url('../fonts/noto-kr/notokr-light.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/noto-kr/notokr-light.woff2') format('woff2'),
+         url('../fonts/noto-kr/notokr-light.woff') format('woff'),
+         url('../fonts/noto-kr/notokr-light.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}

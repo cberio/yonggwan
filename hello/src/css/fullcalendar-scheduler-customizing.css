@@ -1,0 +1,787 @@
+				/* fullcalendar-scheduler.css 에서 수정될 부분만 적용합니다 */
+/*-------------------------------------------------------------------------------------------------*/
+.fc-unthemed .fc-content, .fc-unthemed .fc-divider, .fc-unthemed .fc-list-heading td,.fc-unthemed .fc-list-view,
+.fc-unthemed .fc-popover, .fc-unthemed .fc-row, .fc-unthemed tbody, .fc-unthemed td, .fc-unthemed th, .fc-unthemed thead {
+	border-color: #e6e6e6;
+}
+.fc {	
+	padding-bottom: 50px;
+}
+.fc-scroller.fc-time-grid-container {
+	/*min-height: 678px;*/
+}
+.fc-scroller > .fc-day-grid,
+.fc-scroller > .fc-time-grid {
+	/*max-width: 1440px;*/
+}
+
+.fc-time-grid > .fc-bg {
+	background-color: #fff;
+}
+.fc-toolbar.fc-header-toolbar {
+	position: fixed;
+	left: 80px;
+	top: 0;
+	right: 0;
+	background-color: #fff;
+	border-bottom: 1px solid #f0f0f0;
+	height: 52px;
+	z-index: 2;
+	margin-bottom: 0;
+}
+
+.fc-toolbar .fc-agendaDay-button,
+.fc-toolbar .fc-agendaWeekly-button{
+	width: 80px;
+	height: 58px;
+	position: fixed;
+	left: 0;
+	border: 0;
+	z-index: 1;
+	text-indent: -9999px;
+	overflow: hidden;
+	-webkit-border-radius: 0;
+	border-radius: 0;
+	margin: 0;
+	background: transparent;
+	-webkit-box-shadow: none;
+	-moz-box-shadow: none;
+	-ms-box-shadow: none;
+	box-shadow: none;
+}
+.fc-toolbar .fc-agendaDay-button{		
+	top: 90px;
+}
+.fc-toolbar .fc-agendaWeekly-button{
+	top: 148px;	
+}
+
+.fc-toolbar.fc-header-toolbar .fc-center {
+	position: relative;
+}
+.fc-toolbar.fc-header-toolbar h2 {
+	font-size: 20px;
+	font-family: 'notokr-black';
+	color: #000;
+	line-height: 52px;
+	margin: 0 36px;
+}
+.fc-toolbar.fc-header-toolbar .fc-selectDate-button {
+	position: absolute;
+	width: 190px;
+	height: 44px;
+	top: 4px;
+	margin: 0 0 0 -95px;
+	text-indent: -9999px;
+	overflow: hidden;
+	left: 50%;
+	background: url(../image/common/calendar-controler-dropdown.png) center bottom no-repeat;
+	-webkit-border-radius: 0;
+	-moz-border-radius: 0;
+	border-radius: 0;
+}
+.fc-header-toolbar .fc-center button {
+	-webkit-border-radius: 50%;
+	-moz-border-radius: 50%;
+	border-radius: 50%;
+	width: 28px;
+	height: 28px;
+	border: 0;
+	margin: 0;
+	margin-top: 13px;
+	box-shadow: none;
+	background: none;
+}
+.fc-header-toolbar .fc-center button.fc-prev-button {
+	background: url(../image/common/calendar-controler-prev.png) 0 0 no-repeat;
+}
+.fc-header-toolbar .fc-center button.fc-next-button {
+	background: url(../image/common/calendar-controler-next.png) 0 0 no-repeat;
+}
+.fc-header-toolbar .fc-center button span{
+	display: none;
+}
+.fc-day-header.fc-widget-header {
+	height: 38px;
+}
+.fc-view-container {
+	margin-top: 52px;
+	padding-bottom: 50px;
+}
+.each-ui {
+	height: 40px;
+	border-bottom: 1px solid #e4e4e4;
+	z-index: 2;
+	position: fixed;
+	left: 80px;
+	right: 0;
+	top: 52px;
+	background-color: #fff;	
+	-webkit-box-shadow: 0 1px 2px 0px rgba(0,0,0,0.15);
+	box-shadow: 0 1px 2px 0px rgba(0,0,0,0.15);
+}
+.each-ui .each{
+	float: left;
+	height: 100%;
+	text-align: center;
+	-o-transition: .3s margin ease-out;
+	-webkit-transition: .3s margin ease-out;
+	transition: .3s margin ease-out;
+	overflow: hidden;
+}
+.each-ui .each.all {
+	border-right: 1px solid #e4e4e4;
+}
+.each-ui .each input{
+	position: absolute;
+	left: -9999px;
+	top : -999px;
+}
+.each-ui .each label{
+	font-family: 'notokr-bold';
+	padding: 0 15px 0 40px;
+	cursor: pointer;
+	font-size: 11px;
+	color: #808080;
+	line-height: 38px;
+	display: inline-block;
+	min-width: 50px;
+	-o-transition: .1s background ease-out;
+	-webkit-transition: .1s background ease-out;
+	transition: .1s background ease-out;
+	background: url(../image/common/calendar-partners-label.png) 15px center no-repeat;
+}
+.each-ui .each input:checked + label{
+	background-image: url(../image/common/calendar-partners-label-on.png);
+}
+/* 현재 시간표시 라인 */
+
+.fc-now-indicator {
+	z-index: 0 !important;
+	border-color: #e60b25;
+}
+.fc-now-indicator.fc-now-indicator-arrow {
+	position: relative;
+	left: 12px !important;
+	width: 72px;
+	height: 24px;
+	line-height: 24px;
+	margin-top: -12px;
+	z-index: 0;
+	font-size: 11px;
+	font-family: 'notokr-bold';
+	color: #fff;
+	border: none;
+	text-align: center;
+	background-color: #e60b25;
+}
+.fc-now-indicator.fc-now-indicator-arrow:after {
+	background: url(../image/common/timeline-bullet.png) right center no-repeat;
+	position: absolute;
+	right: -6px;
+	top: 0;
+	width: 6px;
+	height: 100%;
+	content:'';
+	margin-left: 6px;
+	display: block;
+}
+/* 오늘의 타임라인 배경색상 제거*/
+.fc-unthemed td.fc-today {
+	background: none;
+}
+
+/* 슬롯 opacity 제거 */
+.fc-event .fc-bg { /* the generic .fc-bg already does position */
+	background: none;
+	opacity: 1;
+}
+/* 슬롯 helper 스타일 */
+.fc-helper {
+	box-shadow: 0 10px 20px 5px rgba(0,0,0,0.2);
+}
+/* 타임라인 시간표시 셀 */
+.fc .fc-axis { /* .fc to overcome default cell styles */
+	vertical-align: top;
+	padding: 0 4px;
+	white-space: nowrap;
+	background-color: #f2f2f2;
+	text-align: right;
+	border-top: 0;
+}
+.fc .fc-axis {
+	vertical-align: top !important;
+}
+.fc .fc-axis span {
+	font-size: 10px;
+	color: #999;
+	display: inline-block;;
+	position: relative;
+	top: -7px;
+}
+/* 타임라인및 슬롯 높이수정*/
+.fc-time-grid .fc-slats td {
+	height: 106px;
+	vertical-align: middle;	
+	border-bottom: 0; /* each cell is responsible for its top border */
+}
+
+/* TimeGrid Event Containment
+--------------------------------------------------------------------------------------------------*/
+/* 주간 훑어보기 타임라인 스크롤가능하도록 오버사이즈*/
+.fc-view-container {
+	overflow: auto;
+}
+.fc-agendaFiveDay-view {
+	width: 300%;
+}
+
+/* 슬롯에 영향이 되는 여백1 */
+.fc-ltr .fc-time-grid .fc-event-container { /* space on the sides of events for LTR (default) */
+	/*margin: 0 2.5% 0 2px;*/
+	margin: 0;
+}
+
+/* 슬롯에 영향이 되는 여백2 */
+.fc-rtl .fc-time-grid .fc-event-container { /* space on the sides of events for RTL */
+	/*margin: 0 2px 0 2.5%;*/
+	margin: 0;
+}
+
+
+/* 주,일 단위 슬롯 CSS적용 */
+.fc-event {
+	left: 50% !important;
+	max-width: 600px;
+	margin: 0.5px auto;
+    line-height: 1.5;
+    border-radius: 0;
+    border: 1px solid #000;
+    border-left-width: 4px;
+    font-weight: normal;
+    background-color: #333;    
+    -webkit-box-sizing: border-box;
+	   -moz-box-sizing: border-box;
+	    	box-sizing: border-box;        
+	-webkit-transform: translateX(-50%);
+			transform: translateX(-50%);
+	-webkit-transition: 0.2s box-shadow ease;
+	transition: 0.2s box-shadow ease;
+}
+.fc-event:hover .fc-ui {
+	display: block;
+}
+.fc-event .fc-content {
+	position: relative;
+	padding: 12px 15px;
+	height: 100%;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+.fc-event .fc-product{
+	font-size: 13px;
+	font-family: 'notokr-bold';
+	letter-spacing: -0.6px;
+	margin-right: 4px;
+	margin-bottom: 5px;
+	line-height: 1;
+}
+.fc-event .fc-time{
+	font-size: 20px;
+	font-family: 'notokr-black';
+	line-height: 1;
+	margin-bottom: 7px;
+}
+.fc-event .fc-user{
+	position: absolute;
+	top: 12px;
+	right: 15px;
+	text-align: center;
+}
+.fc-event .fc-user .fc-picture{
+	max-width: 38px;
+	padding-left: 5px;		
+	margin: 0 auto 8px;	
+	position: relative;
+}
+.fc-event .fc-user .fc-picture .picture{
+	width: 100%;
+	height: 100%;
+	margin: 0 auto;
+	display: block;
+	overflow: hidden;
+	-webkit-border-radius: 50%;
+	-moz-border-radius: 50%;
+	border-radius: 50%;
+}
+.fc-event .fc-user .fc-picture .picture img{
+	width: 100%;
+	height: 100%;
+}
+.fc-event .fc-user .fc-picture .rating{
+	font-size: 10px;
+	font-family: 'notokr-bold';
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 18px;
+	height: 18px;	
+	letter-spacing: 100px;
+	overflow: hidden;
+	text-indent: 5px;
+	line-height: 18px;
+	-webkit-border-radius: 50%;
+	border-radius: 50%;
+	background-color: #aaa;
+	display: block;
+	text-transform: uppercase;	
+}
+.fc-event .fc-user .fc-picture .rating.bad{
+	background-color: #b1282f;
+}
+.fc-event .fc-user .fc-picture .rating.new{
+	background-color: #05a609;
+}
+.fc-event .fc-user .fc-picture .rating.vip{
+	background-color: #d37c00;
+}
+.fc-event .fc-user .fc-name{
+	font-size: 12px;
+	font-family: 'notokr-bold';
+	padding-left: 5px;
+	letter-spacing: -0.3px;
+}
+.fc-event .fc-comment{
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
+	margin-right: 70px;
+	font-size: 12px;
+	letter-spacing: -0.3px;
+	line-height: 1.35;
+}
+
+/* slot ui 스타일 */
+.fc-event .fc-ui{
+	display: none;
+	position: absolute;
+	bottom: 6px;
+	left: 11px;
+	right: 11px;
+}
+.fc-event .fc-ui button {
+	color: #aaa;
+	overflow: hidden;
+	width: 20px;
+	height: 18px;
+	text-indent: -999px;
+	padding: 0;
+	background-repeat: no-repeat;
+}
+.fc-event .fc-ui .fc-ui-delete{
+	float: left;
+	background-image: url(../image/common/slot-ui-delete.png);
+	background-position: 4px 2px;
+}
+.fc-event .fc-ui .fc-ui-edit{
+	float: right;
+	background-image: url(../image/common/slot-ui-edit.png);
+	background-position: 3px 2px ;
+}
+
+/* resizer (cursor device) */
+.fc-time-grid-event.fc-allow-mouse-resize .fc-resizer {
+	left: 60px;
+	right: 60px;
+	bottom: 0;
+	height: 10px;
+	overflow: hidden;
+	line-height: 10px;
+	text-align: center;
+	cursor: s-resize;
+}
+
+.fc-time-grid-event.fc-allow-mouse-resize .fc-resizer:after {
+	content:'';
+	width: 12px;
+	height: 3px;
+	display: block;
+	margin: 0 auto;	
+	background: url('../image/common/resize-controler.png') center center no-repeat;
+	
+}
+
+/* colorClass 에 따른 timeline slot 텍스트 및 배경 색상 스타일 */
+.fc-event.yellow {border-color: #d9a521; border-left-color: #d9a521; background-color: rgba(255,254,242,0.7);}
+.fc-event.yellow .fc-product,
+.fc-event.yellow .fc-time,
+.fc-event.yellow .fc-name{color: #cc8100;}
+.fc-event.yellow .fc-comment{color: #b3b08f;}
+
+.fc-event.red {border-color: #d9b8ad; border-left-color: #d97759; background-color: rgba(255,245,242,0.7);}
+.fc-event.red .fc-product,
+.fc-event.red .fc-time,
+.fc-event.red .fc-name{color: #cc5e3d;}
+.fc-event.red .fc-comment{color: #ccada3;}
+
+.fc-event.green {border-color: #56b39e; border-left-color: #6bb3a3; background-color: rgba(242,255,252,0.7);}
+.fc-event.green .fc-product,
+.fc-event.green .fc-time,
+.fc-event.green .fc-name{color: #1f997e;}
+.fc-event.green .fc-comment{color: #a1b3af;}
+
+.fc-event.purple {border-color: #8a62b3; border-left-color: #8f6bb3; background-color: rgba(249,242,255,0.7);}
+.fc-event.purple .fc-product,
+.fc-event.purple .fc-time,
+.fc-event.purple .fc-name{color: #7435b3;}
+.fc-event.purple .fc-comment{color: #aaa1b3;}
+
+.fc-event.blue {border-color: #6274b3; border-left-color: #6b7bb3; background-color: rgba(242,247,255,0.7);}
+.fc-event.blue .fc-product,
+.fc-event.blue .fc-time,
+.fc-event.blue .fc-name{color: #3550b3;}
+.fc-event.blue .fc-comment{color: #a1a5b3;}
+
+/* 시간이 지난 slot style*/
+.fc-event.disabled{opacity: 0.5;}
+.fc-event.disabled.yellow {background-color: #fffef2;}
+.fc-event.disabled.red {background-color: #fff5f2;}
+.fc-event.disabled.green {background-color: #f2fffc;}
+.fc-event.disabled.purple {background-color: #f9f2ff;}
+.fc-event.disabled.blue {background-color: #f2f7ff;}
+
+/* slot 클릭(활성화)시 style */
+.fc-helper {
+	border: 0;
+    background-color: #111;
+}
+.fc-event.fc-helper .fc-content{
+	margin: 1px 1px 1px 4px;
+}
+.fc-event.fc-helper .fc-product,
+.fc-event.fc-helper .fc-time,
+.fc-event.fc-helper .fc-user .fc-name{
+	color: #fff;
+}
+.fc-event.fc-helper .fc-picture .rating{
+	background-color: #fff !important;
+}
+.fc-event.fc-helper .fc-picture .rating.vip{
+	color: #d37c00;
+}
+.fc-event.fc-helper .fc-picture .rating.new{
+	color: #05a609;
+}
+.fc-event.fc-helper .fc-picture .rating.bad{
+	color: #b1282f;
+}
+.fc-event.fc-helper .fc-comment{
+	color: #fff;
+	opacity: 0.7;
+}
+.fc-event.fc-helper .fc-ui{
+	display: none;
+}
+
+.fc-event.fc-helper.yellow {background-color: #d9a521;}
+.fc-event.fc-helper.red {background-color: #d96d4c;}
+.fc-event.fc-helper.green {background-color: #56b29e;}
+.fc-event.fc-helper.purple {background-color: #8f6bb2;}
+.fc-event.fc-helper.blue {background-color: #6274b2;}
+
+
+
+.new-order{width: 300px;height: 200px;border: 1px solid #000;background-color: #fc0;position: fixed;left: 50%; top: 100px; margin-left: -150px;z-index: 10}
+.new-order-submit{border: 1px solid #ddd;background-color: #c00;}
+.new-order-submit:hover{background-color: #c99;}
+.new-order-appear {
+  opacity: 0.01;
+  transform: translateX(30px);
+}
+.new-order-appear.new-order-appear-active {
+  opacity: 1;
+  transform: translateX(0);
+  transition: all .1s ease-in;
+}
+
+
+/* confirm modal style */
+.modal-confirm {padding: 15px;background-color: #fff;border: 1px solid #000;border-radius: 10px;}
+.modal-confirm .confirm-buttons{text-align: right;margin-top: 20px;}
+.modal-confirm .confirm-buttons button{border: 1px solid #aaa;border-radius: 3px;background-color: #efefef;margin-left: 10px;}
+
+/* auto suggest input style */
+.react-autosuggest__container {
+  position: relative;
+}
+
+.react-autosuggest__input {
+  width: 240px;
+  height: 30px;
+  padding: 10px 20px;
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 300;
+  font-size: 16px;
+  border: 1px solid #aaa;
+  border-radius: 4px;
+  -webkit-appearance: none;
+}
+
+.react-autosuggest__input:focus {
+  outline: none;
+}
+
+.react-autosuggest__input::-ms-clear {
+  display: none;
+}
+
+.react-autosuggest__container--open .react-autosuggest__input {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.react-autosuggest__suggestions-container {
+  display: none;
+}
+
+.react-autosuggest__container--open .react-autosuggest__suggestions-container {
+  display: block;
+  position: relative;
+  top: -1px;
+  width: 280px;
+  border: 1px solid #aaa;
+  background-color: #fff;
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 300;
+  font-size: 16px;
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+  z-index: 2;
+}
+
+.react-autosuggest__suggestions-list {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+
+.react-autosuggest__suggestion {
+  cursor: pointer;
+  padding: 10px 20px;
+}
+
+.react-autosuggest__suggestion--focused {
+  background-color: #ddd;
+}
+
+
+
+/*																					*/
+/*ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ [ -이하- '주 단위 훑어보기' 모드에 적용돼는 Styles ] ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ*/
+/*																					*/
+.fc-agendaWeekly-view{
+	margin-top: 39px;
+	transition: 1s all cubic-bezier(0.42, 0.9, 0.76, 1);
+	opacity: 1;
+}
+
+.fc-agendaWeekly-view.prev {
+	opacity: .2;
+	transform: translateX(-90%);
+}
+.fc-agendaWeekly-view.next {
+	opacity: .2;
+	transform: translateX(90%);
+}
+.fc-agendaWeekly-view .fc-now-indicator {
+ 	display: none;
+ }
+.controler{
+	position: fixed;left: 80px;top:0;
+	z-index: 3;border: 1px solid #000;
+	background-color: red;color: #fff;padding: 10px;
+}
+
+
+
+/*																					*/
+/*ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ [ -이하- '일 단위 타임라인' 모드에 적용돼는 Styles ] ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ*/
+/*																					*/
+
+.fc-agendaDay-view .fc-event-container{margin: 0 50px 0 0 !important;}
+.fc-agendaDay-view .fc-widget-content{border-bottom: 0;}
+.fc-agendaDay-view .fc-time-grid .fc-content-skeleton {top: 35px;}
+.fc-agendaDay-view .fc-time-grid .fc-slats .fc-minor td {
+	border-style: dashed;
+	vertical-align: middle;
+}
+.fc-agendaDay-view .fc-time-grid .fc-axis{
+	width: 50px !important;
+	padding-right: 4px;
+}
+.fc-agendaDay-view .fc-time-grid > .fc-bg {
+	margin-right: 50px;	
+	background: none;
+}
+
+.fc-agendaDay-view .fc-scroller > .fc-day-grid, 
+.fc-agendaDay-view .fc-scroller > .fc-time-grid {
+	margin-top: 15px;
+	padding-top: 35px;
+}
+
+/* 일단위 타임라인 border setting */
+.fc-agendaDay-view .fc-time-grid .fc-bg .fc-axis {border-right: 0 !important;}
+.fc-agendaDay-view .fc-time-grid .fc-bg .fc-day {
+	background: #fff;
+	border: 1px solid #e6e6e6;
+	height: 100%;
+	-webkit-border-radius: 10px;
+	border-radius: 10px;
+	position: relative;
+}
+
+.fc-agendaDay-view .fc-time-grid .fc-bg .fc-day:before{
+	display: block;
+	content:'';
+	width: 16px;
+	height: 9px;
+	position: absolute;
+	top: -8px;
+	left: 50%;
+	margin: 0 0 0 -8px;
+	background: url(../image/common/bullet-timeline-arrow.png) 0 0 no-repeat;
+}
+.fc-agendaDay-view .fc-time-grid .fc-slats td{border-left: 0 !important; border-right: 0 !important;}
+.fc-agendaDay-view .fc-time-grid .fc-slats tr:first-child td{vertical-align: top;}
+.fc-agendaDay-view .fc-time-grid .fc-slats tr:first-child td:last-child:before{
+	display: block;
+	content:'';
+	border-top: 1px solid #e6e6e6;
+}
+
+/* 하단 타임라인 예약 마감버튼  */
+.order-deadline-button {
+	margin: 30px auto 0;
+	display: block;
+	width: 122px;
+	height: 49px;
+	background: url(../image/common/btn-order-close.png) 0 0 no-repeat;
+	text-indent: -9999px;
+	overflow: hidden;
+}
+
+/* 우측하단 예약생성 고정버튼 */
+.fc .create-order-button {
+	position: fixed;
+	z-index: 1;
+	right: 40px;
+	bottom: 22px;
+	width: 56px;
+	height: 56px;
+	background: black;
+	border-radius: 50%;
+	color: #fff;
+	font-size: 30px;
+	font-family: 'notokr-regular';
+	box-shadow: 0 2px 10px 1px rgba(0,0,0,0.5);
+}
+/* 일 단위 타임라인 예약생성 버튼 */
+.fc-agendaDay-view .create-order-button-current {
+	position: relative;
+	display: block;
+	margin-right: 50px;	
+	height: 100%;
+	transition: all ease 1s;
+}
+.fc-agendaDay-view .create-order-button-current span {
+	width: 44px;
+	height: 44px;
+	display: block;
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	margin: -22px 0 0 -22px;
+	text-align: center;
+	padding: 0;
+	background: black;
+	border-radius: 50%;
+	color: #fff;
+	font-size: 26px;
+	line-height: 44px;
+	font-family: 'notokr-regular';
+	box-shadow: 0 1px 7px 1px rgba(0,0,0,0.5);
+}
+
+
+
+/* 데스크톱 */
+@media screen and (min-width:1024px) and (max-width: 1439px) {
+	.fc-toolbar.fc-header-toolbar {
+		height: 46px;
+		left: 68px;
+	}	
+	.fc-toolbar.fc-header-toolbar h2 {
+		font-size: 18px;
+		line-height: 42px;		
+	}
+	.fc-toolbar .fc-agendaDay-button,
+	.fc-toolbar .fc-agendaWeekly-button{
+		width: 68px;
+	}
+	.fc-header-toolbar .fc-center button {
+		margin-top: 8px;
+	}	
+	.fc-toolbar.fc-header-toolbar .fc-selectDate-button {
+		height: 40px;
+		top: 3px;
+		background-position: center 33px;
+	}
+	.each-ui {
+		height: 30px;
+		top: 46px;
+		left: 68px;
+	}
+	.each-ui .each label{
+		padding: 0 10px 0 35px;
+		line-height: 30px;
+	}
+	.fc-view-container {
+		margin-top: 35px;
+	}
+	.fc-time-grid .fc-slats td {
+		height: 84px;
+	}
+	.controler{
+		left: 68px;
+	}
+
+	/* slot style*/
+	.fc-event {
+		max-width: 380px;
+	}
+	.fc-event .fc-product{
+		font-size: 12px;		
+	}
+	.fc-event .fc-time{
+		font-size: 16px;
+	}
+	.fc-event .fc-user{
+		top: 7px;
+		right: 13px;
+	}
+	.fc-event .fc-user .fc-picture{
+		width: 32px;
+		height: 32px;
+		margin: 0 auto 1px;
+	}	
+	.fc-event .fc-user .fc-name{
+		font-size: 11px;
+	}
+	.fc-event .fc-comment{
+		font-size: 11px;
+	}
+
+}
+/* // 데스크톱 END */

@@ -1,0 +1,126 @@
+.slider{background: none !important;}
+.slick-slider {
+	padding: 0 120px;
+    position: relative;
+    display: block;
+    box-sizing: border-box;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -ms-touch-action: pan-y;
+    touch-action: pan-y;
+    -webkit-tap-highlight-color: transparent;
+}
+.slider .slick-list{width: 460px;overflow: hidden;}
+.slider .slick-slide{float: left;}
+.slider .slick-arrow{width: 23px;padding: 0 20px;height: 40px;overflow: hidden;text-indent: -9999px;position: absolute;top: 50%;margin-top: -20px;background: url(../image/common/slider-controler.png) 0 0 no-repeat;}
+.slider .slick-prev{left: 0;}
+.slider .slick-next{right: 0;background-position: right 100%;}
+
+.customer-detail {border-radius: 5px;width: 460px;background: #fff;}
+.customer-detail .head{height: 36px;padding: 0 0 0 30px;background-color: #555555;}
+.customer-detail .head span{color: #FFF;font-size: 11px;font-family: 'notokr-bold';line-height: 36px;}
+.customer-detail .head .btn-close{float: right;width: 36px;height: 36px;background: url(../image/common/btn-close.png) center center no-repeat;}
+
+.customer-detail .product{font-family: 'notokr-medium';position: relative;padding: 24px 24px 30px 30px;background-color: #EEE;border-bottom: 1px solid #CCCCCC;}
+.customer-detail .product  span{display: block;}
+.customer-detail .product .tit{letter-spacing: -0.6px;color: #666;margin-bottom: 10px;}
+.customer-detail .product .res-info{margin-bottom: 34px;}
+.customer-detail .product .res-info .time{font-size: 24px;color: #555555;}
+.customer-detail .product .type .service-name{font-size: 20px;letter-spacing: -0.3px;color: #555555;margin-bottom: 5px;}
+.customer-detail .product .type .service-name .service-time{font-size: 16px;font-family: 'notokr-bold';color: #888;display: inline;margin-left: 5px;}
+.customer-detail .product .price{font-size: 20px;color: #555555;}
+.customer-detail .product .price .won{color: #888;display: inline;font-family: 'notokr-regular';}
+.customer-detail .product .ui{position: absolute;top:20px;right: 20px;}
+.customer-detail .product .ui button{width: 15px;height: 15px;margin-left: 10px;}
+
+.customer-detail .customer-info{padding: 24px 24px 27px 30px;}
+.customer-detail .customer-info .info {float: left;width: 260px;}
+.customer-detail .customer-info .info .picture {float: left;margin-right: 12px;border-radius: 50%;background-color: #EEE;width: 52px;height: 52px;display: inline-block;overflow: hidden;}
+.customer-detail .customer-info .info .picture img{width: 100%;height: 100%;display: inline-block;border: 0;outline: 0;}
+.customer-detail .customer-info .info .name{font-size: 20px;color: #000;margin: 4px 0 5px 0;display: block;font-family: 'notokr-medium';}
+.customer-detail .customer-info .info .phone{font-size: 16px;color: #666666;display: block;}
+.customer-detail .customer-info .util{float: right;}
+.customer-detail .customer-info .util .ui{margin: -2px 0 8px 0;text-align: right;}
+.customer-detail .customer-info .util .ui button{width: 14px;height: 14px;margin: -1px -1px 0 0;}
+.customer-detail .customer-info .util .sns{float: right;}
+.customer-detail .customer-info .util .sns a{margin-left: 9px;}
+
+.customer-detail .bottom{border-top: 1px solid #D9D9D9;}
+.customer-detail .bottom .tabmenu{height: 40px;}
+.customer-detail .bottom .tabmenu a{letter-spacing: -0.3px;color: #999;height: 40px;line-height: 40px;display: block;float: left;width: 50%;background-color: #E6E6E6;text-align: center;}
+.customer-detail .bottom .tabmenu a:hover,
+.customer-detail .bottom .tabmenu a:focus{color: #000;}
+.customer-detail .bottom .tabmenu a.active{background-color: #FFF;color: #000;}
+.customer-detail .bottom .history {padding: 0 24px;}
+.customer-detail .bottom .history ul li{border-bottom: 1px solid #E6E6E6;}
+.customer-detail .bottom .history ul li:last-child{border-bottom: 0;}
+.customer-detail .bottom .history ul li div{padding: 20px 0;}
+.customer-detail .bottom .history ul li div .date{font-family: 'notokr-medium';letter-spacing: -0.3px;color: #808080;}
+.customer-detail .bottom .history ul li div .date.today{color: #E60B25;}
+.customer-detail .bottom .history ul li div .product-name{color: #808080;margin-left: 4px;}
+.customer-detail .bottom .history ul li div .comment{
+	font-size: 14px;color: #000;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;margin-top: 6px;letter-spacing: -0.3px;
+	padding-right: 10%;background: url(../image/common/calendar-controler-dropdown.png) 99% top no-repeat;
+}
+/* 메모없는 콘텐츠 */
+.customer-detail .bottom .history ul li.no-comment div{padding: 30px 0;}
+.customer-detail .bottom .history ul li.no-comment .comment{
+	float: right;background: none;margin: 0;color: #999;padding-right: 0;
+}
+
+
+.customer-detail .indicator{height: 46px;line-height: 46px;padding: 0 28px;border-top: 1px solid #D9D9D9;background-color: #F2F2F2;position: relative;text-align: center;letter-spacing: -0.3px;}
+.customer-detail .indicator button{padding: 10px;text-indent: -9999px;overflow: hidden;font-family: 'notokr-bold';position: absolute;top: 6px;line-height: 1;}
+.customer-detail .indicator button.prev{background: url(../image/common/pager-prev.png) center center no-repeat;left: 20px;}
+.customer-detail .indicator button.next{background: url(../image/common/pager-next.png) center center no-repeat;right: 20px;}
+.customer-detail .indicator input{width: 33px;height: 22px;color: #000;background-color: #FFF;border: 1px solid #B3B3B3; text-align: center;
+	-webkit-border-radius: 2px;
+			border-radius: 2px;
+	-webkit-box-shadow: 0 1px 1px #B3B3B3 inset;
+			box-shadow: 0 1px 1px #B3B3B3 inset;
+}
+
+
+
+
+
+/* 고객카드 상품별로 색상정의 */
+.red.customer-detail .head{background-color: #D96441;}
+.red.customer-detail .product .res-info .time{color: #D96441;}
+.red.customer-detail .product .type .service-name{color: #D96441;}
+.red.customer-detail .product .price{color: #D96441;}
+.red.customer-detail .product{background-color: #FFF6F2;}
+.red.customer-detail .product .type .service-name .service-time{color: #B2988F;}
+.red.customer-detail .product .price .won{color: #B2988F;}
+.red.customer-detail .product{border-bottom-color: #E6BAAC;}
+
+.blue.customer-detail .head{background-color: #6274B3;}
+.blue.customer-detail .product .res-info .time{color: #3550B3;}
+.blue.customer-detail .product .type .service-name{color: #3550B3;}
+.blue.customer-detail .product .price{color: #3550B3;}
+.blue.customer-detail .product{background-color: #F2F6FF;}
+.blue.customer-detail .product .type .service-name .service-time{color: #A1A5B3;}
+.blue.customer-detail .product .price .won{color: #A1A5B3;}
+.blue.customer-detail .product{border-bottom-color: #ACB9E6;}
+
+.yellow.customer-detail .head{background-color: #D9A521;}
+.yellow.customer-detail .product .res-info .time{color: #CC8100;}
+.yellow.customer-detail .product .type .service-name{color: #CC8100;}
+.yellow.customer-detail .product .price{color: #CC8100;}
+.yellow.customer-detail .product{background-color: #FFFEF2;}
+.yellow.customer-detail .product .type .service-name .service-time{color: #B3B08F;}
+.yellow.customer-detail .product .price .won{color: #B3B08F;}
+.yellow.customer-detail .product{border-bottom-color: #CCBE99;}
+
+.purple.customer-detail .head{background-color: #8F6BB3;}
+.purple.customer-detail .product .res-info .time{color: #7435B3;}
+.purple.customer-detail .product .type .service-name{color: #7435B3;}
+.purple.customer-detail .product .price{color: #7435B3;}
+.purple.customer-detail .product{background-color: #F9F2FF;}
+.purple.customer-detail .product .type .service-name .service-time{color: #AAA1B3;}
+.purple.customer-detail .product .price .won{color: #AAA1B3;}
+.purple.customer-detail .product{border-bottom-color: #C9ACE6;}

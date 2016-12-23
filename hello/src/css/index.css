@@ -1,0 +1,74 @@
+@charset "utf-8";
+
+html, body{overflow: hidden;background-color: #f2f2f2;}
+#root {height: 100%;}
+#root > div {height: 100%;}
+
+#header {min-height: 173px;position: fixed;left: 0;top: 0;width: 80px;height: 100%; background-color: #000;color: #FFF;z-index: 2;}
+#header .header-brand-logo a{height: 90px;text-indent: -9999px;display: block;overflow: hidden;background: url(../image/common/brand-logo.png) center 33px no-repeat;}
+
+#header .header-nav{margin-bottom: 140px;}
+#header .header-nav li{}
+#header .header-nav li a{text-indent: -9999px;height: 58px;line-height: 58px;color: #fff;display: block;display: block;overflow: hidden;background-repeat: no-repeat;background-position: center center;}
+#header .header-nav li a:hover,
+#header .header-nav li a:focus,
+#header .header-nav li a.active{background-color: #333;}
+#header .header-nav li.nav-daily a{background-image: url(../image/common/nav-daily.png);}
+#header .header-nav li.nav-overview a{background-image: url(../image/common/nav-overview.png);}
+#header .header-nav li.nav-customer a{background-image: url(../image/common/nav-customer.png);}
+#header .header-nav li.nav-search a{background-image: url(../image/common/nav-search.png);}
+
+#header .header-nav li.nav-daily a:hover,
+#header .header-nav li.nav-daily a:focus,
+#header .header-nav li.nav-daily a.active{background-image: url(../image/common/nav-daily-on.png);}
+#header .header-nav li.nav-overview a:hover,
+#header .header-nav li.nav-overview a:focus,
+#header .header-nav li.nav-overview a.active{background-image: url(../image/common/nav-overview-on.png);}
+#header .header-nav li.nav-customer a:hover,
+#header .header-nav li.nav-customer a:focus,
+#header .header-nav li.nav-customer a.active{background-image: url(../image/common/nav-customer-on.png);}
+#header .header-nav li.nav-search a:hover,
+#header .header-nav li.nav-search a:focus,
+#header .header-nav li.nav-search a.active{background-image: url(../image/common/nav-search-on.png);}
+
+#header .header-util{}
+#header .header-util li{text-align: center;position: relative;}
+#header .header-util-btn{width: 50%;height: 32px;margin: 2px auto;background: url(../image/common/notification.png) center center no-repeat;text-indent: -9999px;overflow: hidden;}
+#header .header-util-new{position: absolute;right: 0;top: 0;width: 15px;text-align: left;border: 1px solid #a0a0a0;border-radius: 50%;}
+
+#header .link-profile {position: absolute;left: 0;right: 0;bottom: 0;border-top: 1px solid #333333;background-color: #000;}
+#header .link-profile a{display: block;width: 42px;height: 42px;line-height: 42px;background-color: #f0f0f0;border-radius: 50%;overflow: hidden;margin: 20px auto;font-size: 11px;}
+
+#container {height: 100%;margin-left: 80px;overflow: auto;}
+
+/*************************** commons **************************/
+
+/* 레이어팝업 */
+.modal-mask {background-color: rgba(0,0,0,0.7); position: fixed; right: 0;left: 80px; top: 92px; height: 100%;z-index: 3;}
+.modal-mask .modal-layer {position: absolute;left: 50%;top:50px;background-color: #fff;transform: translateX(-50%);-webkit-transform: translateX(-50%);}
+/* 삭제/수정 버튼 [고객카드 등]*/
+.btn-edit{background: url(../image/common/slot-ui-edit.png) center center no-repeat;text-indent: -9999px;overflow: hidden;}
+.btn-delete{background: url(../image/common/slot-ui-delete.png) center center no-repeat;text-indent: -9999px;overflow: hidden;}
+
+
+/* 데스크톱 */
+@media screen and (min-width:1024px) and (max-width: 1439px) {
+	#header {
+		width: 68px;
+	}
+	#header .header-brand-logo a {
+		background-image: url('../image/common/brand-logo-sm.png');
+		background-position: center center;
+	}
+	#header .header-nav{
+		margin-bottom: 70px;
+	}
+	#container {
+		margin-left: 68px;
+	}
+	.modal-mask{
+		top: 46px;
+		left: 68px;
+	}	
+}
+/* // 데스크톱 END */
