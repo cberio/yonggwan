@@ -4,24 +4,33 @@ import Autosuggest from 'react-autosuggest';
 //Imagine you have a list of users that you'd like to autosuggest.
 const searchData = [
  {
-   type: '남성헤어컷',
-   price: '7,000원',
+   product: '남성헤어컷',
+   itemColor: 'red',
+   price: '7,000',
+   serviceTime: 60,
  },
  {
-   type: '남성 볼륨매직',
-   price: '30,000원',
+   product: '남성 볼륨매직',
+   itemColor: 'blue',
+   price: '30,000',
+   serviceTime: 120,
  },
  {
-   type: '여성헤어컷',
-   price: '20,000원',
+   product: '여성헤어컷',
+   itemColor: 'blue',
+   price: '20,000',
+   serviceTime: 90,
  },
  {
-   type: '드라이',
-   price: '10,000원',
+   product: '드라이',
+   price: '10,000',
+   serviceTime: 60,
  },
  {
-   type: '뿌리염색',
-   price: '10,000원',
+   product: '뿌리염색',
+   itemColor: 'yellow',
+   price: '10,000',
+   serviceTime: 180,
  }
 ];
 
@@ -30,20 +39,23 @@ const getSuggestions = value => {
  const inputValue = value.trim().toLowerCase(); // 인풋 value
  const inputLength = inputValue.length; // 인풋 value의 글자수(자,모음단위)
 
- return inputLength === 0 ? [] : searchData.filter(user =>
-   user.type.toLowerCase().slice(0, inputLength) === inputValue
+ return inputLength === 0 ? [] : searchData.filter(data =>
+   data.product.toLowerCase().slice(0, inputLength) === inputValue
  ); // 인풋 value와 일치하는 모든 객체를 반환함
 };
 
 // When suggestion is clicked, Autosuggest needs to populate the input element
 // based on the clicked suggestion. Teach Autosuggest how to calculate the
 // input value for every given suggestion.
-const getSuggestionValue = suggestion => suggestion.type;
+const getSuggestionValue = suggestion => suggestion.product;
 
 // Use your imagination to render suggestions.
 const renderSuggestion = suggestion => (
  <div>
-   {suggestion.type} {suggestion.price}
+   <span className="suggest-bullet"><i className={suggestion.itemColor}></i></span>
+   <span className="suggest-product">{suggestion.product}</span>
+   <span className="suggest-service-time">{suggestion.serviceTime}시간</span>
+   <span className="suggest-price">{suggestion.price} ₩</span>
  </div>
 );
 
@@ -66,7 +78,7 @@ export default class Search extends React.Component {
    this.setState({
      value: newValue
    });
-   this.props.onChange(newValue)
+   this.props.onChange(event, newValue)
  };
 
  // Autosuggest will call this function every time you need to update suggestions.
@@ -89,21 +101,23 @@ export default class Search extends React.Component {
 
    // Autosuggest will pass through all these props to the input element.
    const inputProps = {
-     placeholder: 'ex) 남성헤어컷',
+     placeholder: this.props.placeholder,
      onChange: this.onChange,
      value
    };
 
    // Finally, render it!
    return (
-     <Autosuggest
-       suggestions={suggestions}
-       onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
-       onSuggestionsClearRequested={this.onSuggestionsClearRequested}
-       getSuggestionValue={getSuggestionValue}
-       renderSuggestion={renderSuggestion}
-       inputProps={inputProps}
-     />
+     <div className={`react-autosuggest__wrapper ${this.props.className}`}>
+       <Autosuggest
+         suggestions={suggestions}
+         onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
+         onSuggestionsClearRequested={this.onSuggestionsClearRequested}
+         getSuggestionValue={getSuggestionValue}
+         renderSuggestion={renderSuggestion}
+         inputProps={inputProps}
+         />
+     </div>
    );
  }
 }

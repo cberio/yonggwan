@@ -20,7 +20,7 @@ export default class FullCalendar extends Component {
       isConfirm : false,
       isReservationCard : false,
       isSelectDate : false,
-      isNewOrder : false,
+      isNewOrder : true,
     };
     // event binding
     this.scroll = this.scroll.bind(this);
@@ -273,11 +273,9 @@ export default class FullCalendar extends Component {
     const OrderDeadlineButton = <button className="order-deadline-button" onClick={ () => this.closeReservation() }>예약마감</button>
     return (
       <div ref="Calendar">
-        <Controler overviewDays={this.props.overviewDays} onClick={this.scroll}/>
-        {CreateOrderButton}
-        {this.state.viewType === 'agendaDay' ? OrderDeadlineButton : undefined }
         {this.state.isNewOrder ? (
           <NewOrder
+            isNewOrder={ (bool) => this.isNewOrder(bool) }
             renderOrder={ (bool, newEvent) => this.renderOrder(bool, newEvent) }
             isConfirmSet={ (bool) => this.isConfirmSet(bool) }
             isConfirm={this.state.isConfirm}
@@ -286,6 +284,9 @@ export default class FullCalendar extends Component {
           )
           : undefined
         }
+        <Controler overviewDays={this.props.overviewDays} onClick={this.scroll}/>
+        {CreateOrderButton}
+        {this.state.viewType === 'agendaDay' ? OrderDeadlineButton : undefined }
         {this.state.isSelectDate ? <DatePicker onClick={this.selectDate}/> : undefined}
         {this.state.isReservationCard ? <ReservationCard cards={this.state.events} isReservationCard={ () => this.isReservationCard() }/> : undefined}
       </div>

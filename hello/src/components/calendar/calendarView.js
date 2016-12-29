@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import FullCalendar from './fullCalendar/index';
-import Events from './event.json';
+import Events from '../../data/event.json';
 
 export default class CalendarView extends Component {
   constructor(props) {

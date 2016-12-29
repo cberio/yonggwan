@@ -41,7 +41,7 @@ html, body{overflow: hidden;background-color: #f2f2f2;}
 
 #container {height: 100%;margin-left: 80px;overflow: auto;}
 
-/*************************** commons **************************/
+
 
 /* 레이어팝업 */
 .modal-mask {background-color: rgba(0,0,0,0.7); position: fixed; right: 0;left: 80px; top: 92px; height: 100%;z-index: 3;}
@@ -69,6 +69,6 @@ html, body{overflow: hidden;background-color: #f2f2f2;}
 	.modal-mask{
 		top: 46px;
 		left: 68px;
-	}	
+	}
 }
 /* // 데스크톱 END */
