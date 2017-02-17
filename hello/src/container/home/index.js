@@ -1,16 +1,33 @@
 import React, { Component } from 'react';
-import { Header } from '../../components/header/index';
+import Header from '../../components/header/index';
 import { Container } from '../../components/index';
+import Notifier from '../../components/notifier';
+import * as actions from '../../actions';
+import { connect } from 'react-redux';
 
 class Home extends Component {
+  componentDidMount() {
+    console.log(this.props.isNotifier);
+  }
   render () {
     return (
-      <div>
+      <div id="wrapper">
+        {this.props.isNotifier && <Notifier toggleNotifier={this.props.toggleNotifier} />}
         <Header />
         <Container />
       </div>
     );
   }
 }
+const mapStateToPops = (state) => {
+  return {
+    isNotifier : state.notifier.isNotifier
+  }
+}
+const mapDispatchToProps = (dispatch) => {
+   return {
+     toggleNotifier: (condition) => dispatch(actions.notifier({ isNotifier: condition }))
+   }
+}
 
-export { Home };
+export default connect (mapStateToPops, mapDispatchToProps)(Home);

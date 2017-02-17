@@ -15,7 +15,7 @@
 }
 .Select-control {
   font-family: inherit;width: 100%; height: 54px ;display: block; line-height: 54px;
-  text-align: left;position: relative;z-index: 1;border-radius: 7px;padding: 0 19px;  
+  text-align: left;position: relative;z-index: 1;border-radius: 7px;padding: 0 19px;
   border-radius: 7px;border: 1px solid #d9d9d9;
   background: rgb(255,255,255); /* Old browsers */
   background: -moz-linear-gradient(top,  rgba(255,255,255,1) 0%, rgba(242,242,242,1) 100%); /* FF3.6-15 */
@@ -48,7 +48,7 @@
   cursor: text;
 }
 .is-focused:not(.is-open) > .Select-control {
-  border-color: #aaa;  
+  border-color: #aaa;
 }
 .Select-placeholder,
 .Select--single > .Select-control .Select-value {
@@ -68,12 +68,14 @@
 .Select-input{
   max-width: 90%;
   overflow: hidden;
+  position: relative;
+  z-index: 2;
 }
 .Select-input > input {
   display: block;
   background: none transparent;margin: 0;cursor: text; color: #000;
   font-size: 16px; font-family: inherit; display: inline-block;letter-spacing: -0.2px;
-  border: 0 none;box-shadow: none;display: inline-block;outline: none;  
+  border: 0 none;box-shadow: none;display: inline-block;outline: none;
   /* For IE 8 compatibility */
   padding: 8px 0 12px;
   /* For IE 8 compatibility */
@@ -118,7 +120,7 @@
   text-indent: -9999px;
   overflow: hidden;
   float: right;
-  background: url(../image/common/input-selectdown.png) center center no-repeat;
+  background: url(../image/common/input-selectdown.png) right center no-repeat;
 }
 .Select-arrow {
   border-color: #999 transparent transparent;
@@ -137,19 +139,20 @@
       -ms-transform: rotate(180deg); /* IE 9 */
   -webkit-transform: rotate(180deg); /* Chrome, Safari, Opera */
           transform: rotate(180deg);
+  background-position: left center;
 }
 .Select--multi .Select-multi-value-wrapper {
   display: inline-block;
 }
 .Select-menu-outer {
   position: absolute;
-  top: 54px;
+  top: 50px;
   left: 0;
-  width: 100%;    
-  z-index: 1;
-  padding: 0; 
-  min-width: 100%; 
-  max-height: 321px;  
+  width: 100%;
+  z-index: 2;
+  padding: 0;
+  min-width: 100%;
+  max-height: 321px;
   background-color: #fff;
   border: 1px solid #d9d9d9;
   border-top: 0;
@@ -158,14 +161,14 @@
   -webkit-overflow-scrolling: touch;
   overflow-y: auto;
   -webkit-box-shadow: 0 5px 8px 0px rgba(0,0,0,0.2);
-          box-shadow: 0 5px 8px 0px rgba(0,0,0,0.2); 
+          box-shadow: 0 5px 8px 0px rgba(0,0,0,0.2);
 }
 .Select-menu {
   background-color: #fff;
 }
 .Select-option {
   cursor: pointer;
-  display: block;  
+  display: block;
   height: 64px;
   padding: 0 20px;
   line-height: 64px;
@@ -207,19 +210,23 @@
 .searchable .Select-control {
   height: 44px;
   background: #fff;
-  border-color: #808080;
+  border-color: #d9d9d9;
   overflow: hidden;
 }
 .searchable .is-focused .Select-control {
-  
+  border-color: #808080;
 }
-.searchable .Select-placeholder, 
+.searchable .Select-placeholder,
 .searchable .Select--single > .Select-control .Select-value {
   max-width: none;
   cursor: text;
   height: 44px;
   line-height: 44px;
   background: #f7f7f7;
+}
+.searchable .has-value.Select--single > .Select-control .Select-value .Select-value-label,
+.searchable .has-value.is-pseudo-focused.Select--single > .Select-control .Select-value .Select-value-label {
+  height: 44px;
 }
 .searchable .Select-placeholder {
   background-image: url(../image/common/input-search.png);
@@ -243,34 +250,100 @@
   font-family: 'notokr-bold';
   font-size: 15px;
   color: #666666;
-  border-radius: 7px;  
+  border-radius: 7px;
   border: 1px solid #ccc;
 }
 .searchable .Select-option {
   height: 48px;
   line-height: 48px;
+  background-color: transparent;
 }
-.searchable .Select-option.is-focused {
+.searchable .Select-option > div{
+  height: 48px;
+}
+.searchable .Select-option.is-focused{
   background-color: #808080 !important;
-  color: #FFF;
+}
+.searchable .Select-option.is-focused span {
+  color: #fff;
 }
 .searchable .Select-option.is-selected {
   background: none;
 }
-.searchable .Select-option .suggest-bullet {
+
+/* 서비스입력 인풋 검색영역 스타일 */
+.search-product .Select-value-label .label {
+  font-size: 16px;
+  
+  margin-right: 5px;
+}
+.search-product .Select-value-label .service-time {
+  font-size: 13px;
+  color: #808080;
+}
+.search-product .Select-value-label .checked {
+  position: absolute;right: 20px;top: 0;
+}
+.search-product .Select-option.is-focused{
+  background-color: #8f6bb3 !important;
+}
+.search-product .Select-option span {
+  margin-right: 4px;
+}
+.search-product .Select-option .bullet {
   margin: 0;
 }
-.searchable .Select-option .suggest-service-time{
+.search-product .Select-option .bullet{margin-right: 4px;}
+.search-product .Select-option .bullet{width: 6px;height: 6px;display: inline-block;border-radius: 50%;transform: translateY(-2px);-webkit-transform: translateY(-2px);}
+.search-product .Select-option .bullet.red{background-color: #d97759;}
+.search-product .Select-option .bullet.yellow{background-color: #d9a521;}
+.search-product .Select-option .bullet.blue{background-color: #6b7bb3;}
+.search-product .Select-option .bullet.purple{background-color: #8f6bb3;}
+.search-product .Select-option .bullet.green{background-color: #6bb3a3;}
+.search-product .Select-option.is-focused .bullet {visibility: hidden;}
+
+.search-product .Select-option .label {
+  font-size: 15px;
+  color: #666666;
+}
+.search-product .Select-option .service-time{
   font-size: 12px;
   color: #b2b2b2;
 }
-.searchable .Select-option .suggest-price{
+.search-product .Select-option .price{
   float: right;
   font-size: 12px;
   margin: 0;
   color: #b2b2b2;
 }
-.searchable .Select-option .suggest-rating{
-  font-size: 10px;
-  color: red;
+
+/* 고객검색 인풋 검색영역 스타일 */
+.search-customer {
+  margin-bottom: 12px;
+}
+.search-customer .Select-option .label {
+  margin-right: 6px;
+}
+.search-customer .Select-option .rating {
+  font-size: 13px;
+  color: #999999;
+}
+
+.search-customer .Select-value-label{
+  width: 100%; max-width: none !important;
+}
+.search-customer .Select-value-label .label{
+  margin-right: 6px; font-size: 16px;font-family: 'notokr-medium';letter-spacing: -0.2px;color: #000;
+}
+.search-customer .Select-value-label .checked{
+  float: right;
+}
+.search-customer .Select-value-label .rating{
+  font-size: 13px;letter-spacing: -0.2px;font-family: 'notokr-bold';color: #bbb;
+}
+.search-customer .Select-value-label .rating.VIP{
+  color: #d47b00;
+}
+.search-customer .Select-value-label .rating.BAD{
+  color: #b1282f;
 }

@@ -1,0 +1,62 @@
+@charset "utf-8";
+
+
+/* 카드공통 */
+.user-card-basic{padding: 24px 24px 27px 30px;}
+.user-card-basic .info {float: left;width: 260px;}
+.user-card-basic .info .picture {position: relative;float: left;margin-right: 12px;width: 52px;height: 52px;display: inline-block;}
+.user-card-basic .info .picture .thumbnail{display: block;border-radius: 50%;height: 100%;background-color: #EEE;overflow: hidden;}
+.user-card-basic .info .picture .thumbnail img{width: 100%;height: 100%;display: inline-block;border: 0;outline: 0;}
+.user-card-basic .info .name{font-size: 20px;color: #000;margin: 4px 0 5px 0;display: block;font-family: 'notokr-medium';}
+.user-card-basic .info .phone{font-size: 16px;color: #666666;display: block;}
+.user-card-basic .util{float: right;}
+.user-card-basic .util .ui{margin: -2px 0 8px 0;text-align: right;}
+.user-card-basic .util .ui button{width: 14px;height: 14px;margin: -1px -1px 0 0;}
+.user-card-basic .util .sns{float: right;}
+.user-card-basic .util .sns a{margin-left: 9px;}
+
+.user-card-service{height: 110px;background-color: #262626;padding: 8px 10px 8px 8px;color: #fff;-webkit-transition: .1s background ease;transition: .1s background ease;}
+.user-card-service .lt{float: left;}
+.user-card-service .rt{float: right;}
+.user-card-service button{color: #FFF;font: inherit;text-align: left;}
+.user-card-service .product{font-family: 'notokr-bold';letter-spacing: -0.6px;}
+.user-card-service .product .inner{display: inline-block;border-radius: 18px;opacity: .7;height: 28px;line-height: 18px;padding: 3px 13px;}
+.user-card-service .product .inner:after{display: block;content:'';clear: both;border-bottom: 1px solid #fff;}
+.user-card-service .product .inner span{display: block;float: left;}
+.user-card-service .product .inner .service{}
+.user-card-service .product .inner .time{font-size: 11px;padding-left: 5px;opacity: .8;}
+.user-card-service .service-time{font-size: 20px;font-family: 'notokr-black';display: inline-block;}
+.user-card-service .service-time button{display: inline-block;height: 30px;line-height: 30px;padding: 0 13px;border-radius: 18px;opacity: .5;}
+.user-card-service .service-time button:after{display: block;content:'';background-color: rgba(255,255,255, .9);width: 100%;height: 1px;position: relative;bottom: 5px;}
+.user-card-service .rt button{padding: 8px 8px 8px 16px;border-radius: 27px;opacity: .5;}
+.user-card-service .user{float: left;font-size: 12px;font-family: 'notokr-bold';letter-spacing: -0.3px;padding: 13px 0 3px 0;border-bottom: 1px solid #fff;}
+.user-card-service .picture{float: left;margin-left: 7px;position: relative;}
+.user-card-service .picture .thumbnail{width: 38px;height: 38px;border-radius: 50%;overflow: hidden;background-color: rgba(255,255,255, 0.8);display: inline-block;}
+.user-card-service .picture .thumbnail img {width: 100%; height: 100%;display: block;}
+.user-card-service .picture .rating {
+    font-size: 8px;font-family: 'notokr-mideum';position: absolute;left: 0;top: 0;width: 12px;height: 12px;
+    letter-spacing: 100px;overflow: hidden;text-indent: 3px;line-height: 12px;-webkit-border-radius: 50%;
+    border-radius: 50%;background-color: #aaa;display: block;text-transform: uppercase;color: #FFF;font-style: normal;
+}
+.user-card-service .picture .rating.bad{background-color: #b1282f;}
+.user-card-service .picture .rating.new{background-color: #05a609;}
+.user-card-service .picture .rating.vip{background-color: #d37c00;}
+
+
+/* 예약생성 단계 스타일 */
+.new-order .user-card-basic {border: 1px solid #b3b3b3;border-radius: 5px;}
+.new-order .user-card-basic .info {max-width: 240px;}
+.new-order .user-card-basic .info .rating{
+    font-size: 10px;font-family: 'notokr-bold';position: absolute;right: 0;bottom: 0;width: 18px;height: 18px;
+    letter-spacing: 100px;overflow: hidden;text-indent: 6px;line-height: 18px;-webkit-border-radius: 50%;
+    border-radius: 50%;background-color: #aaa;display: block;text-transform: uppercase;color: #FFF;font-style: normal;
+}
+.new-order .user-card-basic .info .rating.bad{
+    background-color: #b1282f;
+}
+.new-order .user-card-basic .info .rating.new{
+    background-color: #05a609;
+}
+.new-order .user-card-basic .info .rating.vip{
+    background-color: #d37c00;
+}

@@ -1,0 +1,506 @@
+/* 미리알림 스타일 */
+.notifier .viewview:before {
+	content:'미리알림';
+	color: #FFF;
+	font-size: 16px;
+}
+.notifier .viewview {
+	left: 0px;
+	top: auto;
+	bottom: 0;
+}
+.notifier .viewview dt{
+	display: block;
+    padding: 0;
+    font-size: 11px;
+    color: #aba58f;
+}
+.notifier .viewview dd{
+	margin-bottom: 2px;
+    padding: 0;
+    font-family: 'notokr-bold';
+    color: #d17e43;
+}
+
+
+
+.notifier-wrap {
+	z-index: 2;
+	position: relative;
+	display: table-cell;
+	vertical-align: top;
+	background-color: #252525;
+	box-shadow: -10px 5px 10px 0 rgba(0,0,0,0.2) inset;
+	color: #aaa;
+	width: 358px;
+}
+.notifier-wrap .notifier {
+	width: 358px;
+}
+
+/* 상단 헤드영역 */
+.notifier-head {
+	padding: 34px 34px 24px 24px;
+}
+.notifier-head:after {
+	display: block;
+	clear: both;
+	content:'';
+}
+.notifier-head .title{
+	float: left;	
+	color: #fff;	
+}
+.notifier-head .title h3,
+.notifier-head .title p {
+	font-size: 18px;
+	font-family: 'notokr-medium';
+	font-weight: normal;
+}
+.notifier-head .title h3{	
+	display: inline;
+}
+.notifier-head .title p{
+	color: #a6a6a6;
+	display: inline;
+	padding-left: 4px;
+}
+.notifier-head .close{
+	float: right;
+	padding: 4px 0;
+}
+.notifier-head .close .button{
+	font-family: 'notokr-bold';
+	color: rgba(255,255,255, 0.3);
+	letter-spacing: -0.2px;	
+	padding-right: 8px;
+	line-height: 1;	
+	background: url(../image/common/bullet-arrow-right.png) right center no-repeat;
+}
+.notifier-head .close .button:hover,
+.notifier-head .close .button:focus{
+	color: rgba(255,255,255, 0.6);
+}
+
+/* 탭메뉴 */
+.notifier-tabmenu-wrap{
+	margin: 0 34px 0 24px;
+	position: relative;	
+	border-bottom: 1px solid #393939;
+}
+.notifier-tabmenu-bgBar{
+	display: inline-block;
+	position: absolute;
+	bottom: 0;
+	width: 16.66666%;
+	height: 3px;
+	content:'';	
+	background-color: #fff;
+	transition: .2s left ease;
+}
+.notifier-tabmenu-wrap:before{}
+.notifier-tabmenu{
+	width: 100%;
+}
+.notifier-tabmenu .tab-menu{
+}
+.notifier-tabmenu .tab-menu li{
+	float: left;
+	vertical-align: middle;
+	text-align: center;
+	width: 16.66666%;
+}
+.notifier-tabmenu .tab-menu li button{
+	font-size: 11px;
+	font-family: 'notokr-bold';
+	color: #666666;
+	letter-spacing: -0.3px;
+	padding: 13px 0;
+	width: 100%;
+	display: block;	
+}
+.notifier-tabmenu .tab-menu li button:hover,
+.notifier-tabmenu .tab-menu li button:focus,
+.notifier-tabmenu .tab-menu li.active button{
+	color: #fff;
+}
+.notifier-tabmenu .tab-menu li button .menu{}
+.notifier-tabmenu .tab-menu li button .state{
+	color: #e60b25;
+	font-size: 10px;
+	padding-left: 3px;
+}
+.notifier .head-by-daily{
+	margin-right: 16px;
+	margin-bottom: 14px;
+}
+.notifier .head-by-daily p{
+	font-size: 14px;
+	color: #a6a6a6;
+	opacity: .6;
+	letter-spacing: -0.2px;
+	font-family: 'notokr-medium';
+	line-height: 1;
+	display: inline;
+}
+.notifier .head-by-daily .close{
+	float: right;
+	text-indent: -9999px;
+	overflow: hidden;
+	width: 16px;
+	height: 14px;
+	opacity: .7;
+	background: url(../image/common/btn-close-2.png) 0 0 no-repeat;
+}
+.notifier .head-by-daily .close:hover,
+.notifier .head-by-daily .close:focus {
+	opacity: 1;
+}
+
+.notifier .head-by-menu{
+	height: 30px;
+	line-height: 30px;
+	padding: 0 15px;
+	background-color: #454545;
+	position: relative;
+}
+.notifier .head-by-menu p{
+	display: inline;
+	font-size: 12px;
+	font-family: 'notokr-bold';
+	color: #fff;
+	opacity: .7;
+}
+.notifier .head-by-menu button{
+	position: absolute;
+	right: 0;top:0;bottom:0;
+	text-indent: -9999px;
+	overflow: hidden;
+	width: 30px;
+	background: url(../image/common/btn-close-3.png) center center no-repeat;
+}
+
+
+/* 컨텐츠 컨테이너 */
+.notifier-container{
+	margin: 16px 8px 0 24px;
+	outline: 0 !important;
+}
+.notifier-contents{
+	margin-right: 16px;	
+}
+.notifier-contents .card-wrap{
+	margin-bottom: 20px;
+}
+.notifier-contents .card{
+	margin-bottom: 10px;
+	position: relative;
+}
+.notifier .link{
+	width: 100%;
+	text-align: left;
+	display: block;
+}
+.notifier .card-content{
+	font-size: 12px;
+	background-color: #363636;
+}
+.notifier .card-content .service{
+	padding: 16px 15px 14px 32px;
+	border-bottom: 1px solid #3c3c3c;
+	position: relative;
+}
+.notifier .card-content .service .lt{}
+.notifier .card-content .service .lt span{
+	display: block;
+}
+.notifier .card-content .service .lt .product{
+	font-family: 'notokr-bold';
+	letter-spacing: -0.3px;
+	line-height: 1;
+	margin-bottom: 8px;
+	margin-right: 40px;
+	position: relative;
+}
+.notifier .card-content .service .lt .product:before{
+	display: inline-block;
+	width: 8px; height: 8px;
+	border-radius: 50%;
+	content:'';
+	position: absolute;
+	left: -15px;
+	top: 3px;
+	background-color: #777;
+}
+
+.notifier .card-content .service .lt .time{
+	font-family: 'notokr-medium';
+	font-size: inherit;
+	color: #fff;
+	padding-right: 10px;
+}
+.notifier .card-content .service .lt .time span{
+	display: inline;
+	padding-right: 10px;
+}
+.notifier .card-content .service .lt .time.last{
+	color: #808080;
+	margin-bottom: 4px;
+	padding-right: 0;
+	display: block;
+}
+.notifier .card-content .service .lt .time .expert{
+	font-size: inherit;
+	opacity: .7;
+	-ms-word-break: break-all;
+		word-break: break-all;
+	display: inline;
+}
+.notifier .card-content .service .rt{
+	position: absolute;
+	right: 15px; top: 16px;
+}
+.notifier .card-content .service .rt .posted{
+	font-size: 11px;
+	font-family: 'notokr-regular';
+	color: #fff;
+	line-height: 1;
+	opacity: .4;
+}
+
+.notifier .card-content .customer {
+	padding: 16px 15px 14px 32px;
+}
+.notifier .card-content .customer .user{
+	margin-bottom: 10px;
+}
+.notifier .card-content .customer .user .thumbnail{
+	position: relative;
+	width: 32px; height: 32px;	
+	margin-right: 8px;
+	vertical-align: middle;
+	display: inline-block;
+}
+.notifier .card-content .customer .user .thumbnail .picture{
+	width: 100%; height: 100%;
+	border-radius: 50%;
+	overflow: hidden;
+	background-color: #555;
+}
+.notifier .card-content .customer .user .thumbnail .picture img{
+	width: 100%; height: 100%;
+}
+.notifier .card-content .customer .user .thumbnail .rating-bullet{
+	position: absolute;
+	left: 0; top: 0;
+	width: 12px; height: 12px;
+	text-indent: 2px;
+	letter-spacing: 100px;
+	border-radius: 50%;
+	overflow: hidden;	
+	font-size: 8px;	
+	font-style: normal;
+	color: #fff;
+	background-color: #a0a;
+	border: 1px solid transparent;
+}
+.notifier .card-content .customer .user .name{
+	font-size: inherit;
+	font-family: 'notokr-bold';
+	letter-spacing: -0.3px;
+	color: #fff;
+}
+.notifier .card-content .customer .user .rating{
+	font-size: inherit;
+	font-family: 'notokr-bold';
+	letter-spacing: -0.3px;
+	padding-left: 3px;
+}
+.notifier .card-content .customer .comment{
+	font-size: inherit;
+	color: #fff;
+	letter-spacing: -0.2px;
+	line-height: 16px;
+	opacity: .3;
+}
+.notifier-contents .card .card-foot{
+	background-color: #303030;
+	border-top: 1px solid #2d2c2c;
+	height: 35px;
+	line-height: 35px;
+	padding-right: 10px;
+	text-align: right;
+}
+.notifier-contents .card .card-foot button{
+	font-size: 11px;
+	color: #6a6a6a;
+	font-family: 'notokr-bold';
+	padding: 4px 16px 4px 0;
+	background-position: right center;
+	background-repeat: no-repeat;	
+}
+.notifier-contents .card .card-foot button.remove{
+	background-image: url(../image/common/btn-remove.png);
+}
+.notifier-contents .card .card-foot button.cancel{
+	background-image: url(../image/common/btn-cancel.png);
+	padding-right: 18px;
+}
+
+.notifier-contents .card .card-modal{
+	left: 0; top: 0; right: 0; bottom: 0;
+	position: absolute;
+	z-index: 1;
+	background-color: #363636;
+	text-align: center;
+	height: 100%;
+}
+.notifier-contents .card .card-modal .modal-message{
+	width: 100%;
+	font-family: 'notokr-bold';
+	color: #b2b2b2;
+	letter-spacing: -0.3px;
+	vertical-align: middle;
+}
+.notifier-contents .card .card-modal .modal-message p{	
+	left: 0; top: 50%; right: 0; 
+	margin-top: -26px;
+	position: absolute;
+}
+
+.notifier-contents .card .card-modal .modal-ui{
+	left: 0; right: 0; bottom: 0;
+	position: absolute;
+	height: 35px;
+	line-height: 35px;
+	background-color: #303030;
+	border-top: 1px solid #2d2c2c;
+}
+.notifier-contents .card .card-modal .modal-ui button{
+	display: block;
+	float: right;
+	width: 50%;
+	height: 100%;
+	color: #fff;
+	font-size: 11px;
+	font-family: 'notokr-bold';
+	opacity: .4;
+}
+.notifier-contents .card .card-modal .modal-ui button:hover,
+.notifier-contents .card .card-modal .modal-ui button:focus{
+	opacity: .7;
+}
+.notifier-contents .card .card-modal .modal-ui button:first-of-type{
+	border-right: 1px solid #2d2c2c;
+}
+
+/* scrollbar 관련 스타일  dark skin (custom skin)*/
+.scrollable.dark-skin {
+  padding-right: 10px;
+  padding-bottom: 0;
+}
+
+.scrollable.dark-skin .scroll-bar.vertical {
+  width: 6px;
+}
+
+.scrollable.dark-skin .scroll-bar.horizontal {
+  display: none;
+}
+
+.scrollable.dark-skin .scroll-bar .thumb {
+  background-color: #313131;
+  border-radius: 3px;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+}
+
+.scrollable.dark-skin .scroll-bar:hover .thumb {
+  background-color: black;
+}
+
+/* 모달팝업 미리알림 스타일 적용 */
+.notifier-modal-wrap {
+	width: 300px;
+	position: fixed; 
+	right: 20px; top: 20px;
+	z-index: 2;
+}
+/* 모달팝업 미리알림을 제외한 스타일 적용 */
+.notifier-wrap .head-by-menu {
+	margin-right: 16px;
+}
+
+/* 상품별 스타일*/
+.notifier .card-content .service .lt .product.blue{color: #d3e9f4;}
+.notifier .card-content .service .lt .product.green{color: #d6f4ef;}
+.notifier .card-content .service .lt .product.purple{color: #f5dffa;}
+.notifier .card-content .service .lt .product.yellow{color: #fae8ce;}
+.notifier .card-content .service .lt .product.red{color: #faceda;}
+
+.notifier .card-content .service .lt .product.blue:before{background-color: #7a8ccc;}
+.notifier .card-content .service .lt .product.green:before{background-color: #6bb3a3;}
+.notifier .card-content .service .lt .product.purple:before{background-color: #a37acc;}
+.notifier .card-content .service .lt .product.yellow:before{background-color: #d9a521;}
+.notifier .card-content .service .lt .product.red:before{background-color: #d96d4c;}
+
+/*고객 등급별 스타일*/
+.notifier .card-content .customer .user .thumbnail .rating-bullet.BAD{background-color: #b1282f;border-color: #7f0f15;}
+.notifier .card-content .customer .user .thumbnail .rating-bullet.VIP{background-color: #d47b00;border-color: #b36106;}
+.notifier .card-content .customer .user .thumbnail .rating-bullet.NEW{background-color: #05a609;border-color: #007f03;}
+
+.notifier .card-content .customer .user .rating.BAD{color: #b1282f;}
+.notifier .card-content .customer .user .rating.VIP{color: #d47b00;}
+.notifier .card-content .customer .user .rating.NEW{color: #059907;}
+
+
+/* scrollbar.js 플러그인 실행후 삽입돼는 dom element style */
+.notifier-container .overview{
+	width: 100%;
+}
+
+
+
+@media all and (max-width:1023px) {
+	.notifier-wrap,
+	.notifier-wrap .notifier {
+		width: 252px;
+	}	
+	.notifier-container{
+		margin-left: 16px;
+	}
+	.notifier-head {
+		padding: 34px 30px 24px 16px;
+	}
+	.notifier-tabmenu-wrap{
+		margin: 0 30px 0 16px;
+	}
+	.notifier-tabmenu .tab-menu li button {
+		font-size: 10px;
+	}
+
+	.scrollable.dark-skin {
+  		padding-right: 6px;
+  	}
+  	.notifier .card-content .customer .user .thumbnail {
+  		margin-right: 7px;
+  	}
+  	.notifier .card-content .service{
+		padding: 16px 15px 14px 32px;
+	}
+	.notifier .card-content {
+		font-size: 11px;
+	}
+	.notifier .card-content .lt .product {
+		font-size: 12px;
+	}
+	.notifier .card-content .service .lt .time span {
+		padding-right: 7px;
+	}
+
+	/* 모달팝업 미리알림 스타일 적용 */
+	.notifier-modal-wrap {
+		width: 236px;
+	}
+
+}

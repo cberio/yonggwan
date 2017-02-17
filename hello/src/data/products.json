@@ -1,4 +1,11 @@
 [
+  {
+    "product": "염색",
+    "label": "염색",
+    "itemColor": "blue",
+    "price": "9,000",
+    "serviceTime": 30
+  },
  {
    "product": "남성헤어컷",
    "label": "남성헤어컷",
@@ -9,20 +16,21 @@
  {
    "product": "남성 볼륨매직",
    "label": "남성 볼륨매직",
-   "itemColor": "blue",
+   "itemColor": "purple",
    "price": "30,000",
    "serviceTime": 120
  },
  {
    "product": "여성헤어컷",
    "label": "여성헤어컷",
-   "itemColor": "blue",
+   "itemColor": "green",
    "price": "20,000",
    "serviceTime": 90
  },
  {
    "product": "드라이",
    "label": "드라이",
+   "itemColor": "blue",
    "price": "10,000",
    "serviceTime": 60
  },

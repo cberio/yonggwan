@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { Match } from 'react-router';
 import { Daily } from './calendar/daily';
 import { Overview } from './calendar/overview';
-import { ReservationCard } from './reservationCard/index';
 
 class Container extends Component {
   render () {

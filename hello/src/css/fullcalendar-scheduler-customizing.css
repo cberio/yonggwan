@@ -1,11 +1,17 @@
 				/* fullcalendar-scheduler.css 에서 수정될 부분만 적용합니다 */
 /*-------------------------------------------------------------------------------------------------*/
+
+.full-calendar {
+	position: relative;
+}
 .fc-unthemed .fc-content, .fc-unthemed .fc-divider, .fc-unthemed .fc-list-heading td,.fc-unthemed .fc-list-view,
 .fc-unthemed .fc-popover, .fc-unthemed .fc-row, .fc-unthemed tbody, .fc-unthemed td, .fc-unthemed th, .fc-unthemed thead {
 	border-color: #e6e6e6;
 }
-.fc {
-	padding-bottom: 50px;
+.fc-agenda-view .fc-day-grid,
+.fc-divider.fc-widget-header {
+	/* allDayslot, grid devider 히든 */
+	display: none;
 }
 .fc-scroller.fc-time-grid-container {
 	/*min-height: 678px;*/
@@ -15,47 +21,20 @@
 	/*max-width: 1440px;*/
 }
 
-.fc-time-grid > .fc-bg {
-	background-color: #fff;
-}
 .fc-toolbar.fc-header-toolbar {
-	position: fixed;
+	/*position: fixed;*/
 	left: 80px;
 	top: 0;
 	right: 0;
-	background-color: #fff;
-	border-bottom: 1px solid #f0f0f0;
+	background-color: #FFF;
+	border-bottom: 1px solid #e6e6e6;
 	height: 52px;
 	z-index: 2;
 	margin-bottom: 0;
 }
-
-.fc-toolbar .fc-agendaDay-button,
-.fc-toolbar .fc-agendaWeekly-button{
-	width: 80px;
-	height: 58px;
-	position: fixed;
-	left: 0;
-	border: 0;
-	z-index: 1;
-	text-indent: -9999px;
-	overflow: hidden;
-	-webkit-border-radius: 0;
-	border-radius: 0;
-	margin: 0;
-	background: transparent;
-	-webkit-box-shadow: none;
-	-moz-box-shadow: none;
-	-ms-box-shadow: none;
-	box-shadow: none;
+.fc-toolbar.fc-header-toolbar .fc-left button{
+	visibility: hidden;
 }
-.fc-toolbar .fc-agendaDay-button{
-	top: 90px;
-}
-.fc-toolbar .fc-agendaWeekly-button{
-	top: 148px;
-}
-
 .fc-toolbar.fc-header-toolbar .fc-center {
 	position: relative;
 }
@@ -63,10 +42,16 @@
 	font-size: 20px;
 	font-family: 'notokr-black';
 	color: #000;
-	line-height: 52px;
+	line-height: 49px;
 	margin: 0 36px;
+	width: 190px;
 }
-.fc-toolbar.fc-header-toolbar .fc-selectDate-button {
+.fc-toolbar.fc-header-toolbar h2 .weekDay {
+	font-size: 16px;
+	color: #999999;
+	margin-left: 10px;
+}
+.fc-toolbar.fc-header-toolbar .fc-changeDate-button {
 	position: absolute;
 	width: 190px;
 	height: 44px;
@@ -88,6 +73,7 @@
 	height: 28px;
 	border: 0;
 	margin: 0;
+	outline: none;
 	margin-top: 13px;
 	box-shadow: none;
 	background: none;
@@ -104,55 +90,84 @@
 .fc-day-header.fc-widget-header {
 	height: 38px;
 }
-.fc-view-container {
-	margin-top: 52px;
-	padding-bottom: 50px;
+.fc-day-header.fc-widget-header.fc-today:after {
+	display: inline-block;
+	content:'TODAY';
+	color: #e60b25;
+	text-indent: 3px;
 }
-.each-ui {
+.fc-view-container {
+}
+.expert-ui {
+	display: none;
 	height: 40px;
-	border-bottom: 1px solid #e4e4e4;
 	z-index: 2;
-	position: fixed;
 	left: 80px;
 	right: 0;
 	top: 52px;
 	background-color: #fff;
-	-webkit-box-shadow: 0 1px 2px 0px rgba(0,0,0,0.15);
-	box-shadow: 0 1px 2px 0px rgba(0,0,0,0.15);
+	border-bottom: 1px solid #d7d7d7;
+	-webkit-box-shadow: 0 2px 3px 1px rgba(0,0,0,0.1);
+			box-shadow: 0 2px 3px 1px rgba(0,0,0,0.1);
 }
-.each-ui .each{
+.expert-ui .expert-inner {
+	height: 100%;
+}
+.expert-ui .expert-inner:after{
+	display: block;
+	clear: both;
+	content:'';
+}
+.expert-each {
 	float: left;
 	height: 100%;
 	text-align: center;
-	-o-transition: .3s margin ease-out;
 	-webkit-transition: .3s margin ease-out;
-	transition: .3s margin ease-out;
+		 -o-transition: .3s margin ease-out;
+			transition: .3s margin ease-out;
 	overflow: hidden;
 }
-.each-ui .each.all {
-	border-right: 1px solid #e4e4e4;
+.expert-ui .expert-each.all {
+	border-right: 1px solid #d7d7d7;
+	/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#ffffff+0,e5e5e5+100 */
+	background: rgb(255,255,255); /* Old browsers */
+	background: -moz-linear-gradient(top,  rgba(255,255,255,1) 0%, rgba(229,229,229,1) 100%); /* FF3.6-15 */
+	background: -webkit-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(229,229,229,1) 100%); /* Chrome10-25,Safari5.1-6 */
+	background: linear-gradient(to bottom,  rgba(255,255,255,1) 0%,rgba(229,229,229,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#e5e5e5',GradientType=0 ); /* IE6-9 */
 }
-.each-ui .each input{
+.expert-each .expert-input{
 	position: absolute;
 	left: -9999px;
 	top : -999px;
 }
-.each-ui .each label{
+.expert-each .expert-label{
 	font-family: 'notokr-bold';
 	padding: 0 15px 0 40px;
+	line-height: 38px;
 	cursor: pointer;
 	font-size: 11px;
 	color: #808080;
-	line-height: 38px;
+	height: 100%;
 	display: inline-block;
 	min-width: 50px;
-	-o-transition: .1s background ease-out;
+		 -o-transition: .1s background ease-out;
 	-webkit-transition: .1s background ease-out;
-	transition: .1s background ease-out;
+			transition: .1s background ease-out;
 	background: url(../image/common/calendar-partners-label.png) 15px center no-repeat;
 }
-.each-ui .each input:checked + label{
+.expert-each .expert-input:checked + .expert-label{
 	background-image: url(../image/common/calendar-partners-label-on.png);
+}
+.expert-each .expert-label:hover,
+.expert-each .expert-input:focus ~ .expert-label,
+.expert-each .expert-input:checked ~ .expert-label {
+	color: #000;
+}
+.expert-each .today-reservation {
+	color: #e60b25;
+	padding-left: 3px;
+	font-style: normal;
 }
 /* 현재 시간표시 라인 */
 
@@ -163,7 +178,8 @@
 .fc-now-indicator.fc-now-indicator-arrow {
 	position: relative;
 	left: 12px !important;
-	width: 72px;
+	width: 60px;
+	padding-left: 12px;
 	height: 24px;
 	line-height: 24px;
 	margin-top: -12px;
@@ -172,8 +188,11 @@
 	font-family: 'notokr-bold';
 	color: #fff;
 	border: none;
-	text-align: center;
 	background-color: #e60b25;
+}
+.fc-now-indicator-arrow .time {
+	float: left; 
+	margin-right: 4px;
 }
 .fc-now-indicator.fc-now-indicator-arrow:after {
 	background: url(../image/common/timeline-bullet.png) right center no-repeat;
@@ -198,14 +217,16 @@
 }
 /* 슬롯 helper 스타일 */
 .fc-helper {
-	box-shadow: 0 10px 20px 5px rgba(0,0,0,0.2);
+	border-color: transparent !important;
+    background-color: #111111;
+    box-shadow: 0 10px 20px 5px rgba(0,0,0,0.2);
 }
+
 /* 타임라인 시간표시 셀 */
 .fc .fc-axis { /* .fc to overcome default cell styles */
 	vertical-align: top;
 	padding: 0 4px;
 	white-space: nowrap;
-	background-color: #f2f2f2;
 	text-align: right;
 	border-top: 0;
 }
@@ -219,149 +240,144 @@
 	position: relative;
 	top: -7px;
 }
+.fc-day-grid .fc-create-helper {
+	display: none !important;
+}
+/* create helper */
+.fc-create-helper {
+	position: absolute;	top: 35px; left: 0; right: 0 ; bottom: 0;
+	width: 100%;
+}
+.fc-create-helper table {
+	table-layout: fixed;
+	width: 100%;
+	height: 100%;
+}
+.fc-create-helper td {
+	background: 0;
+	border: 0;
+}
+
 /* 타임라인및 슬롯 높이수정*/
-.fc-time-grid .fc-slats td {
-	height: 106px;
+.fc-time-grid .fc-slats tr td,
+.fc-time-grid .fc-create-helper tr td {
+	height: 35px;
 	vertical-align: middle;
+	border-right: 0;
+	border-left: 0;
 	border-bottom: 0; /* each cell is responsible for its top border */
+}
+.fc-time-grid .fc-slats tr.fc-minor td{
+	border-top-color: transparent;
+}
+/* 30분단위 그리드에 border color 적용*/
+.fc-time-grid .fc-slats tr:nth-child(6n-2) td,
+.fc-time-grid .fc-create-helper tr:nth-child(6n-2) td{
+	border-top-color: #e0e0e0;
+}
+.multi-experts .fc-create-helper {
+	border-top: 1px solid #e6e6e6;
+}
+.multi-experts .fc-time-grid .fc-create-helper tr td{
+	border-bottom: 1px solid transparent;
+}
+.multi-experts .fc-time-grid .fc-create-helper tr:nth-child(6n-3) td{
+	border-bottom: 1px dashed #e8e8e8;
+}
+.multi-experts .fc-time-grid .fc-create-helper tr:nth-child(6n) td{
+	border-bottom: 1px solid #e8e8e8;
 }
 
 /* TimeGrid Event Containment
 --------------------------------------------------------------------------------------------------*/
-/* 주간 훑어보기 타임라인 스크롤가능하도록 오버사이즈*/
-.fc-view-container {
-	overflow: auto;
-}
-.fc-agendaFiveDay-view {
-	width: 300%;
-}
-
-/* 슬롯에 영향이 되는 여백1 */
-.fc-ltr .fc-time-grid .fc-event-container { /* space on the sides of events for LTR (default) */
-	/*margin: 0 2.5% 0 2px;*/
-	margin: 0;
-}
-
-/* 슬롯에 영향이 되는 여백2 */
-.fc-rtl .fc-time-grid .fc-event-container { /* space on the sides of events for RTL */
-	/*margin: 0 2px 0 2.5%;*/
-	margin: 0;
-}
-
-
 /* 주,일 단위 슬롯 CSS적용 */
 .fc-event {
-	left: 50% !important;
-	max-width: 600px;
-	margin: 0.5px auto;
+	overflow: visible;
     line-height: 1.5;
     border-radius: 0;
-    border: 1px solid #000;
-    border-left-width: 4px;
+    border-color: #555;
     font-weight: normal;
     background-color: #333;
     -webkit-box-sizing: border-box;
 	   -moz-box-sizing: border-box;
 	    	box-sizing: border-box;
-	-webkit-transform: translateX(-50%);
-			transform: translateX(-50%);
 	-webkit-transition: 0.2s box-shadow ease;
 	transition: 0.2s box-shadow ease;
+}
+.fc-event:hover {
+	z-index: 2 !important;
 }
 .fc-event:hover .fc-ui {
 	display: block;
 }
 .fc-event .fc-content {
 	position: relative;
-	padding: 12px 15px;
 	height: 100%;
 	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
 	box-sizing: border-box;
 }
 .fc-event .fc-product{
-	font-size: 13px;
-	font-family: 'notokr-bold';
-	letter-spacing: -0.6px;
-	margin-right: 4px;
-	margin-bottom: 5px;
 	line-height: 1;
-}
-.fc-event .fc-time{
-	font-size: 20px;
-	font-family: 'notokr-black';
-	line-height: 1;
-	margin-bottom: 7px;
-}
-.fc-event .fc-user{
-	position: absolute;
-	top: 12px;
-	right: 15px;
-	text-align: center;
-}
-.fc-event .fc-user .fc-picture{
-	max-width: 38px;
-	padding-left: 5px;
-	margin: 0 auto 8px;
-	position: relative;
 }
 .fc-event .fc-user .fc-picture .picture{
-	width: 100%;
-	height: 100%;
-	margin: 0 auto;
-	display: block;
-	overflow: hidden;
-	-webkit-border-radius: 50%;
-	-moz-border-radius: 50%;
-	border-radius: 50%;
-}
-.fc-event .fc-user .fc-picture .picture img{
-	width: 100%;
-	height: 100%;
+	background-color: rgba(0,0,0, .2);
 }
 .fc-event .fc-user .fc-picture .rating{
-	font-size: 10px;
-	font-family: 'notokr-bold';
-	position: absolute;
-	left: 0;
-	top: 0;
-	width: 18px;
-	height: 18px;
-	letter-spacing: 100px;
 	overflow: hidden;
-	text-indent: 5px;
-	line-height: 18px;
 	-webkit-border-radius: 50%;
 	border-radius: 50%;
 	background-color: #aaa;
 	display: block;
 	text-transform: uppercase;
 }
-.fc-event .fc-user .fc-picture .rating.bad{
+.fc-event .fc-user .fc-picture .rating.BAD{
 	background-color: #b1282f;
 }
-.fc-event .fc-user .fc-picture .rating.new{
+.fc-event .fc-user .fc-picture .rating.NEW{
 	background-color: #05a609;
 }
-.fc-event .fc-user .fc-picture .rating.vip{
+.fc-event .fc-user .fc-picture .rating.VIP{
 	background-color: #d37c00;
 }
 .fc-event .fc-user .fc-name{
 	font-size: 12px;
+	letter-spacing: -0.3px;
+}
+.fc-event.fc-short .fc-time span{
+	display: block;
+}
+.fc-event.fc-short .fc-time:after,
+.fc-event.fc-short .fc-time:before {
+	display: none;
+}
+.fc-event .fc-time-helper {
+	visibility: hidden;
+	overflow: visible;
+	position: absolute;
+	left: -2px;
+	right: 0;
+	top: -24px;
+	z-index: 1;
 	font-family: 'notokr-bold';
-	padding-left: 5px;
-	letter-spacing: -0.3px;
-}
-.fc-event .fc-comment{
-	text-overflow: ellipsis;
+	font-size: 11px;
+	letter-spacing: -0.2px;
+	color: #fff;
+	-ms-text-overflow: ellipsis;
+		text-overflow: ellipsis;
 	white-space: nowrap;
-	overflow: hidden;
-	margin-right: 70px;
-	font-size: 12px;
-	letter-spacing: -0.3px;
-	line-height: 1.35;
 }
-
+.fc-event:hover .fc-time-helper {
+	visibility: visible;
+}
+.fc-event .fc-time-helper span {
+	display: inline-block;
+	padding: 0 12px;
+	height: 24px;
+	line-height: 24px;
+	background-color: #444;
+	
+}
 /* slot ui 스타일 */
 .fc-event .fc-ui{
 	display: none;
@@ -390,6 +406,12 @@
 	background-position: 3px 2px ;
 }
 
+/* 주단위 타임라인에서 fake fc-event를 감싸는 앨리먼트 */
+.fc-fake-event {
+	position: absolute; left:0; top: 0; right: 0; width: 100%;height: 0;
+}
+
+
 /* resizer (cursor device) */
 .fc-time-grid-event.fc-allow-mouse-resize .fc-resizer {
 	left: 60px;
@@ -409,123 +431,301 @@
 	display: block;
 	margin: 0 auto;
 	background: url('../image/common/resize-controler.png') center center no-repeat;
-
 }
 
 /* colorClass 에 따른 timeline slot 텍스트 및 배경 색상 스타일 */
-.fc-event.yellow {border-color: #d9a521; border-left-color: #d9a521; background-color: rgba(255,254,242,0.7);}
+.fc-event.yellow {border-color: #d9a521; background-color: rgba(250,224,187,0.7);}
 .fc-event.yellow .fc-product,
 .fc-event.yellow .fc-time,
 .fc-event.yellow .fc-name{color: #cc8100;}
+.fc-event.yellow .fc-service-time,
 .fc-event.yellow .fc-comment{color: #b3b08f;}
+.fc-event.yellow .fc-time-helper span{background-color: #f0b724;}
 
-.fc-event.red {border-color: #d9b8ad; border-left-color: #d97759; background-color: rgba(255,245,242,0.7);}
+.fc-event.red {border-color: #d96d4c; background-color: rgba(250,200,214,0.7);}
 .fc-event.red .fc-product,
 .fc-event.red .fc-time,
-.fc-event.red .fc-name{color: #cc5e3d;}
-.fc-event.red .fc-comment{color: #ccada3;}
+.fc-event.red .fc-name{color: #d96441;}
+.fc-event.red .fc-service-time,
+.fc-event.red .fc-comment{color: #c5a9a5;}
+.fc-event.red .fc-time-helper span{background-color: #f07954;}
 
-.fc-event.green {border-color: #56b39e; border-left-color: #6bb3a3; background-color: rgba(242,255,252,0.7);}
+.fc-event.green {border-color: #56b39e; background-color: rgba(199,242,234,0.7);}
 .fc-event.green .fc-product,
 .fc-event.green .fc-time,
 .fc-event.green .fc-name{color: #1f997e;}
-.fc-event.green .fc-comment{color: #a1b3af;}
+.fc-event.green .fc-service-time,
+.fc-event.green .fc-comment{color: #a5b7b3;}
+.fc-event.green .fc-time-helper span{background-color: #5bbda6;}
 
-.fc-event.purple {border-color: #8a62b3; border-left-color: #8f6bb3; background-color: rgba(249,242,255,0.7);}
+.fc-event.purple {border-color: #8a62b3; background-color: rgba(243,212,250,0.7);}
 .fc-event.purple .fc-product,
 .fc-event.purple .fc-time,
 .fc-event.purple .fc-name{color: #7435b3;}
+.fc-event.purple .fc-service-time,
 .fc-event.purple .fc-comment{color: #aaa1b3;}
+.fc-event.purple .fc-time-helper span{background-color: #a37acc;}
 
-.fc-event.blue {border-color: #6274b3; border-left-color: #6b7bb3; background-color: rgba(242,247,255,0.7);}
+.fc-event.blue {border-color: #6274b3; background-color: rgba(194,226,242,0.7);}
 .fc-event.blue .fc-product,
 .fc-event.blue .fc-time,
 .fc-event.blue .fc-name{color: #3550b3;}
+.fc-event.blue .fc-service-time,
 .fc-event.blue .fc-comment{color: #a1a5b3;}
+.fc-event.blue .fc-time-helper span{background-color: #6f83ca;}
+
+
+.fc-event.new-event {background: #9472b7;}
+.fc-event.new-event .fc-product,
+.fc-event.new-event .fc-time,
+.fc-event.new-event .fc-name{color: #fff;}
+.fc-event.new-event .fc-service-time,
+.fc-event.new-event .fc-comment{color: #fff;}
+.fc-event.new-event .fc-time-helper span{display: inline-block;}
+
+.fc-event.new-event.edit {background-color: #56b39e;cursor: default;}
+.fc-event.new-event.edit .fc-time-helper span{background-color: #56b39e;}
+
+.fc-event.new-event {
+	z-index: 4 !important;
+	border: 0 !important;
+	-webkit-box-shadow: 0 5px 20px 5px rgba(0, 0, 0, 0.2);
+			box-shadow: 0 5px 20px 5px rgba(0, 0, 0, 0.2);
+}
+.fc-event.new-event .fc-time-helper {
+	left: 0;
+	visibility: visible;	
+}
+.fc-event.new-event .fc-time-helper span {
+	background-color: #9472b7;
+}
+.fc-event.new-event:not(.off-time):not(.fc-helper) .fc-content:after {
+	display: block;content:"";width: 200%;height: 100%;z-index: 0;position: absolute;left: 0;top: 0;right: 0;bottom: 0;
+	background: repeating-linear-gradient(-75deg, rgba(255,255,255,0.1), rgba(255,255,255,0.1) 5px, transparent 5px, transparent 10px);
+    animation: roll 10s linear infinite;
+}
+.fc-event.new-event .fc-ui .fc-ui-edit {
+	display: none;
+}
+.fc-event.new-event:not(.off-time) .fc-ui .fc-ui-delete{
+	display: none;
+}
+
+.fc-event.off-time {
+	border-color: #c4c3c3;font-family: 'notokr-medium';
+	background-color: rgba(229,229,229,0.5);
+}
+.fc-event.off-time:not(.new-event):not(.fc-helper) .fc-content:after {
+	display: block;content:'';width: 200%;height: 100%;position: absolute;left: 0; top: 0;z-index: -1;
+	background: repeating-linear-gradient(-45deg, #fefefe, #fefefe 2px, transparent 2px, transparent 4px);
+    animation: roll 15s linear infinite;
+}
+.fc-event.off-time .fc-product,
+.fc-event.off-time .fc-time,
+.fc-event.off-time .fc-name{color: #4c4c4c;}
+.fc-event.off-time .fc-service-time,
+.fc-event.off-time .fc-comment{color: #a1a5b3; font-family: 'notokr-medium' !important;}
+.fc-event.off-time .fc-product {font-family: 'notokr-medium' !important;}
+.fc-event.off-time .fc-time-helper span{background-color: #999;}
+
 
 /* 시간이 지난 slot style*/
-.fc-event.disabled{opacity: 0.5;}
-.fc-event.disabled.yellow {background-color: #fffef2;}
-.fc-event.disabled.red {background-color: #fff5f2;}
-.fc-event.disabled.green {background-color: #f2fffc;}
-.fc-event.disabled.purple {background-color: #f9f2ff;}
-.fc-event.disabled.blue {background-color: #f2f7ff;}
+.fc-event.disabled:not(.new-event){opacity: .4;cursor: default;border-color: transparent;}
 
-/* slot 클릭(활성화)시 style */
-.fc-helper {
-	border: 0;
-    background-color: #111;
+/* off time slot bg animation*/
+@-moz-keyframes roll {
+	0% { left: -100%; }
+  100% { left: 0%; }
 }
-.fc-event.fc-helper .fc-content{
-	margin: 1px 1px 1px 4px;
+
+@-webkit-keyframes roll {
+	0% { left: -100%; }
+  100% { left: 0%; }
+}
+
+
+.fc-event.fc-helper .fc-time-helper {
+	visibility: visible;
 }
 .fc-event.fc-helper .fc-product,
 .fc-event.fc-helper .fc-time,
+.fc-event.fc-helper .fc-service-time,
 .fc-event.fc-helper .fc-user .fc-name{
-	color: #fff;
+	color: #fff !important;
 }
 .fc-event.fc-helper .fc-picture .rating{
 	background-color: #fff !important;
 }
-.fc-event.fc-helper .fc-picture .rating.vip{
+.fc-event.fc-helper .fc-picture .rating{
+	color: #aaa;
+}
+.fc-event.fc-helper .fc-picture .rating.VIP{
 	color: #d37c00;
 }
-.fc-event.fc-helper .fc-picture .rating.new{
+.fc-event.fc-helper .fc-picture .rating.NEW{
 	color: #05a609;
 }
-.fc-event.fc-helper .fc-picture .rating.bad{
+.fc-event.fc-helper .fc-picture .rating.BAD{
 	color: #b1282f;
 }
 .fc-event.fc-helper .fc-comment{
 	color: #fff;
 	opacity: 0.7;
 }
-.fc-event.fc-helper .fc-ui{
+.fc-event.fc-helper:not(.off-time) .fc-ui{
 	display: none;
 }
 
-.fc-event.fc-helper.yellow {background-color: #d9a521;}
-.fc-event.fc-helper.red {background-color: #d96d4c;}
-.fc-event.fc-helper.green {background-color: #56b29e;}
-.fc-event.fc-helper.purple {background-color: #8f6bb2;}
-.fc-event.fc-helper.blue {background-color: #6274b2;}
+.fc-event.fc-helper.yellow 	{background-color: #d9a521;}
+.fc-event.fc-helper.red 	{background-color: #d96d4c;}
+.fc-event.fc-helper.green 	{background-color: #56b29e;}
+.fc-event.fc-helper.purple 	{background-color: #8f6bb2;}
+.fc-event.fc-helper.blue 	{background-color: #6274b2;}
+
+.fc-event.off-time.new-event,
+.fc-event.off-time.fc-helper {background-color: #808080;}
+.fc-event.off-time.new-event .fc-content *,
+.fc-event.off-time.fc-helper .fc-content * {color: #fff !important;}
+.fc-event.off-time.new-event:after,
+.fc-event.off-time.fc-helper:after{opacity: .15;}
+
+.fc-event.off-time.new-event .fc-resizer:after,
+.fc-event.off-time.fc-helper .fc-resizer:after{background-image: url('../image/common/resize-controler-white.png');}
+
+.fc-event.off-time.fc-helper .fc-ui .fc-ui-delete,
+.fc-event.off-time.new-event .fc-ui .fc-ui-delete {
+	background-image: url(../image/common/slot-ui-delete-white.png);
+}
 
 
-.viewview{position: fixed;left: 100px;top:200px;z-index: 1;border: 1px solid #999;}
-.viewview span{width: 130px;display: inline-block;}
+.viewview{
+	visibility: visible;position: fixed;left: 80px;top:70px;z-index: 1;border: 1px solid #999;
+	max-width:380px;-ms-word-break: break-all;font-size: 12px;font-style: normal !important;
+	word-break: break-all;background-color: #282c34;color: #d17e43;z-index: 55;padding: 5px;
+}
+.viewview button{float: right;font-size: 10px;color: blue;border: 1px solid #fff;color: #fff;}
+.viewview span{width: 130px;display: inline-block;color: #aba58f;}
+.viewview div{background-color: #434854;color: #eee;}
+.viewview div:after{display: block;clear: both;content:'';}
+.viewview i{color: #aba58f;display: block;padding: 0;font-style: normal;text-align: right;width: 57px;-ms-word-break: justify;word-break: justify;float: left;clear: both;}
+.viewview i:first-of-type{clear: both;}
+.viewview p{float: left;text-indent: 3px;color: #d17e43;}
 
-.new-order-wrap{position: fixed;left: 80px;top: 0;right: 0;bottom: 0;z-index: 4;background-color: #cccccc;}
-.new-order-navigator{margin: 30px 36px 0;text-align: center;}
-.new-order-navigator h2{font-size: 32px;font-family: 'notokr-light'; letter-spacing: -0.3px;color: #000;float: left;}
-.new-order-navigator ol{display: inline-block;width: 65%;max-width: 824px;border: 1px solid #a6a6a6;border-radius: 50px;overflow: hidden;background-color: #b3b3b3;position: relative;}
+.viewview.fc{right: 20px;left: auto;top: 70px;z-index: 99;padding: 5px;}
+.viewview.fc dt{display: block;padding: 0;font-size: 11px;color: #aba58f;}
+.viewview.fc dd{display: block;margin-bottom: 2px;padding: 0;font-family: 'notokr-bold';color: #d17e43;}
+
+.new-order-wrap{
+	position: relative;
+	z-index: 3;
+	background-color: #ccc;
+	-webkit-transition: .15s all ease;
+	   -moz-transition: .15s all ease;
+			transition: .15s all ease;
+}
+.new-order-wrap.step-3 {
+	height: 324px !important;
+}
+.new-order-wrap.step-3.hidden {
+	height: 0 !important;
+	display: none;
+}
+.new-order-navigator{padding-top: 32px;margin: 0 36px 40px;text-align: center;}
+.new-order-navigator-inner {position: relative;}
+.new-order-navigator h2{font-size: 32px;font-family: 'notokr-light'; letter-spacing: -0.3px;color: #000;position: absolute;left: 0;top:0;}
+.new-order-navigator ol{display: inline-block;width: 65%;max-width: 612px;border: 1px solid #a6a6a6;border-radius: 6px;overflow: hidden;background-color: #bfbfbf;position: relative;}
 .new-order-navigator ol:before{
-	display: block;width: 25%;height: 44px;border-radius: 50px;border: 1px solid #999999;background-color: #fff;content:'';position: absolute;top:0;left: -25%;
+	display: block;width: 33.333%;height: 36px;border-radius: 6px;border: 1px solid #999999;background-color: #d9d9d9;content:'';position: absolute;top:0;left: -33.333%;
 	-webkit-transform: translate(-1px, -1px);
 			transform: translate(-1px, -1px);
 	-webkit-transition: .1s left ease;
 			transition: .1s left ease;
 }
-.step-0 .new-order-navigator ol:before{left: 0;}
-.step-1 .new-order-navigator ol:before{left: 25%;}
-.step-2 .new-order-navigator ol:before{left: 50%;}
-.step-3 .new-order-navigator ol:before{left: 75%;}
+.step-1 .new-order-navigator ol:before{left: 0;}
+.step-2 .new-order-navigator ol:before{left: 33.333%;}
+.step-3 .new-order-navigator ol:before{left: 66.666%;}
 
-.new-order-navigator ol li{float: left;width: 25%;text-align: center;position: relative;z-index: 1;}
-.new-order-navigator ol li button{outline:0; font-size: 14px;letter-spacing: -0.3px;font-family: 'notokr-medium';display: block;width: 100%;height: 44px;color: #000;border-radius: 50px;}
-.new-order-navigator .new-order-close{float: right;width: 32px;height: 32px;display: inline-block;border-radius: 50%;background: #262625 url(../image/common/btn-close-newOrder.png) center center;}
+.new-order-navigator ol li{float: left;width: 33.333%;text-align: center;position: relative;z-index: 1;}
+.new-order-navigator ol li button{outline:0; font-size: 14px;letter-spacing: -0.3px;font-family: 'notokr-medium';display: block;width: 100%;height: 36px;color: #5f5f5f;border-radius: 6px;}
+.new-order-navigator ol li button i{font-style: normal;}
+.new-order-navigator ol li.active button{color: #000;}
+.new-order-navigator ol li.active button i{color: #e60b25;}
+.new-order-navigator .new-order-close{width: 32px;height: 32px;display: inline-block;border-radius: 50%;background: #262625 url(../image/common/btn-close-newOrder.png) center center;position: absolute;right: 0;top:0 ;}
 
-.new-order{width: 464px;position: absolute; left: 50%; top: 100px; margin-left: -230px;}
-.new-order .service-info{height: 110px;background-color: #000;padding: 16px 21px;color: #fff;}
-.new-order .service-info .lt{float: left;}
-.new-order .service-info .rt{float: right;}
-.new-order .service-info button{color: #FFF;font: inherit;}
-.new-order .service-info .product{font-family: 'notokr-bold';margin-bottom: 12px;letter-spacing: -0.6px;}
-.new-order .service-info .product button{border-bottom: 1px solid #fff;}
-.new-order .service-info .service-time{font-size: 20px;font-family: 'notokr-black';border-bottom: 1px solid #fff;opacity: .3;border-bottom: 1px solid #fff;}
-.new-order .service-info .user{float: left;font-size: 12px;font-family: 'notokr-bold';letter-spacing: -0.3px;opacity: .3;}
-.new-order .service-info .user button{border-bottom: 1px solid #fff;}
-.new-order .service-info .picture{float: left;opacity: .2;margin-left: 7px;}
-.new-order .service-info .picture span{width: 38px;height: 38px;border-radius: 50%;overflow: hidden;background-color: #fff;display: inline-block;}
+.new-order-card {
+	padding-bottom: 32px;
+}
+.new-order-card .user-card-service {
+	max-width: 464px;
+	margin: 0 auto;
+	border: 1px solid #000;
+	box-shadow: 0 15px 20px rgba(0,0,0, 0.15)
+}
+.new-order-card .user-card-service .rt button{
+	text-align: center;
+	padding-left: 8px;
+}
+.new-order-card .user-card-service .user {
+	padding: 0 0 2px 0;
+	text-align: center;
+	float: none;
+	display: inline-block;
+}
+.new-order-card .user-card-service .picture {
+	float: none;
+	margin-left: 0;
+	margin-bottom: 8px;
+}
+/* step 에따른 스타일 */
+.step-1 .user-card-service .product .inner{
+	background-color: rgba(0,0,0,1);
+	opacity: 1;
+}
+.step-1 .user-card-service .product .inner:after{
+	border-bottom: 0;
+}
+.step-2 .user-card-service .rt button{
+	background-color: rgba(0,0,0,0.2);
+	opacity: 1;
+}
+.step-3 .user-card-service .rt button{
+	opacity: 1;
+}
+.step-3 .user-card-service .rt button .user{
+	opacity: .7;
+}
+.step-2 .user-card-service .user{
+	border-bottom: 0;
+}
+.step-3 .user-card-service .service-time button{
+	background-color: rgba(0,0,0, .2);
+	opacity: 1;
+}
+.step-3 .user-card-service .service-time button:after{
+	display: none;
+}
+
+/* 예약날짜 선택하는 단계일시 */
+.new-order-render .user-card-service{
+	background-color: #8f6bb3;
+	border: 1px solid #845bac;
+}
+/* 예약수정 시 */
+.new-order-edit .user-card-service{
+	background-color: #56b39e;
+	border: 1px solid #50a692;
+}
+
+.new-order{width: 464px;margin: 0 auto;}
+.new-order-inner {padding-bottom: 32px;}
+.new-order-wrap .has-expert{padding-top: 10px;margin-bottom: 16px;text-align: center;}
+.new-order-wrap .has-expert > div{display: inline-block;}
+.new-order-wrap .has-expert .thumbnail {width: 38px;height: 38px;border-radius: 50%;overflow: hidden;background-color: #b7b7b7;display: inline-block;margin-right: 10px;vertical-align: middle;}
+.new-order-wrap .has-expert .thumbnail img {display: block;width: 100%;height: 100%;}
+.new-order-wrap .has-expert .label{font-size: 24px;color: #666666;letter-spacing: -0.2px;display: inline-block;vertical-align: middle;text-shadow: 0 1px 0 #fff;}
+.new-order .service-info:after{display: block;clear: both;content:'';}
+
+.step-2 .new-order .user-card-service{background-color: #8f6bb3;}
 
 .new-order .service-input-wrap{min-height: 118px;background-color: #fff;}
 .new-order .service-input{padding: 30px 24px;}
@@ -546,7 +746,8 @@
 .new-order .service-input .radio-group label:last-of-type {-webkit-border-radius: 0 7px 7px 0;border-radius: 0 7px 7px 0;border-left: 0;}
 .new-order .service-input .radio-group:hover label{border-color: #808080;border-right-color: #d9d9d9;}
 .new-order .service-input .radio-group:hover label:last-of-type{border-right-color: #808080;}
-.new-order .service-input .radio-group label:hover{color: #666666;}
+.new-order .service-input .radio-group label:hover,
+.new-order .service-input .radio-group input:focus + label{color: #666666;}
 .new-order .service-input .radio-group label:hover,
 .new-order .service-input .radio-group input:checked + label{
 	/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#f2f2f2+0,ffffff+100 */
@@ -559,13 +760,25 @@
 .new-order .service-input .radio-group input:checked + label{text-indent: -7px;color: #000;}
 .new-order .service-input .radio-group input:checked + label:after{position: absolute;left: 0; top: 0;display: block;clear: both;content:'';width: 100%;height: 100%;text-indent: -6px;background-image: url(../image/common/input-checked.png); background-position: 50px center;background-repeat: no-repeat;}
 
-.new-order .service-input .customer-phone{}
+.new-order .service-input .customer-phone:after{display: block;clear: both;content:'';}
 .new-order .service-input .customer-phone input{background-color: #f7f7f7;border: 1px solid #d9d9d9;border-radius: 7px;width: 138px;height: 34px;line-height: 34px;vertical-align: middle;float: left;color: #000;font-family: 'notokr-bold';text-align: center;font-size: 16px;}
 .new-order .service-input .customer-phone input:nth-of-type(1){width: 108px;}
 .new-order .service-input .customer-phone i{width: 8px;height: 2px;margin: 16px 4px 0;display: block;float: left;text-indent: -999px;overflow: hidden;background-color: #b3b3b3;}
 
+.render-confirm-inner {text-align: center;padding: 15px 0;position: absolute;left: 0; top: 100%; right: 0;width: 100%;}
+.render-confirm-inner button {
+	border-radius: 50%;overflow: hidden;background-color: #fff;overflow: hidden;
+	width: 42px;height: 42px;margin: 0 6px;display: inline-block;text-indent: -9999px;
+	-webkit-box-shadow: 0 5px 10px 0 rgba(0,0,0,0.25);
+			box-shadow: 0 5px 10px 0 rgba(0,0,0,0.25);
+
+}
+.render-confirm-inner button.complete {background: url(../image/common/input-checked-large.png) 0 0 no-repeat;}
+.render-confirm-inner button.cancel {background: url(../image/common/input-delete-large.png) 0 0 no-repeat;}
+
 .new-order .complete{border-top: 1px solid #ccc;}
-.new-order .complete button{color: #fff;border-top: 1px solid #f0f0f0;height: 52px;line-height: 52px;display: block;width: 100%;font-family: 'notokr-bold';letter-spacing: -0.2px;overflow: hidden;
+.new-order .complete button,
+.step-2 .new-order .complete button.has-customer{color: #fff;border-top: 1px solid #f0f0f0;height: 52px;line-height: 52px;display: block;width: 100%;font-family: 'notokr-bold';letter-spacing: -0.2px;overflow: hidden;
 	/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#333333+0,4c4c4c+100 */
 	background: rgb(51,51,51); /* Old browsers */
 	background: -moz-linear-gradient(top,  rgba(51,51,51,1) 0%, rgba(76,76,76,1) 100%); /* FF3.6-15 */
@@ -573,10 +786,39 @@
 	background: linear-gradient(to bottom,  rgba(51,51,51,1) 0%,rgba(76,76,76,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#333333', endColorstr='#4c4c4c',GradientType=0 ); /* IE6-9 */
 }
-.new-order .complete button:disabled{color: #bfbfbf;background: #e6e6e6;}
+.new-order .complete button:disabled{color: #bfbfbf;background: #e6e6e6 !important;}
 .new-order .complete button .bullet{display: inline-block;margin-left: 4px;width: 12px;height: 10px;content:'';background: url(../image/common/bullet-next.png) 0 0 no-repeat;-webkit-transition: .1s all ease;transition: .1s all ease;-webkit-transform: translateX(0);transform: translateX(0);}
 .new-order .complete button:disabled .bullet{-webkit-transform: translateX(300px);transform: translateX(300px);}
-.new-order .complete button:hover{}
+.new-order .complete button:hover,
+.step-2 .new-order .complete button.has-customer:hover,
+.step-2 .new-order .complete button.has-customer:focus{
+	/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#333333+0,4c4c4c+99 */
+	background: rgb(51,51,51); /* Old browsers */
+	background: -moz-linear-gradient(top, rgba(76,76,76,1) 0%, rgba(51,51,51,1) 100%); /* FF3.6-15 */
+	background: -webkit-linear-gradient(top, rgba(76,76,76,1) 0%,rgba(51,51,51,1) 100%); /* Chrome10-25,Safari5.1-6 */
+	background: linear-gradient(to bottom, rgba(76,76,76,1) 0%,rgba(51,51,51,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#4c4c4c', endColorstr='#333333',GradientType=0 ); /* IE6-9 */
+}
+
+.step-2 .new-order .complete button{
+	/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#8c8c8c+0,a6a6a6+100 */
+	background: rgb(140,140,140); /* Old browsers */
+	background: -moz-linear-gradient(top,  rgba(140,140,140,1) 0%, rgba(166,166,166,1) 100%); /* FF3.6-15 */
+	background: -webkit-linear-gradient(top,  rgba(140,140,140,1) 0%,rgba(166,166,166,1) 100%); /* Chrome10-25,Safari5.1-6 */
+	background: linear-gradient(to bottom,  rgba(140,140,140,1) 0%,rgba(166,166,166,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#8c8c8c', endColorstr='#a6a6a6',GradientType=0 ); /* IE6-9 */
+}
+
+.step-2 .new-order .complete button:hover,
+.step-2 .new-order .complete button:focus{
+	/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#a6a6a6+0,8c8c8c+99 */
+	background: rgb(166,166,166); /* Old browsers */
+	background: -moz-linear-gradient(top,  rgba(166,166,166,1) 0%, rgba(140,140,140,1) 100%); /* FF3.6-15 */
+	background: -webkit-linear-gradient(top,  rgba(166,166,166,1) 0%,rgba(140,140,140,1) 100%); /* Chrome10-25,Safari5.1-6 */
+	background: linear-gradient(to bottom,  rgba(166,166,166,1) 0%,rgba(140,140,140,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6a6a6', endColorstr='#8c8c8c',GradientType=0 ); /* IE6-9 */
+}
+
 .new-order-appear {
   opacity: 0.01;
   transform: translateX(30px);
@@ -587,19 +829,210 @@
   transition: all .1s ease-in;
 }
 
-
 /* confirm modal style */
-.modal-confirm {padding: 15px;background-color: #fff;border: 1px solid #000;border-radius: 10px;}
-.modal-confirm .confirm-buttons{text-align: right;margin-top: 20px;}
-.modal-confirm .confirm-buttons button{border: 1px solid #aaa;border-radius: 3px;background-color: #efefef;margin-left: 10px;}
+.order-confirm {
+	width: 420px;margin: 0 auto;
+	background-color: #fff;
+}
+.order-confirm .confirm-content{
+	padding: 24px;min-height: 150px
+}
+.order-confirm .confirm-content p {
+	font-size: 18px;
+	line-height: 28px;
+	letter-spacing: -0.3px;
+	color: #666666;
+}
+.order-confirm .confirm-content p span {
+	font-family: 'notokr-bold';
+}
+.order-confirm .confirm-content .date {
+	color: #000;
+}
+.order-confirm .confirm-content .name {
+	color: #000;
+	padding-right: 5px;
+}
+.order-confirm .confirm-content .rating.VIP{color: #d37c00;}
+.order-confirm .confirm-content .rating.NEW{color: #05a609;}
+.order-confirm .confirm-content .rating.BAD{color: #b1282f;}
+
+.order-confirm .confirm-content .product.yellow{color: #cc8100;}
+.order-confirm .confirm-content .product.red{color: #d96441;}
+.order-confirm .confirm-content .product.green{color: #1f997e;}
+.order-confirm .confirm-content .product.purple{color: #7435b3;}
+.order-confirm .confirm-content .product.blue{color: #3550b3;}
+
+.order-confirm .confirm-content .change-date{margin-top: 30px;}
+
+.order-confirm .confirm-ui:after{
+	display: block;clear: both;content:'';
+}
+.order-confirm .confirm-ui button{
+	font-size: 16px;
+	color: #4c4c4c;
+	letter-spacing: -0.3px;
+	height: 50px;
+	line-height: 50px;
+	text-align: center;
+	font-family: 'notokr-medium';
+	float: right;
+	display: block;
+	width: 50%;
+	background-color: #d9d9d9;
+}
+.order-confirm .confirm-ui button:first-of-type {
+	border-left: 1px solid #fff;
+}
+.order-confirm .confirm-ui button:hover,
+.order-confirm .confirm-ui button:focus {
+	color: #fff;
+	background-color: #000;
+}
+
+/* 예약생성 버튼 */
+.create-order-wrap {
+	text-align: center;
+	z-index: 2;
+	overflow: visible;
+}
+.create-order-wrap:before {
+	content:'';
+}
+.create-order-slot .create-button span {
+	width: 44px;
+	height: 44px;
+	display: block;
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	margin: -6px 0 0 -22px;
+	text-align: center;
+	padding: 0;
+	background: black;
+	border-radius: 50%;
+	color: #fff;
+	font-size: 26px;
+	line-height: 44px;
+	font-family: 'notokr-regular';
+	box-shadow: 0 1px 7px 1px rgba(0,0,0,0.5);
+}
+
+.create-order-ui {
+	display: inline-block;
+	border-radius: 8px;
+	overflow: hidden;
+	border: 1px solid #000;
+	-webkit-box-shadow: 0 5px 15px 0px rgba(0,0,0,0.3);
+			box-shadow: 0 5px 15px 0px rgba(0,0,0,0.3);
+}
+.create-order-ui button {
+	font-size: 16px;
+	font-family: 'notokr-medium';
+	letter-spacing: -0.3px;
+	display: block;
+	width: 166px;
+	float: left;
+	height: 46px;
+	line-height: 46px;
+	color: #cccccc;
+	/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#4c4c4c+0,333333+100 */
+	background: rgb(76,76,76); /* Old browsers */
+	background: -moz-linear-gradient(top,  rgba(76,76,76,1) 0%, rgba(51,51,51,1) 100%); /* FF3.6-15 */
+	background: -webkit-linear-gradient(top,  rgba(76,76,76,1) 0%,rgba(51,51,51,1) 100%); /* Chrome10-25,Safari5.1-6 */
+	background: linear-gradient(to bottom,  rgba(76,76,76,1) 0%,rgba(51,51,51,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#4c4c4c', endColorstr='#333333',GradientType=0 ); /* IE6-9 */
+}
+.create-order-ui button.ui-reservation {
+	border-right: 1px solid #000;
+}
+.create-order-ui button:hover,
+.create-order-ui button:focus {
+	color: #fff;
+	/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#333333+0,4c4c4c+100 */
+	background: rgb(51,51,51); /* Old browsers */
+	background: -moz-linear-gradient(top,  rgba(51,51,51,1) 0%, rgba(76,76,76,1) 100%); /* FF3.6-15 */
+	background: -webkit-linear-gradient(top,  rgba(51,51,51,1) 0%,rgba(76,76,76,1) 100%); /* Chrome10-25,Safari5.1-6 */
+	background: linear-gradient(to bottom,  rgba(51,51,51,1) 0%,rgba(76,76,76,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#333333', endColorstr='#4c4c4c',GradientType=0 ); /* IE6-9 */
+}
+
+/* 예약생성 버튼 (우측하단 고정스타일)*/
+.create-order-wrap.fixed {
+	position: fixed;
+	right: 26px;
+	bottom: 26px;
+	-webkit-transition: .3s bottom ease;
+	   -moz-transition: .3s bottom ease;
+			transition: .3s bottom ease;
+}
+.create-order-wrap.fixed .create-order-slot {
+	width: 56px;
+	height: 56px;
+	display: block;
+    position: absolute;
+	right: 0;
+    bottom: 0;
+}
+.create-order-wrap.fixed .create-order-slot .create-button {
+	width: 100%;
+	height: 100%;
+	display: block;
+	position: relative;
+	overflow: visible;
+}
+.create-order-wrap.fixed .create-order-slot .create-button span {
+	width: 100%;
+	height: 100%;
+	line-height: 56px;
+	top: auto;
+	left: auto;
+	right: 0;
+	bottom: 0;
+}
+.create-order-wrap.fixed .create-order-ui {
+	display: none;
+	position: relative;
+	bottom: 65px;
+}
+.create-order-wrap.fixed:hover .create-order-ui {
+	display: block !important;
+}
+.create-order-wrap.fixed .create-order-ui button {
+	float: none;
+}
+.create-order-wrap.fixed .create-order-ui button.ui-reservation {
+	border-bottom: 1px solid #000;
+	border-right: 0;
+}
+
+.create-order-wrap.fixed.hidden {
+	bottom: -100px;
+}
+.create-order-wrap.fixed.hidden .create-order-ui {
+	display: none !important;
+}
 
 
 /*																					*/
 /*ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ [ -이하- '주 단위 훑어보기' 모드에 적용돼는 Styles ] ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ*/
 /*																					*/
+
+.expert-ui.expert-weekly {
+	height: 38px;
+	text-align: center;
+}
+.expert-ui.expert-weekly .expert label {
+	line-height: 38px;
+}
+.expert-ui.expert-weekly .expert-each{
+	display: inline-block;
+	float: none;
+}
+
+
 .fc-agendaWeekly-view{
-	margin-top: 39px;
-	transition: 1s all cubic-bezier(0.42, 0.9, 0.76, 1);
+	/*transition: .25s all cubic-bezier(0.42, 0.9, 0.76, 1);*/
 	opacity: 1;
 }
 
@@ -611,13 +1044,298 @@
 	opacity: .2;
 	transform: translateX(90%);
 }
-.fc-agendaWeekly-view .fc-now-indicator {
- 	display: none;
- }
+.fc-agendaWeekly-view .fc-bg td {
+	position: relative;
+	border-left: 0 !important;
+    border-right: 0 !important;
+}
+
+#weekly .fc-toolbar.fc-header-toolbar {
+	background-color: #fafafa;
+}
+#weekly .fc-toolbar.fc-header-toolbar h2 .weekDay {
+	display: none;
+}
+
+.fc-agendaWeekly-view .fc-head-container {
+	border-top: 0 !important;
+	/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#fafafa+0,e5e5e5+100 */
+	background: rgb(250,250,250); /* Old browsers */
+	background: -moz-linear-gradient(top,  rgba(250,250,250,1) 0%, rgba(229,229,229,1) 100%); /* FF3.6-15 */
+	background: -webkit-linear-gradient(top,  rgba(250,250,250,1) 0%,rgba(229,229,229,1) 100%); /* Chrome10-25,Safari5.1-6 */
+	background: linear-gradient(to bottom,  rgba(250,250,250,1) 0%,rgba(229,229,229,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fafafa', endColorstr='#e5e5e5',GradientType=0 ); /* IE6-9 */
+}
+
+.fc-agendaWeekly-view .fc-widget-header {
+	font-size: 11px;
+	font-family: 'notokr-bold';
+	color: #999999;
+	height: 32px;
+	line-height: 32px;
+	border-color: #d2d2d2;
+}
+.fc-agendaWeekly-view .fc-widget-header.fc-today {
+	color: #000;
+}
+.fc-agendaWeekly-view .fc-day-header.fc-widget-header th {
+	border-color: #d2d2d2;
+}
+
+.fc-agendaWeekly-view .fc-event-container {
+	margin: 0 !important;
+}
+
+.fc-agendaWeekly-view .fc-scroller.fc-time-grid-container {
+	background-color: #fff;
+}
+.fc-agendaWeekly-view .fc-time-grid table {
+	border-top: 0;
+}
+.fc-agendaWeekly-view .fc-time-grid .fc-slats tr:first-of-type td:last-of-type {
+	border-top: 1px solid #e6e6e6 !important;
+}
+.fc-agendaWeekly-view .fc-time-grid {
+	margin-top: 28px;
+}
+.fc-agendaWeekly-view .fc-time-grid > .fc-bg {
+	z-index: 3;
+}
+/*.fc-agendaWeekly-view .fc-time-grid > .fc-bg.create-order-overlap {
+	z-index: 4;
+}*/
+
+.fc-agendaWeekly-view .fc-create-helper {
+	top: -1px;
+}
+.fc-agendaWeekly-view .fc-time-grid .fc-slats tr td {
+	height: 27px;
+}
+.fc-agendaWeekly-view .fc-time-grid .fc-create-helper tr td {
+	height: 28px;
+}
+
+/* create button style (timeline) */
+.fc-agendaWeekly-view .create-order-wrap.timeline {
+	position: absolute;
+	width: auto;
+	left: 11px;
+	right: 11px;
+	top: 0;
+	bottom: 0;	
+	margin: 0 !important;
+	-webkit-transform: none;
+    	-ms-transform: none;
+    		transform: none;
+}
+.fc-agendaWeekly-view .create-order-wrap.timeline .create-order-inner {
+	background-color: rgba(217,217,217,0.7);
+	box-shadow: 0 28px 0 rgba(217,217,217,0.7);
+	margin: 0;
+	height: 28px;
+}
+.fc-agendaWeekly-view .create-order-wrap.timeline .create-order-slot .create-button {
+	width: 100%;
+	height: 100%;
+	position: relative;
+}
+.fc-agendaWeekly-view .create-order-wrap.timeline .create-order-slot .create-button span {
+	width: 30px;
+	height: 30px;
+	line-height: 30px;
+	margin: 0 0 0 -15px;
+	font-size: 13px;
+}
+.fc-agendaWeekly-view .create-order-wrap.timeline .create-order-slot .create-button .time {
+	font-size: 11px;
+	font-family: 'notokr-bold';
+	background-color: #ccc;
+	color: #fff;
+	min-width: 60px;
+	height: 24px;
+	line-height: 24px;
+	padding: 0 10px;
+	left: 0;
+	top: -24px;
+	-webkit-box-sizing: border-box;
+	   -moz-box-sizing: border-box;
+			box-sizing: border-box;
+}
+.fc-agendaWeekly-view .create-order-wrap.timeline .create-order-ui-inner {
+	padding-top: 28px;
+}
+
+/* 주단위 타임라인에서 off time 생성단계 에서의 버튼 스타일 */
+.fc-agendaWeekly-view .create-order-wrap.off-time {
+}
+.fc-agendaWeekly-view .create-order-wrap.off-time .create-order-slot {
+	background-color: rgba(128,128,128, 0.7);
+}
+.fc-agendaWeekly-view .create-order-wrap.off-time .create-order-slot .create-button .time{
+	background-color: #808080;
+	border: 1px solid #777;
+}
+.fc-agendaWeekly-view .create-order-wrap.off-time .create-order-slot .create-button span{
+	font-family: 'notokr-light';
+	font-size: 28px;
+	background: none;
+	-webkit-box-shadow: none;
+	   -moz-box-shadow: none;
+			box-shadow: none;
+}
+
+/*
+ 주단위 타임라인에서 시간지정하지 않은 채 예약 슬롯을 생성할 경우 및
+ 주단위 타임라인에서 예약변경을 할 경우 버튼 스타일
+ */
+.fc-agendaWeekly-view .create-order-wrap.has-card,
+.fc-agendaWeekly-view .create-order-wrap.edit{
+	box-shadow: 0 10px 20px 0 rgba(0,0,0, 0.15);
+}
+.fc-agendaWeekly-view .create-order-wrap.has-card .create-order-slot .create-button span,
+.fc-agendaWeekly-view .create-order-wrap.edit .create-order-slot .create-button span{
+	font-family: 'notokr-light';font-size: 28px;background: none;
+	-webkit-box-shadow: none;
+	   -moz-box-shadow: none;
+			box-shadow: none;
+}
+
+.fc-agendaWeekly-view .create-order-wrap.has-card .create-order-slot{background-color: #bb97d8;}
+.fc-agendaWeekly-view .create-order-wrap.edit .create-order-slot{background-color: #7fccbb;}
+
+.fc-agendaWeekly-view .create-order-wrap.has-card .create-order-slot .create-button .time{
+	background-color: #a37acc; left: -1px;
+	border-bottom: 1px solid #d0bdd4;
+}
+.fc-agendaWeekly-view .create-order-wrap.edit .create-order-slot .create-button .time{
+	background-color: #5bbca5;left: -1px;
+	border-bottom: 1px solid #b9d2ce;
+}
+
+
+/* slot style*/
+.fc-agendaWeekly-view .fc-event {
+  margin: 0 10px;
+  border-width: 0 0 0 2px;
+}
+.fc-agendaWeekly-view .fc-event .fc-content{
+  font-family: 'notokr-medium';
+  padding: 8px 6px;
+  line-height: 15px;
+}
+.fc-agendaWeekly-view .fc-event .fc-content * {
+	font-family: inherit;
+}
+.fc-agendaWeekly-view .fc-event .fc-product{
+  font-size: 12px;
+  letter-spacing: -0.6px;
+}
+.fc-agendaWeekly-view .fc-event .fc-service-time {
+	font-size: 11px;
+	letter-spacing: -0.6px;
+}
+.fc-agendaWeekly-view .fc-event .fc-time,
+.fc-agendaWeekly-view .fc-event .fc-user .fc-picture .picture,
+.fc-agendaWeekly-view .fc-event .fc-comment{
+	display: none;
+}
+.fc-agendaWeekly-view .fc-event .fc-user{
+
+}
+.fc-agendaWeekly-view .fc-event .fc-user .fc-picture{
+	display: inline;
+}
+.fc-agendaWeekly-view .fc-event .fc-user .fc-picture .rating{
+  font-size: 8px;
+  width: 12px;
+  margin-right: 2px;
+  height: 12px;
+  letter-spacing: 100px;
+  text-indent: 3px;
+  line-height: 12px;
+  display: inline-block;
+  vertical-align: middle;
+}
+.fc-agendaWeekly-view .fc-event .fc-user .fc-name{
+  font-size: 12px;
+  font-family: 'notokr-medium';
+  letter-spacing: -0.3px;
+  display: inline-block;
+  vertical-align: middle;
+}
+.fc-agendaWeekly-view .fc-ui {
+	display: none !important;
+}
+
+.fc-agendaWeekly-view .fc-time-grid-event.fc-allow-mouse-resize .fc-resizer {
+	left: 10px;
+	right: 10px;
+}
+.fc-agendaWeekly-view .fc-time-grid-event.fc-allow-mouse-resize .fc-resizer:after {
+	background: url('../image/common/resize-controler-large.png') center center no-repeat;
+	width: 20px;
+	margin-top: 5px;
+}
+
+/* 주단위 에서의 colorClass 에 따른 timeline slot 텍스트 및 배경 색상 스타일 */
+.fc-agendaWeekly-view .fc-event.yellow .fc-name {color: #b3b08f;}
+.fc-agendaWeekly-view .fc-event.red .fc-name {color: #c5a9a5;}
+.fc-agendaWeekly-view .fc-event.green .fc-name {color: #a5b7b3;}
+.fc-agendaWeekly-view .fc-event.purple .fc-name {color: #aaa1b3;}
+.fc-agendaWeekly-view .fc-event.blue .fc-name {color: #a1a5b3;}
+
+/* 주단위 에서의 예약생성단계 및 예약변경단계의 예약카드 스타일 */
+.fc-agendaWeekly-view .fc-event.new-event .fc-service-time,
+.fc-agendaWeekly-view .fc-event.new-event .fc-name {
+	color: rgba(255,255,255, 0.6);
+}
+
+
+.fc-agendaWeekly-view .fc-time-grid .fc-content-col {
+	/* 오버뷰의 now indicator line이 모든 날짜에 표시되도록 적용*/
+	position: static;
+}
+.fc-agendaWeekly-view .fc-now-indicator-arrow {
+	width: 30px;
+	padding-left: 0;
+	color: #e60b25;
+	line-height: 11px;
+	border: 0 !important;
+	background: none;
+	text-align: center;
+	-ms-word-break: keep-all;
+		word-break: keep-all;
+}
+.fc-agendaWeekly-view .fc-now-indicator-arrow:after {
+	display: none;
+}
+.fc-agendaWeekly-view .fc-now-indicator-arrow span {
+	font-family: 'notokr-bold';
+	text-align: right;
+	display: block;
+	float: none;
+	margin: 0;
+}
+.fc-agendaWeekly-view .fc-now-indicator-line {
+ 	margin-left: 48px;
+}
+
+
 .controler{
-	position: fixed;left: 80px;top:0;
-	z-index: 3;border: 1px solid #000;
-	background-color: red;color: #fff;padding: 10px;
+	position: fixed;
+	left: 68px;
+	cursor: pointer; /* ms */
+	cursor: col-resize; 	 /* active : grabbing */
+	top: 90px;
+	right: 0;
+	height: 32px;
+	opacity: 1;
+	z-index: 1;
+}
+.controler:active,
+.controler:focus{
+	cursor: pointer; /* ms */
+	cursor: col-resize;
 }
 
 
@@ -625,20 +1343,61 @@
 /*																					*/
 /*ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ [ -이하- '일 단위 타임라인' 모드에 적용돼는 Styles ] ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ*/
 /*																					*/
+.expert-ui.expert-daily {
+	background-color: #f7f7f7;
+}
+.expert-ui.expert-daily .expert-inner {
+	border-top: 1px solid #fff;
+}
+.fc-agendaDay-view .fc-head {
+	/*display: none;*/
+}
+.fc-agendaDay-view .fc-head-container {
+	background-color: #f7f7f7;
+	padding-right: 50px;
+}
+.fc-agendaDay-view .fc-head-container th {
+	font-family: 'notokr-bold';
+	font-size: 12px;
+	color: #999;
+	height: 36px;
+	line-height: 36px;
+}
 
-.fc-agendaDay-view .fc-event-container{margin: 0 50px 0 0 !important;}
-.fc-agendaDay-view .fc-widget-content{border-bottom: 0;}
+.fc-agendaDay-view .fc-time-grid .fc-slats {
+	z-index: 0;
+}
+/*.fc-agendaDay-view .fc-time-grid .fc-slats.create-order-overlap {
+	z-index: 4;
+}*/
+
+
+.fc-agendaDay-view .fc-head-container .fc-axis {
+	border: 0 !important;
+}
+
+.fc-agendaDay-view .fc-head-container .fc-axis,
+.fc-agendaDay-view .fc-time-grid .fc-axis {
+	width: 42px !important;
+	padding-right: 4px;
+}
+.fc-agendaDay-view .fc-body > tr > .fc-widget-content {border-top: 0;}
+.fc-agendaDay-view .fc-event-container{margin: 0 30px !important;}
+.fc-agendaDay-view .fc-widget-content{border-bottom: 0;position: relative;}
 .fc-agendaDay-view .fc-time-grid .fc-content-skeleton {top: 35px;}
 .fc-agendaDay-view .fc-time-grid .fc-slats .fc-minor td {
 	border-style: dashed;
 	vertical-align: middle;
 }
+.fc-agendaDay-view .fc-time-grid > *{
+	margin-right: 50px;
+}
 .fc-agendaDay-view .fc-time-grid .fc-axis{
-	width: 50px !important;
-	padding-right: 4px;
+	background-color: transparent;
 }
 .fc-agendaDay-view .fc-time-grid > .fc-bg {
-	margin-right: 50px;
+	border-right: 1px solid #e6e6e6;
+	border-radius: 10px;
 	background: none;
 }
 
@@ -647,9 +1406,10 @@
 	margin-top: 15px;
 	padding-top: 35px;
 }
-
 /* 일단위 타임라인 border setting */
-.fc-agendaDay-view .fc-time-grid .fc-bg .fc-axis {border-right: 0 !important;}
+.fc-agendaDay-view .fc-time-grid .fc-bg .fc-axis {
+	border-right: 0 !important;
+}
 .fc-agendaDay-view .fc-time-grid .fc-bg .fc-day {
 	background: #fff;
 	border: 1px solid #e6e6e6;
@@ -670,7 +1430,6 @@
 	margin: 0 0 0 -8px;
 	background: url(../image/common/bullet-timeline-arrow.png) 0 0 no-repeat;
 }
-.fc-agendaDay-view .fc-time-grid .fc-slats td{border-left: 0 !important; border-right: 0 !important;}
 .fc-agendaDay-view .fc-time-grid .fc-slats tr:first-child td{vertical-align: top;}
 .fc-agendaDay-view .fc-time-grid .fc-slats tr:first-child td:last-child:before{
 	display: block;
@@ -678,9 +1437,207 @@
 	border-top: 1px solid #e6e6e6;
 }
 
+.fc-agendaDay-view .fc-helper {
+	left: 0% !important;
+}
+
+/* slot style */
+.fc-agendaDay-view .fc-event {
+	width: 100%;
+	max-width: 600px;
+	margin: 0.5px auto;
+	border-style: solid;
+	border-width: 0 0 0 4px;
+}
+.fc-agendaDay-view .fc-event .fc-time-helper {
+	display: none;
+}
+.fc-agendaDay-view .fc-event .fc-content{
+  padding: 12px 15px;
+}
+
+.fc-agendaDay-view .fc-event .fc-product{
+  font-size: 13px;
+  display: inline-block; margin-right: 3px;
+  font-family: 'notokr-bold';
+  letter-spacing: -0.6px;
+  margin-right: 4px;
+  margin-bottom: 5px;
+}
+.fc-agendaDay-view .fc-event .fc-time{
+  font-size: 20px;
+  font-family: 'notokr-black';
+  line-height: 1;
+  margin-bottom: 7px;
+}
+.fc-agendaDay-view .fc-event .fc-user{
+  position: absolute;
+  top: 12px;
+  right: 15px;
+  text-align: center;
+}
+.fc-agendaDay-view .fc-event .fc-user .fc-picture{
+  height: 38px;
+  width: 38px;
+  padding-left: 5px;
+  margin: 0 auto 8px;
+  position: relative;
+}
+.fc-agendaDay-view .fc-event .fc-user .fc-picture .picture{
+  width: 100%;
+  height: 100%;
+  margin: 0 auto;
+  display: block;
+  overflow: hidden;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  border-radius: 50%;
+}
+.fc-agendaDay-view .fc-event .fc-service-time {
+	display: inline-block;
+}
+.fc-agendaDay-view .fc-event .fc-user .fc-picture .picture img{
+  width: 100%;
+  height: 100%;
+}
+.fc-agendaDay-view .fc-event .fc-user .fc-picture .rating{
+
+}
+.fc-agendaDay-view .fc-event .fc-user .fc-picture .rating{
+  font-size: 10px;
+  font-family: 'notokr-bold';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 18px;
+  height: 18px;
+  letter-spacing: 100px;
+  text-indent: 5px;
+  line-height: 18px;
+}
+.fc-agendaDay-view .fc-event .fc-user .fc-name{
+  font-family: 'notokr-bold';
+  padding-left: 5px;
+}
+.fc-agendaDay-view .fc-event .fc-comment{
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  margin-right: 70px;
+  font-size: 12px;
+  letter-spacing: -0.3px;
+  line-height: 1.35;
+}
+
+/* 20분 이하 슬롯 스타일 */
+.fc-agendaDay-view .fc-event.fc-short:not(.off-time):hover{
+	margin-bottom: -10px;
+}
+.fc-agendaDay-view .fc-event.fc-short .fc-content {
+	padding: 8px 16px;
+}
+.fc-agendaDay-view .fc-event.fc-short .fc-product {
+	font-size: 12px;
+	margin-bottom: 2px;
+}
+.fc-agendaDay-view .fc-event.fc-short .fc-time {
+	font-size: 16px;
+	display: block !important;
+	margin-bottom: 3px;
+}
+
+.fc-agendaDay-view .fc-event.fc-short .fc-service-time {
+	font-size: 10px;
+}
+.fc-agendaDay-view .fc-event.fc-short .fc-comment {
+	font-size: 11px;
+}
+.fc-agendaDay-view .fc-event.fc-short .fc-name {
+	font-size: 11px;
+}
+.fc-agendaDay-view .fc-event.fc-short .fc-user .fc-picture .rating {
+	width: 14px;
+	height: 14px;
+	line-height: 14px;
+	font-size: 9px;
+	text-indent: 4px;
+}
+.fc-agendaDay-view .fc-event.fc-short .fc-user {
+	top: 4px;
+	right: 16px;
+}
+.fc-agendaDay-view .fc-event.fc-short .fc-user .fc-picture{
+	width: 32px;
+	height: 32px;
+	margin-bottom: 2px;
+}
+
+
+
+/* 타임라인 오버시 나타나는 예약 신규생성 버튼 스타일*/
+.create-order-wrap.timeline {
+	position: absolute;
+	left: 50%;
+	top: 0; 
+	bottom: 0;
+	display: none;
+	margin: 0 30px;
+	width: 100%;
+	max-width: 600px;
+	transform: translateX(-50%);
+	margin: auto;
+}
+.create-order-wrap.timeline .create-order-inner {
+	margin: 0 30px;
+	height: 36px;
+	box-shadow: 0 36px 0 rgba(0,0,0,0.05);
+	background-color: rgba(0,0,0,0.05);	
+}
+.create-order-wrap.timeline .create-order-slot {
+	height: 100%;
+}
+.create-order-wrap.timeline .create-order-slot .create-button {
+	display: block;
+	width: 100%;
+	height: 100%;
+	outline: 0;
+	z-index: 2;
+	position: relative;overflow: visible;
+}
+.create-order-wrap.timeline .create-order-slot .create-button .time {
+	font-size: 13px;
+	font-family: 'notokr-medium';
+	font-style: normal;
+	color: #808080;
+	position: absolute;
+	left: 20px;
+	top: 14px;
+}
+.create-order-wrap.timeline .create-order-ui-wrap {
+	width: 330px;
+	height: 100%;
+	margin: 0 auto;
+	position: absolute;
+	left: 50%;
+	margin-left: -165px;
+	z-index: 1;
+}
+.create-order-wrap.timeline .create-order-ui-inner {
+	width: 100%;
+	padding-top: 36px;
+}
+.create-order-wrap.timeline .create-order-ui {
+	background-color: #999;
+}
+.create-order-wrap.timeline .create-order-ui button {
+	max-width: 50% !important;
+	box-sizing: border-box;
+}
+
+
 /* 하단 타임라인 예약 마감버튼  */
 .order-deadline-button {
-	margin: 30px auto 0;
+	margin: 30px auto 20px;
 	display: block;
 	width: 122px;
 	height: 49px;
@@ -689,52 +1646,10 @@
 	overflow: hidden;
 }
 
-/* 우측하단 예약생성 고정버튼 */
-.fc .create-order-button {
-	position: fixed;
-	z-index: 1;
-	right: 40px;
-	bottom: 22px;
-	width: 56px;
-	height: 56px;
-	background: black;
-	border-radius: 50%;
-	color: #fff;
-	font-size: 30px;
-	font-family: 'notokr-regular';
-	box-shadow: 0 2px 10px 1px rgba(0,0,0,0.5);
-}
-/* 일 단위 타임라인 예약생성 버튼 */
-.fc-agendaDay-view .create-order-button-current {
-	position: relative;
-	display: block;
-	margin-right: 50px;
-	height: 100%;
-	transition: all ease 1s;
-}
-.fc-agendaDay-view .create-order-button-current span {
-	width: 44px;
-	height: 44px;
-	display: block;
-	position: absolute;
-	left: 50%;
-	top: 50%;
-	margin: -22px 0 0 -22px;
-	text-align: center;
-	padding: 0;
-	background: black;
-	border-radius: 50%;
-	color: #fff;
-	font-size: 26px;
-	line-height: 44px;
-	font-family: 'notokr-regular';
-	box-shadow: 0 1px 7px 1px rgba(0,0,0,0.5);
-}
 
 
-
-/* 데스크톱 */
-@media screen and (min-width:1024px) and (max-width: 1439px) {
+/* Media */
+@media screen and (max-width: 1439px) {
 	.fc-toolbar.fc-header-toolbar {
 		height: 46px;
 		left: 68px;
@@ -750,28 +1665,33 @@
 	.fc-header-toolbar .fc-center button {
 		margin-top: 8px;
 	}
-	.fc-toolbar.fc-header-toolbar .fc-selectDate-button {
+	.fc-toolbar.fc-header-toolbar .fc-changeDate-button {
 		height: 40px;
 		top: 3px;
 		background-position: center 33px;
 	}
-	.each-ui {
+	.expert-ui {
 		height: 30px;
 		top: 46px;
 		left: 68px;
 	}
-	.each-ui .each label{
+	.expert-each .expert-label{
 		padding: 0 10px 0 35px;
 		line-height: 30px;
 	}
-	.fc-view-container {
-		margin-top: 35px;
+	.fc-agendaDay-view .fc-time-grid .fc-slats td,
+	.fc-agendaDay-view .fc-time-grid .fc-create-helper td {
+		height: 27px;
 	}
-	.fc-time-grid .fc-slats td {
-		height: 84px;
+	.fc-agendaDay-view .create-order-wrap.timeline .create-order-ui-inner {
+		padding-top: 26px;
 	}
-	.controler{
-		left: 68px;
+	.fc-agendaDay-view .create-order-wrap.timeline .create-order-inner {
+		height: 28px;
+		box-shadow: 0 28px 0 rgba(0,0,0,0.05);
+	}
+	.fc-agendaDay-view .create-order-slot .create-button span {
+		margin-top: -9px;
 	}
 
 	/* slot style*/
@@ -789,8 +1709,8 @@
 		right: 13px;
 	}
 	.fc-event .fc-user .fc-picture{
-		width: 32px;
-		height: 32px;
+		width: 32px !important;
+		height: 32px !important;
 		margin: 0 auto 1px;
 	}
 	.fc-event .fc-user .fc-name{
@@ -800,11 +1720,114 @@
 		font-size: 11px;
 	}
 
-
-	/* 예약생성 */
-	.new-order-wrap {
-		left: 68px;
+	/* 20분 이하 슬롯 스타일 */
+	.fc-agendaDay-view .fc-event.fc-short:not(.off-time):hover{
+		margin-bottom: -22px;
 	}
-
+	
 }
-/* // 데스크톱 END */
+/* Media */
+@media screen and (max-width: 1023px) {
+	.fc-agendaWeekly-view .fc-event {
+		margin: 0 5px;
+	}
+	.fc-event .fc-time-helper {
+		font-size: 10px;
+	}
+	.fc-event .fc-time-helper span {
+		padding: 0 6px;
+	}
+	.fc-agendaWeekly-view .create-order-wrap.timeline {
+		left: 6px;
+		right: 6px;
+	}
+	.fc-agendaWeekly-view .create-order-wrap.timeline .create-order-inner{
+		height: 23px;
+		box-shadow: 0 23px 0 rgba(217,217,217,0.7);
+	}
+	.fc-agendaWeekly-view .create-order-wrap.timeline .create-order-slot .create-button span {
+		width: 23px;
+		height: 23px;
+		line-height: 23px;
+	}
+	.fc-agendaWeekly-view .create-order-wrap.timeline .create-order-ui-inner {
+		padding-top: 23px;
+	}
+	.fc-agendaWeekly-view .fc-time-grid .fc-slats tr td{
+		height: 22px;
+	}
+	.fc-agendaWeekly-view .fc-time-grid .fc-create-helper tr td {
+		height: 23px;
+	}
+	.fc-agendaWeekly-view .fc-bg tr.slot-highlight-cell td:after{
+		margin: 0 6px !important;
+	}
+}
+/* // Media END */
+
+
+/*  주단위 예약카드 생성 시 활성화 슬롯 하이라이트 스타일 */
+.fc-agendaWeekly-view .fc-bg tr.slot-highlight td {
+	position: relative;
+	background: none;
+	box-sizing: content-box;
+}
+.fc-agendaWeekly-view .fc-bg tr.slot-highlight td .bg-cell {
+	content: '';
+	display: block;;
+	height: 100%;
+	margin: 0 10px;
+	background-color: #f2dcf7;
+	border-left: 1px solid #9775b8;
+	border-right: 1px solid #9775b8;
+}
+.fc-agendaWeekly-view .fc-bg tr.slot-highlight.start td .bg-cell {
+	box-shadow: 0 1px 0 0 #9775b8 inset;
+}
+.fc-agendaWeekly-view .fc-bg tr.slot-highlight.end td .bg-cell {
+	box-shadow: 0 1px 0 0 #9775b8;
+}
+
+/* OFF 타임의 별도 색상 */
+.fc-agendaWeekly-view .fc-bg tr.slot-highlight.off-time td .bg-cell{
+	background-color: #e5e5e5;
+	border-color: #858585 !important;
+	border-left-color: #858585 !important;
+	border-right-color: #858585 !important;
+}
+.fc-agendaWeekly-view .fc-bg tr.slot-highlight.off-time.start td .bg-cell{
+	box-shadow: 0 1px 0 0 #858585 inset !important;
+}
+.fc-agendaWeekly-view .fc-bg tr.slot-highlight.off-time.end td .bg-cell{
+	box-shadow: 0 1px 0 0 #858585 !important;
+}
+/* 예약수정 별도 색상 */
+.fc-agendaWeekly-view .fc-bg tr.slot-highlight.edit td .bg-cell{
+	background-color: #d7f6f0;
+	border-color: #62b7a5 !important;
+	border-left-color: #62b7a5 !important;
+	border-right-color: #62b7a5 !important;
+}
+.fc-agendaWeekly-view .fc-bg tr.slot-highlight.edit.start td .bg-cell{
+	box-shadow: 0 1px 0 0 #62b7a5 inset !important;
+}
+.fc-agendaWeekly-view .fc-bg tr.slot-highlight.edit.end td .bg-cell{
+	box-shadow: 0 1px 0 0 #62b7a5 !important;
+}
+
+/* 주단위 예약카드 생성 시 마우스오버 영역 하이라이트 슬롯 스타일 */
+.fc-agendaWeekly-view .fc-bg tr.slot-highlight-cell td:after{
+	margin: 0 11px;height: 100%;
+	background-color: #bb97d8;
+	display: block;content:'';
+	position: absolute;
+	top: 0; right: 0; left: 0; bottom: 0;
+	z-index: 2;
+	box-shadow: 0 10px 20px 0 rgba(0,0,0, 0.15);
+}
+.fc-agendaWeekly-view .fc-bg tr.slot-highlight-cell.edit td:after{	
+	background-color: #7fccbb;
+}
+.fc-agendaWeekly-view .fc-bg tr.slot-highlight-cell.off-time td:after{	
+	background-color: rgba(128,128,128,0.7);
+}
