@@ -10,9 +10,9 @@ class ModalConfirm extends Component {
     // ESC key 입력시 닫기
     $(document).bind('keydown', function(e){
       if (e.which === 27) {
+        console.log('happend ModalConfirm');
         _component.props.modalConfirmHide();
         $(document).unbind('keydown');
-        console.log('happend ModalConfirm');
       }
     });
   }

@@ -7,6 +7,10 @@ export default class RenderEventConfirm extends React.Component {
   }
   componentDidMount() {
     const _component = this;
+    // 캘린더 상단 날자이동 컨트롤러 모두 비활성화 적용
+    $('.fc-toolbar.fc-header-toolbar .fc-center button').prop('disabled' ,true);
+    $('.fc-toolbar.fc-header-toolbar h2').addClass('disabled');
+
     // Fake 이벤트 레이어를 렌더링했을경우
     if ($('#ID_' + this.props.newEventId + '_FAKE').length > 0) {
       $('.render-confirm-inner').appendTo($('#ID_' + this.props.newEventId + '_FAKE'));
@@ -34,6 +38,9 @@ export default class RenderEventConfirm extends React.Component {
   }
   componentWillUnmount() {
     $('.render-confirm-inner').remove();
+    // 캘린더 상단 날자이동 컨트롤러 비활성화 모두 적용해제
+    $('.fc-toolbar.fc-header-toolbar .fc-center button').prop('disabled' ,false);
+    $('.fc-toolbar.fc-header-toolbar h2').removeClass('disabled');
   }
 
   render () {

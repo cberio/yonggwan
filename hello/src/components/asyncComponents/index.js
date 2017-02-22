@@ -41,8 +41,8 @@ class AsyncComponents extends Component {
     )
     return (
       <div>
-        {/*this.props.isModalNotifier && CardModalComponent*/}
-        {/*this.props.isGuider && <Guider />*/}
+        {this.props.isModalNotifier && CardModalComponent}
+        {this.props.isGuider && <Guider />}
       </div>
     );
   }

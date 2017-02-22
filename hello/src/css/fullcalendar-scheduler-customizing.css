@@ -46,6 +46,9 @@
 	margin: 0 36px;
 	width: 190px;
 }
+.fc-toolbar.fc-header-toolbar h2.disabled {
+	opacity: .3;
+}
 .fc-toolbar.fc-header-toolbar h2 .weekDay {
 	font-size: 16px;
 	color: #999999;
@@ -78,6 +81,9 @@
 	box-shadow: none;
 	background: none;
 }
+.fc-header-toolbar .fc-center button:disabled {
+	opacity: .3;
+}
 .fc-header-toolbar .fc-center button.fc-prev-button {
 	background: url(../image/common/calendar-controler-prev.png) 0 0 no-repeat;
 }
@@ -90,7 +96,7 @@
 .fc-day-header.fc-widget-header {
 	height: 38px;
 }
-.fc-day-header.fc-widget-header.fc-today:after {
+.fc-day-header.fc-widget-header.fc-today a:after {
 	display: inline-block;
 	content:'TODAY';
 	color: #e60b25;
@@ -156,6 +162,9 @@
 			transition: .1s background ease-out;
 	background: url(../image/common/calendar-partners-label.png) 15px center no-repeat;
 }
+.expert-each .expert-input:disabled + .expert-label {
+	opacity: .3;
+}
 .expert-each .expert-input:checked + .expert-label{
 	background-image: url(../image/common/calendar-partners-label-on.png);
 }
@@ -191,7 +200,7 @@
 	background-color: #e60b25;
 }
 .fc-now-indicator-arrow .time {
-	float: left; 
+	float: left;
 	margin-right: 4px;
 }
 .fc-now-indicator.fc-now-indicator-arrow:after {
@@ -376,7 +385,7 @@
 	height: 24px;
 	line-height: 24px;
 	background-color: #444;
-	
+
 }
 /* slot ui 스타일 */
 .fc-event .fc-ui{
@@ -494,7 +503,7 @@
 }
 .fc-event.new-event .fc-time-helper {
 	left: 0;
-	visibility: visible;	
+	visibility: visible;
 }
 .fc-event.new-event .fc-time-helper span {
 	background-color: #9472b7;
@@ -1049,7 +1058,9 @@
 	border-left: 0 !important;
     border-right: 0 !important;
 }
-
+.fc-agendaWeekly-view .fc-bg td.fc-mon {
+	/*border-left: 1px solid #e60b25 !important;*/
+}
 #weekly .fc-toolbar.fc-header-toolbar {
 	background-color: #fafafa;
 }
@@ -1109,9 +1120,9 @@
 .fc-agendaWeekly-view .fc-time-grid > .fc-bg {
 	z-index: 3;
 }
-/*.fc-agendaWeekly-view .fc-time-grid > .fc-bg.create-order-overlap {
+.fc-agendaWeekly-view .fc-time-grid > .fc-bg.create-order-overlap {
 	z-index: 4;
-}*/
+}
 
 .fc-agendaWeekly-view .fc-create-helper {
 	top: -1px;
@@ -1126,21 +1137,24 @@
 /* create button style (timeline) */
 .fc-agendaWeekly-view .create-order-wrap.timeline {
 	position: absolute;
+	z-index: 3;
 	width: auto;
 	left: 11px;
 	right: 11px;
 	top: 0;
-	bottom: 0;	
+	bottom: 0;
 	margin: 0 !important;
 	-webkit-transform: none;
     	-ms-transform: none;
     		transform: none;
 }
 .fc-agendaWeekly-view .create-order-wrap.timeline .create-order-inner {
-	background-color: rgba(217,217,217,0.7);
-	box-shadow: 0 28px 0 rgba(217,217,217,0.7);
+	background-color: rgba(217,217,217,0.7);	
 	margin: 0;
 	height: 28px;
+}
+.fc-agendaWeekly-view .create-order-wrap.timeline.off-time .create-order-inner {
+	box-shadow: 0 28px 0 rgba(217,217,217,0.7);
 }
 .fc-agendaWeekly-view .create-order-wrap.timeline .create-order-slot .create-button {
 	width: 100%;
@@ -1375,9 +1389,9 @@
 .fc-agendaDay-view .fc-time-grid .fc-slats {
 	z-index: 0;
 }
-/*.fc-agendaDay-view .fc-time-grid .fc-slats.create-order-overlap {
+.fc-agendaDay-view .fc-time-grid .fc-slats.create-order-overlap {
 	z-index: 4;
-}*/
+}
 
 
 .fc-agendaDay-view .fc-head-container .fc-axis {
@@ -1586,7 +1600,7 @@
 .create-order-wrap.timeline {
 	position: absolute;
 	left: 50%;
-	top: 0; 
+	top: 0;
 	bottom: 0;
 	display: none;
 	margin: 0 30px;
@@ -1599,7 +1613,7 @@
 	margin: 0 30px;
 	height: 36px;
 	box-shadow: 0 36px 0 rgba(0,0,0,0.05);
-	background-color: rgba(0,0,0,0.05);	
+	background-color: rgba(0,0,0,0.05);
 }
 .create-order-wrap.timeline .create-order-slot {
 	height: 100%;
@@ -1732,7 +1746,7 @@
 	.fc-agendaDay-view .fc-event.fc-short:not(.off-time):hover{
 		margin-bottom: -22px;
 	}
-	
+
 }
 /* Media */
 @media screen and (max-width: 1023px) {
@@ -1751,6 +1765,8 @@
 	}
 	.fc-agendaWeekly-view .create-order-wrap.timeline .create-order-inner{
 		height: 23px;
+	}
+	.fc-agendaWeekly-view .create-order-wrap.timeline.off-time .create-order-inner{
 		box-shadow: 0 23px 0 rgba(217,217,217,0.7);
 	}
 	.fc-agendaWeekly-view .create-order-wrap.timeline .create-order-slot .create-button span {
@@ -1767,7 +1783,7 @@
 	.fc-agendaWeekly-view .fc-time-grid .fc-create-helper tr td {
 		height: 23px;
 	}
-	.fc-agendaWeekly-view .fc-bg tr.slot-highlight-cell td:after{
+	.fc-agendaWeekly-view .fc-bg tr.shc td:after{
 		margin: 0 6px !important;
 	}
 }
@@ -1824,18 +1840,24 @@
 }
 
 /* 주단위 예약카드 생성 시 마우스오버 영역 하이라이트 슬롯 스타일 */
-.fc-agendaWeekly-view .fc-bg tr.slot-highlight-cell td:after{
+.fc-agendaWeekly-view .fc-bg tr.shc td:after{
 	margin: 0 11px;height: 100%;
 	background-color: #bb97d8;
 	display: block;content:'';
 	position: absolute;
 	top: 0; right: 0; left: 0; bottom: 0;
-	z-index: 2;
+	z-index: 2;	
+}
+.fc-agendaWeekly-view .fc-bg tr.shc-start td:after,
+.fc-agendaWeekly-view .fc-bg tr.shc-start td * {
+	box-shadow: none;
+}
+.fc-agendaWeekly-view .fc-bg tr.shc-end td:after {
 	box-shadow: 0 10px 20px 0 rgba(0,0,0, 0.15);
 }
-.fc-agendaWeekly-view .fc-bg tr.slot-highlight-cell.edit td:after{	
+.fc-agendaWeekly-view .fc-bg tr.shc-edit td:after{
 	background-color: #7fccbb;
 }
-.fc-agendaWeekly-view .fc-bg tr.slot-highlight-cell.off-time td:after{	
+.fc-agendaWeekly-view .fc-bg tr.shc-off-time td:after{
 	background-color: rgba(128,128,128,0.7);
 }
