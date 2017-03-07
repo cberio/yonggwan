@@ -14,6 +14,7 @@
 	display: none;
 }
 .fc-scroller.fc-time-grid-container {
+	overflow-x: auto !important;
 	/*min-height: 678px;*/
 }
 .fc-scroller > .fc-day-grid,
@@ -46,6 +47,7 @@
 	margin: 0 36px;
 	width: 190px;
 }
+
 .fc-toolbar.fc-header-toolbar h2.disabled {
 	opacity: .3;
 }
@@ -78,23 +80,26 @@
 	margin: 0;
 	outline: none;
 	margin-top: 13px;
+	text-indent: -9999px;
+	overflow: hidden;
 	box-shadow: none;
 	background: none;
 }
 .fc-header-toolbar .fc-center button:disabled {
 	opacity: .3;
 }
-.fc-header-toolbar .fc-center button.fc-prev-button {
+.fc-header-toolbar .fc-center button.fc-prev-button,
+.fc-header-toolbar .fc-center button.fc-prevTimeline-button {
 	background: url(../image/common/calendar-controler-prev.png) 0 0 no-repeat;
 }
-.fc-header-toolbar .fc-center button.fc-next-button {
+.fc-header-toolbar .fc-center button.fc-next-button,
+.fc-header-toolbar .fc-center button.fc-nextTimeline-button {
 	background: url(../image/common/calendar-controler-next.png) 0 0 no-repeat;
 }
 .fc-header-toolbar .fc-center button span{
 	display: none;
 }
 .fc-day-header.fc-widget-header {
-	height: 38px;
 }
 .fc-day-header.fc-widget-header.fc-today a:after {
 	display: inline-block;
@@ -162,11 +167,11 @@
 			transition: .1s background ease-out;
 	background: url(../image/common/calendar-partners-label.png) 15px center no-repeat;
 }
-.expert-each .expert-input:disabled + .expert-label {
-	opacity: .3;
-}
 .expert-each .expert-input:checked + .expert-label{
 	background-image: url(../image/common/calendar-partners-label-on.png);
+}
+.expert-each .expert-input:disabled + .expert-label {
+	opacity: .3;
 }
 .expert-each .expert-label:hover,
 .expert-each .expert-input:focus ~ .expert-label,
@@ -200,7 +205,7 @@
 	background-color: #e60b25;
 }
 .fc-now-indicator-arrow .time {
-	float: left;
+	float: left; 
 	margin-right: 4px;
 }
 .fc-now-indicator.fc-now-indicator-arrow:after {
@@ -385,7 +390,7 @@
 	height: 24px;
 	line-height: 24px;
 	background-color: #444;
-
+	
 }
 /* slot ui 스타일 */
 .fc-event .fc-ui{
@@ -503,7 +508,7 @@
 }
 .fc-event.new-event .fc-time-helper {
 	left: 0;
-	visibility: visible;
+	visibility: visible;	
 }
 .fc-event.new-event .fc-time-helper span {
 	background-color: #9472b7;
@@ -1022,7 +1027,6 @@
 	display: none !important;
 }
 
-
 /*																					*/
 /*ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ [ -이하- '주 단위 훑어보기' 모드에 적용돼는 Styles ] ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ*/
 /*																					*/
@@ -1031,8 +1035,8 @@
 	height: 38px;
 	text-align: center;
 }
-.expert-ui.expert-weekly .expert label {
-	line-height: 38px;
+.expert-ui.expert-weekly .expert-label {
+	line-height: 38px !important;
 }
 .expert-ui.expert-weekly .expert-each{
 	display: inline-block;
@@ -1041,9 +1045,9 @@
 
 
 .fc-agendaWeekly-view{
-	/*transition: .25s all cubic-bezier(0.42, 0.9, 0.76, 1);*/
 	opacity: 1;
 }
+
 
 .fc-agendaWeekly-view.prev {
 	opacity: .2;
@@ -1059,8 +1063,9 @@
     border-right: 0 !important;
 }
 .fc-agendaWeekly-view .fc-bg td.fc-mon {
-	/*border-left: 1px solid #e60b25 !important;*/
+	border-left: 1px solid #e6e6e6 !important;
 }
+
 #weekly .fc-toolbar.fc-header-toolbar {
 	background-color: #fafafa;
 }
@@ -1068,8 +1073,24 @@
 	display: none;
 }
 
-.fc-agendaWeekly-view .fc-head-container {
+.fc-agendaWeekly-view td.fc-head-container {	
+	width: 100%;	
+	font-size: 11px;
+	font-family: 'notokr-bold';
+	color: #999999;
+	height: 32px;
+	line-height: 32px;
 	border-top: 0 !important;
+	border-bottom: 0 !important; 
+}
+.fc-agendaWeekly-view td.fc-widget-header .fc-row {
+	height: 100%;
+	position: relative;
+	padding-right: 0 !important;
+	margin-right: 0 !important;
+	padding-bottom: 0 !important; 
+	border-color: #d2d2d2;
+
 	/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#fafafa+0,e5e5e5+100 */
 	background: rgb(250,250,250); /* Old browsers */
 	background: -moz-linear-gradient(top,  rgba(250,250,250,1) 0%, rgba(229,229,229,1) 100%); /* FF3.6-15 */
@@ -1077,36 +1098,57 @@
 	background: linear-gradient(to bottom,  rgba(250,250,250,1) 0%,rgba(229,229,229,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fafafa', endColorstr='#e5e5e5',GradientType=0 ); /* IE6-9 */
 }
+.fc-agendaWeekly-view td.fc-widget-header .viewport {
+	height: 100%;
+	cursor: pointer;
+	cursor: -webkit-grab;
+}
 
-.fc-agendaWeekly-view .fc-widget-header {
-	font-size: 11px;
-	font-family: 'notokr-bold';
-	color: #999999;
-	height: 32px;
-	line-height: 32px;
-	border-color: #d2d2d2;
+.fc-agendaWeekly-view td.fc-widget-header .fc-row.is-scrolling .viewport,
+.fc-agendaWeekly-view td.fc-widget-header .fc-row:active .viewport,
+.fc-agendaWeekly-view td.fc-widget-header .fc-row:focus  .viewport{
+	cursor: -webkit-grabbing;
+}
+.fc-agendaWeekly-view td.fc-widget-header .fc-row .overview {
+	width: 500%;
+	position: absolute;
+}
+.fc-agendaWeekly-view td.fc-widget-header .fc-row .scroll-bar {
+	position: relative;
+	z-index: 2;
+	margin-top: 0;
 }
 .fc-agendaWeekly-view .fc-widget-header.fc-today {
 	color: #000;
 }
 .fc-agendaWeekly-view .fc-widget-header a {
-	display: block;
+	    -ms-user-select: none; 
+  -moz-user-select: -moz-none;
+	 -khtml-user-select: none;
+	-webkit-user-select: none;
+			user-select: none;
 }
 .fc-agendaWeekly-view .fc-widget-header a:hover,
 .fc-agendaWeekly-view .fc-widget-header a:focus {
 	text-decoration: none;
 	color: #000;
 }
+
 .fc-agendaWeekly-view .fc-day-header.fc-widget-header th {
 	border-color: #d2d2d2;
 }
 
+.fc-agendaWeekly-view .fc-body > tr > td.fc-widget-content {
+	border-top: 0;
+}
 .fc-agendaWeekly-view .fc-event-container {
 	margin: 0 !important;
 }
-
 .fc-agendaWeekly-view .fc-scroller.fc-time-grid-container {
 	background-color: #fff;
+}
+.fc-agendaWeekly-view .fc-time-grid {
+	width: 500%;
 }
 .fc-agendaWeekly-view .fc-time-grid table {
 	border-top: 0;
@@ -1137,24 +1179,28 @@
 /* create button style (timeline) */
 .fc-agendaWeekly-view .create-order-wrap.timeline {
 	position: absolute;
-	z-index: 3;
 	width: auto;
 	left: 11px;
 	right: 11px;
+	z-index: 3;
 	top: 0;
-	bottom: 0;
+	bottom: 0;	
 	margin: 0 !important;
 	-webkit-transform: none;
     	-ms-transform: none;
     		transform: none;
 }
 .fc-agendaWeekly-view .create-order-wrap.timeline .create-order-inner {
-	background-color: rgba(217,217,217,0.7);	
+	background-color: rgba(217,217,217,0.7);
+	box-shadow: 0 28px 0 rgba(217,217,217,0.7);
 	margin: 0;
 	height: 28px;
 }
+.fc-agendaWeekly-view .create-order-wrap.timeline.edit .create-order-inner,
+.fc-agendaWeekly-view .create-order-wrap.timeline.has-card .create-order-inner,
 .fc-agendaWeekly-view .create-order-wrap.timeline.off-time .create-order-inner {
-	box-shadow: 0 28px 0 rgba(217,217,217,0.7);
+	box-shadow: none !important;
+	background: none !important;
 }
 .fc-agendaWeekly-view .create-order-wrap.timeline .create-order-slot .create-button {
 	width: 100%;
@@ -1210,10 +1256,10 @@
  주단위 타임라인에서 시간지정하지 않은 채 예약 슬롯을 생성할 경우 및
  주단위 타임라인에서 예약변경을 할 경우 버튼 스타일
  */
-.fc-agendaWeekly-view .create-order-wrap.has-card,
+/*.fc-agendaWeekly-view .create-order-wrap.has-card,
 .fc-agendaWeekly-view .create-order-wrap.edit{
 	box-shadow: 0 10px 20px 0 rgba(0,0,0, 0.15);
-}
+}*/
 .fc-agendaWeekly-view .create-order-wrap.has-card .create-order-slot .create-button span,
 .fc-agendaWeekly-view .create-order-wrap.edit .create-order-slot .create-button span{
 	font-family: 'notokr-light';font-size: 28px;background: none;
@@ -1343,27 +1389,8 @@
 }
 
 
-.controler{
-	position: fixed;
-	left: 68px;
-	cursor: pointer; /* ms */
-	cursor: col-resize; 	 /* active : grabbing */
-	top: 90px;
-	right: 0;
-	height: 32px;
-	opacity: 1;
-	z-index: 1;
-}
-.controler:active,
-.controler:focus{
-	cursor: pointer; /* ms */
-	cursor: col-resize;
-}
-
-
-
 /*																					*/
-/*ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ [ -이하- '일 단위 타임라인' 모드에 적용돼는 Styles ] ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ*/
+/*ㅡㅡㅡㅡㅡㅡㅡ [ -이하- '일 단위 타임라인' 모드에 적용돼는 Styles ] ㅡㅡㅡㅡㅡㅡㅡ*/
 /*																					*/
 .expert-ui.expert-daily {
 	background-color: #f7f7f7;
@@ -1371,6 +1398,15 @@
 .expert-ui.expert-daily .expert-inner {
 	border-top: 1px solid #fff;
 }
+
+/* 다중 타임라인을 렌더링했을경우 스타일 */
+.multi-experts .fc-agendaDay-view .fc-time-grid > *{
+	margin-right: 0;
+}
+.multi-experts .fc-agendaDay-view .fc-head-container {
+	padding-right: 0;
+}
+
 .fc-agendaDay-view .fc-head {
 	/*display: none;*/
 }
@@ -1466,7 +1502,7 @@
 /* slot style */
 .fc-agendaDay-view .fc-event {
 	width: 100%;
-	max-width: 600px;
+	max-width: 480px;
 	margin: 0.5px auto;
 	border-style: solid;
 	border-width: 0 0 0 4px;
@@ -1600,20 +1636,20 @@
 .create-order-wrap.timeline {
 	position: absolute;
 	left: 50%;
-	top: 0;
+	top: 0; 
 	bottom: 0;
 	display: none;
 	margin: 0 30px;
 	width: 100%;
-	max-width: 660px;
+	max-width: 540px;
 	transform: translateX(-50%);
 	margin: auto;
 }
 .create-order-wrap.timeline .create-order-inner {
 	margin: 0 30px;
 	height: 36px;
-	box-shadow: 0 36px 0 rgba(0,0,0,0.05);
 	background-color: rgba(0,0,0,0.05);
+	box-shadow: 0 36px 0 rgba(0,0,0,0.05);
 }
 .create-order-wrap.timeline .create-order-slot {
 	height: 100%;
@@ -1699,7 +1735,7 @@
 	}
 	.expert-each .expert-label{
 		padding: 0 10px 0 35px;
-		line-height: 30px;
+		line-height: 28px;
 	}
 	.fc-agendaDay-view .fc-time-grid .fc-slats td,
 	.fc-agendaDay-view .fc-time-grid .fc-create-helper td {
@@ -1746,7 +1782,7 @@
 	.fc-agendaDay-view .fc-event.fc-short:not(.off-time):hover{
 		margin-bottom: -22px;
 	}
-
+	
 }
 /* Media */
 @media screen and (max-width: 1023px) {
@@ -1765,8 +1801,6 @@
 	}
 	.fc-agendaWeekly-view .create-order-wrap.timeline .create-order-inner{
 		height: 23px;
-	}
-	.fc-agendaWeekly-view .create-order-wrap.timeline.off-time .create-order-inner{
 		box-shadow: 0 23px 0 rgba(217,217,217,0.7);
 	}
 	.fc-agendaWeekly-view .create-order-wrap.timeline .create-order-slot .create-button span {
@@ -1848,16 +1882,12 @@
 	top: 0; right: 0; left: 0; bottom: 0;
 	z-index: 2;	
 }
-.fc-agendaWeekly-view .fc-bg tr.shc-start td:after,
-.fc-agendaWeekly-view .fc-bg tr.shc-start td * {
-	box-shadow: none;
+.fc-agendaWeekly-view .fc-bg tr.shc-end td:after{
+	box-shadow: 0 15px 20px 0 rgba(0,0,0, 0.2);
 }
-.fc-agendaWeekly-view .fc-bg tr.shc-end td:after {
-	box-shadow: 0 10px 20px 0 rgba(0,0,0, 0.15);
-}
-.fc-agendaWeekly-view .fc-bg tr.shc-edit td:after{
+.fc-agendaWeekly-view .fc-bg tr.shc-edit td:after{	
 	background-color: #7fccbb;
 }
-.fc-agendaWeekly-view .fc-bg tr.shc-off-time td:after{
+.fc-agendaWeekly-view .fc-bg tr.shc-off-time td:after{	
 	background-color: rgba(128,128,128,0.7);
 }

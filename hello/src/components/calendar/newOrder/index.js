@@ -21,7 +21,7 @@ export default class NewOrder extends Component {
       newOrderUserSex : undefined,
       newOrderUserPhone: ["","",""],
       newOrderProduct : undefined,
-      newOrderClassName : undefined,
+      newOrderClassName: undefined,
       newOrderExpert : this.props.selectedExpert,
       newOrderMember : {},
       newOrderStart : this.props.selectedDate,
@@ -42,6 +42,10 @@ export default class NewOrder extends Component {
 
   componentWillUnmount () {
     this.props.setCalendarHeight(null);
+  }
+
+  setNewOrderExpert (expert) {
+    this.setState({ newOrderExpert: expert });
   }
 
   getExpertObj (id) {
@@ -73,12 +77,6 @@ export default class NewOrder extends Component {
         break;
       }
     }
-  }
-
-  setExpert (expert) {
-    this.setState({
-      newOrderExpert: expert
-    });
   }
 
   backToStep (step) {
@@ -173,16 +171,15 @@ export default class NewOrder extends Component {
     const _component = this;
     // ESC key 입력시 닫기
     $(document).bind('keydown', function(e){
-      if (e.which === 27 && !_component.props.isModalConfirm && !_component.props.isRenderConfirm) {
-        console.log('happend newOrder');
-        if (_component.state.newOrderStep < 3) {
-          _component.props.isNewOrder(false);
-        } else {
-          _component.backToStep(2);
-          _component.props.backToOrder();
+        if (e.which === 27 && !_component.props.isModalConfirm && !_component.props.isRenderConfirm) {
+          if (_component.state.newOrderStep < 3) {
+            _component.props.isNewOrder(false);
+          } else {
+            _component.backToStep(2);
+            _component.props.backToOrder();
+          }
+          $(document).unbind('keydown');
         }
-        $(document).unbind('keydown');
-      }
     });
     $(window).resize(function () {
       $('.new-order-wrap').css('height', window.innerHeight+'px');
@@ -250,7 +247,7 @@ export default class NewOrder extends Component {
         />
         <br />
         <Selectable
-          value={this.state.newOrderExpert || this.props.selectedExpert}
+          value={this.props.selectedExpert}
           selectType="selectable"
           name="epxerts"
           className="select-expert"

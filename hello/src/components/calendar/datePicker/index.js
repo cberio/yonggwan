@@ -27,15 +27,12 @@ export default class DatePicker extends Component {
   }
   render () {
     let date = new Date();
-    let today = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
-    //let max = (date.getFullYear() + 1 ) + "-" + (date.getMonth() + 1) + "-" + date.getDate();
-    let selectedDate = today;
     return (
       <div className="mask-transparent">
         <InfiniteCalendar
           showHeader={false}
           showOverlay={false}
-          selectedDate={selectedDate}
+          selectedDate={date}
           locale={{ name: 'ko' }}
           autoFocus={true}
           width={332}
@@ -44,13 +41,6 @@ export default class DatePicker extends Component {
           keyboardSupport={true}
           onSelect={ (date) => this.props.onClick(date) }
           onScroll={function(scrollTop) {
-            /*$('.ReactVirtualized__Grid.ReactVirtualized__List.Cal__List__root').css({'opacity': 0});
-            clearTimeout(animating);
-            let animating = setTimeout(function (){
-              $('.ReactVirtualized__Grid.ReactVirtualized__List.Cal__List__root')
-              .stop()
-              .animate({'opacity':1}, 400);
-            })*/
           }}
           theme={{
               selectionColor: '#e60b25',
