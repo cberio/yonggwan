@@ -1460,7 +1460,6 @@ class FullCalendar extends Component {
         } else {
           _component.setCalendarColumn();
         }
-
         // let renderedExpert = [];
         let renderedExpert = $(Calendar).fullCalendar('getResources');
         // if (view.type === 'agendaDay') {
