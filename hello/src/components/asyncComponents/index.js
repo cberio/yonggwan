@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import CardModal from './cardModal';
 import Guider from './guider';
+import Loading from './loading';
 import { connect } from 'react-redux';
 import * as actions from '../../actions';
 
@@ -43,6 +44,7 @@ class AsyncComponents extends Component {
       <div>
         {/*this.props.isModalNotifier && CardModalComponent*/}
         {/*this.props.isGuider && <Guider />*/}
+        {this.props.isLoading && <Loading />}
       </div>
     );
   }
@@ -51,7 +53,8 @@ class AsyncComponents extends Component {
 const mapStateToPops = (state) => {
   return {
     isModalNotifier: state.notifier.isModalNotifier,
-    isGuider: state.guider.isGuider
+    isGuider: state.guider.isGuider,
+    isLoading: state.loading.isLoading
   }
 }
 const mapDispatchToProps = (dispatch) => {

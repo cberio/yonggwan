@@ -45,4 +45,5 @@ export function getProductColor (productName, products) {
       break;
     }
   }
+  return '';
 }

@@ -42,3 +42,10 @@ export function guider (options) {
     options
   };
 }
+
+export function loading (condition) {
+  return {
+    type : types.LOADING,
+    condition
+  };
+}
