@@ -9,9 +9,14 @@
 	z-index: 2;	
 	margin: 0 0 0 -166px;	
 	border-radius: 8px;
-	overflow: hidden;
 	-webkit-box-shadow: 0 7px 20px 7px rgba(0,0,0,0.25);
 	box-shadow: 0 7px 20px 7px rgba(0,0,0,0.25);
+}
+
+.Cal__Container__root:after{
+	width: 16px; height: 6px; display: block; content: '';
+	position: absolute; top: -6px; left: 50%; margin-left: -8px;
+	background: url(../image/common/bullet-arrow-top.png) center center no-repeat;
 }
 
 .Cal__Container__wrapper {
@@ -19,6 +24,7 @@
 	border-radius: 8px;
 	overflow: hidden;
 }
+
 .Cal__Header__root {
 	display: none;
 }
@@ -27,14 +33,11 @@
 	font-family: 'notokr-bold';
 	background-color: #333333;
 }
-
-.Cal__Container__root .ReactVirtualized__List {
-	border-top: 1px solid #000;
-}
+.Cal__Container__root .ReactVirtualized__List {}
 
 .Cal__List__root {
 	width: 349px !important;
-	background-color: transparent;
+	background-color: transparent;	
 }
 .Cal__Today__root.Cal__Today__show {
 	font-size: 12px;
@@ -49,11 +52,22 @@
 
 .Cal__Weekdays__root {
 	padding: 0 22px;
+	border-radius: 8px 8px 0 0;	
+	box-shadow: 0 40px 70px 0 rgba(50,50,50, 1);
+}
+/* script로 초기 삽입됀 element */
+.Cal__Container__Shadow__Bottom {	
+	border-radius: 8px; overflow: hidden;
+	position: absolute; left: 30px; right: 30px; bottom: 15px; content: '';	
+	box-shadow: 0 0 70px 20px rgba(50,50,50, 1);
 }
 .Cal__Weekdays__day {
-	font-size: 14px;
-	color: #808080;font-family: 'notokr-medium';
+	font-size: 13px;
+	padding: 14px 0;
+	color: #808080;
+	font-family: 'notokr-medium';
 }
+
 /* 각 월 outer div */
 
 .Cal__Month__root {

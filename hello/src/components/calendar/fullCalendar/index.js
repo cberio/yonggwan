@@ -98,6 +98,7 @@ class FullCalendar extends Component {
 
     var controler = $('.fc-head-container .fc-row.fc-widget-header'),
         timeline = $('.fc-scroller.fc-time-grid-container'),
+        timelineHours = $('.fc-slats-clone'),
 
         isScrollingControler = false,
         isScrollingTimeline = false,
@@ -159,6 +160,7 @@ class FullCalendar extends Component {
           if (!isScrollingControler && this.mcs.direction === 'x') {
             $(controler).find('.mCSB_container').css('left', this.mcs.left );
             $(controler).find('.mCSB_scrollTools_horizontal .mCSB_dragger').css('left', this.mcs.draggerLeft);
+            $(timelineHours).css('left', Math.abs(this.mcs.left));
           }
         }
       }
@@ -319,6 +321,7 @@ class FullCalendar extends Component {
 
       // event slot highlight button binding
       $('.create-order-wrap.timeline button.create-event').ready(function () {
+        $('.create-order-wrap.timeline button.create-event').unbind('click');
         $('.create-order-wrap.timeline button.create-event').bind('click', function () {
           insertEvent = $.extend(insertEvent, {resourceId: _component.state.selectedExpert.id });
           _component.fakeRenderNewEvent(insertEvent, newEventId, 'weekly');
@@ -478,6 +481,7 @@ class FullCalendar extends Component {
     $('.mask-event').hide();
     // 스크롤링 방지 클래스 삭제
     $('.fc-scroller.fc-time-grid-container').removeClass('overflow-hidden');
+    $('.create-order-wrap.timeline').removeClass('red blue yellow green purple');
     // show create order ui
     $('.create-order-wrap.fixed').removeClass('hidden');
     // remove z-index inline style
@@ -877,6 +881,7 @@ class FullCalendar extends Component {
   // 예약정보수정
   editEvent (event) {
     let { Calendar } = this.refs;
+    let _component = this;
     let type = event.product ==='OFF TIME' ? 'off-time' : 'edit';
     // 예약카드 상세보기에서 예약수정을 클릭한경우
     if (this.state.isUserCard) {
@@ -895,7 +900,7 @@ class FullCalendar extends Component {
       };
       $(Calendar).fullCalendar('option', fcOptions);
       this.changeView('agendaWeekly', function () {
-        $('.fc-scroller.fc-time-grid-container').animate({scrollTop: $('#ID_'+ event.id).css('top') }, 300);
+        _component.autoScrollWeekly($('#ID_'+ event.id));
       });
       this.eventSlotHighlight(true, type, event.product);
       this.fakeRenderEditEvent(event);
@@ -969,6 +974,8 @@ class FullCalendar extends Component {
       $('.fc-content-skeleton').css('z-index', '2');
       $("#render-confirm").show().css('z-index', '2').addClass('mask-white mask-overview');
       $('.create-order-wrap.fixed').addClass('hidden');
+      $('.create-order-wrap.timeline').removeClass('red blue yellow green purple');
+      if (color) setTimeout(function(){ $('.create-order-wrap.timeline').addClass(color); },0);
       /*[공통]  활성화 가능한 타임 블록의 tr에 class="slot-highlight"를      적용해주어야 합니다
         [공통]  활성화 가능한 타임 블록의 첫번째 tr에 class="start"를  추가로 적용해주어야 합니다
         [공통]  활성화 가능한 타임 블록의 마지막 tr에 class="end"를    추가로 적용해주어야 합니다
@@ -991,7 +998,6 @@ class FullCalendar extends Component {
           $(daySlot).find('tr[data-time="16:00:00"]').addClass(`slot-highlight end ${color}`).find('td').append(bgCell);
           break;
       }
-      if (color) $('.create-order-wrap.timeline').addClass(color);
     // reset highlighted
     } else {
       setTimeout(function(){
@@ -1337,7 +1343,7 @@ class FullCalendar extends Component {
           eventLimit: 1,
 					type: 'agenda',
           buttonText: 'WEEKLY',
-          titleFormat: 'YYYY.MM',
+          titleFormat: 'YYYY.MM.DD',
 					duration: {
             weeks: 4
           }
@@ -1383,10 +1389,15 @@ class FullCalendar extends Component {
             isAbleBindRemoveEvent: false
           });
         }
-        // 20분 이하의 이벤트의 element에 클래스 추가
-        if (Functions.millisecondsToMinute(event.end.diff(event.start)) <= 20) {
+        // 30분 이하의 이벤트의 element에 클래스 추가
+        if (Functions.millisecondsToMinute(event.end.diff(event.start)) <= 30) {
           setTimeout(function(){
-            $('.fc-event#ID_'+ event.id).addClass('fc-short');
+            // 20분 이하의 이벤트인경우
+            if (Functions.millisecondsToMinute(event.end.diff(event.start)) <= 20) {
+              $('.fc-event#ID_'+ event.id).addClass('fc-short');
+            } else {
+              $('.fc-event#ID_'+ event.id).addClass('fc-short no-expand');
+            }
           },0);
         }
         // 20분 미만으로 이벤트 시간을 수정할 경우 수정을 되돌린다.
@@ -1487,6 +1498,10 @@ class FullCalendar extends Component {
         console.log('VIEW 렌더링');
 
         if (view.type === 'agendaWeekly') {
+          var cloneTimelineSlats = $('.fc-time-grid > .fc-slats').clone().addClass('fc-slats-clone');
+            $(cloneTimelineSlats).find('.fc-slot').remove();
+            $(cloneTimelineSlats).insertAfter('.fc-time-grid > .fc-slats');
+          // weekly timeline 에서 좌측 시간 element를 복제하여 삽입 (스크롤시 고정적으로 따라다니도록 별도의 스타일 class 적용)
           _component.scrollerBinding(true);
         } else {
           _component.setCalendarColumn();
@@ -1659,7 +1674,7 @@ class FullCalendar extends Component {
                   $('.shc').removeClass('shc');
                   let elems = $(this).parent(parentElem).nextUntil(`tr[data-time="${fullTimeFormat}"]`);
                   $(elems).each(function(i, elem){
-                    $(elem).addClass(`shc${color ? ' '+color :''}${className ? ' '+className : ''}`);
+                    $(elem).addClass(`shc${color ? ' shc-'+color :''}${className ? ' '+className : ''}`);
                     if (i === elems.length -1) $(elem).addClass('shc-end');
                   });
                 }
@@ -1680,10 +1695,8 @@ class FullCalendar extends Component {
                 // console.log(_component.state.selectedExpert);
               },
               mouseleave: function (e) {
-                let color;
-                if (_component.state.newEventProduct) color = Functions.getProductColor(_component.state.newEventProduct, Products);
                 // bg cell style reset
-                $('.shc').removeClass('shc shc-edit shc-off-time shc-end shc-start green red purple blue yellow');
+                $('.shc').removeClass('shc shc-edit shc-off-time shc-end shc-start shc-green shc-red shc-purple shc-blue shc-yellow');
                 /// 생성버튼 캘린더 타임라인 노드에서 상위 노드로 삽입
                 $('.full-calendar > .fc').append($(createButtonElem).hide());
                 // 타임라인 내 신규예약생성 버튼 클릭시 z index 스타일 클래스 제거

@@ -1,9 +1,6 @@
 import React, { Component } from 'react';
 import $ from 'jquery';
 import InfiniteCalendar from 'react-infinite-calendar';
-// import '../../../lib/jquery-custom-scrollbar-master/jquery.custom-scrollbar';
-// import '../../../lib/jquery-custom-scrollbar-master/jquery.custom-scrollbar.css';
-// import '../../../css/jquery.custom-scrollbar-customizing.css';
 import 'react-infinite-calendar/styles.min.css';
 import '../../../css/date-picker-customizing.css';
 
@@ -23,6 +20,7 @@ export default class DatePicker extends Component {
         $('.mask-transparent').unbind();
       }
     });
+    $('.Cal__Container__wrapper').append('<div class="Cal__Container__Shadow__Bottom"></div>');
     //$('.ReactVirtualized__Grid').customScrollbar();
   }
   render () {
@@ -48,7 +46,7 @@ export default class DatePicker extends Component {
                  default: '#000',
                  active: '#ffffff'
               },
-              weekdayColor: '#4d4d4d',
+              weekdayColor: '#1a1a1a',
               headerColor: 'pink',
               floatingNav: {
                  background: '#000',
