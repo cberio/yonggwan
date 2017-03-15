@@ -13,8 +13,7 @@ import ModalConfirm from '../modal/modalConfirm';
 import RenderEventConfirm from '../modal/renderEventConfirm';
 import UserCard from '../../userCard';
 import Notifier from '../../../components/notifier';
-import 'malihu-custom-scrollbar-plugin';
-import 'malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.css';
+import 'jquery.nicescroll';
 import 'fullcalendar-scheduler';
 import 'fullcalendar-scheduler/node_modules/fullcalendar/dist/fullcalendar.min.css';
 import '../../../css/fullcalendar-scheduler-customizing.css';
@@ -42,8 +41,8 @@ class FullCalendar extends Component {
       // Expert states
       defaultExpert : undefined,                // 관리자가 설정한 1순위 expert
       priorityExpert : undefined,               // 타임라인 렌더링시 0순위로 기준이 되는 expert (일부 이벤트 등록시 해당된다)
-      // prevExpert: this.props.defaultExpert,     // 이전에 렌더링 된 expert (현재 해당 state 는 사용하지않음)
-      // prevExpertAll: undefined,                 // 이전에 렌더링 된 experts (현재 해당 state 는 사용하지않음)
+      // prevExpert: this.props.defaultExpert,  // 이전에 렌더링 된 expert (현재 해당 state 는 사용하지않음)
+      // prevExpertAll: undefined,              // 이전에 렌더링 된 experts (현재 해당 state 는 사용하지않음)
       renderedExpert : [],                      // 현재 타임라인에 렌더링 된 expert
       lastExpert: undefined,                    // 타임라인을 재 렌더링 할때 기준이되는 expert (해당 expert로 렌더링됨)
       selectedExpert : undefined,               // 타임라인에 마우스 오버시 해당 타임라인의 expert
@@ -54,7 +53,8 @@ class FullCalendar extends Component {
       renderedEvent: undefined,
       newEvents: undefined,
       newEventId: undefined,
-      newEventProductTime: undefined
+      newEventProductTime: undefined,
+      newEventSelector: undefined
     };
     // event binding
     this.isNewOrder = this.isNewOrder.bind(this);
@@ -80,120 +80,141 @@ class FullCalendar extends Component {
     this.getExpert = this.getExpert.bind(this);
     this.sortExpert = this.sortExpert.bind(this);
     this.toggleCreateUi = this.toggleCreateUi.bind(this);
-    this.scrollerBinding = this.scrollerBinding.bind(this);
-    this.autoScrollWeekly = this.autoScrollWeekly.bind(this);
+    this.checkRenderedDate = this.checkRenderedDate.bind(this);
     this.initializeViewRender = this.initializeViewRender.bind(this);
+    this.autoScrollTimeline = this.autoScrollTimeline.bind(this);
+    this.controlerInit = this.controlerInit.bind(this);
+    this.controler = undefined; // overview timeline 상단 날자 스크롤러(컨트롤러 obj)
+    this.test = this.test.bind(this);
   }
 
-  initializeViewRender (view) {
+  test (e) {
     let { Calendar } = this.refs;
-    if (view === 'agendaWeekly') {
-      // $(Calendar).fullCalendar('incrementDate', {week: -1});
-    }
+    let _component = this;
   }
 
-  scrollerBinding (isInit) {
+  initializeViewRender (viewType) {
+    let { Calendar } = this.refs;
+  }
+
+  // 주단위 에서의 상단 controler 스크롤러 바인딩
+  controlerInit () {
     let { Calendar } = this.refs;
     let _component = this;
 
-    var controler = $('.fc-head-container .fc-row.fc-widget-header'),
+    var controlerElem = $('.fc-head-container .fc-row.fc-widget-header'),
         timeline = $('.fc-scroller.fc-time-grid-container'),
         timelineHours = $('.fc-slats-clone'),
 
         isScrollingControler = false,
         isScrollingTimeline = false,
 
-        curDown = false,
-        curXPos = 0,
-
         scrollDayFormat = $(Calendar).fullCalendar('getDate').add(5, 'day').format('YYYY-MM-DD'),
         initOffsetLeft = $('.fc-agendaWeekly-view .fc-bg td[data-date="'+ scrollDayFormat + '"]').offset().left;
 
-    var mcsOptions = {
-      theme :'dark',
-      // setLeft: initOffsetLeft + 'px',
-      scrollInertia: 100,
-      advanced: {
-        updateOnContentResize: true,
-        autoScrollOnFocus: false
-      }
-    };
-
     // 날짜 텍스트 드래그 색상 하이라이팅 방지
-    $(controler).find('th').on({
+    $(controlerElem).find('th').on({
       dragstart:   function () { return false; },
       selectstart: function () { return false; }
     });
 
+    this.controler = $(controlerElem);
+    $(controlerElem).niceScroll({
+      autohidemode: false,
+      touchbehavior: true,
+      cursordragontouch: true
+    });
+
     // init controler
-    $(controler).mCustomScrollbar($.extend(mcsOptions, {
-      axis: 'x',
-      alwaysShowScrollbar: 1,
-      callbacks: {
-        onScrollStart: function () { isScrollingControler = true; },
-        onScroll:      function () { isScrollingControler = false; },
-        whileScrolling:function () {
-          if (!isScrollingTimeline) {
-            $(timeline).find('.mCSB_container').css('left',this.mcs.left );
-            $(timeline).find('.mCSB_scrollTools_horizontal .mCSB_dragger').css('left', this.mcs.draggerLeft);
-          }
-        }
-      }
-    }));
+    $(controlerElem).scroll(function(){
+      if (isScrollingTimeline) return false;
+      isScrollingControler = true;
+
+      var thisLeft = $(this).scrollLeft();
+      $(timeline).scrollLeft(thisLeft);
+
+      isScrollingControler = false;
+    });
+
+
 
     // init timeline
-    $(timeline).mCustomScrollbar($.extend(mcsOptions, {
-      axis: 'xy',
-      mouseWheel: {
-        deltaFactor: 20
-      },
-      callbacks: {
-        onCreate: function () {
-          //$(timeline).find('.mCSB_scrollTools_horizontal').addClass('hidden');
-        },
-        onInit: function () {
-          //$(timeline).mCustomScrollbar('scrollTo', $('.fc-agendaWeekly-view .fc-bg td[data-date="'+ scrollDayFormat + '"]'));
-        },
-        onScrollStart: function () { isScrollingTimeline = true; },
-        onScroll:      function () { isScrollingTimeline = false; },
-        whileScrolling:function () {
-          if (!isScrollingControler && this.mcs.direction === 'x') {
-            $(controler).find('.mCSB_container').css('left', this.mcs.left );
-            $(controler).find('.mCSB_scrollTools_horizontal .mCSB_dragger').css('left', this.mcs.draggerLeft);
-            $(timelineHours).css('left', Math.abs(this.mcs.left));
-          }
-        }
-      }
-    }));
+    var lastX = $(timeline).scrollLeft();
+    var lastY = $(timeline).scrollTop();
+    var direction;
 
-    // 컨트롤러 마우스 드래그 스크롤링 이벤트 관련
-    // $(controler).on({
-    //   mousemove: function(e) {
-    //     if(curDown === true){
-    //       $(this).mCustomScrollbar('scrollTo', {x: Math.abs(curXPos + e.pageX) });
-    //       $(this).addClass('is-scrolling');
-    //     }
-    //   },
-    //   mousedown: function(e) {
-    //     curDown = true;
-    //     curXPos = e.pageX;
-    //     $(window).on('mouseup', function(e){
-    //       curDown = false;
-    //       $(this).removeClass('is-scrolling');
-    //     });
-    //   },
-    //   mouseup: function() {
-    //     curDown = false;
-    //     $(this).removeClass('is-scrolling');
-    //   }
-    // });
+    $(timeline).scroll(function(){
+      if (isScrollingControler) return false;
+      isScrollingTimeline = true;
+
+      var thisX = $(this).scrollLeft();
+      var thisY = $(this).scrollTop();
+
+      if      (lastX < thisX) { direction = 'right'; }
+      else if (lastX > thisX) { direction = 'left'; }
+      else if (lastY < thisY) { direction = 'bottom'; }
+      else if (lastY > thisY) { direction = 'top'; }
+
+      // 이벤트를 드래그 시 빠르게 스크롤하기 위함
+      // if(_component.state.isDragging) {
+      //   switch (direction) {
+      //     case 'right':
+      //       $(timeline).scrollLeft(thisX +10);
+      //       break;
+      //     case 'left':
+      //       $(timeline).scrollLeft(thisX -10);
+      //       break;
+      //     case 'top':
+      //       $(timeline).scrollTop(thisY +10);
+      //       break;
+      //     case 'bottom':
+      //       $(timeline).scrollTop(thisY -10);
+      //       break;
+      //     default:
+      //       break;
+      //   }
+      // }
+
+      $(controlerElem).scrollLeft(thisX);
+
+      lastX = thisX;
+      lastY = thisY;
+
+      isScrollingTimeline = false;
+    });
+
   }
 
-  autoScrollWeekly (selector) {
-    var timeline = $('.fc-scroller.fc-time-grid-container');
-    $(timeline).mCustomScrollbar('scrollTo', $(selector), {
-      scrollEasing:'easeOut'
+  checkRenderedDate (date) {
+    let { Calendar } = this.refs;
+    var dayDates = $(Calendar).fullCalendar('getView').dayGrid.dayDates;
+    var renderedDates = dayDates.map(function(elem, i){
+      return elem.format();
     });
+
+    if (renderedDates.indexOf(date.format('YYYY-MM-DD')) !== -1) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  // 일, 주단위 타임라인 스크롤 트리거 공통
+  autoScrollTimeline (selector, getTimeout, callback) {
+    var timeline = $('.fc-time-grid-container');
+    var timeout;
+    if (getTimeout > 0) { timeout = getTimeout; }
+    else                { timeout = 0; }
+
+    setTimeout(function(){
+      console.log('Top:' + $(selector).offset().top, 'Left:' + $(selector).offset().left);
+      $(timeline).stop().animate({
+        scrollTop: $(selector).offset().top,
+        scrollLeft: $(selector).offset().left
+      }, 400, function (){
+        if (callback) callback();
+      });
+    }, timeout);
   }
 
 
@@ -234,7 +255,7 @@ class FullCalendar extends Component {
   // 예약 생성 단계에 따른 Calendar Height 사이즈를 조절합니다
   setCalendarHeight (step) {
     let { Calendar } = this.refs;
-    let expertUiHeight = this.state.viewType === 'agendaDay' ? 40 : 38;
+    let expertUiHeight = this.state.viewType === 'agendaDay' ? 0 : 38;
     // 예약 3단계 이면서, 시작시간을 미리 선택하지 않는 예약생성 단계 이거나 혹은 예약변경 인 경우
     if (step === 3 && (this.state.isNotAutoSelectTime || this.state.isEditEvent)) {
       $(Calendar).fullCalendar('option', 'height', (window.innerHeight -324) -expertUiHeight); // 324 = step3의 'NewOrder' layer height
@@ -253,7 +274,7 @@ class FullCalendar extends Component {
       start: newEvent.newOrderStart,
       end: newEvent.newOrderEnd,
       comment: newEvent.newOrderComment,
-      resourceId: (newEvent.newOrderExpert.id || newEvent.resourceId )
+      resourceId: (newEvent.newOrderExpert.id || newEvent.resourceId)
     };
   }
 
@@ -302,7 +323,7 @@ class FullCalendar extends Component {
         });
       } else {
         // 선택한 expert로 view를 rendering합니다
-        $('.expert-ui .expert-each input#expert_w_' + newEvent.resourceId).prop('checked', true);
+        $('.expert-each input#expert_w_' + newEvent.resourceId).prop('checked', true);
         this.changeExpert(newEvent.newOrderExpert, undefined, function(){
           _component.expertInputCheck('direct');
           _component.eventSlotHighlight(true, 'event', newEvent.newOrderProduct);
@@ -362,7 +383,8 @@ class FullCalendar extends Component {
 
     this.setState({
       newEvents: $.extend(insertEvent, {class: Functions.getProductColor(insertEvent.product, Products)}),
-      newEventId: newEventId
+      newEventId: newEventId,
+      newEventSelector: '#ID_' + newEventId
     }, () => {
       /// ↓↓↓↓↓↓↓↓↓ 예약생성을 할 이벤트의 Expert 타임라인을 렌더링한다  ↓↓↓↓↓↓↓↓///
       // 1. weekly 생성인 경우
@@ -370,7 +392,7 @@ class FullCalendar extends Component {
         // 현재 렌더링된 expert가 아닌 다른 expert로 생성하는 경우: expert view change
         if ((this.state.lastExpert && this.state.lastExpert.id !== insertEvent.resourceId) || (this.state.renderedExpert[0].id !== insertEvent.resourceId)) {
           // 선택한 expert로 view를 rendering합니다
-          $('.expert-ui .expert-each input#expert_w_' + insertEvent.resourceId).prop('checked', true);
+          $('.expert-each input#expert_w_' + insertEvent.resourceId).prop('checked', true);
           this.setState({
             lastExpert: this.getExpert(insertEvent.resourceId)
           }, () => {
@@ -442,15 +464,14 @@ class FullCalendar extends Component {
         if (this.state.viewTypeOrder === 'agendaDay') {
           // 생성한 이벤트의 날자로 캘린더 타임라인을 변경
           $(Calendar).fullCalendar('gotoDate', moment(this.state.selectedDate).format('YYYY-MM-DD'));
-          this.changeView ('agendaDay', function () {
+          this.changeView('agendaDay', function () {
             // render event
-            $('.fc-scroller.fc-time-grid-container').animate({scrollTop: $('#ID_'+ id).css('top') }, 300);
+            this.autoScrollTimeline($('#ID_'+ id));
+            //$('.fc-scroller.fc-time-grid-container').animate({scrollTop: $('#ID_'+ id).css('top') }, 300);
           });
-          $('.fc-scroller.fc-time-grid-container').animate({scrollTop: $('#ID_'+ id).css('top') }, 300);
         } else {
           // 생성된 슬롯에 자동 스크롤
-          //$('.fc-scroller.fc-time-grid-container').animate({scrollTop: $('#ID_'+ id).css('top') }, 300);
-          this.autoScrollWeekly( $('#ID_'+ id) );
+          this.autoScrollTimeline($('#ID_'+ id));
         }
       }
       this.props.guider('ABCD'+'님의 ' + 'AAAA'+ ' 예약이 생성되었습니다!');
@@ -492,6 +513,16 @@ class FullCalendar extends Component {
     if ($('.create-order-overlap').length) $('.create-order-overlap').removeClass('create-order-overlap');
     // store isModalConfirm init
     this.props.isModalConfirm('');
+
+    // enable editable
+    if (this.state.newEventId) {
+      let evt = $(Calendar).fullCalendar('clientEvents', this.state.newEventId)[0];
+      evt.editable = true;
+      setTimeout(function(){
+        $(Calendar).fullCalendar('updateEvent', evt);
+      },0);
+    }
+
     // reset states
     this.setState({
       viewTypeOrder: undefined,
@@ -501,6 +532,7 @@ class FullCalendar extends Component {
       selectedEvent: undefined,
       renderedEvent: undefined,
       newEventId: undefined,
+      newEventSelector: undefined,
       newEventProductTime: undefined,
       isNotAutoSelectTime: false,
       isEditEvent: false,
@@ -508,8 +540,6 @@ class FullCalendar extends Component {
       isModalConfirm: false,
       isNewOrder: false,
       isRenderConfirm: false
-    }, () => {
-       $(Calendar).fullCalendar('option', 'editable', true);
     });
   }
 
@@ -590,6 +620,7 @@ class FullCalendar extends Component {
                 isCreateOfftime: false,
                 newEventProductTime: undefined,
                 newEventId: undefined,
+                newEventSelector: undefined,
                 isAbleBindRemoveEvent: false
               });
               _component.eventSlotHighlight(false);
@@ -637,7 +668,8 @@ class FullCalendar extends Component {
         this.changeView ('agendaDay', function () {
           // render event
           $(Calendar).fullCalendar('renderEvent', insertOfftime, true ); //stick?  true
-          $('.fc-scroller.fc-time-grid-container').animate({scrollTop: $('#ID_'+ insertOfftime.id).css('top') }, 300);
+          _component.autoScrollTimeline($('#ID_'+ insertOfftime.id));
+          //$('.fc-scroller.fc-time-grid-container').animate({scrollTop: $('#ID_'+ insertOfftime.id).css('top') }, 300);
         });
       } else {
         $(Calendar).fullCalendar('renderEvent', insertOfftime, true ); //stick?  true
@@ -651,6 +683,7 @@ class FullCalendar extends Component {
         isCreateOfftime: false,
         newEventProductTime: undefined,
         newEventId: insertOfftime.id,
+        newEventSelector: '#ID_' + insertOfftime.id,
         isAbleBindRemoveEvent: true
         }, () => {
         // callback
@@ -663,7 +696,8 @@ class FullCalendar extends Component {
                   $(Calendar).fullCalendar('removeEvents', [_component.state.newEventId]);
                   _component.setState({
                     isAbleBindRemoveEvent: false,
-                    newEventId: undefined
+                    newEventId: undefined,
+                    newEventSelector: undefined
                   });
                   _component.props.guider('OFF TIME이 삭제되었습니다!');
                 }
@@ -676,7 +710,8 @@ class FullCalendar extends Component {
               $('#ID_' + insertOfftime.id).removeClass('new-event');
               _component.setState({
                 isAbleBindRemoveEvent: false,
-                newEventId: undefined
+                newEventId: undefined,
+                newEventSelector: undefined
               });
             }
           });
@@ -707,7 +742,8 @@ class FullCalendar extends Component {
                   $(Calendar).fullCalendar('removeEvents', [_component.state.newEventId]);
                   _component.setState({
                     isAbleBindRemoveEvent: false,
-                    newEventId: undefined
+                    newEventId: undefined,
+                    newEventSelector: undefined
                   });
                   _component.props.guider('OFF TIME이 삭제되었습니다!');
                 }
@@ -720,7 +756,8 @@ class FullCalendar extends Component {
               $('#ID_' + insertOfftime.id).removeClass('new-event');
               _component.setState({
                 isAbleBindRemoveEvent: false,
-                newEventId: undefined
+                newEventId: undefined,
+                newEventSelector: undefined
               });
             }
           });
@@ -735,9 +772,12 @@ class FullCalendar extends Component {
     if (type === 'selectedStart') {
       $(Calendar).fullCalendar('renderEvent', insertEvent , true); // stick? = true
       // animate scroll after event rendered
-      $('.fc-scroller.fc-time-grid-container').animate({scrollTop: $('#ID_'+ newEventId).css('top') }, 300, function () {
-        $(this).addClass('overflow-hidden');
+      this.autoScrollTimeline($('#ID_'+ newEventId), 0, function () {
+        $('.fc-scroller.fc-time-grid-container').addClass('overflow-hidden');
       });
+      // $('.fc-scroller.fc-time-grid-container').animate({scrollTop: $('#ID_'+ newEventId).css('top') }, 300, function () {
+      //   $(this).addClass('overflow-hidden');
+      // });
       $('#ID_'+ newEventId).addClass('new-event').after($('.mask-event').show());
     // weekly
     } else {
@@ -754,6 +794,7 @@ class FullCalendar extends Component {
       $(fakeEventElem).wrap('<div class="fc-fake-event"></div>');
       this.setState({
         newEventId: newEventId,
+        newEventSelector: '#ID_' + newEventId,
         newEvents: $.extend(newInsertEvent, {class: Functions.getProductColor(newInsertEvent.product, Products)}),
       });
     }
@@ -778,6 +819,7 @@ class FullCalendar extends Component {
     $(fakeEventElem).wrap('<div class="fc-fake-event"></div>');
     this.setState({
       newEventId: editEvent.id,
+      newEventSelector: '#ID_' + editEvent.id,
       newEvents: $.extend(editEvent, {class: Functions.getProductColor(editEvent.product, Products)}),
       newEventProductTime: Functions.millisecondsToMinute(moment(editEvent.end).diff(moment(editEvent.start)))
     });
@@ -872,7 +914,18 @@ class FullCalendar extends Component {
       return false;
     }
 
-    $(Calendar).fullCalendar('gotoDate', date.format());
+    if (this.state.viewType === 'agendaDay') {
+      $(Calendar).fullCalendar('gotoDate', date.format());
+    } else {
+      // 해당 날짜가 이미 타임라인에 렌더링 되어있는 경우
+      if (this.checkRenderedDate(date)) {
+        this.autoScrollTimeline($('th.fc-day-header.fc-widget-header[data-date="'+ date.format('YYYY-MM-DD') +'"]'));
+      } else {
+        $(Calendar).fullCalendar('gotoDate', date.format());
+      }
+    }
+
+
     this.setState({
       isChangeDate: false
     });
@@ -900,7 +953,7 @@ class FullCalendar extends Component {
       };
       $(Calendar).fullCalendar('option', fcOptions);
       this.changeView('agendaWeekly', function () {
-        _component.autoScrollWeekly($('#ID_'+ event.id));
+        _component.autoScrollTimeline($('#ID_'+ event.id));
       });
       this.eventSlotHighlight(true, type, event.product);
       this.fakeRenderEditEvent(event);
@@ -923,15 +976,21 @@ class FullCalendar extends Component {
       /// 생성버튼 캘린더 타임라인 노드에서 상위 노드로 삽입
       $('.full-calendar > .fc').append($('.create-order-wrap.timeline').hide());
       $('.timeline .create-order-ui-wrap').hide();
-      $(Calendar).fullCalendar('option', 'editable', false);
+      // $(Calendar).fullCalendar('option', 'editable', false);
     } else {
       /// 생성버튼 캘린더 타임라인 노드에서 상위 노드로 삽입
       $('.full-calendar > .fc').append($('.create-order-wrap.timeline').hide());
       // 시작시간을 미리 선택하지않고 이벤트를 생성중에 취소할 경우
       if (this.state.isNotAutoSelectTime || this.state.isEditEvent) {
         this.resetOrder();
+      } else {
+        // enable editable
+        let evt = $(Calendar).fullCalendar('clientEvents', this.state.newEventId);
+            evt.editable = true;
+        $(Calendar).fullCalendar('updateEvent', evt);
+        // $(Calendar).fullCalendar('option', 'editable', true);
       }
-      $(Calendar).fullCalendar('option', 'editable', true);
+
       $('.create-order-wrap.fixed').removeClass('hidden');
       $('#render-confirm').hide();
     }
@@ -1028,7 +1087,7 @@ class FullCalendar extends Component {
     if ( (viewTypePrev && viewTypePrev !== view.type) || view === 'direct') {
       console.log('VIEW 전환');
       // 공통으로 초기 인풋 체크 해제
-      $('.expert-ui .expert-each input:checked')
+      $('.expert-each input:checked')
         .prop('checked', false)
         .parent('.expert-each').attr('data-active', false);
 
@@ -1056,7 +1115,7 @@ class FullCalendar extends Component {
         // 2-0
         if (priorityExpert) {
           console.log('2-0');
-          $('.expert-daily .expert-each[data-id="expert_'+ priorityExpert.id +'"]')
+          $('.expert-each.checkbox[data-id="expert_'+ priorityExpert.id +'"]')
             .attr('data-active', true)
             .find('input').prop('checked', true);
           $(Calendar).fullCalendar('addResource', priorityExpert);
@@ -1066,7 +1125,7 @@ class FullCalendar extends Component {
         // 2-1 : 2명이상의 Expert를 렌더링 했었을경우 > 1순위인 Default Expert로 렌더링
         } else if (renderedExpert.length >= 2) {
           console.log('2-1');
-          $('.expert-daily .expert-each[data-id="expert_'+ defaultExpert.id +'"]')
+          $('.expert-each.checkbox[data-id="expert_'+ defaultExpert.id +'"]')
             .attr('data-active', true)
             .find('input').prop('checked', true);
           $(Calendar).fullCalendar('addResource', defaultExpert);
@@ -1076,7 +1135,7 @@ class FullCalendar extends Component {
         // 2-2 : Expert를 변경했었을 경우 > 마지막으로 렌더링했던 Expert로 렌더링
         } else if (lastExpert) {
           console.log('2-2');
-          $('.expert-daily .expert-each[data-id="expert_'+ lastExpert.id +'"]')
+          $('.expert-each.checkbox[data-id="expert_'+ lastExpert.id +'"]')
             .attr('data-active', true)
             .find('input').prop('checked', true);
           for (let i = 0; i < renderedExpert.length; i++) {
@@ -1086,7 +1145,7 @@ class FullCalendar extends Component {
         // 2-3 : (기본) Default Expert > 1순위 Expert로 렌더링
         } else {
           console.log('2-3');
-          $('.expert-daily .expert-each[data-id="expert_'+ defaultExpert.id +'"]')
+          $('.expert-each.checkbox[data-id="expert_'+ defaultExpert.id +'"]')
             .attr('data-active', true)
             .find('input').prop('checked', true);
         }
@@ -1096,10 +1155,10 @@ class FullCalendar extends Component {
   } else if (!viewTypePrev) {
       console.log('VIEW 예약 초기접근 Default Expert');
       if (view.type === 'agendaDay') {
-        $('.expert-ui .expert-each[data-id="expert_'+ defaultExpert.id +'"]').attr('data-active', true);
-        $('.expert-ui .expert-each input#expert_' + defaultExpert.id).prop('checked', true);
+        $('.expert-each[data-id="expert_'+ defaultExpert.id +'"]').attr('data-active', true);
+        $('.expert-each input#expert_' + defaultExpert.id).prop('checked', true);
       } else {
-        $('.expert-ui .expert-each input#expert_w_' + defaultExpert.id).prop('checked', true);
+        $('.expert-each input#expert_w_' + defaultExpert.id).prop('checked', true);
       }
     } // ****END // input checked
     if (view.type === 'agendaDay') this.expertInputAutoSort();
@@ -1107,7 +1166,7 @@ class FullCalendar extends Component {
 
   // Daily 에서의 Expert input 정렬
   expertInputAutoSort (e) {
-    //console.log(e);
+    //  ddddd/......
   }
 
   getExpert (id) {
@@ -1122,10 +1181,12 @@ class FullCalendar extends Component {
     let { Calendar } = this.refs;
     $(Calendar).fullCalendar('changeView', type);
     if (callback) setTimeout(callback, 0);
+    console.log(this.state.viewTye);
   }
 
   // change expert: only weekly timeline
   changeExpert (expert, input, callback) {
+    $('.fc-view-container .fc-body').addClass('fade-loading');
     let { Calendar } = this.refs;
     if (this.state.isNewOrder) this.refs.NewOrder.setNewOrderExpert(expert);
     this.setState({
@@ -1140,15 +1201,17 @@ class FullCalendar extends Component {
 
   // show and hide calendar each experts: only dailyTimeline
   renderExpert (expert, input, isRemoveSiblings) {
+    //this.props.loading(true);
     let { Calendar } = this.refs;
     let _component = this;
     let element = $(input);
 
     // 1. Expert Show
     if (element.prop('checked')) {
+      $('.fc-view-container').addClass('fade-loading');
       // 1-1 All of experts
       if (expert === 'all') {
-        element.parent('.expert-each').siblings()
+        $('.expert-each.checkbox')
         .attr('data-active', true)
         .find('input').prop('checked', true);
 
@@ -1162,15 +1225,15 @@ class FullCalendar extends Component {
         if (isRemoveSiblings) {
           for (let i = 0; i < this.state.renderedExpert.length; i++) {
             $(Calendar).fullCalendar('removeResource', this.state.renderedExpert[i].id);
-            element.parent('.expert-each')
-            .attr('data-active', true)
-            .siblings().attr('data-active', false)
-            .find('input').prop('checked', false);
+            $('.expert-each.checkbox')
+              .attr('data-active', false)
+              .find('input').prop('checked', false);
+            element.parent('.expert-each').attr('data-active', true);
           }
         }
         element.parent('.expert-each').attr('data-active', true);
         // 모두선택이 될 경우
-        if (element.parent('.expert-each').siblings().find('input:checked').length === element.parent('.expert-each').siblings().find('input').length -1) {
+        if ($('.expert-each.checkbox').find('input:checked').length === $('.expert-each.checkbox').find('input').length -1) {
           $('input#expert_all').prop('checked', true);
         }
         this.setState({
@@ -1183,14 +1246,14 @@ class FullCalendar extends Component {
     // 2. Expert Hide
     } else {
       // 2-1 공통 현재 렌더링된 Expert가 1명 이하일경우 리턴 false
-      if (element.parents('.expert-each').siblings().find('input:checked').length < 1) {
+      if ($('.expert-each.checkbox').find('input:checked').length < 1) {
         element.prop('checked', true);
         return false;
       }
       // 2-2 All of experts
       if (expert === 'all') {
         // 1순위 defaultExpert를 제외한 Experts의 Input값 해제
-        $('.expert-ui .expert-each input').each(function(i, elem){
+        $('.expert-each.checkbox input').each(function(i, elem){
           if (_component.state.defaultExpert.id === $(elem).val()) {
             $(elem).prop('checked', true);
             $(Calendar).fullCalendar('addResource', _component.getExpert($(elem).val()));
@@ -1208,7 +1271,7 @@ class FullCalendar extends Component {
         }
         if (this.state.renderedExpert.length <= 2) {
           this.setState({
-            lastExpert: this.getExpert(element.parents('.expert-each').siblings().find('input:checked').val()),
+            lastExpert: this.getExpert($('.expert-each.checkbox').find('input:checked').val()),
             prevExpert: undefined
           });
         } else {
@@ -1234,6 +1297,7 @@ class FullCalendar extends Component {
         //   }
         // }
       }
+      $('.fc-view-container').addClass('fade-loading');
     }
   }
 
@@ -1252,9 +1316,9 @@ class FullCalendar extends Component {
   }
 
   componentDidMount() {
+
     const _component = this;
     let { Calendar } = this.refs;
-    let expertUiHeight = 30;
     var date  = new Date();
     var time  = date.getTime();
     var day   = date.getDate();
@@ -1265,6 +1329,8 @@ class FullCalendar extends Component {
     var firstDay = moment(date).day();
     var defaultScrollTime = moment(time).subtract(1, 'hour').format('HH:mm'); //현재시간으로부터 1시간 이전의 시간
     var isLastTime = moment(date).subtract(2, 'hour'); //오늘로부터 1시간 이전의 시간 ( "YYYY-MM-DD" )
+    var expertUiHeight = 38;
+    if (location.pathname.indexOf('daily') !== -1) expertUiHeight = 0;
 
     this.sortExpert(Experts);
     this.setState({ defaultExpert: Experts[0]});
@@ -1279,7 +1345,7 @@ class FullCalendar extends Component {
       locale : 'ko',              //언어선택
       defaultView : this.props.defaultView,  // init view type set
       header: {
-        left: 'agendaDay agendaWeekly',
+        left: 'todayTimeline agendaDay agendaWeekly',
 				// center: 'prev title next, changeDate',
         center: 'prevTimeline title nextTimeline, changeDate',
 				right: 'agendaDay agendaWeekly'
@@ -1306,6 +1372,12 @@ class FullCalendar extends Component {
             _component.setState({ isChangeDate: !_component.state.isChangeDate });
           }
         },
+        todayTimeline: {
+          text: 'TODAY',
+          click: function() {
+            _component.changeDate(moment(date));
+          }
+        },
         prevTimeline : {
           text: '이전',
           click: function() {
@@ -1326,11 +1398,12 @@ class FullCalendar extends Component {
       //slotMinutes : 20,        //슬롯 생성 분단위 범위 설정 default :30
       //minTime: '09:00',        //예약가능한 최소 시작시간 지정 (출근시간)
       //maxTime: '18:00',        //예약마감시간 지정
-      //businessHours:{},        //업무시간 지정
+      //businessHours: {},       //샵 영업시간 지정 (모든 Expert 의 업무시간이 동일한경우) (expert 별로 지정할경우는 resources 에서 선언)
       //eventConstraint: false,  //이벤트 수정을 특정 시간 내로 제한함 (businessHours 와 관련)
       height: window.innerHeight -expertUiHeight,
       nowIndicator: true,
       dragOpacity: 1,
+      dragScroll: true,
       editable: true,            //수정가능한지 여부
 			selectable: false,         //드래그로 날짜를 선택하여 추가기능 활성화
 			selectHelper: true,        //드래그시 배경색상 효과
@@ -1375,6 +1448,7 @@ class FullCalendar extends Component {
         if (_component.state.isAbleBindRemoveEvent) {
           _component.setState({
             newEventId: undefined,
+            newEventSelector: undefined,
             isAbleBindRemoveEvent: false
           });
         }
@@ -1386,6 +1460,7 @@ class FullCalendar extends Component {
         if (_component.state.isAbleBindRemoveEvent) {
           _component.setState({
             newEventId: undefined,
+            newEventSelector: undefined,
             isAbleBindRemoveEvent: false
           });
         }
@@ -1423,13 +1498,10 @@ class FullCalendar extends Component {
         _component.setCalendarColumn();
       },
       resourceRender: function(resourceObj, labelTds, bodyTds) {
-        // if (!labelTds.hasClass('inserted')) {
-        //   return false;
-        //   $(labelTds)
-        //   .html($('.expert-daily .expert-each[data-id="expert_'+ labelTds.data('resource-id')+'"]'))
-        //   .addClass('inserted')
-        //   console.log(labelTds.data('resource-id'));
-        // }
+        setTimeout(function(){
+          var expertUi = $('.expert-each[data-id="expert_'+ resourceObj.id + '"]');
+          $(labelTds).html($(expertUi));
+        },0);
       },
       eventRender: function( event, element, view ) {
         // 주단위 타임라인 에서 expert 별로 이벤트를 렌더링합니다. (filtering)
@@ -1461,9 +1533,8 @@ class FullCalendar extends Component {
           }
         }
 
-        //이전 이벤트에 대한 이벤트 수정 비활성화 및 스타일 클래스 적용
-        if (event.end.isBefore(isLastTime, 'hour')) {
-          //$(element).find('.fc-ui').remove();
+        //시간이 지난 이벤트건 혹은, 예약 신규생성 도중인 이벤트에 대한 수정 비활성화 및 스타일 클래스 적용
+        if (event.end.isBefore(isLastTime, 'hour') || _component.state.isNewOrder) {
           event.editable = false;
           $(element).addClass('disabled');
         }
@@ -1475,6 +1546,10 @@ class FullCalendar extends Component {
           $(element).removeClass('fc-short');
         }
 
+      },
+
+      eventAfterAllRender: function (view) {
+        if (view.type === 'agendaWeekly') $('.fade-loading').removeClass('fade-loading');
       },
 
       // 캘린더 이벤트 day 렌더링시
@@ -1497,16 +1572,6 @@ class FullCalendar extends Component {
 
         console.log('VIEW 렌더링');
 
-        if (view.type === 'agendaWeekly') {
-          var cloneTimelineSlats = $('.fc-time-grid > .fc-slats').clone().addClass('fc-slats-clone');
-            $(cloneTimelineSlats).find('.fc-slot').remove();
-            $(cloneTimelineSlats).insertAfter('.fc-time-grid > .fc-slats');
-          // weekly timeline 에서 좌측 시간 element를 복제하여 삽입 (스크롤시 고정적으로 따라다니도록 별도의 스타일 class 적용)
-          _component.scrollerBinding(true);
-        } else {
-          _component.setCalendarColumn();
-        }
-
         // let renderedExpert = [];
         let renderedExpert = $(Calendar).fullCalendar('getResources');
         // if (view.type === 'agendaDay') {
@@ -1525,18 +1590,41 @@ class FullCalendar extends Component {
         _component.expertInputCheck(view);
           // view rendering 시 초기실행함수
           if (!_component.state.viewTypePrev) _component.initializeViewRender(view.type);
-
         });
         _component.setState({
           renderedExpert: renderedExpert
         });
+
+
+        if (view.type === 'agendaWeekly') {
+        // $(Calendar).fullCalendar('incrementDate', {week: -1});
+
+        // weekly timeline 에서 좌측 시간 element를 복제하여 삽입 (스크롤시 고정적으로 따라다니도록 별도의 스타일 class 적용)
+          var cloneTimelineSlats = $('.fc-time-grid > .fc-slats').clone().addClass('fc-slats-clone');
+            $(cloneTimelineSlats).find('.fc-slot').remove();
+            $(cloneTimelineSlats).insertAfter('.fc-time-grid > .fc-slats');
+          // 주 단위 타임라인의 scroller module 실행
+          _component.controlerInit();
+        } else {
+          _component.setCalendarColumn();
+        }
+
+        // 오늘날짜인경우 today 버튼 비활성화
+        if (view.type === 'agendaDay' && view.start.isSame(moment(date), 'day')) {
+          $('.fc-todayTimeline-button').prop('disabled', true);
+        } else {
+          $('.fc-todayTimeline-button').prop('disabled', false);
+        }
+
 
         // 타임라인 내 신규예약생성 버튼 클릭시 추가되었던 클래스가 남아있으면 다시 제거
         if ($('.create-order-overlap').length) $('.create-order-overlap').removeClass('create-order-overlap');
 
         //** expert ui 의 레이어를 상단으로 이동 (hasClass를통해 이미 삽입되었으면 실행안함) **
         if (!$('.fc-view-container > .fc-view').hasClass('inserted-expert')) {
-          $('.expert-daily').insertAfter($('.fc-header-toolbar'));
+          $('.expert-daily')
+            .appendTo($('.fc-resource-cell-unselected'))
+            .find('.expert-each.all').appendTo('th.fc-axis.fc-widget-header');
           $('.expert-weekly').insertBefore($('.fc-header-toolbar'));
           $('.fc-view-container > .fc-view').addClass('inserted-expert');
         }
@@ -1683,7 +1771,7 @@ class FullCalendar extends Component {
                 // get selected expert ( case : daily view)
                 if (view.type === 'agendaDay') {
                   if ($(Calendar).fullCalendar('getResources').length === 1) {
-                    _component.setState({ selectedExpert: _component.getExpert($('.expert-ui input:checked').val()) });
+                    _component.setState({ selectedExpert: _component.getExpert($('.expert-each.checkbox input:checked').val()) });
                   } else {
                     _component.setState({ selectedExpert: _component.getExpert($(this).parents('.fc-day').data('resource-id')) });
                   }
@@ -1708,12 +1796,22 @@ class FullCalendar extends Component {
 
         // loading bar hide
         _component.props.loading(false);
+        $('.fade-loading').removeClass('fade-loading');
 
       }, //end viewRender
 
       viewDestroy: function (view, elem) {
         $('.fc-agendaDay-button, .fc-agendaWeekly-button').css('visibility', 'hidden');
         $('.nav-reservation .header-nav-sub > li > a').css('visibility', 'visible');
+
+        // daily 에서의 expert input element 제거되는것을 방지함
+        if (view.type === 'agendaDay') {
+          $('.fc-head').find('.expert-each.checkbox').each(function (i, element){
+            // $(element).appendTo('.expert-daily .expert-inner');
+            $(element).appendTo('.expert-daily .expert-inner');
+            console.log('view was destroy');
+          });
+        }
       },
       // open customer card
       eventDoubleClick: function(calEvent, jsEvent, view) {
@@ -1751,7 +1849,6 @@ class FullCalendar extends Component {
 
     $(document).ready(function(){
       $('.nav-reservation > a').addClass('active');
-      $(Calendar).fullCalendar('option', 'height', window.innerHeight - $('.expert-ui').outerHeight());
     });
 
     //우측하단 예약생성 고정버튼 Ui toggle
@@ -1812,7 +1909,8 @@ class FullCalendar extends Component {
         $(Calendar).fullCalendar('option', fcOptions);
         this.changeView('agendaWeekly', function () {
           // view change시, 선택된 이벤트의 요일이 처음으로 오도록 설정해준다
-          $('.fc-scroller.fc-time-grid-container').animate({scrollTop: $('#ID_'+ requestEvent.id).css('top') }, 300);
+          //$('.fc-scroller.fc-time-grid-container').animate({scrollTop: $('#ID_'+ requestEvent.id).css('top') }, 300);
+          this.autoScrollTimeline($('#ID_'+ requestEvent.id));
         });
       }
       this.eventSlotHighlight(true, 'edit', requestEvent.product);
@@ -1893,14 +1991,14 @@ class FullCalendar extends Component {
         <div className="expert-ui expert-daily" style={{display: this.state.viewType==='agendaWeekly' ? 'none' : 'block'}}>
           <div className="expert-inner">
             { Experts.length >= 2 ? (
-              <div className="expert-each all">
+              <div className="expert-each checkbox all">
                 <input disabled={this.state.isRenderConfirm} className="expert-input" type="checkbox" name="expert" id="expert_all" value="all" onChange={ (input) => this.renderExpert('all', input.target)}/>
                 <label className="expert-label" htmlFor="expert_all">ALL</label>
               </div>
             ) : ''}
             { Experts.map((expert, i) => {
                 return (
-                  <div className="expert-each" data-id={`expert_${expert.id}`} data-active="false" key={i}>
+                  <div className="expert-each checkbox" data-id={`expert_${expert.id}`} data-active="false" key={i}>
                     <input disabled={this.state.isRenderConfirm} className="expert-input" type="checkbox" name="expert" id={`expert_${expert.id}`} value={expert.id} onChange={ (input) => this.renderExpert(expert, input.target)} />
                     <label className="expert-label" htmlFor={`expert_${expert.id}`}>{expert.title}<i className="today-reservation">{expert.todayReservation}</i></label>
                   </div>
@@ -2029,8 +2127,18 @@ class FullCalendar extends Component {
         <dt>newEventId: </dt><dd>{this.state.newEventId}</dd>
         <dt>newEventProduct: </dt><dd>{this.state.newEventProduct}</dd>
         <dt>newEventProductTime: </dt><dd>{this.state.newEventProductTime}</dd>
+        <dt>newEventSelector: </dt><dd>{this.state.newEventSelector}</dd>
       </dl>
     );
+
+    const test = (
+      <button
+        style={{'position': 'fixed', 'left': '80px', 'top': '0px', 'zIndex': '10', 'background': '#eee'}}
+        onClick={ () => this.test() }
+      >
+          CLICK ME!
+      </button>
+    )
 
     return (
       <div ref="Calendar" id={`${this.state.viewType === 'agendaDay' ? 'daily':'weekly'}`}>
@@ -2043,6 +2151,7 @@ class FullCalendar extends Component {
         {ModalConfirmComponent}
         {RenderConfirmComponent}
         {viewview}
+        {test}
       </div>
     );
   }
