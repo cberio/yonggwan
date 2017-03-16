@@ -17,6 +17,14 @@
 	overflow-x: auto !important;
 	/*min-height: 678px;*/
 }
+.fc-scroller.fc-time-grid-container .fc-time-grid .fc-content-skeleton-clone {
+	height: 1px;
+	position: absolute;
+	z-index: 4;
+	top: 0;
+	left: 0;
+	right: 0;
+}
 .fc-scroller > .fc-day-grid,
 .fc-scroller > .fc-time-grid {
 	/*max-width: 1440px;*/
@@ -1173,30 +1181,29 @@
 .fc-agendaWeekly-view .fc-time-grid table {
 	border-top: 0;
 }
-.fc-agendaWeekly-view .fc-time-grid .fc-slats tr:first-of-type td:last-of-type {
-	border-top: 1px solid #e6e6e6 !important;
+.fc-agendaWeekly-view .fc-slats tr:first-of-type td:last-of-type {
+	/*border-top: 1px solid #e6e6e6 !important;*/
 }
 .fc-agendaWeekly-view .fc-time-grid {
 	width: 400%;
-	margin-top: 28px;
+	margin-top: 10px;
 }
 .fc-agendaWeekly-view .fc-time-grid .fc-bg {
 	z-index: 3;
 }
-
-
 .fc-agendaWeekly-view .fc-time-grid > .fc-bg.create-order-overlap {
 	z-index: 4;
 }
 .fc-agendaWeekly-view .fc-slats-clone {
-	position: absolute; left: 0; top: 0; z-index: 2;
-	width: 33px; background-color: #fff;
+	position: absolute; left: 0; top: 0;
+	width: 33px; z-index: 4; background-color: #fff;
 }
-.fc-agendaWeekly-view .fc-slats 	  .fc-axis.fc-time {display: none;}
-.fc-agendaWeekly-view .fc-slats-clone .fc-axis.fc-time {display: table-cell !important;}
+.fc-agendaWeekly-view .fc-slats 	  .fc-axis.fc-time {visibility: hidden;}
+.fc-agendaWeekly-view .fc-slats-clone .fc-axis.fc-time {visibility: visible;}
 
 .fc-agendaWeekly-view .fc-slats-clone td {
-	border-top: 1px solid transparent;
+	border-top: 1px solid transparent !important;
+	border-color: transparent;
 }
 .fc-agendaWeekly-view .fc-slats-clone .fc-slot {
 	display: none;
@@ -1207,7 +1214,7 @@
 .fc-agendaWeekly-view .fc-create-helper {
 	top: -1px;
 }
-.fc-agendaWeekly-view .fc-time-grid .fc-slats tr td {
+.fc-agendaWeekly-view .fc-slats tr td {
 	height: 27px;
 }
 .fc-agendaWeekly-view .fc-time-grid .fc-create-helper tr td {
@@ -1430,17 +1437,14 @@
 	margin: 0;
 }
 .fc-agendaWeekly-view .fc-now-indicator-line {
- 	margin-left: 48px;
+ 	margin-left: 50px;
 }
 
 
 /*																					*/
 /*ㅡㅡㅡㅡㅡㅡㅡ [ -이하- '일 단위 타임라인' 모드에 적용돼는 Styles ] ㅡㅡㅡㅡㅡㅡㅡ*/
 /*																					*/
-.expert-ui.expert-daily {
-}
-.expert-ui.expert-daily .expert-inner {
-}
+.expert-ui.expert-daily {}
 
 /* 다중 타임라인을 렌더링했을경우 스타일 */
 .multi-experts .fc-agendaDay-view .fc-time-grid > *{
@@ -1448,6 +1452,10 @@
 }
 .multi-experts .fc-agendaDay-view .fc-head-container {
 	padding-right: 0;
+}
+
+#daily .fc-view-container {
+	overflow: auto;
 }
 
 .fc-agendaDay-view .fc-head {
@@ -1480,6 +1488,11 @@
 .fc-agendaDay-view .fc-time-grid .fc-slats {
 	z-index: 0;
 }
+.fc-agendaDay-view .fc-time-grid .fc-slats-clone {	
+	width: 50px; position: absolute; 
+	left: 0; top: 35px; 
+	background: #f2f2f2; z-index: 4;
+}
 .fc-agendaDay-view .fc-time-grid .fc-slats.create-order-overlap {
 	z-index: 4;
 }
@@ -1496,7 +1509,9 @@
 .fc-agendaDay-view .fc-body > tr > .fc-widget-content {border-top: 0;}
 .fc-agendaDay-view .fc-event-container{margin: 0 30px !important;}
 .fc-agendaDay-view .fc-widget-content{border-bottom: 0;position: relative;}
-.fc-agendaDay-view .fc-time-grid .fc-content-skeleton {top: 35px;}
+.fc-agendaDay-view .fc-time-grid .fc-content-skeleton {}
+.fc-agendaDay-view .fc-time-grid .fc-content-skeleton,
+.fc-agendaDay-view .fc-time-grid .fc-content-skeleton-clone {top: 35px !important;}
 .fc-agendaDay-view .fc-time-grid .fc-slats .fc-minor td {
 	border-style: dashed;
 	vertical-align: middle;
@@ -1547,6 +1562,10 @@
 	display: block;
 	content:'';
 	border-top: 1px solid #e6e6e6;
+}
+
+.fc-agendaDay-view .fc-now-indicator-line {
+ 	margin-left: 48px;
 }
 
 .fc-agendaDay-view .fc-helper {
@@ -1866,7 +1885,7 @@
 	.fc-agendaWeekly-view .create-order-wrap.timeline .create-order-ui-inner {
 		padding-top: 23px;
 	}
-	.fc-agendaWeekly-view .fc-time-grid .fc-slats tr td{
+	.fc-agendaWeekly-view .fc-slats tr td{
 		height: 22px;
 	}
 	.fc-agendaWeekly-view .fc-time-grid .fc-create-helper tr td {
