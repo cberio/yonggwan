@@ -112,13 +112,13 @@ class FullCalendar extends Component {
         isScrollingTimeline = false,
 
         scrollDayFormat,
-        initOffsetLeft;
+        initPositionLeft;
 
     if (viewType === 'agendaWeekly') {
       timeline = $('.fc-scroller.fc-time-grid-container');
       controlerElem = $('.fc-head-container .fc-row.fc-widget-header');
       scrollDayFormat = $(Calendar).fullCalendar('getDate').add(5, 'day').format('YYYY-MM-DD');
-      initOffsetLeft = $('.fc-agendaWeekly-view .fc-bg td[data-date="'+ scrollDayFormat + '"]').offset().left;
+      initPositionLeft = $('.fc-agendaWeekly-view .fc-bg td[data-date="'+ scrollDayFormat + '"]').position().left;
     } else {
       timeline = $('.fc-view-container');
     }
@@ -129,10 +129,8 @@ class FullCalendar extends Component {
         direction;
 
     $(timeline).scroll(function(){
-    console.log('1111');
       if (isScrollingControler) return false;
       isScrollingTimeline = true;
-      console.log('2');
 
       var thisX = $(this).scrollLeft();
       var thisY = $(this).scrollTop();
@@ -174,6 +172,7 @@ class FullCalendar extends Component {
       cursordragontouch: true,
       enablekeyboard: false
     });
+    $('.nicescroll-rails-hr').addClass('always-show');
 
     // init controler
     $(controlerElem).scroll(function(){
@@ -186,12 +185,6 @@ class FullCalendar extends Component {
       $('.fc-slats-clone, .fc-content-skeleton-clone').css('left', thisLeft);
 
       isScrollingControler = false;
-    });
-
-    // 날짜 텍스트 드래그 색상 하이라이팅 방지
-    $(controlerElem).find('th').on({
-      dragstart:   function () { return false; },
-      selectstart: function () { return false; }
     });
 
   }
@@ -937,7 +930,6 @@ class FullCalendar extends Component {
   changeDateBasic (dir, view) {
     let { Calendar } = this.refs;
 
-
     switch (view) {
       case 'agendaDay' :
         if (dir === 'prev') {
@@ -973,12 +965,13 @@ class FullCalendar extends Component {
     } else {
       // 해당 날짜가 이미 타임라인에 렌더링 되어있는 경우
       if (this.checkRenderedDate(date)) {
-        this.autoScrollTimeline($('th.fc-day-header.fc-widget-header[data-date="'+ date.format('YYYY-MM-DD') +'"]'));
+        var scrollX = $(this.controler).scrollLeft();
+        var positionX = $('th.fc-day-header.fc-widget-header[data-date="'+ date.format('YYYY-MM-DD') +'"]').position().left;
+        $(this.controler).getNiceScroll(0).doScrollLeft(scrollX + positionX, 200);
       } else {
         $(Calendar).fullCalendar('gotoDate', date.format());
       }
     }
-
 
     this.setState({
       isChangeDate: false
@@ -1099,17 +1092,17 @@ class FullCalendar extends Component {
         case 'off-time' :
           $(daySlot).find('tr[data-time="15:00:00"]').addClass('slot-highlight off-time start').find('td').append(bgCell);
           $(daySlot).find('tr[data-time="15:00:00"]').nextUntil('tr[data-time="16:00:00"]').addClass('slot-highlight off-time').find('td').append(bgCell);
-          $(daySlot).find('tr[data-time="16:00:00"]').addClass('slot-highlight off-time end').find('td').append(bgCell);
+          $(daySlot).find('tr[data-time="16:00:00"]').prev('tr').addClass('slot-highlight off-time end');
           break;
         case 'edit' :
           $(daySlot).find('tr[data-time="15:00:00"]').addClass(`slot-highlight edit start ${color}`).find('td').append(bgCell);
           $(daySlot).find('tr[data-time="15:00:00"]').nextUntil('tr[data-time="16:00:00"]').addClass(`slot-highlight edit ${color}`).find('td').append(bgCell);
-          $(daySlot).find('tr[data-time="16:00:00"]').addClass(`slot-highlight edit end ${color}`).find('td').append(bgCell);
+          $(daySlot).find('tr[data-time="16:00:00"]').prev('tr').addClass(`slot-highlight edit end ${color}`);
           break;
         default :
           $(daySlot).find('tr[data-time="15:00:00"]').addClass(`slot-highlight start ${color}`).find('td').append(bgCell);
           $(daySlot).find('tr[data-time="15:00:00"]').nextUntil('tr[data-time="16:00:00"]').addClass(`slot-highlight ${color}`).find('td').append(bgCell);
-          $(daySlot).find('tr[data-time="16:00:00"]').addClass(`slot-highlight end ${color}`).find('td').append(bgCell);
+          $(daySlot).find('tr[data-time="16:00:00"]').prev('tr').addClass(`slot-highlight end ${color}`);
           break;
       }
     // reset highlighted
@@ -1377,7 +1370,6 @@ class FullCalendar extends Component {
     var defaultDate = date;
     var firstDay = moment(date).day();
     var defaultScrollTime = moment(time).subtract(1, 'hour').format('HH:mm'); //현재시간으로부터 1시간 이전의 시간
-    var isLastTime = moment(date).subtract(2, 'hour'); //오늘로부터 1시간 이전의 시간 ( "YYYY-MM-DD" )
     var expertUiHeight = 38;
     if (location.pathname.indexOf('daily') !== -1) expertUiHeight = 0;
 
@@ -1587,8 +1579,8 @@ class FullCalendar extends Component {
           }
         }
 
-        //시간이 지난 이벤트건 혹은, 예약 신규생성 도중인 이벤트에 대한 수정 비활성화 및 스타일 클래스 적용
-        if (event.end.isBefore(isLastTime, 'hour') || _component.state.isNewOrder) {
+        //시간이 지난 이벤트 건 스타일 클래스 적용 (minute을 기준으로 설정)
+        if ( moment(event.end.format('YYYY-MM-DD HH:mm:ss')).isBefore(date, 'minute') ) {
           event.editable = false;
           $(element).addClass('disabled');
         }
@@ -1786,15 +1778,16 @@ class FullCalendar extends Component {
                 // current time setting
                 var slotTime = 'T' + $(parentElem).data('time');
                 var selectedTime = d + slotTime;
-                let mouseenteredTime = moment($(parentElem).data('time'),"hh:mm:ss");
-                let color;
+                var mouseenteredTime = moment($(parentElem).data('time'),"HH:mm:ss");
+                var addedProductTime = moment(JSON.parse(JSON.stringify(mouseenteredTime))).add(_component.state.newEventProductTime, 'minutes');
+                var color;
                 if (_component.state.newEventProduct) color = Functions.getProductColor(_component.state.newEventProduct, Products);
 
                 // current slot time display
                 if (_component.state.isNotAutoSelectTime) {
                   $(createButtonElem).find('.time').html(
                     mouseenteredTime.format("a hh:mm") + ' - ' +
-                    mouseenteredTime.add(_component.state.newEventProductTime, 'minute').format("a hh:mm")
+                    addedProductTime.format("a hh:mm")
                   );
                 } else {
                   $(createButtonElem).find('.time').html(mouseenteredTime.format("A hh:mm"));
@@ -1808,7 +1801,7 @@ class FullCalendar extends Component {
                     _component.state.isRequestReservation ? 'shc-edit' :
                     _component.state.isCreateOfftime ? 'shc-off-time' : ''
                   );
-                  let fullTimeFormat = moment(mouseenteredTime).add(_component.state.newEventProductTime, 'minutes').format('HH:mm:ss');
+                  let fullTimeFormat = addedProductTime.format('HH:mm:ss');
 
                   $('.shc').removeClass('shc');
                   let elems = $(this).parent(parentElem).nextUntil(`tr[data-time="${fullTimeFormat}"]`);
@@ -2196,7 +2189,7 @@ class FullCalendar extends Component {
         {UserCardComponent}
         {ModalConfirmComponent}
         {RenderConfirmComponent}
-        {viewview}
+        {/*viewview*/}
         {test}
       </div>
     );

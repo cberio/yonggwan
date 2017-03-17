@@ -1169,6 +1169,9 @@
 	border-color: #d2d2d2;
 }
 
+/* scrollbars plugins*/
+.nicescroll-rails.always-show {display: block !important;}
+
 .fc-agendaWeekly-view .fc-body > tr > td.fc-widget-content {
 	border: 0;
 }
