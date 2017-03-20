@@ -1359,6 +1359,8 @@ class FullCalendar extends Component {
 
   componentDidMount() {
 
+    this.props.fetchSchedulesIfNeeded(14);
+
     const _component = this;
     let { Calendar } = this.refs;
     var date  = new Date();
@@ -2204,9 +2206,15 @@ FullCalendar.defaultProps = {
 }
 
 const mapStateToProps = (state) => {
+  const { getSchedulesBySelectedShopID } = state;
+  const { isFetching, receivedAt, schedules } = getSchedulesBySelectedShopID[14] || { isFetching: true, schedules: {} };
+
   return {
     modalConfirmOptionComponent: state.modalConfirm.optionComponent,
-    requestReservation: state.notifier.requestReservation
+    requestReservation: state.notifier.requestReservation,
+    schedules,
+    isFetching,
+    receivedAt
   }
 }
 const mapDispatchToProps = (dispatch) => {
@@ -2226,7 +2234,8 @@ const mapDispatchToProps = (dispatch) => {
       actions.guider({ isGuider: true, message: message })
     ),
     loading: (condition) => dispatch(actions.loading(condition)),
-    finishRequestReservation: () => dispatch(actions.requestReservation({condition: false, requestEvent: undefined}))
+    finishRequestReservation: () => dispatch(actions.requestReservation({condition: false, requestEvent: undefined})),
+    fetchSchedulesIfNeeded: shopID => (dispatch(actions.fetchSchedulesIfNeeded(shopID)))
   }
 }
 

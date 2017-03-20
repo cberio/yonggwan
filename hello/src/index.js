@@ -6,17 +6,22 @@ import { Match, Miss } from 'react-router';
 import { BrowserRouter as Router } from 'react-router';
 import AsyncComponents from './components/asyncComponents';
 
-import { createStore } from 'redux';
+import { createStore, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
 import Reducers from './reducers';
+import thunk from 'redux-thunk';
 
 import './css/reset.css';
 import './css/index.css';
 
-const store = createStore(Reducers);
-store.subscribe(() => console.log('ㅡㅡㅡㅡㅡ store was updated ㅡㅡㅡㅡㅡ'));
+const middleware = [thunk];
+const store = createStore(
+  Reducers,
+  applyMiddleware(...middleware)
+);
+/*store.subscribe(() => console.log('ㅡㅡㅡㅡㅡ store was updated ㅡㅡㅡㅡㅡ'));
 store.subscribe(() => console.log(store.getState()));
-store.subscribe(() => console.log('ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ'));
+store.subscribe(() => console.log('ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ'));*/
 
 const NotFound = ({ location }) => (
   <div>
