@@ -5,39 +5,43 @@ import 'react-infinite-calendar/styles.min.css';
 import '../../../css/date-picker-customizing.css';
 
 export default class DatePicker extends Component {
+  componentWillUnmount () {
+    $(document).unbind('click');
+  }
   componentDidMount () {
     const _this = this;
     // ESC key 입력시 닫기
     $(document).on('keydown', function(e){
-        if (e.which === 27) {
-          _this.props.onClose();
-        }
+      if (e.which === 27) {
+        _this.props.onClose();
+        $(document).unbind('kewdown');
+      }
     });
     // 빈 영역 클릭시 닫기
-    $('.mask-transparent').bind('click', function (e){
-      if (e.target.className === 'mask-transparent') {
+    $(document).bind('click', function(e) {
+      if ($(e.target).parents('.date-picker').length < 1) {
+        e.stopPropagation();
         _this.props.onClose();
-        $('.mask-transparent').unbind();
       }
     });
     $('.Cal__Container__wrapper').append('<div class="Cal__Container__Shadow__Bottom"></div>');
-    //$('.ReactVirtualized__Grid').customScrollbar();
   }
   render () {
     let date = new Date();
     return (
-      <div className="mask-transparent">
+      <div className="">
         <InfiniteCalendar
           showHeader={false}
           showOverlay={false}
-          selectedDate={date}
+          selectedDate={this.props.selectedDate || date}
           locale={{ name: 'ko' }}
           autoFocus={true}
           width={332}
+          height={this.props.height}
           rowHeight={43}
-          className="date-picker"
+          className={`date-picker ${this.props.className}`}
           keyboardSupport={true}
-          onSelect={ (date) => this.props.onClick(date) }
+          onSelect={ (date) => this.props.onChange(date) }
           onScroll={function(scrollTop) {
           }}
           theme={{

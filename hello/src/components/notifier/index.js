@@ -89,7 +89,7 @@ class Notifier extends Component {
   }
   componentDidMount () {
     let _component = this;
-    _component.setScrolerHeight(true);    
+    _component.setScrolerHeight(true);
     $('body').addClass('opened-notifier');
   }
   componentWillUnmount() {

@@ -148,7 +148,7 @@
   position: absolute;
   top: 50px;
   left: 0;
-  width: 100%;
+  width: 415px;
   z-index: 2;
   padding: 0;
   min-width: 100%;
@@ -200,11 +200,11 @@
   font-size: 14px;
   font-family: 'notokr-light';
 }
-
 /* selectable 기능의 셀렉트 스타일 */
 .selectable .Select-clear-zone {
   display: none;
 }
+
 
 /* Searchable 기능의 셀렉트 스타일 */
 .searchable .Select-control {
@@ -346,4 +346,73 @@
 }
 .search-customer .Select-value-label .rating.BAD{
   color: #b1282f;
+}
+
+
+
+
+/* selectable user-card 슬라이더 에서의 스타일 */
+#select-slide {max-width: 320px;text-align: left;float: left;margin-right: 10px;}
+#select-slide .Select{margin-left: 23px;}
+#select-slide .Select-control{
+  position: relative;background: none;z-index: 1;border: 0;padding: 0;float: left;
+  width: auto;height: 48px;line-height: 48px;color: #FFF;font-size: 13px;font-family: 'notokr-bold';
+}
+#select-slide .Select-arrow-zone{display: none;}
+#select-slide .Select-control .Select-value{
+  letter-spacing: 0;
+  color: #fff;
+  max-width: none;
+  vertical-align: middle;
+  height: 100%;
+  line-height: inherit;
+  padding: 0;
+  position: static;
+  overflow: hidden;
+  -ms-text-overflow: auto;
+  text-overflow: auto;
+  white-space: pre-wrap;
+}
+#select-slide .Select-control .Select-value-label{
+  font-size: 13px;  
+  color: #fff;
+  opacity: .7;
+  height: auto;
+  padding-right: 10px;
+  background: url(../image/common/bullet-arrow-down-medium.png) right center no-repeat;
+}
+#select-slide .is-open .Select-control .Select-value-label{
+  background-image: url(../image/common/bullet-arrow-up-medium.png);
+}
+#select-slide:hover .Select-control .Select-value-label{
+  opacity: 1;
+}
+
+#select-slide .Select-menu-outer{
+  top: 38px;
+  border: 1px solid #111;
+  -webkit-border-radius: 7px;
+          border-radius: 7px;
+}
+#select-slide .Select-menu{
+  background: #333333;
+}
+#select-slide .Select-menu-option {
+  color: #999999;
+}
+#select-slide .Select-option{
+  font-size: 13px;
+  color: #999999;
+  height: 54px;
+  padding: 0 16px;
+  line-height: 54px;
+}
+#select-slide .Select-option .thumbnail.no-image{
+  background-color: #cccccc;
+}
+
+#select-slide .Select-option.is-selected,
+#select-slide .Select-option.is-focused{
+  color: #e5e5e5;
+  background-color: #212121;
 }
