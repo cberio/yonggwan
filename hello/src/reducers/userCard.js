@@ -1,22 +1,32 @@
 import * as types from '../actions/actionType';
 
 const initialState = {
-  defaultSlide : undefined,
-  expert: undefined,
-  userCards: undefined
+  selectedDate : undefined,
+  selectedCard : undefined,
+  selectedExpert: undefined
 };
 
 export default function userCard (state = initialState, action) {
-
-    if (action.type === types.USER_CARD) {
+  
+  switch (action.type) {
+    case types.USER_CARD_EVENT :
       return {
         ...state,
-        defaultSlide: action.options.defaultSlide,
-        expert: action.options.expert,
-        userCards: action.options.userCards
+        selectedCard: action.options
       }
-    } else {
+    case types.USER_CARD_EXPERT :
+      return {
+        ...state,
+        selectedExpert: action.options
+      }
+    case types.USER_CARD_DATE :
+      return {
+        ...state,
+        selectedDate: action.options
+      }
+
+    default:
       return state;
-    }
+  }
 
 }

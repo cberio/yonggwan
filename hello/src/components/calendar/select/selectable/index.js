@@ -25,8 +25,8 @@ const OptionComponent = React.createClass({
 				title={this.props.option.title} >
 					<div>
 						{this.props.option.picture ?
-							<span className="thumbnail"><img src={this.props.option.picture} alt={this.props.children} /></span>
-							: ""
+							<span className="thumbnail"><img src={this.props.option.picture} alt={this.props.children} /></span> :
+							<span className="thumbnail no-image"></span>
 						}
 						{this.props.children}
 					</div>
@@ -35,7 +35,20 @@ const OptionComponent = React.createClass({
 	}
 });
 
-const ValueComponent = React.createClass({
+const ValueComponentSlide = React.createClass({
+	render () {
+		console.log(this.props);
+		return (
+			<div className="Select-value">
+				<span className="Select-value-label">
+					{this.props.children}
+				</span>
+			</div>
+		);
+	}
+});
+
+const ValueComponentNewOrder = React.createClass({
 	render () {
 		return (
 			<div className="Select-value">
@@ -73,18 +86,19 @@ const Selectable = React.createClass({
 
 	render () {
 		return (
-			<div className={`Select-wrap selectable ${this.props.className}`}>
+			<div className={`Select-wrap selectable ${this.props.className}`} id={this.props.id ? this.props.id : ''}>
 				<Select
           searchable={this.props.searchable}
+					clearable={this.props.clearable}
           options={this.props.options}
           value={this.state.value}
           name={this.props.name}
 					onChange={this.setValue}
 					optionComponent={OptionComponent}
-					valueComponent={ValueComponent}
+					valueComponent={this.props.type === 'user-card' ? ValueComponentSlide : ValueComponentNewOrder}
   				placeholder={this.props.placeholder}
           arrowRenderer={this.arrowRenderer}
-					/>
+				/>
 			</div>
 		);
 	}

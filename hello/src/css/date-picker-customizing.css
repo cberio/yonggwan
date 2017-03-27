@@ -3,22 +3,43 @@
 .date-picker {
 	max-width: 332px !important;
 	width: 332px !important;
-	position: absolute;
-	left: 50%;
-	top: 90px;
 	z-index: 2;	
-	margin: 0 0 0 -166px;	
 	border-radius: 8px;
-	overflow: hidden;
 	-webkit-box-shadow: 0 7px 20px 7px rgba(0,0,0,0.25);
 	box-shadow: 0 7px 20px 7px rgba(0,0,0,0.25);
+}
+
+.date-picker.timeline-date-picker {
+	position: absolute;
+	left: 50%; top: 90px;
+	margin: 0 0 0 -166px;
+}
+.date-picker.user-card-slide-datepicker {
+    position: absolute;
+    left: 50%; top: 40px;
+    margin: 0 0 0 -166px;
+}
+.date-picker.user-card-event-datepicker {
+	position: absolute;
+	left: 30px; top: 140px;
+}
+.date-picker.user-card-event-datepicker.Cal__Container__root:after {
+	left: 70px; margin-left: 0;
+}
+
+.Cal__Container__root:after{
+	width: 16px; height: 6px; display: block; content: '';
+	position: absolute; top: -5px; left: 50%; margin-left: -8px;
+	background: url(../image/common/bullet-arrow-top.png) center center no-repeat;
 }
 
 .Cal__Container__wrapper {
 	width: 332px !important;
 	border-radius: 8px;
 	overflow: hidden;
+	text-align: left;
 }
+
 .Cal__Header__root {
 	display: none;
 }
@@ -27,10 +48,7 @@
 	font-family: 'notokr-bold';
 	background-color: #333333;
 }
-
-.Cal__Container__root .ReactVirtualized__List {
-	border-top: 1px solid #000;
-}
+.Cal__Container__root .ReactVirtualized__List {}
 
 .Cal__List__root {
 	width: 349px !important;
@@ -44,16 +62,27 @@
 	text-transform: uppercase;
 }
 .Cal__Today__root .Cal__Today__chevron {
-	
+
 }
 
 .Cal__Weekdays__root {
 	padding: 0 22px;
+	border-radius: 8px 8px 0 0;
+	box-shadow: 0 40px 70px 0 rgba(50,50,50, 1);
+}
+/* script로 초기 삽입됀 element */
+.Cal__Container__Shadow__Bottom {
+	border-radius: 8px; overflow: hidden;
+	position: absolute; left: 30px; right: 30px; bottom: 15px; content: '';
+	box-shadow: 0 0 70px 20px rgba(50,50,50, 1);
 }
 .Cal__Weekdays__day {
-	font-size: 14px;
-	color: #808080;font-family: 'notokr-medium';
+	font-size: 13px;
+	padding: 14px 0;
+	color: #808080;
+	font-family: 'notokr-medium';
 }
+
 /* 각 월 outer div */
 
 .Cal__Month__root {
@@ -83,7 +112,7 @@
 	background: none !important;
 }
 .Cal__Month__row {
-
+	cursor: default;
 }
 .Cal__Month__row:nth-child(2) {
 	box-shadow: none;
@@ -100,7 +129,7 @@
 	border: 0 !important;
 	box-shadow: none !important;
 }
-.Cal__Day__root {	
+.Cal__Day__root {
 }
 .Cal__Day__root:before {
 	display: none;
@@ -127,7 +156,7 @@
 }
 .Cal__Day__root span:not(.Cal__Day__month):hover,
 .Cal__Day__root.Cal__Day__highlighted span:not(.Cal__Day__month) {
-	background-color: #010101;	
+	background-color: #010101;
 }
 /* 다음 년도의 2018, 2019, 2020, 2021 ... 년도 span스타일*/
 .Cal__Day__root span:nth-of-type(3) {
@@ -150,14 +179,14 @@
 }
 .Cal__Day__root.Cal__Day__selected .Cal__Day__selection {
 	width: 36px;
-	height: 36px;      
+	height: 36px;
 	margin: -18px 0 0 -18px;
 }
 .Cal__Day__root.Cal__Day__selected .Cal__Day__selection .Cal__Day__month{
 	display: none;
 }
 .Cal__Day__root.Cal__Day__selected .Cal__Day__selection .Cal__Day__day {
-	font-size: inherit;		
+	font-size: inherit;
 }
 .Cal__Day__root.Cal__Day__enabled:hover {
 	position: static;

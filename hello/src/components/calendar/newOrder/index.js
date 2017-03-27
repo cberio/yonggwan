@@ -44,6 +44,10 @@ export default class NewOrder extends Component {
     this.props.setCalendarHeight(null);
   }
 
+  setNewOrderExpert (expert) {
+    this.setState({ newOrderExpert: expert });
+  }
+
   getExpertObj (id) {
     for (let i = 0; i < Experts.length; i++) {
       if (Experts[i].id === id) {
@@ -390,7 +394,7 @@ export default class NewOrder extends Component {
                       </div>
                     </div>
                   ) }
-                  <div className="user-card-service">
+                  <div className={`user-card-service${state.newOrderProduct ? ' '+ Functions.getProductColor(state.newOrderProduct, Products): ''}`}>
                     <div className="service-info">
                       <div className="lt">
                         <p className="product">
@@ -471,7 +475,7 @@ export default class NewOrder extends Component {
                 </div>
               )}
               <div className={`new-order-card ${this.props.isNotAutoSelectTime ? 'new-order-render' : this.props.isEditEvent ? 'new-order-edit' : ''} `}>
-                <div className="user-card-service">
+                <div className={`user-card-service${state.newOrderProduct ? ' '+ Functions.getProductColor(state.newOrderProduct, Products): ''}`}>
                   <div className="service-info">
                     <div className="lt">
                       <p className="product">

@@ -12,19 +12,21 @@
     "webpack-dev-server": "^1.16.2"
   },
   "dependencies": {
-    "react": "^15.4.1",
-    "react-dom": "^15.4.1",
+    "fullcalendar-scheduler": "^1.5.0",
     "jquery": "^3.1.1",
-    "redux": "^3.6.0",
-    "react-redux": "^4.4.6",
-    "react-router": "^4.0.0-alpha.6",
+    "jquery.nicescroll": "^3.6.8",
+    "moment": "^2.17.1",
+    "react": "^15.4.1",
     "react-addons-css-transition-group": "^15.4.1",
     "react-addons-update": "^15.4.1",
+    "react-dom": "^15.4.1",
     "react-infinite-calendar": "^1.2.2",
-    "fullcalendar-scheduler": "^1.5.0",
-    "moment": "^2.17.1",
+    "react-redux": "^4.4.6",
+    "react-router": "^4.0.0-alpha.6",
     "react-select": "^1.0.0-rc.2",
-    "react-slick": "^0.14.5"
+    "react-slick": "^0.14.5",
+    "redux": "^3.6.0",
+    "redux-thunk": "^2.2.0"
   },
   "scripts": {
     "start": "react-scripts start",

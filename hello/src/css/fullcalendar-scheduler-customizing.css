@@ -1,4 +1,4 @@
-				/* fullcalendar-scheduler.css 에서 수정될 부분만 적용합니다 */
+ 				/* fullcalendar-scheduler.css 에서 수정될 부분만 적용합니다 */
 /*-------------------------------------------------------------------------------------------------*/
 
 .full-calendar {
@@ -14,7 +14,16 @@
 	display: none;
 }
 .fc-scroller.fc-time-grid-container {
+	overflow-x: auto !important;
 	/*min-height: 678px;*/
+}
+.fc-scroller.fc-time-grid-container .fc-time-grid .fc-content-skeleton-clone {
+	height: 1px;
+	position: absolute;
+	z-index: 4;
+	top: 0;
+	left: 0;
+	right: 0;
 }
 .fc-scroller > .fc-day-grid,
 .fc-scroller > .fc-time-grid {
@@ -22,18 +31,42 @@
 }
 
 .fc-toolbar.fc-header-toolbar {
-	/*position: fixed;*/
-	left: 80px;
-	top: 0;
-	right: 0;
 	background-color: #FFF;
-	border-bottom: 1px solid #e6e6e6;
 	height: 52px;
 	z-index: 2;
 	margin-bottom: 0;
+	position: relative;
 }
-.fc-toolbar.fc-header-toolbar .fc-left button{
+.fc-toolbar.fc-header-toolbar .fc-right {
+	position: absolute;
+	right: 0;
+	float: none;
+}
+.fc-toolbar.fc-header-toolbar .fc-left {
+	position: absolute;
+	left: 0;
+	float: none;
+}
+.fc-toolbar.fc-header-toolbar .fc-left button:not(.fc-todayTimeline-button){
 	visibility: hidden;
+}
+.fc-toolbar.fc-header-toolbar .fc-left .fc-todayTimeline-button {
+	width: 62px;
+	height: 25px;
+	line-height: 24px;
+	border-color: #cccccc;
+	font-size: 11px;
+	font-family: 'notokr-medium';
+	letter-spacing: -0.5px;
+	color: #e60b25; 
+	margin: 14px 0 0 16px;
+	box-shadow: none;
+}
+.fc-toolbar.fc-header-toolbar .fc-left .fc-todayTimeline-button:disabled {
+	cursor: default;
+	color: #ccc;
+	background: #f5f5f5;
+	border-color: #ebebeb;
 }
 .fc-toolbar.fc-header-toolbar .fc-center {
 	position: relative;
@@ -44,7 +77,11 @@
 	color: #000;
 	line-height: 49px;
 	margin: 0 36px;
-	width: 190px;
+	width: 200px;
+}
+
+.fc-toolbar.fc-header-toolbar h2.disabled {
+	opacity: .3;
 }
 .fc-toolbar.fc-header-toolbar h2 .weekDay {
 	font-size: 16px;
@@ -53,10 +90,10 @@
 }
 .fc-toolbar.fc-header-toolbar .fc-changeDate-button {
 	position: absolute;
-	width: 190px;
+	width: 200px;
 	height: 44px;
 	top: 4px;
-	margin: 0 0 0 -95px;
+	margin: 0 0 0 -100px;
 	text-indent: -9999px;
 	overflow: hidden;
 	left: 50%;
@@ -75,40 +112,87 @@
 	margin: 0;
 	outline: none;
 	margin-top: 13px;
+	text-indent: -9999px;
+	overflow: hidden;
 	box-shadow: none;
 	background: none;
 }
-.fc-header-toolbar .fc-center button.fc-prev-button {
+.fc-header-toolbar .fc-center button:disabled {
+	opacity: .3;
+}
+.fc-header-toolbar .fc-center button.fc-prev-button,
+.fc-header-toolbar .fc-center button.fc-prevTimeline-button {
 	background: url(../image/common/calendar-controler-prev.png) 0 0 no-repeat;
 }
-.fc-header-toolbar .fc-center button.fc-next-button {
+.fc-header-toolbar .fc-center button.fc-prev-button:hover,
+.fc-header-toolbar .fc-center button.fc-prevTimeline-button:hover {
+	background: url(../image/common/calendar-controler-prev-on.png) 0 0 no-repeat;
+}
+.fc-header-toolbar .fc-center button.fc-next-button,
+.fc-header-toolbar .fc-center button.fc-nextTimeline-button {
 	background: url(../image/common/calendar-controler-next.png) 0 0 no-repeat;
+}
+.fc-header-toolbar .fc-center button.fc-next-button:hover,
+.fc-header-toolbar .fc-center button.fc-nextTimeline-button:hover {
+	background: url(../image/common/calendar-controler-next-on.png) 0 0 no-repeat;
 }
 .fc-header-toolbar .fc-center button span{
 	display: none;
 }
-.fc-day-header.fc-widget-header {
-	height: 38px;
+.fc-header-toolbar .fc-right {
+	margin: 13px 16px 0 0;
 }
-.fc-day-header.fc-widget-header.fc-today:after {
+.fc-header-toolbar .fc-right button {
+	width: 62px;
+	height: 26px;
+	text-indent: -9999px;
+	overflow: hidden;
+	box-shadow: none;
+	border: 1px solid #d9d9d9;
+	margin: 0;
+	z-index: 1;
+	border-radius: 0;
+	background: #fff url(../image/common/fc-agenda-text.png) no-repeat;
+}
+.fc-header-toolbar .fc-right button:disabled {
+	opacity: .3;
+}
+.fc-header-toolbar .fc-right button.fc-state-active {
+	background-color: #333;	
+	border: 0;
+}
+.fc-header-toolbar .fc-right button:first-of-type {
+	border-radius: 3px 0 0 3px;
+}
+.fc-header-toolbar .fc-right button:last-of-type {
+	border-radius: 0 3px 3px 0;
+}
+.fc-header-toolbar .fc-right .fc-agendaDay-button {
+	background-position: center 0;
+}
+.fc-header-toolbar .fc-right .fc-agendaDay-button.fc-state-active {
+	background-position: center -26px;
+}
+.fc-header-toolbar .fc-right .fc-agendaWeekly-button {
+	background-position: center -52px;
+}
+.fc-header-toolbar .fc-right .fc-agendaWeekly-button.fc-state-active {
+	background-position: center -78px;
+}
+
+.fc-day-header.fc-widget-header {
+	border-color: #e0e0e0;
+}
+.fc-day-header.fc-widget-header.fc-today a:after {
 	display: inline-block;
 	content:'TODAY';
 	color: #e60b25;
 	text-indent: 3px;
 }
-.fc-view-container {
-}
 .expert-ui {
 	display: none;
 	height: 40px;
 	z-index: 2;
-	left: 80px;
-	right: 0;
-	top: 52px;
-	background-color: #fff;
-	border-bottom: 1px solid #d7d7d7;
-	-webkit-box-shadow: 0 2px 3px 1px rgba(0,0,0,0.1);
-			box-shadow: 0 2px 3px 1px rgba(0,0,0,0.1);
 }
 .expert-ui .expert-inner {
 	height: 100%;
@@ -142,6 +226,7 @@
 	top : -999px;
 }
 .expert-each .expert-label{
+	position: relative;
 	font-family: 'notokr-bold';
 	padding: 0 15px 0 40px;
 	line-height: 38px;
@@ -151,13 +236,32 @@
 	height: 100%;
 	display: inline-block;
 	min-width: 50px;
-		 -o-transition: .1s background ease-out;
-	-webkit-transition: .1s background ease-out;
-			transition: .1s background ease-out;
-	background: url(../image/common/calendar-partners-label.png) 15px center no-repeat;
 }
-.expert-each .expert-input:checked + .expert-label{
-	background-image: url(../image/common/calendar-partners-label-on.png);
+.expert-each.all .expert-label {
+	padding: 0 7px 0 23px;
+}
+.expert-each .expert-label:after {
+	display: block;
+	box-sizing: border-box;
+	content: '';
+	width: 14px;
+	height: 14px;
+	border-radius: 50%;
+	background-color: #fff;
+	position: absolute; 
+	left: 18px;
+	top: 50%;
+	margin-top: -8px;
+	border: 1px solid #e9e9e9;
+		 -o-transition: .1s border ease-out;
+	-webkit-transition: .1s border ease-out;
+			transition: .1s border ease-out;
+}
+.expert-each .expert-input:checked + .expert-label:after{
+	border: 4px solid #000;
+}
+.expert-each .expert-input:disabled + .expert-label {
+	opacity: .3;
 }
 .expert-each .expert-label:hover,
 .expert-each .expert-input:focus ~ .expert-label,
@@ -258,6 +362,28 @@
 	border: 0;
 }
 
+.fc-bg-inner {
+	position: absolute;
+	left: 0; right: 0;
+	top: 0; bottom: 0;
+	background-color: #fff;	
+	border: 1px solid #e6e6e6;
+	-webkit-border-radius: 10px;
+	border-radius: 10px;
+	z-index: -1;
+}
+.fc-bg-inner:before {
+	display: block;
+	content:'';
+	width: 16px;
+	height: 9px;
+	position: absolute;
+	top: -9px;
+	left: 50%;
+	margin: 0 0 0 -8px;
+	background: url(../image/common/bullet-timeline-arrow.png) 0 0 no-repeat;
+}
+
 /* 타임라인및 슬롯 높이수정*/
 .fc-time-grid .fc-slats tr td,
 .fc-time-grid .fc-create-helper tr td {
@@ -295,7 +421,7 @@
 	overflow: visible;
     line-height: 1.5;
     border-radius: 0;
-    border-color: #555;
+    border-color: transparent transparent transparent #555;
     font-weight: normal;
     background-color: #333;
     -webkit-box-sizing: border-box;
@@ -317,8 +443,10 @@
 	-moz-box-sizing: border-box;
 	box-sizing: border-box;
 }
-.fc-event .fc-product{
+.fc-event .fc-product{	
 	line-height: 1;
+	text-overflow: ellipsis;
+	white-space: pre-wrap;
 }
 .fc-event .fc-user .fc-picture .picture{
 	background-color: rgba(0,0,0, .2);
@@ -357,7 +485,7 @@
 	position: absolute;
 	left: -2px;
 	right: 0;
-	top: -24px;
+	top: -25px;
 	z-index: 1;
 	font-family: 'notokr-bold';
 	font-size: 11px;
@@ -424,9 +552,10 @@
 	cursor: s-resize;
 }
 
-.fc-time-grid-event.fc-allow-mouse-resize .fc-resizer:after {
+.fc-time-grid-event.fc-allow-mouse-resize .fc-resizer:after,
+.fc-event.off-time.new-event .fc-resizer:after {
 	content:'';
-	width: 12px;
+	width: 16px;
 	height: 3px;
 	display: block;
 	margin: 0 auto;
@@ -434,7 +563,8 @@
 }
 
 /* colorClass 에 따른 timeline slot 텍스트 및 배경 색상 스타일 */
-.fc-event.yellow {border-color: #d9a521; background-color: rgba(250,224,187,0.7);}
+.fc-event.yellow {border-left-color: #d9a521; background-color: rgba(250,224,187,0.7);}
+.fc-event.yellow:hover {border-color: #d9a521;}
 .fc-event.yellow .fc-product,
 .fc-event.yellow .fc-time,
 .fc-event.yellow .fc-name{color: #cc8100;}
@@ -442,7 +572,8 @@
 .fc-event.yellow .fc-comment{color: #b3b08f;}
 .fc-event.yellow .fc-time-helper span{background-color: #f0b724;}
 
-.fc-event.red {border-color: #d96d4c; background-color: rgba(250,200,214,0.7);}
+.fc-event.red {border-left-color: #d96d4c; background-color: rgba(250,200,214,0.7);}
+.fc-event.red:hover {border-color: #d96d4c;}
 .fc-event.red .fc-product,
 .fc-event.red .fc-time,
 .fc-event.red .fc-name{color: #d96441;}
@@ -450,7 +581,8 @@
 .fc-event.red .fc-comment{color: #c5a9a5;}
 .fc-event.red .fc-time-helper span{background-color: #f07954;}
 
-.fc-event.green {border-color: #56b39e; background-color: rgba(199,242,234,0.7);}
+.fc-event.green {border-left-color: #56b39e; background-color: rgba(199,242,234,0.7);}
+.fc-event.green:hover {border-color: #56b39e;}
 .fc-event.green .fc-product,
 .fc-event.green .fc-time,
 .fc-event.green .fc-name{color: #1f997e;}
@@ -458,7 +590,8 @@
 .fc-event.green .fc-comment{color: #a5b7b3;}
 .fc-event.green .fc-time-helper span{background-color: #5bbda6;}
 
-.fc-event.purple {border-color: #8a62b3; background-color: rgba(243,212,250,0.7);}
+.fc-event.purple {border-left-color: #8a62b3; background-color: rgba(243,212,250,0.7);}
+.fc-event.purple:hover {border-color: #8a62b3;}
 .fc-event.purple .fc-product,
 .fc-event.purple .fc-time,
 .fc-event.purple .fc-name{color: #7435b3;}
@@ -466,7 +599,8 @@
 .fc-event.purple .fc-comment{color: #aaa1b3;}
 .fc-event.purple .fc-time-helper span{background-color: #a37acc;}
 
-.fc-event.blue {border-color: #6274b3; background-color: rgba(194,226,242,0.7);}
+.fc-event.blue {border-left-color: #6274b3; background-color: rgba(194,226,242,0.7);}
+.fc-event.blue:hover {border-color: #6274b3;}
 .fc-event.blue .fc-product,
 .fc-event.blue .fc-time,
 .fc-event.blue .fc-name{color: #3550b3;}
@@ -474,8 +608,29 @@
 .fc-event.blue .fc-comment{color: #a1a5b3;}
 .fc-event.blue .fc-time-helper span{background-color: #6f83ca;}
 
+.fc-event.fc-request.yellow {background-color: rgba(229,184,69, .7);}
+.fc-event.fc-request.red {background-color: rgba(245,151,122, .7);}
+.fc-event.fc-request.green {background-color: rgba(92,191,168, .7);}
+.fc-event.fc-request.purple {background-color: rgba(130,147,217, .7);}
+.fc-event.fc-request.blue {background-color: rgba(130,147,217, .7);}
 
-.fc-event.new-event {background: #9472b7;}
+.fc-event.off-time {
+	border-left-color: #c4c3c3;
+	font-family: 'notokr-medium';
+	background-color: rgba(229,229,229,0.5);
+}
+.fc-event.off-time:hover {border-color: #c4c3c3;}
+
+/* 신규 생성중인 이벤트 */
+.fc-event.new-event {
+	z-index: 4 !important;
+	border: 0 !important;
+	-webkit-box-shadow: 0 5px 20px 5px rgba(0, 0, 0, 0.2);
+			box-shadow: 0 5px 20px 5px rgba(0, 0, 0, 0.2);
+}
+.fc-event.new-event:not(.off-time) {
+	cursor: default;
+}
 .fc-event.new-event .fc-product,
 .fc-event.new-event .fc-time,
 .fc-event.new-event .fc-name{color: #fff;}
@@ -483,21 +638,12 @@
 .fc-event.new-event .fc-comment{color: #fff;}
 .fc-event.new-event .fc-time-helper span{display: inline-block;}
 
-.fc-event.new-event.edit {background-color: #56b39e;cursor: default;}
-.fc-event.new-event.edit .fc-time-helper span{background-color: #56b39e;}
+.fc-event.new-event.edit {cursor: default;}
+.fc-event.new-event.edit .fc-time-helper span{}
 
-.fc-event.new-event {
-	z-index: 4 !important;
-	border: 0 !important;
-	-webkit-box-shadow: 0 5px 20px 5px rgba(0, 0, 0, 0.2);
-			box-shadow: 0 5px 20px 5px rgba(0, 0, 0, 0.2);
-}
 .fc-event.new-event .fc-time-helper {
 	left: 0;
 	visibility: visible;	
-}
-.fc-event.new-event .fc-time-helper span {
-	background-color: #9472b7;
 }
 .fc-event.new-event:not(.off-time):not(.fc-helper) .fc-content:after {
 	display: block;content:"";width: 200%;height: 100%;z-index: 0;position: absolute;left: 0;top: 0;right: 0;bottom: 0;
@@ -511,10 +657,6 @@
 	display: none;
 }
 
-.fc-event.off-time {
-	border-color: #c4c3c3;font-family: 'notokr-medium';
-	background-color: rgba(229,229,229,0.5);
-}
 .fc-event.off-time:not(.new-event):not(.fc-helper) .fc-content:after {
 	display: block;content:'';width: 200%;height: 100%;position: absolute;left: 0; top: 0;z-index: -1;
 	background: repeating-linear-gradient(-45deg, #fefefe, #fefefe 2px, transparent 2px, transparent 4px);
@@ -528,9 +670,30 @@
 .fc-event.off-time .fc-product {font-family: 'notokr-medium' !important;}
 .fc-event.off-time .fc-time-helper span{background-color: #999;}
 
+/* 예약요청카드*/
+.fc-event.fc-request:not(:hover) { border-left: 1px solid transparent; }
+.fc-event.fc-request:hover { border-width: 1px !important; }
+.fc-event.fc-request .fc-product,
+.fc-event.fc-request .fc-time,
+.fc-event.fc-request .fc-name,
+.fc-event.fc-request .fc-service-time,
+.fc-event.fc-request .fc-comment{color: #fff;}
+.fc-event.fc-request .fc-service-time,
+.fc-event.fc-request .fc-comment{opacity: .7;}
+
+.fc-event.fc-request:not(.fc-helper) .fc-content:after {
+	display: block;content:'';width: 200%;height: 100%;position: absolute;left: 0; top: 0;z-index: -1;
+	background: repeating-linear-gradient(-45deg, #000000, #000000 2px, transparent 2px, transparent 4px);
+    animation: roll 15s linear infinite; opacity: .04;
+}
+
 
 /* 시간이 지난 slot style*/
-.fc-event.disabled:not(.new-event){opacity: .4;cursor: default;border-color: transparent;}
+.fc-agendaWeekly-view .fc-event.disabled:not(.new-event):not(.fc-request):hover{border-left-width: 1px;padding-left: 1px;}
+.fc-agendaDay-view    .fc-event.disabled:not(.new-event):not(.fc-request):hover{border-left-width: 1px;padding-left: 2px;}
+.fc-event.disabled {cursor: default;}
+.fc-event.disabled:not(.new-event):not(:hover) {border-color: transparent;}
+.fc-event.disabled:not(.new-event) .fc-content {opacity: .5;}
 
 /* off time slot bg animation*/
 @-moz-keyframes roll {
@@ -576,22 +739,33 @@
 	display: none;
 }
 
-.fc-event.fc-helper.yellow 	{background-color: #d9a521;}
-.fc-event.fc-helper.red 	{background-color: #d96d4c;}
-.fc-event.fc-helper.green 	{background-color: #56b29e;}
-.fc-event.fc-helper.purple 	{background-color: #8f6bb2;}
-.fc-event.fc-helper.blue 	{background-color: #6274b2;}
+.fc-event.fc-helper.yellow,
+.fc-event.new-event.yellow 	{background-color: #d9a521;}
+.fc-event.fc-helper.red,
+.fc-event.new-event.red 	{background-color: #d96d4c;}
+.fc-event.fc-helper.green,
+.fc-event.new-event.green 	{background-color: #56b29e;}
+.fc-event.fc-helper.purple,
+.fc-event.new-event.purple 	{background-color: #8f6bb2;}
+.fc-event.fc-helper.blue,
+.fc-event.new-event.blue 	{background-color: #6274b2;}
 
 .fc-event.off-time.new-event,
 .fc-event.off-time.fc-helper {background-color: #808080;}
+
 .fc-event.off-time.new-event .fc-content *,
 .fc-event.off-time.fc-helper .fc-content * {color: #fff !important;}
 .fc-event.off-time.new-event:after,
 .fc-event.off-time.fc-helper:after{opacity: .15;}
 
+.fc-event.off-time.new-event .fc-resizer {	
+	left: 60px; right: 60px; bottom: 0; height: 10px;
+    overflow: hidden; line-height: 10px; text-align: center;
+}
 .fc-event.off-time.new-event .fc-resizer:after,
 .fc-event.off-time.fc-helper .fc-resizer:after{background-image: url('../image/common/resize-controler-white.png');}
 
+.fc-event.off-time.new-event .fc-ui {display: block;}
 .fc-event.off-time.fc-helper .fc-ui .fc-ui-delete,
 .fc-event.off-time.new-event .fc-ui .fc-ui-delete {
 	background-image: url(../image/common/slot-ui-delete-white.png);
@@ -706,15 +880,9 @@
 }
 
 /* 예약날짜 선택하는 단계일시 */
-.new-order-render .user-card-service{
-	background-color: #8f6bb3;
-	border: 1px solid #845bac;
-}
+.new-order-render .user-card-service{}
 /* 예약수정 시 */
-.new-order-edit .user-card-service{
-	background-color: #56b39e;
-	border: 1px solid #50a692;
-}
+.new-order-edit .user-card-service{}
 
 .new-order{width: 464px;margin: 0 auto;}
 .new-order-inner {padding-bottom: 32px;}
@@ -725,7 +893,13 @@
 .new-order-wrap .has-expert .label{font-size: 24px;color: #666666;letter-spacing: -0.2px;display: inline-block;vertical-align: middle;text-shadow: 0 1px 0 #fff;}
 .new-order .service-info:after{display: block;clear: both;content:'';}
 
-.step-2 .new-order .user-card-service{background-color: #8f6bb3;}
+.step-2 .new-order .user-card-service{}
+/* 상품별 카드 색상*/
+.user-card-service.red {background-color: #d96d4c; border-color: #d65d38;}
+.user-card-service.blue {background-color: #6274b3; border-color: #4461c6;}
+.user-card-service.green {background-color: #50a692; border-color: #269d81;}
+.user-card-service.yellow {background-color: #d9a521; border-color: #be8b0a;}
+.user-card-service.purple {background-color: #8f6bb3; border-color: #8a4dc8;}
 
 .new-order .service-input-wrap{min-height: 118px;background-color: #fff;}
 .new-order .service-input{padding: 30px 24px;}
@@ -1013,7 +1187,6 @@
 	display: none !important;
 }
 
-
 /*																					*/
 /*ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ [ -이하- '주 단위 훑어보기' 모드에 적용돼는 Styles ] ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ*/
 /*																					*/
@@ -1021,9 +1194,13 @@
 .expert-ui.expert-weekly {
 	height: 38px;
 	text-align: center;
+	background-color: #fff;	
+	border-bottom: 1px solid #d7d7d7;
+	-webkit-box-shadow: 0 2px 3px 1px rgba(0,0,0,0.1);
+			box-shadow: 0 2px 3px 1px rgba(0,0,0,0.1);
 }
-.expert-ui.expert-weekly .expert label {
-	line-height: 38px;
+.expert-ui.expert-weekly .expert-label {
+	line-height: 38px !important;
 }
 .expert-ui.expert-weekly .expert-each{
 	display: inline-block;
@@ -1032,9 +1209,9 @@
 
 
 .fc-agendaWeekly-view{
-	/*transition: .25s all cubic-bezier(0.42, 0.9, 0.76, 1);*/
 	opacity: 1;
 }
+
 
 .fc-agendaWeekly-view.prev {
 	opacity: .2;
@@ -1049,6 +1226,9 @@
 	border-left: 0 !important;
     border-right: 0 !important;
 }
+.fc-agendaWeekly-view .fc-bg td.fc-mon {
+	border-left: 1px solid #e6e6e6 !important;
+}
 
 #weekly .fc-toolbar.fc-header-toolbar {
 	background-color: #fafafa;
@@ -1057,66 +1237,107 @@
 	display: none;
 }
 
-.fc-agendaWeekly-view .fc-head-container {
-	border-top: 0 !important;
-	/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#fafafa+0,e5e5e5+100 */
-	background: rgb(250,250,250); /* Old browsers */
-	background: -moz-linear-gradient(top,  rgba(250,250,250,1) 0%, rgba(229,229,229,1) 100%); /* FF3.6-15 */
-	background: -webkit-linear-gradient(top,  rgba(250,250,250,1) 0%,rgba(229,229,229,1) 100%); /* Chrome10-25,Safari5.1-6 */
-	background: linear-gradient(to bottom,  rgba(250,250,250,1) 0%,rgba(229,229,229,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fafafa', endColorstr='#e5e5e5',GradientType=0 ); /* IE6-9 */
-}
-
-.fc-agendaWeekly-view .fc-widget-header {
+.fc-agendaWeekly-view td.fc-head-container {	
+	width: 100%;	
 	font-size: 11px;
 	font-family: 'notokr-bold';
 	color: #999999;
 	height: 32px;
 	line-height: 32px;
-	border-color: #d2d2d2;
+	border: 0;
+	border-top: 1px solid #e6e6e6;
+}
+.fc-agendaWeekly-view td.fc-widget-header .fc-row {
+	height: 100%;
+	position: relative;
+	padding-right: 0 !important;	
+	padding-bottom: 0 !important; 
+	border-right: 0;
+	border-color: #d2d2d2; 
+	/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#fafafa+0,e5e5e5+100 */
+	background: rgb(250,250,250); /* Old browsers */
+	background: -moz-linear-gradient(top,  rgba(250,250,250,1) 0%, rgba(229,229,229,1) 100%); /* FF3.6-15 */
+	background: -webkit-linear-gradient(top,  rgba(250,250,250,1) 0%,rgba(229,229,229,1) 100%); /* Chrome10-25,Safari5.1-6 */
+	background: linear-gradient(to bottom,  rgba(250,250,250,1) 0%,rgba(229,229,229,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fafafa', endColorstr='#e6e6e6',GradientType=0 ); /* IE6-9 */
+}
+.fc-agendaWeekly-view td.fc-widget-header .fc-row > table {
+	width: 400%;
 }
 .fc-agendaWeekly-view .fc-widget-header.fc-today {
 	color: #000;
 }
 .fc-agendaWeekly-view .fc-widget-header a {
-	display: block;
+	    -ms-user-select: none; 
+  -moz-user-select: -moz-none;
+	 -khtml-user-select: none;
+	-webkit-user-select: none;
+			user-select: none;
 }
 .fc-agendaWeekly-view .fc-widget-header a:hover,
 .fc-agendaWeekly-view .fc-widget-header a:focus {
-	text-decoration: none;
+	text-decoration: underline;
 	color: #000;
 }
+
 .fc-agendaWeekly-view .fc-day-header.fc-widget-header th {
 	border-color: #d2d2d2;
 }
 
+/* scrollbars plugins*/
+.nicescroll-rails.fc-controler {display: block !important; height: 6px !important;}
+.nicescroll-rails.fc-controler .nicescroll-cursors{top: 1px !important;}
+
+
+.fc-agendaWeekly-view .fc-body > tr > td.fc-widget-content {
+	border: 0;
+}
 .fc-agendaWeekly-view .fc-event-container {
 	margin: 0 !important;
 }
-
 .fc-agendaWeekly-view .fc-scroller.fc-time-grid-container {
 	background-color: #fff;
 }
 .fc-agendaWeekly-view .fc-time-grid table {
 	border-top: 0;
 }
-.fc-agendaWeekly-view .fc-time-grid .fc-slats tr:first-of-type td:last-of-type {
-	border-top: 1px solid #e6e6e6 !important;
+.fc-agendaWeekly-view .fc-slats tr:first-of-type td:last-of-type {
+	/*border-top: 1px solid #e6e6e6 !important;*/
 }
 .fc-agendaWeekly-view .fc-time-grid {
-	margin-top: 28px;
+	width: 400%;
+	margin-top: 10px;
 }
-.fc-agendaWeekly-view .fc-time-grid > .fc-bg {
+.fc-agendaWeekly-view .fc-time-grid .fc-bg {
 	z-index: 3;
 }
-/*.fc-agendaWeekly-view .fc-time-grid > .fc-bg.create-order-overlap {
+.fc-agendaWeekly-view .fc-time-grid .fc-bg .fc-bg-inner {
+	display: none;
+}
+.fc-agendaWeekly-view .fc-time-grid > .fc-bg.create-order-overlap {
 	z-index: 4;
-}*/
+}
+.fc-agendaWeekly-view .fc-slats-clone {
+	position: absolute; left: 0; top: 0;
+	width: 39px; z-index: 4; background-color: #fff;
+}
+.fc-agendaWeekly-view .fc-slats 	  .fc-axis.fc-time {visibility: hidden;}
+.fc-agendaWeekly-view .fc-slats-clone .fc-axis.fc-time {visibility: visible;}
+
+.fc-agendaWeekly-view .fc-slats-clone td {
+	border-top: 1px solid transparent !important;
+	border-color: transparent;
+}
+.fc-agendaWeekly-view .fc-slats-clone .fc-slot {
+	display: none;
+}
+
+
 
 .fc-agendaWeekly-view .fc-create-helper {
 	top: -1px;
 }
-.fc-agendaWeekly-view .fc-time-grid .fc-slats tr td {
+.fc-agendaWeekly-view .fc-slats tr td {
 	height: 27px;
 }
 .fc-agendaWeekly-view .fc-time-grid .fc-create-helper tr td {
@@ -1129,6 +1350,7 @@
 	width: auto;
 	left: 11px;
 	right: 11px;
+	z-index: 3;
 	top: 0;
 	bottom: 0;	
 	margin: 0 !important;
@@ -1141,6 +1363,12 @@
 	box-shadow: 0 28px 0 rgba(217,217,217,0.7);
 	margin: 0;
 	height: 28px;
+}
+.fc-agendaWeekly-view .create-order-wrap.timeline.edit .create-order-inner,
+.fc-agendaWeekly-view .create-order-wrap.timeline.has-card .create-order-inner,
+.fc-agendaWeekly-view .create-order-wrap.timeline.off-time .create-order-inner {
+	box-shadow: none;
+	background: none;
 }
 .fc-agendaWeekly-view .create-order-wrap.timeline .create-order-slot .create-button {
 	width: 100%;
@@ -1196,10 +1424,12 @@
  주단위 타임라인에서 시간지정하지 않은 채 예약 슬롯을 생성할 경우 및
  주단위 타임라인에서 예약변경을 할 경우 버튼 스타일
  */
-.fc-agendaWeekly-view .create-order-wrap.has-card,
+/*.fc-agendaWeekly-view .create-order-wrap.has-card,
 .fc-agendaWeekly-view .create-order-wrap.edit{
 	box-shadow: 0 10px 20px 0 rgba(0,0,0, 0.15);
-}
+}*/
+
+
 .fc-agendaWeekly-view .create-order-wrap.has-card .create-order-slot .create-button span,
 .fc-agendaWeekly-view .create-order-wrap.edit .create-order-slot .create-button span{
 	font-family: 'notokr-light';font-size: 28px;background: none;
@@ -1208,23 +1438,20 @@
 			box-shadow: none;
 }
 
-.fc-agendaWeekly-view .create-order-wrap.has-card .create-order-slot{background-color: #bb97d8;}
-.fc-agendaWeekly-view .create-order-wrap.edit .create-order-slot{background-color: #7fccbb;}
 
-.fc-agendaWeekly-view .create-order-wrap.has-card .create-order-slot .create-button .time{
-	background-color: #a37acc; left: -1px;
-	border-bottom: 1px solid #d0bdd4;
-}
+.fc-agendaWeekly-view .create-order-wrap.has-card .create-order-slot .create-button .time,
 .fc-agendaWeekly-view .create-order-wrap.edit .create-order-slot .create-button .time{
-	background-color: #5bbca5;left: -1px;
-	border-bottom: 1px solid #b9d2ce;
+	left: -1px;
+	background-color: #ccc;
+	border-bottom: 1px solid rgba(255,255,255, .5);
+	box-shadow: 0 15px 10px rgba(0,0,0, .1)
 }
 
 
 /* slot style*/
 .fc-agendaWeekly-view .fc-event {
   margin: 0 10px;
-  border-width: 0 0 0 2px;
+  border-width: 1px 1px 1px 2px;
 }
 .fc-agendaWeekly-view .fc-event .fc-content{
   font-family: 'notokr-medium';
@@ -1271,8 +1498,13 @@
   display: inline-block;
   vertical-align: middle;
 }
-.fc-agendaWeekly-view .fc-ui {
+
+.fc-agendaWeekly-view .fc-event .fc-ui {
 	display: none !important;
+}
+.fc-agendaWeekly-view .fc-event.fc-request .fc-type-icon {
+	width: 14px; height: 14px; text-indent: -9999px; overflow: hidden;
+	float: right; background: url(../image/common/icon-request.png) center center no-repeat;
 }
 
 .fc-agendaWeekly-view .fc-time-grid-event.fc-allow-mouse-resize .fc-resizer {
@@ -1291,6 +1523,9 @@
 .fc-agendaWeekly-view .fc-event.green .fc-name {color: #a5b7b3;}
 .fc-agendaWeekly-view .fc-event.purple .fc-name {color: #aaa1b3;}
 .fc-agendaWeekly-view .fc-event.blue .fc-name {color: #a1a5b3;}
+
+/* 주단위 예약 요청 이벤트 스타일*/
+.fc-agendaWeekly-view .fc-event.fc-request .fc-user .fc-name {color: rgba(255,255,255, .7);}
 
 /* 주단위 에서의 예약생성단계 및 예약변경단계의 예약카드 스타일 */
 .fc-agendaWeekly-view .fc-event.new-event .fc-service-time,
@@ -1325,38 +1560,27 @@
 	margin: 0;
 }
 .fc-agendaWeekly-view .fc-now-indicator-line {
- 	margin-left: 48px;
+ 	margin-left: 50px;
 }
-
-
-.controler{
-	position: fixed;
-	left: 68px;
-	cursor: pointer; /* ms */
-	cursor: col-resize; 	 /* active : grabbing */
-	top: 90px;
-	right: 0;
-	height: 32px;
-	opacity: 1;
-	z-index: 1;
-}
-.controler:active,
-.controler:focus{
-	cursor: pointer; /* ms */
-	cursor: col-resize;
-}
-
 
 
 /*																					*/
-/*ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ [ -이하- '일 단위 타임라인' 모드에 적용돼는 Styles ] ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ*/
+/*ㅡㅡㅡㅡㅡㅡㅡ [ -이하- '일 단위 타임라인' 모드에 적용돼는 Styles ] ㅡㅡㅡㅡㅡㅡㅡ*/
 /*																					*/
-.expert-ui.expert-daily {
-	background-color: #f7f7f7;
+.expert-ui.expert-daily {}
+
+/* 다중 타임라인을 렌더링했을경우 스타일 */
+.multi-experts .fc-agendaDay-view .fc-time-grid > *{
+	margin-right: 0;
 }
-.expert-ui.expert-daily .expert-inner {
-	border-top: 1px solid #fff;
+.multi-experts .fc-agendaDay-view .fc-head-container {
+	padding-right: 0;
 }
+
+#daily .fc-view-container {
+	overflow: auto;
+}
+
 .fc-agendaDay-view .fc-head {
 	/*display: none;*/
 }
@@ -1371,20 +1595,39 @@
 	height: 36px;
 	line-height: 36px;
 }
-
+.fc-agendaDay-view .fc-head-container th.fc-resource-cell-unselected {
+	width: auto;
+	border-right-color: transparent;
+}
+.fc-agendaDay-view .fc-head-container th .expert-each.all,
+.fc-agendaDay-view .fc-head-container th.fc-resource-cell .expert-each {
+	float: none;
+}
+.fc-agendaDay-view .fc-head-container .fc-row.fc-widget-header {
+	border-top: 1px solid #fff;
+}
+.fc-agendaDay-view .fc-time-grid-container {
+}
+.fc-agendaDay-view .fc-time-grid .fc-bg table {
+	/*border-top: 1px solid;*/
+}
 .fc-agendaDay-view .fc-time-grid .fc-slats {
 	z-index: 0;
 }
-/*.fc-agendaDay-view .fc-time-grid .fc-slats.create-order-overlap {
+.fc-agendaDay-view .fc-time-grid .fc-slats-clone {	
+	width: 50px; position: absolute; 
+	left: 0; top: 0; padding-top: 35px;
+	background: #f2f2f2; z-index: 4;
+}
+.fc-agendaDay-view .fc-time-grid .fc-slats.create-order-overlap {
 	z-index: 4;
-}*/
-
-
-.fc-agendaDay-view .fc-head-container .fc-axis {
-	border: 0 !important;
 }
 
-.fc-agendaDay-view .fc-head-container .fc-axis,
+.fc-agendaDay-view .fc-head-container .fc-axis {
+	width: 80px !important;
+	border: 0 !important;
+	padding: 0;
+}
 .fc-agendaDay-view .fc-time-grid .fc-axis {
 	width: 42px !important;
 	padding-right: 4px;
@@ -1392,7 +1635,9 @@
 .fc-agendaDay-view .fc-body > tr > .fc-widget-content {border-top: 0;}
 .fc-agendaDay-view .fc-event-container{margin: 0 30px !important;}
 .fc-agendaDay-view .fc-widget-content{border-bottom: 0;position: relative;}
-.fc-agendaDay-view .fc-time-grid .fc-content-skeleton {top: 35px;}
+.fc-agendaDay-view .fc-time-grid .fc-content-skeleton {}
+.fc-agendaDay-view .fc-time-grid .fc-content-skeleton,
+.fc-agendaDay-view .fc-time-grid .fc-content-skeleton-clone {top: 35px !important;}
 .fc-agendaDay-view .fc-time-grid .fc-slats .fc-minor td {
 	border-style: dashed;
 	vertical-align: middle;
@@ -1404,13 +1649,12 @@
 	background-color: transparent;
 }
 .fc-agendaDay-view .fc-time-grid > .fc-bg {
-	border-right: 1px solid #e6e6e6;
 	border-radius: 10px;
 	background: none;
 }
 
-.fc-agendaDay-view .fc-scroller > .fc-day-grid,
-.fc-agendaDay-view .fc-scroller > .fc-time-grid {
+.fc-agendaDay-view .fc-scroller .fc-day-grid,
+.fc-agendaDay-view .fc-scroller .fc-time-grid {
 	margin-top: 15px;
 	padding-top: 35px;
 }
@@ -1419,30 +1663,21 @@
 	border-right: 0 !important;
 }
 .fc-agendaDay-view .fc-time-grid .fc-bg .fc-day {
-	background: #fff;
-	border: 1px solid #e6e6e6;
 	height: 100%;
-	-webkit-border-radius: 10px;
-	border-radius: 10px;
 	position: relative;
+	border: 0;
 }
 
-.fc-agendaDay-view .fc-time-grid .fc-bg .fc-day:before{
-	display: block;
-	content:'';
-	width: 16px;
-	height: 9px;
-	position: absolute;
-	top: -8px;
-	left: 50%;
-	margin: 0 0 0 -8px;
-	background: url(../image/common/bullet-timeline-arrow.png) 0 0 no-repeat;
-}
+
 .fc-agendaDay-view .fc-time-grid .fc-slats tr:first-child td{vertical-align: top;}
 .fc-agendaDay-view .fc-time-grid .fc-slats tr:first-child td:last-child:before{
 	display: block;
 	content:'';
 	border-top: 1px solid #e6e6e6;
+}
+
+.fc-agendaDay-view .fc-now-indicator-line {
+ 	margin-left: 48px;
 }
 
 .fc-agendaDay-view .fc-helper {
@@ -1452,10 +1687,10 @@
 /* slot style */
 .fc-agendaDay-view .fc-event {
 	width: 100%;
-	max-width: 600px;
+	max-width: 480px;
 	margin: 0.5px auto;
 	border-style: solid;
-	border-width: 0 0 0 4px;
+	border-width: 1px 1px 1px 3px;
 }
 .fc-agendaDay-view .fc-event .fc-time-helper {
 	display: none;
@@ -1537,8 +1772,14 @@
   line-height: 1.35;
 }
 
+.fc-agendaDay-view .fc-event.fc-request .fc-type-icon {
+	font-size: 10px; letter-spacing: -0.6px; color: #fff; font-family: 'notokr-bold';
+	line-height: 16px;height: 16px; padding: 0 5px;	margin-right: 5px; float: left; 
+	background-color: rgba(0,0,0, .2);
+}
+
 /* 20분 이하 슬롯 스타일 */
-.fc-agendaDay-view .fc-event.fc-short:not(.off-time):hover{
+.fc-agendaDay-view .fc-event.fc-short:not(.off-time):not(.no-expand):hover{
 	margin-bottom: -10px;
 }
 .fc-agendaDay-view .fc-event.fc-short .fc-content {
@@ -1591,15 +1832,15 @@
 	display: none;
 	margin: 0 30px;
 	width: 100%;
-	max-width: 660px;
+	max-width: 540px;
 	transform: translateX(-50%);
 	margin: auto;
 }
 .create-order-wrap.timeline .create-order-inner {
 	margin: 0 30px;
 	height: 36px;
+	background-color: rgba(0,0,0,0.05);
 	box-shadow: 0 36px 0 rgba(0,0,0,0.05);
-	background-color: rgba(0,0,0,0.05);	
 }
 .create-order-wrap.timeline .create-order-slot {
 	height: 100%;
@@ -1660,32 +1901,34 @@
 @media screen and (max-width: 1439px) {
 	.fc-toolbar.fc-header-toolbar {
 		height: 46px;
-		left: 68px;
 	}
 	.fc-toolbar.fc-header-toolbar h2 {
 		font-size: 18px;
 		line-height: 42px;
-	}
-	.fc-toolbar .fc-agendaDay-button,
-	.fc-toolbar .fc-agendaWeekly-button{
-		width: 68px;
-	}
+	}	
 	.fc-header-toolbar .fc-center button {
 		margin-top: 8px;
+	}
+	.fc-header-toolbar .fc-right {
+		margin-top: 10px;
 	}
 	.fc-toolbar.fc-header-toolbar .fc-changeDate-button {
 		height: 40px;
 		top: 3px;
 		background-position: center 33px;
-	}
-	.expert-ui {
-		height: 30px;
-		top: 46px;
-		left: 68px;
+	}	
+	.fc-toolbar.fc-header-toolbar .fc-left .fc-todayTimeline-button {
+		margin-top: 10px;
 	}
 	.expert-each .expert-label{
 		padding: 0 10px 0 35px;
-		line-height: 30px;
+		line-height: 36px;
+	}
+	.expert-each .expert-label:after {
+		left: 15px;
+	}
+	.expert-weekly .expert-each .expert-label:after {
+		margin-top: -7px;
 	}
 	.fc-agendaDay-view .fc-time-grid .fc-slats td,
 	.fc-agendaDay-view .fc-time-grid .fc-create-helper td {
@@ -1729,7 +1972,7 @@
 	}
 
 	/* 20분 이하 슬롯 스타일 */
-	.fc-agendaDay-view .fc-event.fc-short:not(.off-time):hover{
+	.fc-agendaDay-view .fc-event.fc-short:not(.no-expand):hover{
 		margin-bottom: -22px;
 	}
 	
@@ -1761,14 +2004,18 @@
 	.fc-agendaWeekly-view .create-order-wrap.timeline .create-order-ui-inner {
 		padding-top: 23px;
 	}
-	.fc-agendaWeekly-view .fc-time-grid .fc-slats tr td{
+	.fc-agendaWeekly-view .fc-slats tr td{
 		height: 22px;
 	}
 	.fc-agendaWeekly-view .fc-time-grid .fc-create-helper tr td {
 		height: 23px;
 	}
-	.fc-agendaWeekly-view .fc-bg tr.slot-highlight-cell td:after{
+	.fc-agendaWeekly-view .fc-bg tr.shc td:after{
 		margin: 0 6px !important;
+	}
+
+	.fc-agendaDay-view .fc-head-container th {
+		height: 30px;
 	}
 }
 /* // Media END */
@@ -1785,16 +2032,63 @@
 	display: block;;
 	height: 100%;
 	margin: 0 10px;
-	background-color: #f2dcf7;
-	border-left: 1px solid #9775b8;
-	border-right: 1px solid #9775b8;
+	background-color: #EEE;
+	border-left: 1px solid #777;
+	border-right: 1px solid #777;
 }
 .fc-agendaWeekly-view .fc-bg tr.slot-highlight.start td .bg-cell {
-	box-shadow: 0 1px 0 0 #9775b8 inset;
+	box-shadow: 0 1px 0 0 #777 inset;
 }
 .fc-agendaWeekly-view .fc-bg tr.slot-highlight.end td .bg-cell {
-	box-shadow: 0 1px 0 0 #9775b8;
+	box-shadow: 0 1px 0 0 #777;
 }
+
+/* 하이라이팅 셀-1 상품별 색상 */
+.fc-agendaWeekly-view .create-order-wrap.blue,
+.fc-agendaWeekly-view .fc-bg tr.shc.shc-blue td:after { background-color: rgba(98,116,179, .7); }
+.fc-agendaWeekly-view .create-order-wrap.red,
+.fc-agendaWeekly-view .fc-bg tr.shc.shc-red td:after { background-color: rgba(239,121,84, .7); }
+.fc-agendaWeekly-view .create-order-wrap.yellow,
+.fc-agendaWeekly-view .fc-bg tr.shc.shc-yellow td:after { background-color: rgba(240,183,36, .7); }
+.fc-agendaWeekly-view .create-order-wrap.green,
+.fc-agendaWeekly-view .fc-bg tr.shc.shc-green td:after { background-color: rgba(92,191,168, .7); }
+.fc-agendaWeekly-view .create-order-wrap.purple,
+.fc-agendaWeekly-view .fc-bg tr.shc.shc-purple td:after { background-color: rgba(163,122,204, .7); }
+
+.fc-agendaWeekly-view .create-order-wrap.blue .create-order-slot .create-button .time{ background-color: #6f82ca; }
+.fc-agendaWeekly-view .create-order-wrap.red .create-order-slot .create-button .time{ background-color: #ef7954; }
+.fc-agendaWeekly-view .create-order-wrap.yellow .create-order-slot .create-button .time{ background-color: #eeb524; }
+.fc-agendaWeekly-view .create-order-wrap.green .create-order-slot .create-button .time{ background-color: #5cbfa8; }
+.fc-agendaWeekly-view .create-order-wrap.purple .create-order-slot .create-button .time{ background-color: #a37acc; }
+
+.fc-agendaWeekly-view .create-order-wrap.edit .create-order-slot .create-button .time{}
+
+/* 바인딩된 타임라인내 예약생성버튼 상품별 색상 */
+
+.fc-agendaWeekly-view .fc-bg tr.slot-highlight.blue td .bg-cell { background-color: #c2e2f2; border-color: #6b7bb3;}
+.fc-agendaWeekly-view .fc-bg tr.slot-highlight.blue.start td .bg-cell { box-shadow: 0 1px 0 0 #6b7bb3 inset; }
+.fc-agendaWeekly-view .fc-bg tr.slot-highlight.blue.end td .bg-cell { box-shadow: 0 1px 0 0 #6b7bb3; }
+
+.fc-agendaWeekly-view .fc-bg tr.slot-highlight.red td .bg-cell { background-color: #fac8d6; border-color: #d97759;}
+.fc-agendaWeekly-view .fc-bg tr.slot-highlight.red.start td .bg-cell { box-shadow: 0 1px 0 0 #d97759 inset; }
+.fc-agendaWeekly-view .fc-bg tr.slot-highlight.red.end td .bg-cell { box-shadow: 0 1px 0 0 #d97759; }
+
+.fc-agendaWeekly-view .fc-bg tr.slot-highlight.yellow td .bg-cell { background-color: #fae0bb; border-color: #d9a521;}
+.fc-agendaWeekly-view .fc-bg tr.slot-highlight.yellow.start td .bg-cell { box-shadow: 0 1px 0 0 #d9a521 inset; }
+.fc-agendaWeekly-view .fc-bg tr.slot-highlight.yellow.end td .bg-cell { box-shadow: 0 1px 0 0 #d9a521; }
+
+.fc-agendaWeekly-view .fc-bg tr.slot-highlight.green td .bg-cell { background-color: #c7f2ea; border-color: #50a692;}
+.fc-agendaWeekly-view .fc-bg tr.slot-highlight.green.start td .bg-cell { box-shadow: 0 1px 0 0 #50a692 inset; }
+.fc-agendaWeekly-view .fc-bg tr.slot-highlight.green.end td .bg-cell { box-shadow: 0 1px 0 0 #50a692; }
+
+.fc-agendaWeekly-view .fc-bg tr.slot-highlight.purple td .bg-cell { background-color: #f3d4fa; border-color: #8f6bb3;}
+.fc-agendaWeekly-view .fc-bg tr.slot-highlight.purple.start td .bg-cell { box-shadow: 0 1px 0 0 #8f6bb3 inset; }
+.fc-agendaWeekly-view .fc-bg tr.slot-highlight.purple.end td .bg-cell { box-shadow: 0 1px 0 0 #8f6bb3; }
+
+
+.fc-agendaWeekly-view .create-order-wrap.has-card .create-order-slot {}
+.fc-agendaWeekly-view .create-order-wrap.edit .create-order-slot {}
+
 
 /* OFF 타임의 별도 색상 */
 .fc-agendaWeekly-view .fc-bg tr.slot-highlight.off-time td .bg-cell{
@@ -1810,12 +2104,7 @@
 	box-shadow: 0 1px 0 0 #858585 !important;
 }
 /* 예약수정 별도 색상 */
-.fc-agendaWeekly-view .fc-bg tr.slot-highlight.edit td .bg-cell{
-	background-color: #d7f6f0;
-	border-color: #62b7a5 !important;
-	border-left-color: #62b7a5 !important;
-	border-right-color: #62b7a5 !important;
-}
+
 .fc-agendaWeekly-view .fc-bg tr.slot-highlight.edit.start td .bg-cell{
 	box-shadow: 0 1px 0 0 #62b7a5 inset !important;
 }
@@ -1824,18 +2113,19 @@
 }
 
 /* 주단위 예약카드 생성 시 마우스오버 영역 하이라이트 슬롯 스타일 */
-.fc-agendaWeekly-view .fc-bg tr.slot-highlight-cell td:after{
+.fc-agendaWeekly-view .fc-bg tr.shc td:after{
 	margin: 0 11px;height: 100%;
-	background-color: #bb97d8;
+	background-color: #c9c9c9;
 	display: block;content:'';
 	position: absolute;
 	top: 0; right: 0; left: 0; bottom: 0;
-	z-index: 2;
-	box-shadow: 0 10px 20px 0 rgba(0,0,0, 0.15);
+	z-index: 2;	
 }
-.fc-agendaWeekly-view .fc-bg tr.slot-highlight-cell.edit td:after{	
-	background-color: #7fccbb;
+.fc-agendaWeekly-view .fc-bg tr.shc-end td:after{
+	box-shadow: 0 15px 20px 0 rgba(0,0,0, 0.2);
 }
-.fc-agendaWeekly-view .fc-bg tr.slot-highlight-cell.off-time td:after{	
+.fc-agendaWeekly-view .fc-bg tr.shc-edit td:after{}
+.fc-agendaWeekly-view .fc-bg tr.shc-off-time td:after{
 	background-color: rgba(128,128,128,0.7);
 }
+

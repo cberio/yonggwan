@@ -1,21 +1,21 @@
 @charset "utf-8";
 
 html, body{background-color: #f2f2f2;}
-html {overflow: auto; min-width: 768px;}
+html {overflow: hidden; min-width: 768px;}
 body {overflow: hidden;}
 .overflow-hidden {overflow: hidden !important;}
+.fade-loading { opacity: .02; transition: .04s opacity ease; }
 
 #root {height: 100%;}
-#root #wrapper-outer {width: 100%;height: 100%;display: table;}
+#root #wrapper-outer {width: 100%;height: 100%;display: table; table-layout: fixed;}
 #root #wrapper-outer #wrapper {display: table-row;}
 
-#header {width: 80px;background-color: #000;color: #FFF;z-index: 2;display: table-cell;position: relative;vertical-align: top;}
+#header {min-width: 68px; width: 80px;background-color: #000;color: #FFF;z-index: 2;display: table-cell;position: relative;vertical-align: top;}
 #header .header-brand-logo a{height: 90px;text-indent: -9999px;display: block;overflow: hidden;background: url(../image/common/brand-logo.png) center 33px no-repeat;}
 
 #header .header-nav{margin-bottom: 90px;}
 #header .header-nav > li > a{text-indent: -9999px;height: 58px;line-height: 58px;color: #fff;display: block;overflow: hidden;background-repeat: no-repeat;background-position: center center;position: relative;}
-#header .header-nav > li:not(.has-submenu) > a:hover,
-#header .header-nav > li:not(.has-submenu) > a:focus,
+
 #header .header-nav > li:not(.has-submenu) > a.active{background-color: #333;}
 #header .header-nav > li.nav-reservation > a{background-image: url(../image/common/nav-daily.png);}
 #header .header-nav > li.nav-customer > a{background-image: url(../image/common/nav-customer.png);}
@@ -24,12 +24,10 @@ body {overflow: hidden;}
 #header .header-nav > li.nav-reservation:hover > a,
 #header .header-nav > li.nav-reservation > a:focus,
 #header .header-nav > li.nav-reservation > a.active{background-image: url(../image/common/nav-daily-on.png);}
-#header .header-nav > li.nav-customer > a:hover,
-#header .header-nav > li.nav-customer > a:focus,
-#header .header-nav > li.nav-customer a.active{background-image: url(../image/common/nav-customer-on.png);}
-#header .header-nav > li.nav-search > a:hover,
-#header .header-nav > li.nav-search > a:focus,
-#header .header-nav > li.nav-search > a.active{background-image: url(../image/common/nav-search-on.png);}
+#header .header-nav > li.nav-customer > a:hover:not(.active),
+#header .header-nav > li.nav-customer > a:focus:not(.active){background-image: url(../image/common/nav-customer-on.png);}
+#header .header-nav > li.nav-search > a:hover:not(.active),
+#header .header-nav > li.nav-search > a:focus:not(.active){background-image: url(../image/common/nav-search-on.png);}
 /* 2depth 관련 스타일*/
 #header .header-nav > li.has-submenu > a:before {
   display: block;content:'';position: absolute;left: 0;right: 0;bottom: 0;margin: 0 0 7px 0;
@@ -42,7 +40,7 @@ body {overflow: hidden;}
 #header .header-nav-sub li a,
 #header .header-nav-sub li button{
   line-height: 22px;font-size: 11px;font-family: 'notokr-bold'; letter-spacing: -0.2px;color: rgba(255,255,255, .3);display: block;height: 22px;
-  border-radius: 12px;background-color: #202020;width: 76%;margin: 0 12%;
+  border-radius: 12px;background-color: #202020;width: 72%;margin: 0 14%;
 }
 #header .header-nav-sub li a:hover,
 #header .header-nav-sub li button:hover,
@@ -81,12 +79,13 @@ body {overflow: hidden;}
 }
 
 #header .link-profile {position: absolute;left: 0;right: 0;bottom: 0;border-top: 1px solid #333333;background-color: #000;}
-#header .link-profile a{background: url(../image/common/profile.png) 0 0 no-repeat;display: block;width: 42px;height: 42px;border-radius: 50%;overflow: hidden;margin: 20px auto;text-indent: -9999px;}
+#header .link-profile a{display: block;width: 44px;height: 44px;border-radius: 50%;overflow: hidden;margin: 18px auto;text-indent: -9999px;font-size: 0;}
+#header .link-profile a img{display: block;width: 100%;height: 100%;}
 
-#container {height: 100%;display: table-cell;overflow: auto;}
+#container {height: 100%;display: table-cell;}
 
 /* 투명 마스크 (접근성 클릭관련 레이어)*/
-.mask-transparent {position: absolute;left: 0;top: 0; right: 0; bottom: 0;display: block;z-index: 10;}
+.mask-transparent {position: fixed;left: 0;top: 0; right: 0; bottom: 0;display: block;z-index: 10;}
 
 /* 레이어팝업 */
 .modal-mask {background-color: rgba(0,0,0,0.7); position: fixed; right: 0;left: 80px; top: 92px; height: 100%;z-index: 3;}
@@ -101,15 +100,20 @@ body {overflow: hidden;}
 /* 미리알림 활성화시 mask 포지션*/
 .opened-notifier .modal-mask {left: 438px;}
 
-/* 삭제/수정 버튼 [고객카드 등]*/
-.btn-edit{background: url(../image/common/slot-ui-edit.png) center center no-repeat;text-indent: -9999px;overflow: hidden;}
-.btn-delete{background: url(../image/common/slot-ui-delete.png) center center no-repeat;text-indent: -9999px;overflow: hidden;}
-
 /* 하단 가이드 영역 */
 .guider-wrap {position: fixed;bottom:0;right: 0;left: 0;background-color: #006cf0;height: 38px;text-align: center;z-index: 1;}
 .guider-wrap .message{line-height: 38px;color: #fff;font-family: 'notokr-bold';letter-spacing: -0.3px;}
 .guider-wrap .close{position: absolute; right: 0;top:0;bottom: 0;width: 38px;text-indent: -9999px;overflow: hidden;font-size: 0;background: url(../image/common/btn-close-4.png) center center no-repeat;}
 
+.loading-mask {
+  position: fixed;z-index: 10;width: 100%;height: 100%;left: 0;top: 0; right: 0; bottom: 0;
+  background-color: rgba(0,0,0,0.5);
+}
+.loading-mask .loading-progressbar {
+  text-align: center;color: #FFF;font-size: 20px;
+  position: absolute; top: 50%; left: 50%;
+  width: 50px;height: 50px;margin: -25px 0 0 -25px;    
+}
 
 /* 공통 CSS애니메이션 클래스 */
 /* Notifier Modal appear animation */
@@ -263,6 +267,11 @@ body {overflow: hidden;}
 	#header .header-nav{
 		margin-bottom: 70px;
 	}
+  #header .header-nav-sub li a,
+  #header .header-nav-sub li button {
+    width: 58px;
+    margin: 0 auto;
+  }
 	#container {
 		margin-left: 68px;
 	}

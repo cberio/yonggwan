@@ -45,4 +45,15 @@ export function getProductColor (productName, products) {
       break;
     }
   }
+  return '';
+}
+/* Product의 상품가격을 반환*/
+export function getProductPrice (productName, products) {
+  for (let i = 0; i < products.length; i++) {
+    if (productName === products[i].product) {
+      return products[i].price;
+      break;
+    }
+  }
+  return '';
 }
