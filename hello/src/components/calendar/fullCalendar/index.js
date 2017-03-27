@@ -1353,7 +1353,6 @@ class FullCalendar extends Component {
   }
 
   componentDidMount() {
-
     const _component = this;
     let { Calendar } = this.refs;
     var date  = new Date();
@@ -2199,7 +2198,7 @@ FullCalendar.defaultProps = {
 const mapStateToProps = (state) => {
   return {
     modalConfirmOptionComponent: state.modalConfirm.optionComponent,
-    requestReservation: state.notifier.requestReservation
+    requestReservation: state.notifier.requestReservation,
   }
 }
 const mapDispatchToProps = (dispatch) => {
@@ -2216,7 +2215,7 @@ const mapDispatchToProps = (dispatch) => {
       actions.guider({ isGuider: true, message: message })
     ),
     loading: (condition) => dispatch(actions.loading(condition)),
-    finishRequestReservation: () => dispatch(actions.requestReservation({condition: false, requestEvent: undefined}))
+    finishRequestReservation: () => dispatch(actions.requestReservation({condition: false, requestEvent: undefined})),
   }
 }
 
