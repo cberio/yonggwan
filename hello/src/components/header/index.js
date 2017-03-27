@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
 import { Link } from 'react-router';
 import { connect } from 'react-redux';
+import * as Images from '../../require/images';
 import * as actions from '../../actions';
 
 
@@ -10,6 +10,7 @@ class Header extends Component {
     super (props);
   }
   render() {
+    let picture = false;
     return (
       <header id="header">
       	<h1 className="header-brand-logo">
@@ -29,14 +30,17 @@ class Header extends Component {
         </ul>
         <div className="nav-notifier-wrap">
           <div className="nav-notifier">
-            <button className={`button ${this.props.isNotifier && ' active'}`} onClick={ () => this.props.toggleNotifier(!this.props.isNotifier) }>
+            <button className={`button${this.props.isNotifier? ' active' : ''}`} onClick={ () => this.props.toggleNotifier(!this.props.isNotifier) }>
               <i>미리알림</i>
               <span className="state">7</span>
             </button>
           </div>
         </div>
         <div className="link-profile">
-          <Link to="/">Profile</Link>
+          <Link to="/">
+            Profile
+            <img src={picture ? picture : Images.IMG_no_picture} alt="" />
+          </Link>
         </div>
       </header>
     );

@@ -47,14 +47,14 @@ class FullCalendar extends Component {
       lastExpert: undefined,                    // 타임라인을 재 렌더링 할때 기준이되는 expert (해당 expert로 렌더링됨)
       selectedExpert : undefined,               // 타임라인에 마우스 오버시 해당 타임라인의 expert
       // ... etc
+      timelineDate: undefined,
       selectedDate: undefined,
       editedDate: undefined,
       selectedEvent: undefined,
       renderedEvent: undefined,
       newEvents: undefined,
       newEventId: undefined,
-      newEventProductTime: undefined,
-      newEventSelector: undefined
+      newEventProductTime: undefined
     };
     // event binding
     this.isNewOrder = this.isNewOrder.bind(this);
@@ -67,6 +67,7 @@ class FullCalendar extends Component {
     this.setCalendarHeight = this.setCalendarHeight.bind(this);
     this.changeDateBasic = this.changeDateBasic.bind(this);
     this.changeDate = this.changeDate.bind(this);
+    this.isChangeDate = this.isChangeDate.bind(this);
     this.isUserCard = this.isUserCard.bind(this);
     this.renderExpert = this.renderExpert.bind(this);
     this.changeExpert = this.changeExpert.bind(this);
@@ -165,6 +166,9 @@ class FullCalendar extends Component {
 
     this.controler = $(controlerElem);
     $(controlerElem).niceScroll({
+      background: '#d2d2d2',
+      railpadding: { top: -4 },
+      cursorcolor: '#9da1a5',
       cursorborder: false,
       cursorwidth: '4px',
       autohidemode: false,
@@ -172,7 +176,7 @@ class FullCalendar extends Component {
       cursordragontouch: true,
       enablekeyboard: false
     });
-    $('.nicescroll-rails-hr').addClass('always-show');
+    $('.nicescroll-rails-hr').addClass('fc-controler');
 
     // init controler
     $(controlerElem).scroll(function(){
@@ -222,12 +226,13 @@ class FullCalendar extends Component {
     var timeout;
     if (getTimeout > 0) { timeout = getTimeout; }
     else                { timeout = 0; }
+    var x = ($(selector).parents('td:eq(0)').position().left  -36) - ($(timeline).width()/2 - $(selector).width());
+    var y = (Number($(selector).css('top').replace('px', '')) -24) - ($(timeline).height()/2 - $(selector).height());
 
     setTimeout(function(){
-      // console.log('Top:' + $(selector).offset().top, 'Left:' + $(selector).offset().left);
       $(timeline).scrollTop(0).stop().animate({
-        scrollTop: $(selector).css('top'),
-        scrollLeft: $(selector).css('left')
+        scrollTop: y,
+        scrollLeft: x
       }, 200, function (){
         if (callback) callback();
       });
@@ -345,7 +350,8 @@ class FullCalendar extends Component {
   removeEvent (event) {
     let _component = this;
     let { Calendar } = this.refs;
-    let eventId = event ? event.id : $(Calendar).fullCalendar('removeEvents', [_component.state.selectedEvent.id]);
+    let eventId = event ? event.id : _component.state.selectedEvent.id;
+    $(Calendar).fullCalendar('removeEvents', [eventId]);
     this.modalConfirmHide();
     this.setState({
       selectedEvent: undefined
@@ -433,8 +439,7 @@ class FullCalendar extends Component {
 
     this.setState({
       newEvents: $.extend(insertEvent, {class: Functions.getProductColor(insertEvent.product, Products)}),
-      newEventId: newEventId,
-      newEventSelector: '#ID_' + newEventId
+      newEventId: newEventId
     }, () => {
       /// ↓↓↓↓↓↓↓↓↓ 예약생성을 할 이벤트의 Expert 타임라인을 렌더링한다  ↓↓↓↓↓↓↓↓///
       // 1. weekly 생성인 경우
@@ -500,6 +505,9 @@ class FullCalendar extends Component {
       }
       // 임시로 렌더링한 이벤트를 제거
       $(Calendar).fullCalendar('removeEvents', [id]);
+      this.setState({
+        newEventId: undefined
+      });
     }
   }
 
@@ -582,7 +590,6 @@ class FullCalendar extends Component {
       selectedEvent: undefined,
       renderedEvent: undefined,
       newEventId: undefined,
-      newEventSelector: undefined,
       newEventProductTime: undefined,
       isNotAutoSelectTime: false,
       isEditEvent: false,
@@ -670,7 +677,6 @@ class FullCalendar extends Component {
                 isCreateOfftime: false,
                 newEventProductTime: undefined,
                 newEventId: undefined,
-                newEventSelector: undefined,
                 isAbleBindRemoveEvent: false
               });
               _component.eventSlotHighlight(false);
@@ -733,7 +739,6 @@ class FullCalendar extends Component {
         isCreateOfftime: false,
         newEventProductTime: undefined,
         newEventId: insertOfftime.id,
-        newEventSelector: '#ID_' + insertOfftime.id,
         isAbleBindRemoveEvent: true
         }, () => {
         // callback
@@ -746,8 +751,7 @@ class FullCalendar extends Component {
                   $(Calendar).fullCalendar('removeEvents', [_component.state.newEventId]);
                   _component.setState({
                     isAbleBindRemoveEvent: false,
-                    newEventId: undefined,
-                    newEventSelector: undefined
+                    newEventId: undefined
                   });
                   _component.props.guider('OFF TIME이 삭제되었습니다!');
                 }
@@ -760,8 +764,7 @@ class FullCalendar extends Component {
               $('#ID_' + insertOfftime.id).removeClass('new-event');
               _component.setState({
                 isAbleBindRemoveEvent: false,
-                newEventId: undefined,
-                newEventSelector: undefined
+                newEventId: undefined
               });
             }
           });
@@ -792,8 +795,7 @@ class FullCalendar extends Component {
                   $(Calendar).fullCalendar('removeEvents', [_component.state.newEventId]);
                   _component.setState({
                     isAbleBindRemoveEvent: false,
-                    newEventId: undefined,
-                    newEventSelector: undefined
+                    newEventId: undefined
                   });
                   _component.props.guider('OFF TIME이 삭제되었습니다!');
                 }
@@ -806,8 +808,7 @@ class FullCalendar extends Component {
               $('#ID_' + insertOfftime.id).removeClass('new-event');
               _component.setState({
                 isAbleBindRemoveEvent: false,
-                newEventId: undefined,
-                newEventSelector: undefined
+                newEventId: undefined
               });
             }
           });
@@ -841,8 +842,7 @@ class FullCalendar extends Component {
       $(fakeEventElem).wrap('<div class="fc-fake-event"></div>');
       this.setState({
         newEventId: newEventId,
-        newEventSelector: '#ID_' + newEventId,
-        newEvents: $.extend(newInsertEvent, {class: Functions.getProductColor(newInsertEvent.product, Products)}),
+        newEvents: $.extend(newInsertEvent, {class: Functions.getProductColor(newInsertEvent.product, Products)})
       });
     }
     // button ui hidden
@@ -866,7 +866,6 @@ class FullCalendar extends Component {
     $(fakeEventElem).wrap('<div class="fc-fake-event"></div>');
     this.setState({
       newEventId: editEvent.id,
-      newEventSelector: '#ID_' + editEvent.id,
       newEvents: $.extend(editEvent, {class: Functions.getProductColor(editEvent.product, Products)}),
       newEventProductTime: Functions.millisecondsToMinute(moment(editEvent.end).diff(moment(editEvent.start)))
     });
@@ -949,16 +948,15 @@ class FullCalendar extends Component {
     }
   }
 
-  // 상단 datepicker 컨트롤러를 통해 타임라인 날짜를 변경할때
-  changeDate (date, show) {
-    let { Calendar } = this.refs;
+  isChangeDate (condition) {
+    this.setState({
+      isChangeDate: condition
+    });
+  }
 
-    if (show === false) {
-      this.setState({
-        isChangeDate: false
-      });
-      return false;
-    }
+  // 상단 datepicker 컨트롤러를 통해 타임라인 날짜를 변경할때
+  changeDate (date) {
+    let { Calendar } = this.refs;
 
     if (this.state.viewType === 'agendaDay') {
       $(Calendar).fullCalendar('gotoDate', date.format());
@@ -991,12 +989,13 @@ class FullCalendar extends Component {
     this.setState({
       priorityExpert: this.getExpert(event.resourceId),
       lastExpert: this.getExpert(event.resourceId),
+      selectedExpert: this.getExpert(event.resourceId),
       viewTypeOrder: this.state.viewType
     }, () => {
       // view change시, 선택된 이벤트의 요일이 처음으로 오도록 설정해준다
       let fcOptions = {
-        firstDay: event.start.day(),
-        gotoDate: event.start.format('YYYY-MM-DD'),
+        firstDay: moment(event.start).day(),
+        gotoDate: moment(event.start).format('YYYY-MM-DD'),
         editable: false
       };
       $(Calendar).fullCalendar('option', fcOptions);
@@ -1031,7 +1030,7 @@ class FullCalendar extends Component {
       // 시작시간을 미리 선택하지않고 이벤트를 생성중에 취소할 경우
       if (this.state.isNotAutoSelectTime || this.state.isEditEvent) {
         this.resetOrder();
-      } else {
+      } else if (this.state.newEventId) {
         // enable editable
         let evt = $(Calendar).fullCalendar('clientEvents', this.state.newEventId);
             evt.editable = true;
@@ -1055,11 +1054,7 @@ class FullCalendar extends Component {
 
   isUserCard (bool, options) {
     if (bool) {
-      this.props.initUserCard({
-        defaultSlideIndex: options.defaultSlideIndex,
-        expert: options.expert,
-        userCards: options.userCards
-      });
+      this.props.initUserCard(options);
     }
     this.setState({
       isUserCard : bool
@@ -1408,8 +1403,9 @@ class FullCalendar extends Component {
       customButtons: {
         changeDate: {
           text: '날짜선택',
-          click: function() {
-            _component.setState({ isChangeDate: !_component.state.isChangeDate });
+          click: function(e) {
+            e.stopPropagation();
+            _component.isChangeDate(true);
           }
         },
         todayTimeline: {
@@ -1495,7 +1491,6 @@ class FullCalendar extends Component {
         if (_component.state.isAbleBindRemoveEvent) {
           _component.setState({
             newEventId: undefined,
-            newEventSelector: undefined,
             isAbleBindRemoveEvent: false
           });
         }
@@ -1508,7 +1503,6 @@ class FullCalendar extends Component {
         if (_component.state.isAbleBindRemoveEvent) {
           _component.setState({
             newEventId: undefined,
-            newEventSelector: undefined,
             isAbleBindRemoveEvent: false
           });
         }
@@ -1619,11 +1613,13 @@ class FullCalendar extends Component {
 
         // let renderedExpert = [];
         let renderedExpert = $(Calendar).fullCalendar('getResources');
+        var timelineDate = $(Calendar).fullCalendar('getDate');
         // if (view.type === 'agendaDay') {
         //    renderedExpert = $(Calendar).fullCalendar('getResources');
         // } else {
         //   renderedExpert[0] = _component.state.lastExpert || _component.state.defaultExpert;
         // }
+
         // view type setting
         _component.props.setRenderedViewType(view.type);
         // return object experts
@@ -1637,19 +1633,23 @@ class FullCalendar extends Component {
           if (!_component.state.viewTypePrev) _component.initializeViewRender(view.type);
         });
         _component.setState({
-          renderedExpert: renderedExpert
+          renderedExpert: renderedExpert,
+          timelineDate: timelineDate.format()
         });
 
 
         if (view.type === 'agendaWeekly') {
+          expertUiHeight = 38;
         // $(Calendar).fullCalendar('incrementDate', {week: -1});
           // 타임라인의 scroller 관련 함수 실행
           _component.controlerInit('agendaWeekly');
         } else {
+          expertUiHeight = 0;
           // 타임라인의 scroller 관련 함수 실행
           _component.controlerInit('agendaDay');
           _component.setCalendarColumn('viewRender', renderedExpert);
         }
+        $(Calendar).fullCalendar('option', 'height', window.innerHeight -expertUiHeight);
 
         // 오늘날짜인경우 today 버튼 비활성화
         if (view.type === 'agendaDay' && view.start.isSame(moment(date), 'day')) {
@@ -1854,32 +1854,22 @@ class FullCalendar extends Component {
       },
       // open customer card
       eventDoubleClick: function(calEvent, jsEvent, view) {
-        if (_component.state.isNewOrder) {
-          // 신규예약 생성중에는 더블클릭 이벤트 실행않함
-          return false;
-        } else {
-          // 더블클릭으로 선택된 이벤트객체를 가져옵니다
-          let selectedCustomer = calEvent;
-          // 선택된 이벤트객체의 리소스ID에 맞는 expert id를 찾아 가져옵니다
-          let selectedExpert = $(Calendar).fullCalendar('getResourceById', selectedCustomer.resourceId);
-          // 선택된 expert의 예약 카드들을 모두 가져옵니다.  추가로 필터링이 필요합니다 (오늘날짜이벤트, 오프타임 이벤트제외, 시간순 정렬)
-          let slideCustomerCards = $(Calendar).fullCalendar('getResourceEvents', selectedCustomer.resourceId);
+        // 신규예약 생성중에는 더블클릭 이벤트 실행않함
+        if (_component.state.isNewOrder) return false;
+        if (calEvent.product === 'OFF TIME') return false;
 
-          // OFF TIME 이벤트는 제거한다
-          let i = 0;
-          while (i < slideCustomerCards.length) {
-            if (slideCustomerCards[i].product === 'OFF TIME') {
-              slideCustomerCards.splice(i, 1);
-            }
-            i++;
-          }
+        let selectedDate = moment(calEvent.start);
+        // 더블클릭으로 선택된 이벤트객체를 가져옵니다
+        let selectedCard = calEvent;
+        // 선택된 이벤트객체의 리소스ID에 맞는 expert id를 찾아 가져옵니다
+        let selectedExpert = $(Calendar).fullCalendar('getResourceById', selectedCard.resourceId);
 
-          _component.isUserCard(true,{
-            defaultSlideIndex: selectedCustomer,
-            expert: selectedExpert,
-            userCards: slideCustomerCards
-          });
-        }
+        // userCard 컴포넌트의 초기값을 전달한다
+        _component.isUserCard(true, {
+          selectedDate: selectedDate,
+          selectedCard: selectedCard,
+          selectedExpert: selectedExpert
+        });
       }
     }; /////// fullcalendar option //END
 
@@ -2101,6 +2091,7 @@ class FullCalendar extends Component {
     if (this.state.isRenderConfirm) {
       RenderConfirmComponent = (
         <RenderEventConfirm
+          viewType={this.state.viewType}
           isModalConfirm={this.state.isModalConfirm}
           modalConfirm={this.step_modal}
           newEventId={this.state.newEventId}
@@ -2112,8 +2103,10 @@ class FullCalendar extends Component {
     if (this.state.isChangeDate) {
       DatePickerComponent = (
         <DatePicker
-          onClick={this.changeDate}
-          onClose={ () => this.changeDate('', false) }
+          selectedDate={this.state.timelineDate}
+          onChange={this.changeDate}
+          onClose={ () => this.isChangeDate(false) }
+          className="timeline-date-picker"
         />
       )
     }
@@ -2151,6 +2144,7 @@ class FullCalendar extends Component {
         <br />
         <dt>modalConfirmOption :</dt><dd>{this.props.modalConfirmOptionComponent ? this.props.modalConfirmOptionComponent : ""}</dd>
         <dt>editedDate: </dt><dd>{this.state.editedDate?'true':""}</dd>
+        <dt>timelineDate: </dt><dd>{this.state.timelineDate}</dd>
         <dt>selectedDate: </dt><dd>{this.state.selectedDate}</dd>
         <dt>selectedEvent: </dt><dd>{this.state.selectedEvent ? this.state.selectedEvent.name +' ID:'+this.state.selectedEvent.id: ""}</dd>
         <br />
@@ -2165,7 +2159,6 @@ class FullCalendar extends Component {
         <dt>newEventId: </dt><dd>{this.state.newEventId}</dd>
         <dt>newEventProduct: </dt><dd>{this.state.newEventProduct}</dd>
         <dt>newEventProductTime: </dt><dd>{this.state.newEventProductTime}</dd>
-        <dt>newEventSelector: </dt><dd>{this.state.newEventSelector}</dd>
       </dl>
     );
 
@@ -2188,7 +2181,7 @@ class FullCalendar extends Component {
         {UserCardComponent}
         {ModalConfirmComponent}
         {RenderConfirmComponent}
-        {/*viewview*/}
+        {viewview}
         {test}
       </div>
     );
@@ -2211,12 +2204,9 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     initUserCard: (options) => {
-      let newOptions = {
-        defaultSlideIndex: options.defaultSlideIndex,
-        expert: options.expert,
-        userCards: options.userCards
-      }
-      dispatch(actions.userCard(newOptions))
+      dispatch(actions.userCardEvent(options.selectedCard));
+      dispatch(actions.userCardExpert(options.selectedExpert));
+      dispatch(actions.userCardDate(options.selectedDate));
     },
     isModalConfirm: (optionComponent) => {
       dispatch(actions.modalConfirm(optionComponent))

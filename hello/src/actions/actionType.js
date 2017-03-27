@@ -1,4 +1,7 @@
-export const USER_CARD = "USER_CARD";
+export const USER_CARD_EVENT = "USER_CARD_EVENT";
+export const USER_CARD_EXPERT = "USER_CARD_EXPERT";
+export const USER_CARD_DATE = "USER_CARD_DATE";
+
 export const MODAL_CONFIRM = "MODAL_CONFIRM";
 export const NEW_ORDER = "NEW_ORDER";
 export const NOTIFIER = "NOTIFIER";
