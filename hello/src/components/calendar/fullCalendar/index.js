@@ -1193,18 +1193,18 @@ class FullCalendar extends Component {
             .find('input').prop('checked', true);
         }
       }
-    // **** END  // 예약 주,일단위 view change시 실행 input checked
-    // **** START// 초기 예약페이지 접근시 실행 ****
-  } else if (!viewTypePrev) {
-      console.log('VIEW 예약 초기접근 Default Expert');
-      if (view.type === 'agendaDay') {
-        $('.expert-each[data-id="expert_'+ defaultExpert.id +'"]').attr('data-active', true);
-        $('.expert-each input#expert_' + defaultExpert.id).prop('checked', true);
-      } else {
-        $('.expert-each input#expert_w_' + defaultExpert.id).prop('checked', true);
+      // **** END  // 예약 주,일단위 view change시 실행 input checked
+      // **** START// 초기 예약페이지 접근시 실행 ****
+    } else if (!viewTypePrev) {
+        console.log('VIEW 예약 초기접근 Default Expert');
+        if (view.type === 'agendaDay') {
+          $('.expert-each[data-id="expert_'+ defaultExpert.id +'"]').attr('data-active', true);
+          $('.expert-each input#expert_' + defaultExpert.id).prop('checked', true);
+        } else {
+          $('.expert-each input#expert_w_' + defaultExpert.id).prop('checked', true);
+        }
       }
     }
-  }
 
 
   getExpert (id) {
@@ -1367,13 +1367,14 @@ class FullCalendar extends Component {
     var expertUiHeight = 38;
     if (location.pathname.indexOf('daily') !== -1) expertUiHeight = 0;
 
-    this.sortExpert(Experts);
-    this.setState({ defaultExpert: Experts[0]});
+    //this.sortExpert(Experts);
+    //debugger
+    this.setState({ defaultExpert: this.props.events === undefined ? undefined : this.props.events[0]});
 
     // fullcalendar option
     var fc__options = {
       schedulerLicenseKey:'0912055899-fcs-1483528517',
-      resources: [ Experts[0] ],
+      resources: [Experts[0]],
       resourceOrder: 'priority', // expert의 정렬 순서를 무엇을 기준으로 할지 정함 (일단 title, id가 가능함)
       filterResourcesWithEvents: false, // 이벤트가 없는 expert를 숨길지 여부
       events: this.props.events,  //스케쥴 이벤트*
@@ -1628,7 +1629,7 @@ class FullCalendar extends Component {
           viewTypePrev: _component.state.viewType,
         }, () => {
           // **** START// 예약 주,일단위 view change시 실행 input checked ****
-        _component.expertInputCheck(view);
+          _component.expertInputCheck(view);
           // view rendering 시 초기실행함수
           if (!_component.state.viewTypePrev) _component.initializeViewRender(view.type);
         });
@@ -1913,6 +1914,25 @@ class FullCalendar extends Component {
       // 예약생성(예약요청확인)으로 넘어감
       this.goToRequestReservation(nextProps.requestReservation);
     }
+    if(nextProps.events !== this.props.events) {
+      let { Calendar } = this.refs;
+      
+      $(Calendar).fullCalendar('addEventSource', nextProps.events);      
+    }
+
+    if(nextProps.experts !== this.props.experts) {
+      let { Calendar } = this.refs;
+
+      this.setState({ defaultExpert: nextProps.experts[0]});
+
+      $(Calendar).fullCalendar('addResource', nextProps.experts);
+      $(Calendar).fullCalendar('refetchResources');
+
+      console.group('experts loaded at componentWillReceiveProps');
+      console.info($(Calendar).fullCalendar('getResources'));
+      console.info(nextProps.experts);
+      console.groupEnd();      
+    }
   }
 
   //예약요청확인
@@ -1959,7 +1979,7 @@ class FullCalendar extends Component {
   }
 
   render() {
-
+    //console.info('render called');
     const CreateOrderButtonFixed = (
       <div className="create-order-wrap fixed">
         <div className="create-order-slot">
@@ -2075,16 +2095,16 @@ class FullCalendar extends Component {
 
     if (this.state.isModalConfirm) {
         ModalConfirmComponent = (
-        <ModalConfirm
-          options={this.state.newEvents}
-          selectedEvent={this.state.selectedEvent}
-          editedDate={this.state.editedDate}
-          newEventId={this.state.newEventId}
-          isNotAutoSelectTime={this.state.isNotAutoSelectTime}
-          modalConfirmHide={this.modalConfirmHide}
-          step_render={ (bool, newEventId, type) => this.step_render(bool, newEventId, type) }
-          removeEvent={this.removeEvent}
-        />
+          <ModalConfirm
+            options={this.state.newEvents}
+            selectedEvent={this.state.selectedEvent}
+            editedDate={this.state.editedDate}
+            newEventId={this.state.newEventId}
+            isNotAutoSelectTime={this.state.isNotAutoSelectTime}
+            modalConfirmHide={this.modalConfirmHide}
+            step_render={ (bool, newEventId, type) => this.step_render(bool, newEventId, type) }
+            removeEvent={this.removeEvent}
+          />
       )
     }
 

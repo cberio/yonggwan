@@ -1,4 +1,5 @@
 import * as types from './actionType';
+import moment from 'moment';
 
 /**/
 export function userCardEvent (options) {
@@ -106,7 +107,7 @@ const fetchSchedules = shop => dispatch => {
   let param = new URLSearchParams();
   param.append('reservation_dt', moment().format('Y-MM-DD'));
 
-  return fetch(`http://helloshop-api-jws.azurewebsites.net/api/v1/shops/${shop}/schedules?`+param, {
+  return fetch(`http://helloshop.app/api/v1/shops/${shop}/schedules?`+param, {
     method: 'GET',
     headers: requestHeader
   })
@@ -117,7 +118,7 @@ const fetchSchedules = shop => dispatch => {
 const fetchStaffs = shop => dispatch => {
   dispatch(requestStaffs);
 
-  return fetch(`http://helloshop-api-jws.azurewebsites.net/api/v1/shops/${shop}/staffs?`, {
+  return fetch(`http://helloshop.app/api/v1/shops/${shop}/staffs?`, {
     method: 'GET',
     headers: requestHeader
   })
