@@ -1,4 +1,6 @@
 import * as types from './actionType';
+import ShopApi from '../api/shop/shop';
+import StaffApi from '../api/shop/staff';
 import moment from 'moment';
 
 /**/
@@ -118,12 +120,13 @@ const fetchSchedules = shop => dispatch => {
 const fetchStaffs = shop => dispatch => {
   dispatch(requestStaffs);
 
-  return fetch(`http://helloshop.app/api/v1/shops/${shop}/staffs?`, {
+  /*return fetch(`http://helloshop.app/api/v1/shops/${shop}/staffs?`, {
     method: 'GET',
     headers: requestHeader
   })
-  .then(parseJSON)
-  .then(json => dispatch(receiveStaffs(shop, json)));
+  .then(parseJSON)*/
+  return new StaffApi(shop).getStaffs()
+    .then(json => dispatch(receiveStaffs(shop, json)));
 }
 
 const shouldFetchSchedules = (state, shopID) => {
