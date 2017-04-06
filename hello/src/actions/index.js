@@ -103,7 +103,7 @@ const requestHeader = {
   'Accept': 'application/json'
 };
 
-const fetchSchedules = shop => dispatch => {
+const fetchSchedules = (shop, state) => dispatch => {
   dispatch(requestSchedules);
   
   let param = new URLSearchParams();
@@ -117,15 +117,12 @@ const fetchSchedules = shop => dispatch => {
   .then(json => dispatch(receiveSchedules(shop, json)));
 }
 
-const fetchStaffs = shop => dispatch => {
+const fetchStaffs = (shop, state) => dispatch => {
   dispatch(requestStaffs);
 
-  /*return fetch(`http://helloshop.app/api/v1/shops/${shop}/staffs?`, {
-    method: 'GET',
-    headers: requestHeader
-  })
-  .then(parseJSON)*/
-  return new StaffApi(shop).getStaffs()
+  let params = new URLSearchParams();
+
+  return new StaffApi(shop).getStaffs(params)
     .then(json => dispatch(receiveStaffs(shop, json)));
 }
 
@@ -154,12 +151,12 @@ const shouldFetchStaffs = (state, shopID) => {
 
 export const fetchSchedulesIfNeeded = shop => (dispatch, getState) => {
   if(shouldFetchSchedules(getState(), shop))
-    return dispatch(fetchSchedules(shop));
+    return dispatch(fetchSchedules(shop, getState()));
 }
 
 export const fetchStaffsIfNeeded = shop => (dispatch, getState) => {
   if(shouldFetchStaffs(getState(), shop))
-    return dispatch(fetchStaffs(shop));
+    return dispatch(fetchStaffs(shop, getState()));
 }
 
 //SHOP RELATED ACTIONS
