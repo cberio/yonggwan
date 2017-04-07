@@ -16,10 +16,10 @@ class CalendarView extends Component {
   }
 
   componentDidMount() {
-    const { selectedShop } = this.props;
+    const { selectedShopID } = this.props;
 
-    this.props.fetchSchedulesIfNeeded(selectedShop);
-    this.props.fetchStaffsIfNeeded(selectedShop);
+    this.props.fetchStaffsIfNeeded(selectedShopID);
+    this.props.fetchSchedulesIfNeeded(selectedShopID);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -57,31 +57,32 @@ CalendarView.PropTypes = {
 
 const mapStateToProps = (state) => {
   const { 
-    selectedShop, 
+    selectedShopID, 
+    getStaffsBySelectedShopID,
     getSchedulesBySelectedShopID,
-    getStaffsBySelectedShopID
   } = state;
-
-  const { 
-    schedules,
-  } = getSchedulesBySelectedShopID[selectedShop] || { 
-    isFetching: false, 
-    schedules: {}
-  };
 
   const { 
     staffs,
     isFetching
-  } = getStaffsBySelectedShopID[selectedShop] || {
+  } = getStaffsBySelectedShopID[selectedShopID] || {
     isFetching: false,
     staffs: {}
-  }
+  };
+
+  const { 
+    schedules,
+  } = getSchedulesBySelectedShopID[selectedShopID] || { 
+    isFetching: false, 
+    schedules: {}
+  };
+
 
   return {
     isFetching,
-    selectedShop,
-    schedules,
+    selectedShopID,
     staffs,
+    schedules,
   }
 }
 
