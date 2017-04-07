@@ -5,7 +5,8 @@ export default class StaffApi {
     constructor(_shopId, _token = ApiUtils.testToken) {
         this.apiUrl = ApiUtils.BASE_URL()+'shops';
         this.shopId = _shopId;
-        this.token = _token
+        this.token = _token;
+        this.params = new URLSearchParams();
     }
 
     /**
@@ -16,13 +17,26 @@ export default class StaffApi {
     }
 
     /**
+     * populate URLSearchParam from current state
+     * 
+     * @param {Object} params 
+     * @return {void}
+     */
+    paramHandler(params) {
+
+        //this.params.set();
+    }
+
+    /**
      * get a staff data with given shopId and staffId
      * 
      * @param {int} staffId
      * @param {URLSearchParams} params 
      */
     getStaff(staffId, params) {
-        return fetch(`${this.apiUrl}/${this.shopId}/staffs/${staffId}?${params}`, {
+        this.paramHandler(params);
+
+        return fetch(`${this.apiUrl}/${this.shopId}/staffs/${staffId}?${this.params}`, {
             method: 'PUT',
             headers: ApiUtils.HTTP_HEADER(this.token),
         }).then(ApiUtils.parseJSON)
@@ -34,7 +48,9 @@ export default class StaffApi {
      * @param {URLSearchParams} params 
      */
     getStaffs(params) {
-        return fetch(`${this.apiUrl}/${this.shopId}/staffs?${params}`, {
+        this.paramHandler(params);
+
+        return fetch(`${this.apiUrl}/${this.shopId}/staffs?${this.params}`, {
             method: 'GET',
             headers: ApiUtils.HTTP_HEADER(this.token),
         }).then(ApiUtils.parseJSON);

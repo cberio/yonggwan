@@ -1,12 +1,13 @@
 import { DataFieldsSet } from '../mock';
 import * as ApiUtils from '../common';
+import moment from 'moment';
 
 export default class ScheduleApi {
     constructor(_shopId, _token = ApiUtils.testToken) {
         this.apiUrl = ApiUtils.BASE_URL()+'shops';
         this.shopId = _shopId;
         this.token = _token;
-        this.params = null;
+        this.params = new URLSearchParams();
     }
 
     fiedls() {
@@ -14,15 +15,15 @@ export default class ScheduleApi {
     }
 
     /**
-     * void
+     * populate URLSearchParam from current state
      * 
-     * @param {URLSearchParams} params 
+     * @param {Object} params 
+     * @return {void}
      */
-    static paramHandler(params) {
-        if(params.has('start')) 
-            param.set('reservation_dt', params.get('start'))
+    paramHandler(params) {
 
-        this.params = params;
+        this.params.set('start', params.start ? params.start : moment().format('YYYY-MM-DD'));
+        this.params.set('end', params.end ? params.end : moment().format('YYYY-MM-DD'));
     }
 
     /**
@@ -34,8 +35,6 @@ export default class ScheduleApi {
      * @return {Promise} 
      */
     getSchedule(scheduleId, params) {
-        
-
         return fetch(`${this.apiUrl}/${this.shopId}/schedules/${scheduleId}?${params}`, {
             method: 'PUT',
             headers: ApiUtils.HTTP_HEADER(this.token),
@@ -48,7 +47,9 @@ export default class ScheduleApi {
      * @param {URLSearchParams} params 
      */
     getSchedules(params) {
-        return fetch(`${this.apiUrl}/${this.shopId}/schedules?${params}`, {
+        this.paramHandler(params);
+
+        return fetch(`${this.apiUrl}/${this.shopId}/schedules?${this.params}`, {
             method: 'GET',
             headers: ApiUtils.HTTP_HEADER(this.token),
         }).then(ApiUtils.parseJSON)

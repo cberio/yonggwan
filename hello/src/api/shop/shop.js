@@ -6,6 +6,7 @@ export default class ShopApi {
         this.apiUrl = ApiUtils.BASE_URL()+'shops';
         this.shopId = _shopId;
         this.token = _token;
+        this.params = null;
     }
 
     fiedls() {
