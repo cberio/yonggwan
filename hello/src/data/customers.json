@@ -3,7 +3,7 @@
     "name":"장원석",
     "label":"장원석",
     "phone":["010","1234","7777"],
-    "rating":"VIP",
+    "rating":"NEW",
     "kakao": "agasdcd@co.kr",
     "line": "admin@co.kr",
     "picture": "http://cfile1.uf.tistory.com/image/2278E041566DF58F2D1777"
@@ -18,6 +18,7 @@
     "name":"최용관",
     "label":"최용관",
     "phone":["010","4444","1212"],
+    "rating":"NEW",
     "line": "adm232asdin@co.kr",
     "picture": "http://cfile1.uf.tistory.com/image/2278E041566DF58F2D1777"
   },

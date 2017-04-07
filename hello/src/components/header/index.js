@@ -22,7 +22,7 @@ class Header extends Component {
             <Link to="/reservation/daily" activeClassName={"active"}>예약현황</Link>
               <ul className="header-nav-sub">
                 <li className="nav-daily"><Link to="/reservation/daily" activeClassName={"active"}>DAILY</Link></li>
-                <li className="nav-overview"><Link to="/reservation/overview" activeClassName={"active"}>WEEKLY</Link></li>
+                <li className="nav-overview"><Link to="/reservation/weekly" activeClassName={"active"}>WEEKLY</Link></li>
               </ul>
           </li>
           <li className="nav-customer"><Link to="/customer" activeClassName={"active"}>고객</Link></li>

@@ -1,14 +1,13 @@
 import React, { Component } from 'react';
 import { Match } from 'react-router';
-import { Daily } from './calendar/daily';
-import { Overview } from './calendar/overview';
+import { DailyContainer, WeeklyContainer } from './calendar/container';
 
 class Container extends Component {
   render () {
     return (
       <div id="container">
-        <Match pattern="/reservation/daily" component={Daily} />
-        <Match pattern="/reservation/overview" component={Overview} />
+        <Match pattern="/reservation/daily" component={DailyContainer} />
+        <Match pattern="/reservation/weekly" component={WeeklyContainer} />
       </div>
     );
   }

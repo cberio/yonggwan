@@ -68,7 +68,7 @@ const Selectable = React.createClass({
 	propTypes: {
 		hint: React.PropTypes.string,
 		label: React.PropTypes.string,
-	},
+	},	
 	getInitialState () {
 		return {
 			value: this.props.value
@@ -88,6 +88,7 @@ const Selectable = React.createClass({
 		return (
 			<div className={`Select-wrap selectable ${this.props.className}`} id={this.props.id ? this.props.id : ''}>
 				<Select
+					ref="select"
           searchable={this.props.searchable}
 					clearable={this.props.clearable}
           options={this.props.options}

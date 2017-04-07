@@ -167,16 +167,16 @@
 .fc-header-toolbar .fc-right button:last-of-type {
 	border-radius: 0 3px 3px 0;
 }
-.fc-header-toolbar .fc-right .fc-agendaDay-button {
+.fc-header-toolbar .fc-right .fc-agendaDayCustom-button {
 	background-position: center 0;
 }
-.fc-header-toolbar .fc-right .fc-agendaDay-button.fc-state-active {
+.fc-header-toolbar .fc-right .fc-agendaDayCustom-button.fc-state-active {
 	background-position: center -26px;
 }
-.fc-header-toolbar .fc-right .fc-agendaWeekly-button {
+.fc-header-toolbar .fc-right .fc-agendaWeeklyCustom-button {
 	background-position: center -52px;
 }
-.fc-header-toolbar .fc-right .fc-agendaWeekly-button.fc-state-active {
+.fc-header-toolbar .fc-right .fc-agendaWeeklyCustom-button.fc-state-active {
 	background-position: center -78px;
 }
 
@@ -190,7 +190,6 @@
 	text-indent: 3px;
 }
 .expert-ui {
-	display: none;
 	height: 40px;
 	z-index: 2;
 }
@@ -1232,6 +1231,13 @@
 
 #weekly .fc-toolbar.fc-header-toolbar {
 	background-color: #fafafa;
+}
+#weekly .fc-toolbar.fc-header-toolbar h2 {
+	width: 250px;
+}
+#weekly .fc-toolbar.fc-header-toolbar .fc-changeDate-button {
+	width: 250px;
+	margin-left: -125px;
 }
 #weekly .fc-toolbar.fc-header-toolbar h2 .weekDay {
 	display: none;
