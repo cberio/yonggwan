@@ -1,6 +1,7 @@
 import * as types from './actionType';
 import ShopApi from '../api/shop/shop';
 import StaffApi from '../api/shop/staff';
+import ScheduleApi from '../api/shop/schedule';
 import moment from 'moment';
 
 /**/
@@ -105,24 +106,15 @@ const requestHeader = {
 
 const fetchSchedules = (shop, state) => dispatch => {
   dispatch(requestSchedules);
-  
-  let param = new URLSearchParams();
-  param.append('reservation_dt', moment().format('Y-MM-DD'));
 
-  return fetch(`http://helloshop.app/api/v1/shops/${shop}/schedules?`+param, {
-    method: 'GET',
-    headers: requestHeader
-  })
-  .then(parseJSON)
-  .then(json => dispatch(receiveSchedules(shop, json)));
+  return new ScheduleApi(shop).getSchedules(state)
+    .then(json => dispatch(receiveSchedules(shop, json)));
 }
 
 const fetchStaffs = (shop, state) => dispatch => {
   dispatch(requestStaffs);
 
-  let params = new URLSearchParams();
-
-  return new StaffApi(shop).getStaffs(params)
+  return new StaffApi(shop).getStaffs(state)
     .then(json => dispatch(receiveStaffs(shop, json)));
 }
 
@@ -169,4 +161,20 @@ export const selectShop = shop => ({
 export const invalidateShop = shop => ({
   type: types.INVALIDATE_SHOP,
   shop
+});
+
+// FullCalendar RELATED ACTIONS
+
+export const fullCalendarStart = start => ({
+  type: types.FULLCALENDAR_START,
+  date: {
+    start: [start]
+  }
+});
+
+export const fullCalendarEnd = end => ({
+  type: types.FULLCALENDAR_END,
+  date: {
+    end: [end]
+  }
 });
