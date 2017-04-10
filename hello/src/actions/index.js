@@ -103,7 +103,7 @@ const requestHeader = {
 
 const fetchSchedules = shop => dispatch => {
   dispatch(requestSchedules);
-  
+
   let param = new URLSearchParams();
   param.append('reservation_dt', moment().format('Y-MM-DD'));
 

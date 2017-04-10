@@ -115,6 +115,7 @@ body {overflow: hidden;}
   width: 50px;height: 50px;margin: -25px 0 0 -25px;    
 }
 
+
 /* 공통 CSS애니메이션 클래스 */
 /* Notifier Modal appear animation */
 @-webkit-keyframes bounceInRight {
@@ -314,3 +315,4 @@ body {overflow: hidden;}
   }
 
 }
+

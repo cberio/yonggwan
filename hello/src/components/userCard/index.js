@@ -209,7 +209,7 @@ class UserCard extends Component {
               id="select-slide"
               className="select-expert"
               options={Experts}
-              onChange={""}
+              onChange={ (option) => this.setUserCards('expert', option)}
               clearable={false}
               searchable={false}
             />

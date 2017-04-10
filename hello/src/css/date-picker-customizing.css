@@ -11,17 +11,17 @@
 
 .date-picker.timeline-date-picker {
 	position: absolute;
-	left: 50%; top: 90px;
+	left: 50%; top: 39px;
 	margin: 0 0 0 -166px;
 }
 .date-picker.user-card-slide-datepicker {
     position: absolute;
-    left: 50%; top: 40px;
+    left: 50%; top: 90px;
     margin: 0 0 0 -166px;
 }
 .date-picker.user-card-event-datepicker {
 	position: absolute;
-	left: 30px; top: 140px;
+	left: -15px; top: 133%;
 }
 .date-picker.user-card-event-datepicker.Cal__Container__root:after {
 	left: 70px; margin-left: 0;

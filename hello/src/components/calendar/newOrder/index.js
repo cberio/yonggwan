@@ -84,7 +84,7 @@ export default class NewOrder extends Component {
   }
 
   nextStep () {
-    let _component = this;
+    let component = this;
     switch (this.state.newOrderStep) {
       case 1 :
         this.setState({ newOrderStep : 2 });
@@ -104,7 +104,7 @@ export default class NewOrder extends Component {
         break;
     }
     setTimeout(function(){
-      _component.props.setCalendarHeight(_component.state.newOrderStep);
+      component.props.setCalendarHeight(component.state.newOrderStep);
     },0);
   }
 
@@ -168,15 +168,15 @@ export default class NewOrder extends Component {
   inputChangeOrderEnd (e)  { this.setState({ newOrderEnd : e.target.value }); }
 
   componentDidMount () {
-    const _component = this;
+    const component = this;
     // ESC key 입력시 닫기
     $(document).bind('keydown', function(e){
-        if (e.which === 27 && !_component.props.isModalConfirm && !_component.props.isRenderConfirm) {
-          if (_component.state.newOrderStep < 3) {
-            _component.props.isNewOrder(false);
+        if (e.which === 27 && !component.props.isModalConfirm && !component.props.isRenderConfirm) {
+          if (component.state.newOrderStep < 3) {
+            component.props.newOrderCancel();
           } else {
-            _component.backToStep(2);
-            _component.props.backToOrder();
+            component.backToStep(2);
+            component.props.backToOrder();
           }
           $(document).unbind('keydown');
         }
@@ -369,7 +369,7 @@ export default class NewOrder extends Component {
                     </button>
                   </li>
                 </ol>
-                <button className="new-order-close ir" onClick={ () => this.props.isNewOrder(false)}>닫기</button>
+                <button className="new-order-close ir" onClick={this.props.newOrderCancel}>닫기</button>
               </div>
             </div>
           )
