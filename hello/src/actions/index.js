@@ -161,7 +161,6 @@ export const selectShop = shop => ({
 export const invalidateShop = shop => ({
   type: types.INVALIDATE_SHOP,
   shop
-<<<<<<< .mine
 });
 
 
