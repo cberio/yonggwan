@@ -163,24 +163,6 @@ export const invalidateShop = shop => ({
   shop
 });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-=======
-});
-
 // FullCalendar RELATED ACTIONS
 
 export const fullCalendarStart = start => ({
@@ -196,4 +178,3 @@ export const fullCalendarEnd = end => ({
     end: [end]
   }
 });
->>>>>>> .theirs
