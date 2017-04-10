@@ -157,7 +157,7 @@
   border: 1px solid #d9d9d9;
   border-top: 0;
   -webkit-border-radius: 0 0 7px 7px;
-  border-radius: 0 0 7px 7px;
+          border-radius: 0 0 7px 7px;
   -webkit-overflow-scrolling: touch;
   overflow-y: auto;
   -webkit-box-shadow: 0 5px 8px 0px rgba(0,0,0,0.2);
@@ -271,10 +271,9 @@
   background: none;
 }
 
-/* 서비스입력 인풋 검색영역 스타일 */
+/* 예약생성 서비스입력 인풋 검색영역 스타일 */
 .search-product .Select-value-label .label {
-  font-size: 16px;
-  
+  font-size: 16px;  
   margin-right: 5px;
 }
 .search-product .Select-value-label .service-time {
@@ -282,10 +281,8 @@
   color: #808080;
 }
 .search-product .Select-value-label .checked {
-  position: absolute;right: 20px;top: 0;
-}
-.search-product .Select-option.is-focused{
-  background-color: #8f6bb3 !important;
+  position: absolute;
+  right: 20px;top: 0;
 }
 .search-product .Select-option span {
   margin-right: 4px;
@@ -293,15 +290,15 @@
 .search-product .Select-option .bullet {
   margin: 0;
 }
-.search-product .Select-option .bullet{margin-right: 4px;}
-.search-product .Select-option .bullet{width: 6px;height: 6px;display: inline-block;border-radius: 50%;transform: translateY(-2px);-webkit-transform: translateY(-2px);}
-.search-product .Select-option .bullet.red{background-color: #d97759;}
-.search-product .Select-option .bullet.yellow{background-color: #d9a521;}
-.search-product .Select-option .bullet.blue{background-color: #6b7bb3;}
-.search-product .Select-option .bullet.purple{background-color: #8f6bb3;}
-.search-product .Select-option .bullet.green{background-color: #6bb3a3;}
-.search-product .Select-option.is-focused .bullet {visibility: hidden;}
-
+.search-product .Select-option .bullet{
+  margin-right: 4px;width: 6px;height: 6px;
+  display: inline-block;border-radius: 50%;  
+  -webkit-transform: translateY(-2px);
+          transform: translateY(-2px);
+}
+.search-product .Select-option.is-focused .bullet {
+  visibility: hidden;
+}
 .search-product .Select-option .label {
   font-size: 15px;
   color: #666666;
@@ -316,6 +313,213 @@
   margin: 0;
   color: #b2b2b2;
 }
+
+/* 상품 색상별 스타일 */
+.Select-option.red    .bullet{background-color: #d97759;}
+.Select-option.yellow .bullet{background-color: #d9a521;}
+.Select-option.blue   .bullet{background-color: #6b7bb3;}
+.Select-option.purple .bullet{background-color: #8f6bb3;}
+.Select-option.green  .bullet{background-color: #6bb3a3;}
+
+.search-product .Select-option.is-focused.red   {background-color: #d97759 !important;}
+.search-product .Select-option.is-focused.yellow{background-color: #d9a521 !important;}
+.search-product .Select-option.is-focused.blue  {background-color: #6b7bb3 !important;}
+.search-product .Select-option.is-focused.purple{background-color: #8f6bb3 !important;}
+.search-product .Select-option.is-focused.green {background-color: #6bb3a3 !important;}
+
+
+/* CUSTOM COMPONENT (검색 옵션)*/
+.Select-filter-wrap {    
+  background: #333333;
+  position: absolute;
+  left: 0; right: 0; top: 55px;  
+}
+.Select-filter-container {
+  margin: 0 16px;
+  text-align: center;
+  height: 40px;
+}
+.Select-filter-option {
+  display: inline-block;
+  overflow: hidden;
+  height: 100%;
+}
+.Select-filter-option input {  
+  font-size: 0;
+  opacity: 0;
+  position: absolute;
+  top: -999px; left: -999px;
+}
+.Select-filter-option label {
+  position: relative;
+  display: block;
+  cursor: pointer;
+  line-height: 40px;
+  height: 40px;
+  padding: 0 15px 0 35px;
+}
+.Select-filter-option label:before,
+.Select-filter-option label:after {
+  content: '';
+  display: block;
+  position: absolute;
+  top: 13px;
+  left: 13px;
+  -webkit-border-radius: 50%;
+          border-radius: 50%;
+}
+.Select-filter-option label:before {
+  width: 14px; height: 14px;
+  border: 1px solid #575757;
+}
+.Select-filter-option label:after {
+  width: 10px; height: 10px;
+  margin: 3px 0 0 3px;
+}
+.Select-filter-option input:checked ~ label:after {
+  background-color: #CCCCCC;
+}
+
+/* searchable user-card 슬라이더 에서의 스타일 */
+#change-product {
+  width: 420px;
+  position: absolute;
+  top: 133%; left: -12px;
+  z-index: 1;
+  -webkit-box-shadow: 0 45px 8px 5px rgba(0,0,0, .2);
+          box-shadow: 0 45px 8px 5px rgba(0,0,0, .2);
+}
+#change-product.arrow-border-dark:after, 
+#change-product.arrow-border-dark:before {
+  left: 18%;
+}
+#change-product .Select {}
+#change-product .Select-input{
+  height: 54px;
+  line-height: 54px;
+}
+#change-product .Select-input input {
+  color: #fff;
+}
+#change-product .Select-placeholder {
+  color: #808080;
+}
+#change-product .Select-control {
+  border: 0;
+  overflow: hidden;
+  -webkit-border-radius: 7px 7px 0 0;
+          border-radius: 7px 7px 0 0 !important;
+}
+#change-product .Select-control,
+#change-product .Select-placeholder,
+#change-product .Select-value {
+  border-radius: 0;
+  height: 55px !important;
+  line-height: 55px !important;
+  padding-left: 45px !important;
+  background: #474747 url(../image/common/input-search-large.png) 15px center no-repeat !important;
+}
+#change-product .Select-value-label {
+  line-height: 44px;
+}
+#change-product .Select-value-label .label{
+  color: #fff;
+}
+#change-product .Select-value-label .service-time{
+  color: #969696;
+}
+#change-product .Select-value .checked{
+  margin-left: 5px;
+  float: right;
+}
+#change-product .Select .Select-noresults {
+  height: 40px;
+  line-height: 40px;
+  padding-top: 0;
+}
+#change-product .Select-filter-option label{
+  font-size: 11px;
+  color: #808080;  
+  font-family: 'notokr-bold';
+}
+#change-product .Select-filter-option input:checked ~ label{
+  color: #ccc;
+}
+
+#change-product .Select-menu-outer {
+  margin: 0;
+  position: relative;
+  top: 40px;
+  background: none;
+  border-radius: 0;
+  border: 0;
+  border-top: 1px solid #262626;
+  margin-right: 2px;
+  background-color: #333;
+  -webkit-border-radius: 0 0 7px 7px;
+          border-radius: 0 0 7px 7px;
+  -webkit-box-shadow: none;
+          box-shadow: none;
+}
+
+#change-product .Select-menu-outer:after {   
+  position: absolute;
+  z-index: 1;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 0;
+  content: '';
+  display: block;
+  box-shadow: 0 0 30px 50px rgba(50,50,50, 1);
+  opacity: .6;
+}
+#change-product .Select-menu{
+  margin-right: 3px;
+  background: none;
+}
+#change-product .Select-option{
+  height: 40px;
+  line-height: 40px;
+  padding: 0 0 0 15px;
+}
+#change-product .Select-option > div {
+  height: 100%;
+}
+#change-product .Select-option.is-selected,
+#change-product .Select-option.is-focused{
+  background-color: #212121 !important;
+}
+#change-product .Select-option span {
+  font-size: 13px;
+  margin-right: 4px;
+}
+#change-product .Select-option .bullet{
+  background-color: #aaa;
+  margin-right: 6px;width: 8px;height: 8px;
+  display: inline-block;border-radius: 50%;
+}
+#change-product .Select-option .label {
+  font-size: 13px;
+}
+#change-product .Select-option .service-time {
+  font-size: 12px; color: #b2b2b2;
+  font-family: 'notokr-regular';
+}
+#change-product .Select-option .price {
+  font-size: 13px; color: #808080;
+  line-height: 40px;
+  float: right;
+}
+
+
+/* 상품 색상별 option text style */
+#change-product .Select-option.red    .label{color: #faceda !important;}
+#change-product .Select-option.yellow .label{color: #fae8ce !important;}
+#change-product .Select-option.blue   .label{color: #d3e9f4 !important;}
+#change-product .Select-option.purple .label{color: #f5dffa !important;}
+#change-product .Select-option.green  .label{color: #d6f4ef !important;}
+
 
 /* 고객검색 인풋 검색영역 스타일 */
 .search-customer {
@@ -356,7 +560,7 @@
 #select-slide .Select{margin-left: 23px;}
 #select-slide .Select-control{
   position: relative;background: none;z-index: 1;border: 0;padding: 0;float: left;
-  width: auto;height: 48px;line-height: 48px;color: #FFF;font-size: 13px;font-family: 'notokr-bold';
+  width: auto;height: 48px;line-height: 48px;color: #212121;font-size: 13px;font-family: 'notokr-bold';
 }
 #select-slide .Select-arrow-zone{display: none;}
 #select-slide .Select-control .Select-value{
@@ -415,4 +619,256 @@
 #select-slide .Select-option.is-focused{
   color: #e5e5e5;
   background-color: #212121;
+}
+
+
+
+
+
+/* 
+  CUSTOM SELECTABLE COMPONENT STYLES
+*/
+.selectable-wrap {
+  z-index: 1;
+  top: 100%; left: 0;
+  background-color: #333333;
+  border: 1px solid #000000;
+  border-radius: 5px;
+  font-size: 13px;
+  font-family: 'notokr-medium';
+  color: #ccc;
+  text-align: left;
+  cursor: default;
+}
+
+.selectable-double-wrap.selectable-double-wrap {
+  position: absolute;
+  left: 0;
+  top: 133%;
+}
+.selectable-wrap:before {
+  content:'';
+  position: absolute;
+  display: block;
+
+}
+.selectable-container.scrollable {
+  height: 100px;
+}
+.select-title {
+  font-size: 11px;
+  color: #999;
+  padding: 10px 15px;
+}
+
+
+
+.select-option .select-option {}
+.select-option .select-option-anchor {
+  font: inherit;
+  color: inherit;
+  line-height: 1.2;
+  padding: 10px 15px;
+  display: block;
+  width: 100%;
+}
+.select-option-anchor .option-end {
+  color: #666666;
+}
+
+.select-option .select-option-anchor:hover,
+.select-option .select-option-anchor:focus,
+.select-option .select-option-selected .select-option-anchor {
+  background-color: #212121;
+}
+.select-option .select-option-anchor:hover,
+.select-option .select-option-anchor:focus,
+.select-option .select-option-selected .select-option-anchor {
+  color: #fff;
+}
+.select-option .select-option-anchor:hover .option-end,
+.select-option .select-option-anchor:focus .option-end,
+.select-option .select-option-selected .select-option-anchor .option-end{
+  color: #999;
+}
+
+
+
+/* selectable custom theme : light-gray */
+
+.selectable-wrap.light-gray {
+  background-color: #474747;  
+  border-bottom: 1px solid #222;
+}
+.selectable-wrap.light-gray .select-option .select-option-anchor {
+  font-size: 16px;  
+}
+
+/* selectable custom theme : double */
+.selectable-double-wrap {
+  position: absolute;
+  z-index: 1;
+  border: 1px solid #000000;
+  border-radius: 5px;
+  box-shadow: 0 10px 25px 10px rgba(0,0,0, 0.18);
+}
+/* arrow css */
+.arrow-border-dark:after, 
+.arrow-border-dark:before {
+  bottom: 100%;
+  left: 35%;
+  border: solid transparent;
+  content: " ";
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none;
+}
+.arrow-border-dark:after {
+  border-color: rgba(71, 71, 71, 0);
+  border-bottom-color: #474747;
+  border-width: 8px;
+  border-bottom-width: 6px;
+  margin-left: -8px;
+}
+.arrow-border-dark:before {
+  border-color: rgba(33, 33, 33, 0);
+  border-bottom-color: #000;
+  border-width: 9px;
+  border-bottom-width: 7px;
+  margin-left: -9px;
+}
+/* E// arrow css*/
+
+.selectable-wrap.selectable-double-top {
+  position: relative;
+  top: 0;
+  border: 0;
+  border-radius: 0;
+}
+.selectable-wrap.selectable-double-bottom {
+  position: relative;
+  top: 0;
+  border: 0;
+  border-radius: 0;
+  overflow: hidden;
+}
+.selectable-wrap.selectable-double-bottom:after {
+  position: absolute; z-index: 1;
+  left: 0; right: 0; bottom: 0; height: 0;
+  content: '';
+  display: block;
+  box-shadow: 0 0 30px 50px rgba(50,50,50, 1); 
+  opacity: .6;
+}
+
+
+/* scrollbar styles */
+.selectable-container.scrollable .viewport {
+  height: 100%;
+}
+.selectable-container.scrollable .viewport .overview {
+  width: 100%;
+}
+.selectable-container.scrollable .scroll-bar.vertical {
+}
+.selectable-container.scrollable .scroll-bar.vertical .thumb{
+  background-color: #525252;
+}
+
+
+
+
+/* CUSTOM COMPONENT (고객 결제금액 차감 및 충전) */
+.creatable-wrap {
+  height: 75px;
+  position: absolute;
+  z-index: 1;
+  top: 133%;
+  left: -12px;
+  width: 420px;
+  background-color: #333;
+  border: 1px solid #262626;
+  -webkit-border-radius:4px;
+          border-radius:4px;
+  -webkit-box-shadow: 0 5px 8px 0px rgba(0,0,0,0.2);
+          box-shadow: 0 5px 8px 0px rgba(0,0,0,0.2);
+
+}
+.creatable-wrap.arrow-border-dark:before,
+.creatable-wrap.arrow-border-dark:after {
+  border-bottom-color: #333;
+  left: 45%; margin: 0;
+}
+.creatable-wrap .creatable-container {
+  height: 100%;
+}
+.creatable-wrap .creatable-container:after {
+  display: block;clear: both;content:'';
+}
+.creatable-wrap .creatable-field {
+  width: 82%;
+  height: 100%;
+  padding: 20px 10px 10px 30px;
+  float: left;
+}
+.creatable-wrap .creatable-field-inner {
+  font-size: 16px;
+}
+.creatable-wrap .creatable-field-input {
+  max-width: 255px;
+  width: 100%;
+  display: inline-block;
+  vertical-align: middle;
+  border-bottom: 1px solid #717171;
+}
+.creatable-wrap .creatable-field-input input {  
+  font-size: 24px;
+  color: #fff;
+  width: 100%;
+  display: block;
+  height: 35px;
+  line-height: 35px;  
+  background-color: transparent;
+  border: 0;outline: 0;
+}
+.creatable-wrap .creatable-field-input input.placeholder {
+  font-size: 16px;
+  font-family: 'notokr-medium';
+  color: #6d6d6d;
+}
+.creatable-wrap .creatable-field-unit {
+  font-size: 18px;
+  color: #858585;
+  font-family: 'notokr-bold';
+  text-indent: 2px;
+  display: inline-block;
+  vertical-align: middle;
+}
+.creatable-wrap .creatable-field-unit label{
+
+}
+.creatable-wrap .creatable-ui {
+  width: 18%; height: 100%; float: right;
+  background-color: #212121;
+}
+.creatable-wrap .creatable-ui button{
+  font-family: 'notokr-bold'; 
+  font-size: 13px !important; 
+  color: rgba(255,255,255, 1) !important;
+  line-height: 1;
+  display: block; text-indent: 18px;
+  width: 100%; height: 50%; opacity: .3;
+}
+.creatable-wrap .creatable-ui button:hover,
+.creatable-wrap .creatable-ui button:focus {
+  opacity: .8;
+  background-color: #202020 !important;
+}
+.creatable-wrap .creatable-ui button.decrement{
+  background: url(../image/common/bullet-minus.png) 18px center no-repeat;
+  border-bottom: 1px solid #333333;
+}
+.creatable-wrap .creatable-ui button.increment{
+  background: url(../image/common/bullet-plus.png) 18px center no-repeat;
 }

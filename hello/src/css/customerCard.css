@@ -6,8 +6,10 @@
 .user-card-basic .info .picture {position: relative;float: left;margin-right: 12px;width: 52px;height: 52px;display: inline-block;}
 .user-card-basic .info .picture .thumbnail{display: block;border-radius: 50%;height: 100%;overflow: hidden;background: url(../image/common/no-picture.png) 0 0 no-repeat;-webkit-background-size: cover;background-size: cover;}
 .user-card-basic .info .picture .thumbnail img{width: 100%;height: 100%;display: inline-block;border: 0;outline: 0;}
-.user-card-basic .info .name{font-size: 20px;color: #000;margin: 4px 0 5px 0;display: block;font-family: 'notokr-medium';}
-.user-card-basic .info .phone{font-size: 16px;color: #666666;display: block;}
+.user-card-basic .info .user{float: left;}
+.user-card-basic .info .user .name{font-size: 20px;color: #000;margin: 4px 5px 5px 0;display: block;font-family: 'notokr-medium';float: left;}
+.user-card-basic .info .user .rating{font-size: 13px;font-family: 'notokr-bold';display: block;float: left;line-height: 30px;color: #aaa;}
+.user-card-basic .info .user .phone{font-size: 16px;color: #666666;display: block;clear: both;}
 .user-card-basic .util{float: right;}
 .user-card-basic .util .ui{margin: -2px 0 8px 0;text-align: right;}
 .user-card-basic .util .ui button{color: #000;opacity: .5;letter-spacing: -0.6px;font-size: 12px;line-height: 12px;font-family: 'notokr-medium';padding-bottom: 2px;border-bottom: 1px solid transparent;}
@@ -44,6 +46,11 @@
     letter-spacing: 100px;overflow: hidden;text-indent: 3px;line-height: 12px;-webkit-border-radius: 50%;
     border-radius: 50%;background-color: #aaa;display: block;text-transform: uppercase;color: #FFF;font-style: normal;
 }
+
+.user-card-basic .info .user .rating.vip{color: #d37c00;}
+.user-card-basic .info .user .rating.new{color: #178417;}
+.user-card-basic .info .user .rating.bad{color: #b1282f;}
+
 .user-card-service .picture .rating.bad{background-color: #b1282f;}
 .user-card-service .picture .rating.new{background-color: #05a609;}
 .user-card-service .picture .rating.vip{background-color: #d37c00;}
