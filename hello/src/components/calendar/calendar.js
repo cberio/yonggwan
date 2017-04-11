@@ -25,8 +25,6 @@ class Calendar extends Component {
     this.returnEventObj = this.returnEventObj.bind(this);
     this.getExpert = this.getExpert.bind(this);
     this.bindTimelineAccess = this.bindTimelineAccess.bind(this);
-
-    this.fetchSchedule = this.fetchSchedule.bind(this);
   }
 
 
@@ -41,7 +39,7 @@ class Calendar extends Component {
   }
 
   getExpert(id) {
-    let ExpertsArray = _.isEmpty(this.props.staffs) ? Experts : this.props.staffs.data;
+    let ExpertsArray = Experts || this.props.staffs.data;
       for (let i = 0; i < ExpertsArray.length; i++) {
           if (ExpertsArray[i].id === id) {
               return ExpertsArray[i];
@@ -53,8 +51,6 @@ class Calendar extends Component {
     this.setState({
       viewType: type
     });
-
-    this.props.setCalendarViewType(type);
   }
 
   returnEventObj (newEvent) {
@@ -85,16 +81,12 @@ class Calendar extends Component {
   }
 
   componentDidMount() {
-    const { selectedShopID } = this.props;
+    const { selectedShop } = this.props;
+    const component = this;
 
-    this.props.fetchSchedulesIfNeeded(selectedShopID);
-    this.props.fetchStaffsIfNeeded(selectedShopID);
-  }
+    this.props.fetchSchedulesIfNeeded(selectedShop);
+    this.props.fetchStaffsIfNeeded(selectedShop);
 
-  fetchSchedule() {
-    const { selectedShopID } = this.props;
-    
-    this.props.fetchSchedulesIfNeeded(selectedShopID);
   }
 
   render () {
@@ -138,15 +130,13 @@ class Calendar extends Component {
       <DailyCalendar
         ref="daily"
         fcOptions={fc_options}
-        events={_.isEmpty(this.props.schedules) ? Events : this.props.schedules.data}
-        experts={_.isEmpty(this.props.staffs) ? Experts : this.props.staffs.data}
+        events={Events}
+        experts={Experts || this.props.staffs.data}
         changeView={this.changeView}
         returnEventObj={this.returnEventObj}
         returnNewID={this.returnNewID}
         getExpert={this.getExpert}
         defaultExpert={_.isEmpty(this.props.staffs) ? Experts[0] : this.props.staffs.data }
-        setCalendarStart={this.props.setCalendarStart}
-        requestSchedules={this.fetchSchedule}
       />
     );
 
@@ -154,8 +144,8 @@ class Calendar extends Component {
       <WeeklyCalendar
         ref="weekly"
         fcOptions={fc_options}
-        events={_.isEmpty(this.props.schedules) ? Events : this.props.schedules.data}
-        experts={_.isEmpty(this.props.staffs) ? Experts : this.props.staffs.data}
+        events={Events}
+        experts={Experts || this.props.staffs.data}
         changeView={this.changeView}
         returnEventObj={this.returnEventObj}
         returnNewID={this.returnNewID}
@@ -187,14 +177,14 @@ Calendar.PropTypes = {
 
 const mapStateToProps = (state) => {
   const {
-    selectedShopID,
+    selectedShop,
     getSchedulesBySelectedShopID,
     getStaffsBySelectedShopID
   } = state;
 
   const {
     schedules,
-  } = getSchedulesBySelectedShopID[selectedShopID] || {
+  } = getSchedulesBySelectedShopID[selectedShop] || {
     isFetching: false,
     schedules: {}
   };
@@ -202,14 +192,14 @@ const mapStateToProps = (state) => {
   const {
     staffs,
     isFetching
-  } = getStaffsBySelectedShopID[selectedShopID] || {
+  } = getStaffsBySelectedShopID[selectedShop] || {
     isFetching: false,
     staffs: {}
   }
 
   return {
     isFetching,
-    selectedShopID,
+    selectedShop,
     schedules,
     staffs,
   }
@@ -219,10 +209,6 @@ const mapDispatchToProps = (dispatch) => {
   return {
     fetchSchedulesIfNeeded: shopID => (dispatch(actions.fetchSchedulesIfNeeded(shopID))),
     fetchStaffsIfNeeded: shopID => (dispatch(actions.fetchStaffsIfNeeded(shopID))),
-    
-    setCalendarViewType: viewType => (dispatch(actions.setCalendarViewType(viewType))),
-    setCalendarStart: start => (dispatch(actions.setCalendarStart(start))),
-    setCalendarEnd: end => (dispatch(actions.setCalendarEnd(end))),
     // or simply do...
     // actions: bindActionCreators(acations, dispatch)
     // this will dispatch all action
