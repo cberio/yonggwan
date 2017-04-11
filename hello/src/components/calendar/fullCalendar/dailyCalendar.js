@@ -81,6 +81,9 @@ class DailyCalendar extends Component {
         this.autoScrollTimeline = this.autoScrollTimeline.bind(this);
         this.autoFlowTimeline = this.autoFlowTimeline.bind(this);
         this.test = this.test.bind(this);
+
+        this.bindResources = this.bindResources.bind(this);
+        this.bindEvents = this.bindEvents.bind(this);
     }
 
     test (e) {
@@ -920,8 +923,12 @@ class DailyCalendar extends Component {
     // 상단 datepicker 컨트롤러를 통해 타임라인 날짜를 변경할때
     changeDate(date) {
         let {Calendar} = this.refs;
+        
         $(Calendar).fullCalendar('gotoDate', date.format());
         this.setState({ isChangeDate: false });
+
+        this.props.setCalendarStart(date.format('YYYY-MM-DD'));
+        this.props.requestSchedules();
     }
 
     // 예약정보수정
@@ -1130,8 +1137,6 @@ class DailyCalendar extends Component {
     }
 
     componentDidMount() {
-      console.debug('@componentDidMount called');
-
         let component = this;
         let {Calendar} = this.refs;
         let Experts = this.props.experts;
@@ -1396,6 +1401,41 @@ class DailyCalendar extends Component {
             // 예약생성(예약요청확인)으로 넘어감
             this.goToRequestReservation(nextProps.requestReservation);
         }
+        
+        if(this.props.experts !== nextProps.experts)
+            this.bindResources(nextProps.experts);        
+
+        if(this.props.events !== nextProps.events)
+            this.bindEvents(nextProps.events);
+    }
+
+    /**
+     * refetchResources with given array 
+     * and set defaultExpert & renderedExpert
+     * 
+     * @param {array} resources 
+     */
+    bindResources(_resources) {
+        let {Calendar} = this.refs;
+
+        $(Calendar).fullCalendar('refetchResources', _resources);
+        
+        this.setState({
+            defaultExpert: _resources[0],
+            renderedExpert: _resources,
+        });
+    }
+
+    /**
+     * remove previous events and add new events with given array
+     * 
+     * @param {array} events 
+     */
+    bindEvents(events) {
+        let {Calendar} = this.refs;
+
+        $(Calendar).fullCalendar('removeEventSources');
+        $(Calendar).fullCalendar('addEventSource', events);
     }
 
     //예약요청확인
@@ -1429,7 +1469,6 @@ class DailyCalendar extends Component {
 
     render() {
 
-        console.info('Render');
         let Experts = this.props.experts;
 
         const CreateOrderButtonFixed = (
