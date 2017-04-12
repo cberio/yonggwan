@@ -20,6 +20,7 @@ class Calendar extends Component {
     this.state = {
       viewType : this.props.defaultView, // state에 의해 타임라인 view를 렌더링함 [agendaDay or agendaWeekly]
     };
+    this.changeDate = this.changeDate.bind(this);
     this.changeView = this.changeView.bind(this);
     this.returnNewID = this.returnNewID.bind(this);
     this.returnEventObj = this.returnEventObj.bind(this);
@@ -57,6 +58,17 @@ class Calendar extends Component {
     this.props.setCalendarViewType(type);
   }
 
+  /**
+   * 
+   * @param {string} YYYY-MM-DD formatted date
+   */
+  changeDate(date) {
+    const { calendarConfig, selectedShopID } = this.props;
+
+    this.props.setCalendarStart(date);
+    this.props.fetchSchedulesIfNeeded(selectedShopID);
+  }
+
   returnEventObj (newEvent) {
       return {
           product: newEvent.newOrderProduct,
@@ -85,10 +97,10 @@ class Calendar extends Component {
   }
 
   componentDidMount() {
-    const { selectedShop } = this.props;
+    const { selectedShopID } = this.props;
 
-    this.props.fetchSchedulesIfNeeded(selectedShop);
-    this.props.fetchStaffsIfNeeded(selectedShop);
+    this.props.fetchSchedulesIfNeeded(selectedShopID);
+    this.props.fetchStaffsIfNeeded(selectedShopID);
   }
 
   fetchSchedule() {
@@ -141,12 +153,11 @@ class Calendar extends Component {
         events={_.isEmpty(this.props.schedules) ? Events : this.props.schedules.data}
         experts={_.isEmpty(this.props.staffs) ? Experts : this.props.staffs.data}
         changeView={this.changeView}
+        changeDate={this.changeDate}
         returnEventObj={this.returnEventObj}
         returnNewID={this.returnNewID}
         getExpert={this.getExpert}
         defaultExpert={_.isEmpty(this.props.staffs) ? Experts[0] : this.props.staffs.data }
-        setCalendarStart={this.props.setCalendarStart}
-        requestSchedules={this.fetchSchedule}
       />
     );
 
@@ -187,6 +198,7 @@ Calendar.PropTypes = {
 
 const mapStateToProps = (state) => {
   const {
+    calendarConfig,
     selectedShopID,
     getSchedulesBySelectedShopID,
     getStaffsBySelectedShopID
@@ -212,6 +224,7 @@ const mapStateToProps = (state) => {
     selectedShopID,
     schedules,
     staffs,
+    calendarConfig,
   }
 }
 
