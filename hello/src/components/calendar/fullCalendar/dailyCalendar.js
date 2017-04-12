@@ -62,7 +62,6 @@ class DailyCalendar extends Component {
         this.modalConfirmHide = this.modalConfirmHide.bind(this);
         this.setCalendarColumn = this.setCalendarColumn.bind(this);
         this.setCalendarHeight = this.setCalendarHeight.bind(this);
-        this.changeDateBasic = this.changeDateBasic.bind(this);
         this.changeDate = this.changeDate.bind(this);
         this.isChangeDate = this.isChangeDate.bind(this);
         this.isUserCard = this.isUserCard.bind(this);
@@ -892,30 +891,6 @@ class DailyCalendar extends Component {
         });
     }
 
-    // 상단 컨트롤러를 통해 일반적으로 타임라인을 변경할때
-    changeDateBasic(dir, view) {
-        let {Calendar} = this.refs;
-
-        switch (view) {
-            case 'agendaDay':
-                if (dir === 'prev') {
-                    $(Calendar).fullCalendar('prev');
-                } else {
-                    $(Calendar).fullCalendar('next');
-                }
-                break;
-            case 'agendaWeekly':
-                if (dir === 'prev') {
-                    $(Calendar).fullCalendar('incrementDate', {week: -4});
-                } else {
-                    $(Calendar).fullCalendar('incrementDate', {week: 4});
-                }
-                break;
-            default:
-                break;
-        }
-    }
-
     isChangeDate(condition) {
         this.setState({isChangeDate: condition});
     }
@@ -927,8 +902,7 @@ class DailyCalendar extends Component {
         $(Calendar).fullCalendar('gotoDate', date.format());
         this.setState({ isChangeDate: false });
 
-        this.props.setCalendarStart(date.format('YYYY-MM-DD'));
-        this.props.requestSchedules();
+        this.props.changeDate(date.format('YYYY-MM-DD'));
     }
 
     // 예약정보수정
@@ -1168,6 +1142,18 @@ class DailyCalendar extends Component {
           defaultDate: defaultDate, //기본 날짜
           scrollTime: defaultScrollTime, //초기 렌더링시 스크롤 될 시간을 표시합니다
           customButtons: {
+              prev: {
+                  text: '이전',
+                  click: () => {
+                      component.changeDate($(Calendar).fullCalendar('getDate').subtract(1, 'days'));
+                  }
+              },
+              next: {
+                  text: '이전',
+                  click: () => {
+                      component.changeDate($(Calendar).fullCalendar('getDate').add(1, 'days'));
+                  }
+              },
               changeDate: {
                   text: '날짜선택',
                   click: function(e) {
