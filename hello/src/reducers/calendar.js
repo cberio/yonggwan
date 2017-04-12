@@ -12,12 +12,12 @@ export const calendarConfig = (state = initialState, action) => {
         case types.FULLCALENDAR_START:
             return {
                 ...state,
-                start: state.start,
+                start: action.start,
             }
         case types.FULLCALENDAR_END:
             return {
                 ...state,
-                end: state.end,
+                end: action.end,
             }
         case types.FULLCALENDAR_VIEWTYPE:
             return {
