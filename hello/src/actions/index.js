@@ -109,8 +109,22 @@ const fetchStaffs = (shop, state) => dispatch => {
     .then(json => dispatch(receiveStaffs(shop, json)));
 }
 
+/**
+ * whether call api request or not.
+ * 
+ * 1) state in reducer is undefined : call api 
+ * 2) state in reducer is not empty and is pending api call : do not call api
+ * 3) state in reducer has data and data has schedule in given date : do not call api
+ * 4) schedule has updated (not implemented) : call api
+ * 
+ * @param {Object} current state 
+ * @param {string} shopID 
+ * 
+ * @return {boolean} 
+ */
 const shouldFetchSchedules = (state, shopID) => {
   const schedules = state.getSchedulesBySelectedShopID[shopID];
+  const selectedDate = state.calendarConfig.start;
 
   if(!schedules)
     return true;
@@ -118,7 +132,7 @@ const shouldFetchSchedules = (state, shopID) => {
   if(schedules.isFetching)
     return false;
   
-  if(schedules.receivedAt < Date.now())
+  if(!schedules.schedules.data.find(schedule => schedule.reservation_dt === selectedDate))
     return true;
 
   return schedules.didInvalidate;
@@ -132,9 +146,6 @@ const shouldFetchStaffs = (state, shopID) => {
 
   if(staffs.isFetching)
     return false;
-
-  if(!staffs.receivedAt < Date.now())
-    return true;
 
   return staffs.didInvalidate;
 }
