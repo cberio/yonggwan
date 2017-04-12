@@ -4,14 +4,14 @@ import modalConfirm from './modalConfirm';
 import notifier from './notifier';
 import guider from './guider';
 import loading from './loading';
-import {calendarDate} from './calendar';
+import {calendarConfig} from './calendar';
 import selectedShopID from './shop';
 import {getSchedulesBySelectedShopID} from './schedule';
 import {getStaffsBySelectedShopID} from './staffs';
 
 const Reducers = combineReducers({
   userCard, modalConfirm, notifier, guider, loading,
-  calendarDate,
+  calendarConfig,
   selectedShopID,
   getSchedulesBySelectedShopID,
   getStaffsBySelectedShopID,
