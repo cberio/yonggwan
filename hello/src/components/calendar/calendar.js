@@ -321,7 +321,7 @@ class Calendar extends Component {
 
     // Daily, Weekly FullCalendar 공통 옵션
     const fc_options = {
-        schedulerLicenseKey: '0912055899-fcs-1483528517',
+        schedulerLicenseKey: `${ process.env.REACT_APP_FULLCALENDAR_LISENCE ? process.env.REACT_APP_FULLCALENDAR_LISENCE : 'GPL-My-Project-Is-Open-Source'}`,
         resourceOrder: 'priority', // expert의 정렬 순서를 무엇을 기준으로 할지 정함
         defaultDate: moment(this.state.viewDate), //기본 날짜
         filterResourcesWithEvents: false, // 이벤트가 없는 expert를 숨길지 여부
