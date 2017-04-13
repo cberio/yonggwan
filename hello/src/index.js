@@ -6,7 +6,7 @@ import { Match, Miss } from 'react-router';
 import { BrowserRouter as Router } from 'react-router';
 import AsyncComponents from './components/asyncComponents';
 
-import { createStore, applyMiddleware } from 'redux';
+import { createStore, applyMiddleware, compose } from 'redux';
 import { Provider } from 'react-redux';
 import Reducers from './reducers';
 import thunk from 'redux-thunk';
@@ -15,9 +15,10 @@ import './css/reset.css';
 import './css/index.css';
 
 const middleware = [thunk];
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const store = createStore(
   Reducers,
-  applyMiddleware(...middleware)
+  composeEnhancers(applyMiddleware(...middleware))
 );
 /*store.subscribe(() => console.log('ㅡㅡㅡㅡㅡ store was updated ㅡㅡㅡㅡㅡ'));
 store.subscribe(() => console.log(store.getState()));

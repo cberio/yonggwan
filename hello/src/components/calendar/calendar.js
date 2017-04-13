@@ -33,6 +33,8 @@ class Calendar extends Component {
         event: undefined
       }
     };
+
+    this.changeDate = this.changeDate.bind(this);
     this.newOrder = this.newOrder.bind(this);
     this.newOrderCancel = this.newOrderCancel.bind(this);
     this.changeView = this.changeView.bind(this);
@@ -42,6 +44,8 @@ class Calendar extends Component {
     this.returnEventObj = this.returnEventObj.bind(this);
     this.setTimelineDate = this.setTimelineDate.bind(this);
     this.getExpert = this.getExpert.bind(this);
+    
+    this.fetchSchedule = this.fetchSchedule.bind(this);
   }
 
   // Daily Timeline 에서 예약생성 모듈로 접근시 실행하는 함수.
@@ -61,7 +65,7 @@ class Calendar extends Component {
   }
 
   getExpert(id) {
-    let ExpertsArray = Experts || this.props.staffs.data;
+    let ExpertsArray = _.isEmpty(this.props.staffs) ? Experts : this.props.staffs.data;
       for (let i = 0; i < ExpertsArray.length; i++) {
           if (ExpertsArray[i].id === id) {
               return ExpertsArray[i];
@@ -73,6 +77,19 @@ class Calendar extends Component {
     this.setState({
       viewType: type
     });
+
+    this.props.setCalendarViewType(type);
+  }
+
+  /**
+   * 
+   * @param {string} YYYY-MM-DD formatted date
+   */
+  changeDate(date) {
+    const { calendarConfig, selectedShopID } = this.props;
+
+    this.props.setCalendarStart(date);
+    this.props.fetchSchedulesIfNeeded(selectedShopID);
   }
 
   setTimelineDate (date) {
@@ -169,12 +186,16 @@ class Calendar extends Component {
   }
 
   componentDidMount() {
-    const { selectedShop } = this.props;
-    const component = this;
+    const { selectedShopID } = this.props;
 
-    this.props.fetchSchedulesIfNeeded(selectedShop);
-    this.props.fetchStaffsIfNeeded(selectedShop);
+    this.props.fetchSchedulesIfNeeded(selectedShopID);
+    this.props.fetchStaffsIfNeeded(selectedShopID);
+  }
 
+  fetchSchedule() {
+    const { selectedShopID } = this.props;
+    
+    this.props.fetchSchedulesIfNeeded(selectedShopID);
   }
 
   render () {
@@ -300,7 +321,7 @@ class Calendar extends Component {
 
     // Daily, Weekly FullCalendar 공통 옵션
     const fc_options = {
-        schedulerLicenseKey: '0912055899-fcs-1483528517',
+        schedulerLicenseKey: `${ process.env.REACT_APP_FULLCALENDAR_LISENCE ? process.env.REACT_APP_FULLCALENDAR_LISENCE : 'GPL-My-Project-Is-Open-Source'}`,
         resourceOrder: 'priority', // expert의 정렬 순서를 무엇을 기준으로 할지 정함
         defaultDate: moment(this.state.viewDate), //기본 날짜
         filterResourcesWithEvents: false, // 이벤트가 없는 expert를 숨길지 여부
@@ -334,9 +355,10 @@ class Calendar extends Component {
 
     const commonViewProps = {
       fcOptions: fc_options,
-      events: Events,
-      experts: Experts || this.props.staffs.data,
+      events: _.isEmpty(this.props.schedules) ? Events : this.props.schedules.data,
+      experts: _.isEmpty(this.props.staffs) ? Experts : this.props.staffs.data,
       changeView: this.changeView,
+      changeDate: this.changeDate,
       returnEventObj: this.returnEventObj,
       returnNewID: this.returnNewID,
       getExpert: this.getExpert,
@@ -407,14 +429,15 @@ Calendar.PropTypes = {
 
 const mapStateToProps = (state) => {
   const {
-    selectedShop,
+    calendarConfig,
+    selectedShopID,
     getSchedulesBySelectedShopID,
     getStaffsBySelectedShopID
   } = state;
 
   const {
     schedules,
-  } = getSchedulesBySelectedShopID[selectedShop] || {
+  } = getSchedulesBySelectedShopID[selectedShopID] || {
     isFetching: false,
     schedules: {}
   };
@@ -422,16 +445,17 @@ const mapStateToProps = (state) => {
   const {
     staffs,
     isFetching
-  } = getStaffsBySelectedShopID[selectedShop] || {
+  } = getStaffsBySelectedShopID[selectedShopID] || {
     isFetching: false,
     staffs: {}
   }
 
   return {
     isFetching,
-    selectedShop,
+    selectedShopID,
     schedules,
     staffs,
+    calendarConfig,
   }
 }
 
@@ -439,6 +463,10 @@ const mapDispatchToProps = (dispatch) => {
   return {
     fetchSchedulesIfNeeded: shopID => (dispatch(actions.fetchSchedulesIfNeeded(shopID))),
     fetchStaffsIfNeeded: shopID => (dispatch(actions.fetchStaffsIfNeeded(shopID))),
+        
+    setCalendarViewType: viewType => (dispatch(actions.setCalendarViewType(viewType))),
+    setCalendarStart: start => (dispatch(actions.setCalendarStart(start))),
+    setCalendarEnd: end => (dispatch(actions.setCalendarEnd(end))),
     // or simply do...
     // actions: bindActionCreators(acations, dispatch)
     // this will dispatch all action

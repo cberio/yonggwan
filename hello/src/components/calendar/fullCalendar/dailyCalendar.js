@@ -48,7 +48,6 @@ class DailyCalendar extends Component {
         this.backToOrder = this.backToOrder.bind(this);
         this.modalConfirmHide = this.modalConfirmHide.bind(this);
         this.setCalendarColumn = this.setCalendarColumn.bind(this);
-        this.changeDateBasic = this.changeDateBasic.bind(this);
         this.changeDate = this.changeDate.bind(this);
         this.isChangeDate = this.isChangeDate.bind(this);
         this.isUserCard = this.isUserCard.bind(this);
@@ -67,6 +66,9 @@ class DailyCalendar extends Component {
         this.autoScrollTimeline = this.autoScrollTimeline.bind(this);
         this.autoFlowTimeline = this.autoFlowTimeline.bind(this);
         this.test = this.test.bind(this);
+
+        this.bindResourcesToTimeLine = this.bindResourcesToTimeLine.bind(this);
+        this.bindEventsToTimeLine = this.bindEventsToTimeLine.bind(this);
     }
 
     test (e) {
@@ -643,28 +645,78 @@ class DailyCalendar extends Component {
         });
     }
 
-    // 상단 컨트롤러를 통해 일반적으로 타임라인을 변경할때
-    changeDateBasic(dir, view) {
+    // 예약 변경시 이벤트를 렌더링합니다 (실제 이벤트를 생성한 후 최종확인 버튼을통해 삭제할지 말지 결정합니다)
+    fakeRenderEditEvent(editEvent, rerender) {
+        let component = this;
         let {Calendar} = this.refs;
+        console.log(editEvent);
+        // rerendering 일 경우 이벤트를 다시 등록한다
+        if (rerender)
+            $(Calendar).fullCalendar('renderEvent', editEvent, true); // stick? = true
 
-        switch (view) {
-            case 'agendaDay':
-                if (dir === 'prev') {
-                    $(Calendar).fullCalendar('prev');
-                } else {
-                    $(Calendar).fullCalendar('next');
-                }
-                break;
-            case 'agendaWeekly':
-                if (dir === 'prev') {
-                    $(Calendar).fullCalendar('incrementDate', {week: -4});
-                } else {
-                    $(Calendar).fullCalendar('incrementDate', {week: 4});
-                }
-                break;
-            default:
-                break;
-        }
+        let realEventElem = $('#ID_' + editEvent.id).hide();
+        let fakeEventElem = $(realEventElem).clone().attr('id', 'ID_' + editEvent.id + '_FAKE').show();
+        $(fakeEventElem).addClass('new-event edit').appendTo($('.fc-time-grid-container td[data-date="' + moment(editEvent.start).format('YYYY-MM-DD') + '"]'));
+        $(fakeEventElem).wrap('<div class="fc-fake-event"></div>');
+        this.setState({
+            newEventId: editEvent.id,
+            newEvents: $.extend(editEvent, {
+                class: Functions.getProductColor(editEvent.product, Products)
+            }),
+            newEventProductTime: Functions.millisecondsToMinute(moment(editEvent.end).diff(moment(editEvent.start)))
+        });
+        // 이벤트 생성버튼 Click 바인딩
+        $('.create-order-wrap.timeline button.create-event').ready(function() {
+            $('.create-order-wrap.timeline button.create-event').bind('click', function() {
+                // 렌더링 된 이벤트 삭제
+                $(fakeEventElem).remove();
+                fakeEventElem = null;
+                $(Calendar).fullCalendar('removeEvents', [editEvent.id]);
+                // 수정된 이벤트 객체 정보
+                let getEventObj = component.refs.NewOrder.getEventObj();
+                let editEventObj = component.returnEventObj(getEventObj);
+                let editedStart = moment(component.state.selectedDate);
+                let editedEnd = moment(component.state.selectedDate).add(component.state.newEventProductTime, 'minutes');
+                let insertEvent = $.extend(editEventObj, {
+                    id: editEvent.id,
+                    resourceId: component.state.selectedExpert.id,
+                    start: editedStart,
+                    end: editedEnd
+                });
+                // 수정된 이벤트 렌더링
+                $(Calendar).fullCalendar('renderEvent', insertEvent, true); // stick? = true
+                realEventElem = $('#ID_' + editEvent.id);
+                fakeEventElem = $(realEventElem).clone().attr('id', 'ID_' + editEvent.id + '_FAKE');
+                $(fakeEventElem).addClass('new-event edit').appendTo($('.fc-time-grid-container td[data-date="' + editedStart.format('YYYY-MM-DD') + '"]'));
+                $(fakeEventElem).wrap('<div class="fc-fake-event"></div>');
+                component.setState({
+                    isRenderConfirm: true,
+                    editedDate: {
+                        start: editedStart,
+                        end: editedEnd
+                    }
+                }, () => {
+                    // 수정된 이벤트 임시 렌더링 후의 취소버튼 바인딩
+                    $('.render-confirm-inner').ready(function() {
+                        $('.render-confirm-inner').find('.cancel').unbind('click'); // 중복 바인딩 방지
+                        $('.render-confirm-inner').find('.cancel').bind('click', function() {
+                            // fake 이벤트레이어 삭제
+                            $('.fc-fake-event').remove();
+                            $(fakeEventElem).remove();
+                            // 수정된 이벤트를 임시 삭제
+                            $(Calendar).fullCalendar('removeEvents', [editEvent.id]);
+                            $('.render-confirm-inner').find('.cancel').unbind('click');
+                            $('.render-confirm-inner').remove();
+                            // reset states and remove dom elements and event
+                            component.setState({isRenderConfirm: false});
+                            // 수정전의 이벤트를 인수로 넘겨 함수를 재실행한다
+                            component.fakeRenderEditEvent(editEventObj, true);
+                        });
+                    });
+                });
+                $(this).unbind('click');
+            });
+        });
     }
 
     isChangeDate(condition) {
@@ -674,8 +726,11 @@ class DailyCalendar extends Component {
     // 상단 datepicker 컨트롤러를 통해 타임라인 날짜를 변경할때
     changeDate(date) {
         let {Calendar} = this.refs;
+        
         $(Calendar).fullCalendar('gotoDate', date.format());
         this.setState({ isChangeDate: false });
+
+        this.props.changeDate(date.format('YYYY-MM-DD'));
     }
 
     // 예약정보수정
@@ -891,6 +946,18 @@ class DailyCalendar extends Component {
           firstDay: firstDay,
           scrollTime: defaultScrollTime, //초기 렌더링시 스크롤 될 시간을 표시합니다
           customButtons: {
+              prev: {
+                  text: '이전',
+                  click: () => {
+                      component.changeDate($(Calendar).fullCalendar('getDate').subtract(1, 'days'));
+                  }
+              },
+              next: {
+                  text: '이전',
+                  click: () => {
+                      component.changeDate($(Calendar).fullCalendar('getDate').add(1, 'days'));
+                  }
+              },
               changeDate: {
                   text: '날짜선택',
                   click: function(e) {
@@ -1123,6 +1190,42 @@ class DailyCalendar extends Component {
             // 예약생성(예약요청확인)으로 넘어감
             this.goToRequestReservation(nextProps.requestReservation);
         }
+        
+        if(this.props.experts !== nextProps.experts)
+            this.bindResourcesToTimeLine(nextProps.experts);        
+
+        if(this.props.events !== nextProps.events)
+            this.bindEventsToTimeLine(nextProps.events);
+    }
+
+    /**
+     * refetchResources with given array 
+     * and set defaultExpert & renderedExpert
+     * 
+     * @param {array} resources 
+     */
+    bindResourcesToTimeLine(_resources) {
+        let {Calendar} = this.refs;
+
+        $(Calendar).fullCalendar('refetchResources', _resources);
+        
+        this.setState({
+            defaultExpert: _resources[0],
+            renderedExpert: _resources,
+            selectedExpert: _resources[0],
+        });
+    }
+
+    /**
+     * remove previous events and add new events with given array
+     * 
+     * @param {array} events 
+     */
+    bindEventsToTimeLine(events) {
+        let {Calendar} = this.refs;
+
+        $(Calendar).fullCalendar('removeEventSources');
+        $(Calendar).fullCalendar('addEventSource', events);
     }
 
     //예약요청확인
