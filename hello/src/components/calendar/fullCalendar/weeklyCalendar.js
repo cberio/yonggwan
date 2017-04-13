@@ -5,13 +5,8 @@ import * as actions from '../../../actions';
 import * as Functions from '../../../js/common';
 import moment from 'moment';
 import update from 'react-addons-update';
-import DatePicker from '../datePicker';
 import Products from '../../../data/products.json';
 import NewOrder from '../newOrder';
-import ModalConfirm from '../modal/modalConfirm';
-import RenderEventConfirm from '../modal/renderEventConfirm';
-import UserCard from '../../userCard';
-import Notifier from '../../../components/notifier';
 import 'jquery.nicescroll';
 import 'fullcalendar-scheduler';
 
@@ -71,12 +66,10 @@ class WeeklyCalendar extends Component {
         this.removeEvent = this.removeEvent.bind(this);
         this.removeConfirm = this.removeConfirm.bind(this);
         this.editEvent = this.editEvent.bind(this);
-        this.mouseenterSlotData = this.mouseenterSlotData.bind(this);
-        this.bindComponentChildren = this.bindComponentChildren.bind(this);
+        this.initRender = this.initRender.bind(this);
         this.toggleCreateOrderUi = this.toggleCreateOrderUi.bind(this);
         this.checkRenderedDate = this.checkRenderedDate.bind(this);
         this.checkBindedStates = this.checkBindedStates.bind(this);
-        this.initRender = this.initRender.bind(this);
         this.goToRequestReservation = this.goToRequestReservation.bind(this);
         this.autoScrollTimeline = this.autoScrollTimeline.bind(this);
         this.autoFlowTimeline = this.autoFlowTimeline.bind(this);
@@ -116,8 +109,12 @@ class WeeklyCalendar extends Component {
             $(parentElem).find('.fc-slot').each(function() {
                 $(this).on({
                     mouseenter: function(e) {
-                        if (component.state.isDragging || component.state.isRenderConfirm)
-                            return false;
+                        var case1 = component.state.isDragging;
+                        var case2 = component.state.isRenderConfirm;
+                        var case3 = component.state.isNewOrder;
+                        var case4 = component.refs.NewOrder ? component.refs.NewOrder.state.newOrderStep !== 3 : false;
+                        if (case1 || case2 || (case3 && case4))
+                          return false;
 
                         // init hidden ui buttons
                         $('.create-order-wrap.timeline .create-order-ui-wrap').hide();
@@ -143,7 +140,7 @@ class WeeklyCalendar extends Component {
                             $(createButtonElem).find('.time').html(mouseenteredTime.format("A hh:mm"));
                         }
                         // data set selectedDate
-                        component.mouseenterSlotData(true, selectedTime);
+                        component.props.getSlotTime(true, selectedTime);
 
                         // insert create button
                         $(this).append($(createButtonElem).show());
@@ -185,9 +182,15 @@ class WeeklyCalendar extends Component {
     }
 
     // 타임라인 에서의 상단 controler 스크롤러 바인딩
-    bindTimelineScroller() {
+    bindTimelineScroller(type) {
         let {Calendar} = this.refs;
         let component = this;
+
+        if (type === 'destroy') {
+          $(this.controler).getNiceScroll().remove();
+          this.controler = undefined;
+          return;
+        }
 
         var controlerElem,
             timeline,
@@ -200,7 +203,8 @@ class WeeklyCalendar extends Component {
 
         timeline = $('.fc-scroller.fc-time-grid-container');
         controlerElem = $('.fc-head-container .fc-row.fc-widget-header');
-        scrollDayFormat = $(Calendar).fullCalendar('getDate').add(5, 'day').format('YYYY-MM-DD');
+        scrollDayFormat = $(Calendar).fullCalendar('getDate').format('YYYY-MM-DD');
+        console.log(scrollDayFormat);
         initPositionLeft = $('.fc-agendaWeekly-view .fc-bg td[data-date="' + scrollDayFormat + '"]').position().left;
 
         this.controler = $(controlerElem);
@@ -227,14 +231,6 @@ class WeeklyCalendar extends Component {
             } else if (lastY > thisY) {
                 direction = 'top';
             }
-            // 이벤트를 드래그 시 빠르게 스크롤하기 위함
-            // if(component.state.isDragging) {
-            //   switch (direction) {
-            //     case 'right':
-            //       $(timeline).scrollLeft(thisX +10);
-            //       break;
-            //   }
-            // }
 
             if (direction === 'left' || direction === 'right') {
                 $(controlerElem).stop().scrollLeft(thisX);
@@ -261,7 +257,7 @@ class WeeklyCalendar extends Component {
             cursordragontouch: true,
             enablekeyboard: false
         });
-        $('.nicescroll-rails-hr').addClass('fc-controler');
+        $('.fc-head-container.fc-widget-header').append($('.nicescroll-rails.nicescroll-rails-hr'));
 
         // init controler
         $(controlerElem).scroll(function() {
@@ -277,28 +273,6 @@ class WeeklyCalendar extends Component {
             isScrollingControler = false;
         });
     }
-
-    // Full Calendar 하위 ELements 가 아닌 Calendar Component 하위 엘리먼트 바인딩
-    bindComponentChildren() {
-        //우측하단 예약생성 고정버튼 Ui toggle
-        $('.create-order-wrap.fixed .create-order-slot').bind('click', function() {
-            $('.create-order-wrap.fixed .create-order-ui-wrap').toggle();
-        });
-        $('.create-order-wrap.fixed').bind('mouseleave', function() {
-            $('.create-order-wrap.fixed .create-order-ui-wrap').hide();
-        });
-    }
-
-    // 타임라인 예약생성 버튼의 data-date 값을 set/return
-    mouseenterSlotData(isSetting, date) {
-      var createButtonElem =  $('.create-order-wrap.timeline');
-      if (isSetting) {
-        $(createButtonElem).attr('data-date', date);
-      } else {
-        return $(createButtonElem).attr('data-date');
-      }
-    }
-
 
     // state 를 체크하여 이벤트를 함수를 실행합니다
     checkBindedStates() {
@@ -387,15 +361,16 @@ class WeeklyCalendar extends Component {
         }, timeout);
     }
 
-    // 예약 생성 단계에 따른 Calendar Height 사이즈를 조절합니다
-    setCalendarHeight(step) {
+    // 예약생성모듈 활성화시 Calendar Height 사이즈를 조절합니다
+    setCalendarHeight(isDestroy) {
         let {Calendar} = this.refs;
-        let expertUiHeight = 38;
-        // 예약 3단계 이면서, 시작시간을 미리 선택하지 않는 예약생성 단계 이거나 혹은 예약변경 인 경우
-        if (step === 3 && (this.state.isNotAutoSelectTime || this.state.isEditEvent)) {
-            $(Calendar).fullCalendar('option', 'height', (window.innerHeight - 324) - expertUiHeight); // 324 = step3의 'NewOrder' layer height
-        } else {
+        let expertUiHeight = 38 - 17; // 17 = window scrollbar height
+        let moduleHeight = 590;
+
+        if (isDestroy) {
             $(Calendar).fullCalendar('option', 'height', window.innerHeight - expertUiHeight);
+        } else {
+            $(Calendar).fullCalendar('option', 'height', (window.innerHeight - moduleHeight) - expertUiHeight);
         }
     }
 
@@ -511,10 +486,13 @@ class WeeklyCalendar extends Component {
                         component.fakeRenderNewEvent(insertEvent, newEventId, 'selectedStart');
                     }, 0);
                 });
+            } else {
+              this.fakeRenderNewEvent(insertEvent, newEventId, 'selectedStart');
             }
         });
     }
     // 생성 A,B ___ 2 : 임시렌더링된 이벤트 등록을 할것인지 확인한다
+
     step_modal(bool, id) {
         let {Calendar} = this.refs;
         let type = this.state.isEditEvent
@@ -552,7 +530,7 @@ class WeeklyCalendar extends Component {
             if (isNotAutoSelectTime) {
                 if (this.state.viewTypeOrder === 'agendaDay') {
                     // 생성한 이벤트의 날자로 캘린더 타임라인을 변경
-                    $(Calendar).fullCalendar('gotoDate', moment(this.mouseenterSlotData()).format('YYYY-MM-DD'));
+                    $(Calendar).fullCalendar('gotoDate', moment(this.props.getSlotTime()).format('YYYY-MM-DD'));
                     this.changeView('agendaDay', function() {
                         // render event
                         this.autoScrollTimeline($('#ID_' + id));
@@ -649,7 +627,7 @@ class WeeklyCalendar extends Component {
         let {Calendar} = this.refs;
         let component = this;
         let defaultMinute = 20;
-        let endTime = this.mouseenterSlotData();
+        let endTime = this.props.getSlotTime();
         endTime = moment(endTime).add(defaultMinute, 'minute');
         endTime = endTime.format("YYYY-MM-DDTHH:mm:ss");
         let newEventId = this.props.returnNewID();
@@ -664,7 +642,7 @@ class WeeklyCalendar extends Component {
             case 'timeline':
                 insertOfftime = $.extend(insertOfftime, {
                     resourceId: this.state.renderedExpert.id,
-                    start: this.mouseenterSlotData(),
+                    start: this.props.getSlotTime(),
                     end: endTime
                 });
                 /// 생성버튼 캘린더 타임라인 노드에서 상위 노드로 삽입
@@ -701,7 +679,7 @@ class WeeklyCalendar extends Component {
             case 'render':
                 insertOfftime = $.extend(insertOfftime, {
                     resourceId: this.state.renderedExpert.id,
-                    start: this.mouseenterSlotData(),
+                    start: this.props.getSlotTime(),
                     end: endTime
                 });
                 this.renderEvent(insertOfftime);
@@ -824,7 +802,7 @@ class WeeklyCalendar extends Component {
             $('#ID_' + newEventId).addClass('new-event').after($('.mask-event').show());
             // weekly
         } else {
-            let startTime = this.mouseenterSlotData();
+            let startTime = this.props.getSlotTime();
             let endTime = moment(startTime).add(this.state.newEventProductTime, 'minute').format("YYYY-MM-DDTHH:mm:ss");
             let newInsertEvent = $.extend(insertEvent, {
                 start: startTime,
@@ -833,7 +811,7 @@ class WeeklyCalendar extends Component {
             $(Calendar).fullCalendar('renderEvent', newInsertEvent, true); // stick? = true
             let realEventElem = $('#ID_' + newEventId);
             let fakeEventElem = $(realEventElem).clone().attr('id', 'ID_' + newEventId + '_FAKE');
-            $(fakeEventElem).addClass('new-event').appendTo($('.fc-time-grid-container td[data-date="' + moment(this.mouseenterSlotData()).format('YYYY-MM-DD') + '"]'));
+            $(fakeEventElem).addClass('new-event').appendTo($('.fc-time-grid-container td[data-date="' + moment(this.props.getSlotTime()).format('YYYY-MM-DD') + '"]'));
             $(fakeEventElem).wrap('<div class="fc-fake-event"></div>');
             this.setState({
                 newEventId: newEventId,
@@ -881,8 +859,8 @@ class WeeklyCalendar extends Component {
                 // 수정된 이벤트 객체 정보
                 let getEventObj = component.refs.NewOrder.getEventObj();
                 let editEventObj = component.props.returnEventObj(getEventObj);
-                let editedStart = moment(component.mouseenterSlotData());
-                let editedEnd = moment(component.mouseenterSlotData()).add(component.state.newEventProductTime, 'minutes');
+                let editedStart = moment(component.props.getSlotTime());
+                let editedEnd = moment(component.props.getSlotTime()).add(component.state.newEventProductTime, 'minutes');
                 let insertEvent = $.extend(editEventObj, {
                     id: editEvent.id,
                     resourceId: component.state.renderedExpert.id,
@@ -928,24 +906,10 @@ class WeeklyCalendar extends Component {
     // 상단 컨트롤러를 통해 일반적으로 타임라인을 변경할때
     changeDateBasic(dir, view) {
         let {Calendar} = this.refs;
-
-        switch (view) {
-            case 'agendaDay':
-                if (dir === 'prev') {
-                    $(Calendar).fullCalendar('prev');
-                } else {
-                    $(Calendar).fullCalendar('next');
-                }
-                break;
-            case 'agendaWeekly':
-                if (dir === 'prev') {
-                    $(Calendar).fullCalendar('incrementDate', {week: -4});
-                } else {
-                    $(Calendar).fullCalendar('incrementDate', {week: 4});
-                }
-                break;
-            default:
-                break;
+        if (dir === 'prev') {
+            $(Calendar).fullCalendar('incrementDate', {week: -4});
+        } else {
+            $(Calendar).fullCalendar('incrementDate', {week: 4});
         }
     }
 
@@ -1003,21 +967,26 @@ class WeeklyCalendar extends Component {
     }
 
     newOrder(type) {
-        let {Calendar} = this.refs;
-        // 우측하단 상시 예약생성 버튼을 통한 생성일 경우
-        if (type === 'notAutoSelectTime')
-            this.setState({isNotAutoSelectTime: true});
+      let {Calendar} = this.refs;
 
-        $('.create-order-wrap.fixed').addClass('hidden');
-        /// 생성버튼 캘린더 타임라인 노드에서 상위 노드로 삽입
-        $('.full-calendar > .fc').append($('.create-order-wrap.timeline').hide());
-        $('.timeline .create-order-ui-wrap').hide();
-        // $(Calendar).fullCalendar('option', 'editable', false);
+      $('.create-order-wrap.fixed').addClass('hidden');
+      /// 생성버튼 캘린더 타임라인 노드에서 상위 노드로 삽입
+      $('.full-calendar > .fc').append($('.create-order-wrap.timeline').hide());
+      $('.timeline .create-order-ui-wrap').hide();
+      // $(Calendar).fullCalendar('option', 'editable', false);
 
-        this.setState({
-          selectedDate : this.mouseenterSlotData(),
-          isNewOrder: true
-        });
+      // 우측하단 상시 예약생성 버튼을 통한 생성일 경우
+      if (type === 'notAutoSelectTime') {
+          this.setState({
+            isNotAutoSelectTime: true,
+            isNewOrder: true
+          });
+      } else {
+          this.setState({
+            selectedDate : this.props.getSlotTime(),
+            isNewOrder: true
+          });
+      }
     }
 
 
@@ -1182,19 +1151,15 @@ class WeeklyCalendar extends Component {
         const component = this;
         let {Calendar} = this.refs;
         let Experts = this.props.experts;
-        var date = new Date();
-        var time = date.getTime();
-        var day = date.getDate();
-        var month = date.getMonth();
-        var year = date.getFullYear();
-        // var defaultDate = moment(date).subtract(7, 'day');
-        var defaultDate = date;
-        var firstDay = moment(date).day();
-        var defaultScrollTime = moment(time).subtract(1, 'hour').format('HH:mm'); //현재시간으로부터 1시간 이전의 시간
-        var expertUiHeight = 38;
+        var date = this.props.fcOptions.defaultDate;
+        var time = date.get('hour');
+        var day = date.get('date');
+        var month = date.get('month');
+        var firstDay = date.format('d');
+        var defaultScrollTime = date.subtract(1, 'hour').format('HH:mm'); //현재시간으로부터 1시간 이전의 시간
+        var expertUiHeight = 38 - 17; //17 = window scrollbar height
 
         this.setState({defaultExpert: Experts[0]});
-        this.bindComponentChildren();
 
         // 스케쥴러 init 실행
         $(Calendar).fullCalendar($.extend(component.props.fcOptions, {
@@ -1207,7 +1172,6 @@ class WeeklyCalendar extends Component {
               right: 'agendaDayCustom agendaWeeklyCustom'
           },
           firstDay: firstDay,
-          defaultDate: defaultDate, //기본 날짜
           scrollTime: defaultScrollTime, //초기 렌더링시 스크롤 될 시간을 표시합니다
           navLinks: true, //(캘린더 상단 날자 활성화) can click day/week names to navigate views
           customButtons: {
@@ -1239,13 +1203,13 @@ class WeeklyCalendar extends Component {
               prevTimeline: {
                   text: '이전',
                   click: function() {
-                      component.changeDateBasic('prev', component.state.viewType);
+                      component.changeDateBasic('prev');
                   }
               },
               nextTimeline: {
                   text: '다음',
                   click: function() {
-                      component.changeDateBasic('next', component.state.viewType);
+                      component.changeDateBasic('next');
                   }
               }
           },
@@ -1389,13 +1353,13 @@ class WeeklyCalendar extends Component {
               var runAfterStatesUpdate = function () {
                   // [1] Weekly 타임라인이 다시 렌더링 된 경우
                   if (component.state.alreadyRendered) {
-                    component.bindTimelineScroller();
+                    component.bindTimelineScroller('again');
                     component.expertInputCheck('again');
                   }
                   // [2] Weekly 타임라인이 처음 렌더링 된 경우
                   else {
                     component.initRender();
-                    component.bindTimelineScroller();
+                    component.bindTimelineScroller('init');
                     component.expertInputCheck('init');
                     component.setState({
                       alreadyRendered: true
@@ -1429,7 +1393,7 @@ class WeeklyCalendar extends Component {
 
           viewDestroy: function(view, elem) {
             // destroy scrollbar
-            $(component.controler).getNiceScroll().remove();
+            component.bindTimelineScroller('destroy');
           },
           // open customer card
           eventDoubleClick: function(calEvent, jsEvent, view) {
@@ -1453,6 +1417,17 @@ class WeeklyCalendar extends Component {
               });
           }
       }));
+
+      if (this.props.isBindedNewOrder) {
+        var newOrderInfo = this.props.getNewOrderStates();
+        this.setState({
+          isNotAutoSelectTime: newOrderInfo.type,
+          renderedExpert: newOrderInfo.expert,
+          selectedDate: newOrderInfo.start,
+          isNewOrder: true
+        });
+      }
+      this.props.wasMount();
 
     } //////// ComponentDidMount //END
 
@@ -1499,71 +1474,8 @@ class WeeklyCalendar extends Component {
 
     render() {
         let Experts = this.props.experts;
-
-        console.info('Render');
-        const CreateOrderButtonFixed = (
-            <div className="create-order-wrap fixed">
-                <div className="create-order-slot">
-                    <button className="create-button">
-                        <span>+</span>
-                    </button>
-                </div>
-                <div className="create-order-ui">
-                    <button onClick={() => this.newOrder('notAutoSelectTime')} className="ui-reservation">예약생성</button>
-                    <button onClick={() => this.createOfftime('weekly')} className="ui-offtime">OFF TIME 생성</button>
-                </div>
-            </div>
-        );
-        const CreateOrderButtonTimeline = (
-            <div data-date="" className={`create-order-wrap timeline${this.state.isCreateOfftime
-                ? " off-time"
-                : this.state.isNotAutoSelectTime
-                    ? " has-card"
-                    : this.state.isEditEvent
-                        ? " edit"
-                        : ""}`}>
-                <div className="create-order-inner">
-                    <div className="create-order-slot">
-                        {this.state.isCreateOfftime
-                            ? (
-                                <button className="create-button" onClick={() => this.createOfftime('render', 'offtime')}>
-                                    <i className="time"></i>
-                                    <span>+</span>
-                                </button>
-                            )
-                            : this.state.isNotAutoSelectTime || this.state.isEditEvent
-                                ? (
-                                    <button className="create-button create-event">
-                                        <i className="time"></i>
-                                        <span>+</span>
-                                    </button>
-                                )
-                                : (
-                                    <button className="create-button" onClick={this.toggleCreateOrderUi}>
-                                        <i className="time"></i>
-                                        <span>+</span>
-                                    </button>
-                                )
-                            }
-                        <div className="create-order-ui-wrap">
-                            <div className="create-order-ui-inner">
-                                <div className="create-order-ui">
-                                    <button onClick={this.isNewOrder} className="ui-reservation">예약생성</button>
-                                    <button onClick={() => this.createOfftime('timeline')} className="ui-offtime">OFF TIME 생성</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        );
-
         let ExpertsInterfaceComponent = null;
         let NewOrderComponent = null;
-        let ModalConfirmComponent = null;
-        let RenderConfirmComponent = null;
-        let DatePickerComponent = null;
-        let UserCardComponent = null;
 
         ExpertsInterfaceComponent = (
             <div className="expert-wrap">
@@ -1587,7 +1499,8 @@ class WeeklyCalendar extends Component {
 
         if (this.state.isNewOrder) {
             NewOrderComponent = (
-              <NewOrder ref="NewOrder"
+              <NewOrder
+                ref="NewOrder"
                 step_confirm={(bool, newEvent) => this.step_confirm(bool, newEvent)}
                 setCalendarHeight={(step) => this.setCalendarHeight(step)}
                 newOrderCancel={this.newOrderCancel}
@@ -1600,69 +1513,18 @@ class WeeklyCalendar extends Component {
                 isModalConfirm={this.state.isModalConfirm}
                 isRenderConfirm={this.state.isRenderConfirm}
                 createEvent={this.createEvent}
-                selectedDate={this.mouseenterSlotData()}
+                selectedDate={this.state.selectedDate}
                 selectedExpert={this.state.renderedExpert}
                 />
             )
         }
 
-        if (this.state.isModalConfirm) {
-            ModalConfirmComponent = (
-              <ModalConfirm
-                options={this.state.newEvents}
-                selectedEvent={this.state.selectedEvent}
-                editedDate={this.state.editedDate}
-                newEventId={this.state.newEventId}
-                isNotAutoSelectTime={this.state.isNotAutoSelectTime}
-                modalConfirmHide={this.modalConfirmHide}
-                step_render={(bool, newEventId, type) => this.step_render(bool, newEventId, type)}
-                removeEvent={this.removeEvent}
-              />
-          )
-        }
-
-        if (this.state.isRenderConfirm) {
-            RenderConfirmComponent = (
-              <RenderEventConfirm viewType={this.state.viewType}
-                isModalConfirm={this.state.isModalConfirm}
-                modalConfirm={this.step_modal}
-                newEventId={this.state.newEventId}
-              />
-          )
-        }
-
-        if (this.state.isChangeDate) {
-            DatePickerComponent = (
-              <DatePicker
-                selectedDate={this.state.timelineDate}
-                onChange={this.changeDate}
-                onClose={() => this.isChangeDate(false)}
-                className="timeline-date-picker"
-              />
-          )
-        }
-
-        if (this.state.isUserCard) {
-            UserCardComponent = (
-              <UserCard cards={this.props.events}
-                isUserCard={(bool) => this.isUserCard(bool)}
-                onRemoveEvent={(event) => this.removeConfirm(event)}
-                onEditEvent={(event) => this.editEvent(event)}
-                onEditCustomer={""}
-            />
-          )
-        }
 
         let viewview = (
             <dl className="viewview fc">
                 <button onClick={() => {$('.viewview.fc').hide()}}>X</button>
-                <dt>viewType :</dt>
-                <dd>{this.state.viewType}</dd>
-                <dt>viewTypePrev :</dt>
-                <dd>{this.state.viewTypePrev}</dd>
                 <dt>viewTypeOrder :</dt>
                 <dd>{this.state.viewTypeOrder}</dd>
-                <br/>
                 <dt>isRenderConfirm :</dt>
                 <dd>{this.state.isRenderConfirm
                         ? 'true'
@@ -1788,12 +1650,12 @@ class WeeklyCalendar extends Component {
             <div ref="Calendar" id="weekly">
                 {NewOrderComponent}
                 {ExpertsInterfaceComponent}
-                {CreateOrderButtonFixed}
-                {CreateOrderButtonTimeline}
-                {DatePickerComponent}
-                {UserCardComponent}
-                {ModalConfirmComponent}
-                {RenderConfirmComponent}
+                {this.props.getCreateOrderButtonFixed(this)}
+                {this.props.getCreateOrderButtonTimeline(this)}
+                {this.props.getDatePickerComponent(this)}
+                {this.props.getUserCardComponent(this)}
+                {this.props.getModalConfirmComponent(this)}
+                {this.props.getRenderConfirmComponent(this, 'agendaWeekly')}
                 {viewview}
                 {test}
             </div>
