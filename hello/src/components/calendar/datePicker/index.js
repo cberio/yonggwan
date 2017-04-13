@@ -36,9 +36,9 @@ export default class DatePicker extends Component {
           selectedDate={this.props.selectedDate || date}
           locale={{ name: 'ko' }}
           autoFocus={true}
-          width={332}
+          width={360}
           height={this.props.height}
-          rowHeight={43}
+          rowHeight={50}
           className={`date-picker ${this.props.className}`}
           keyboardSupport={true}
           onSelect={ (date) => this.props.onChange(date) }

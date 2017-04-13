@@ -1,10 +1,9 @@
 @charset "utf-8";
-
 .date-picker {
-	max-width: 332px !important;
-	width: 332px !important;
+	max-width: 360px !important;
+	width: 360px !important;
 	z-index: 2;	
-	border-radius: 8px;
+	border-radius: 4px;
 	-webkit-box-shadow: 0 7px 20px 7px rgba(0,0,0,0.25);
 	box-shadow: 0 7px 20px 7px rgba(0,0,0,0.25);
 }
@@ -34,8 +33,8 @@
 }
 
 .Cal__Container__wrapper {
-	width: 332px !important;
-	border-radius: 8px;
+	width: 360px !important;
+	border-radius: 4px;
 	overflow: hidden;
 	text-align: left;
 }
@@ -45,14 +44,16 @@
 }
 
 .Cal__Container__listWrapper {
-	font-family: 'notokr-bold';
-	background-color: #333333;
+	font-family: 'notokr-bold';	
+	background-color: #2e2e2e;
+	-webkit-border-radius: 0 0 4px 4px;
+			border-radius: 0 0 4px 4px;
 }
 .Cal__Container__root .ReactVirtualized__List {}
 
 .Cal__List__root {
-	width: 349px !important;
-	background-color: transparent;
+	width: auto !important;
+	margin-right: -17px;
 }
 .Cal__Today__root.Cal__Today__show {
 	font-size: 12px;
@@ -61,21 +62,18 @@
 	line-height: 27px;
 	text-transform: uppercase;
 }
-.Cal__Today__root .Cal__Today__chevron {
-
-}
 
 .Cal__Weekdays__root {
-	padding: 0 22px;
-	border-radius: 8px 8px 0 0;
-	box-shadow: 0 40px 70px 0 rgba(50,50,50, 1);
+	padding-right: 10px !important;
+	border-radius: 4px 4px 0 0;
+	/*box-shadow: 0 40px 70px 0 rgba(50,50,50, 1);*/
 }
 /* script로 초기 삽입됀 element */
-.Cal__Container__Shadow__Bottom {
-	border-radius: 8px; overflow: hidden;
+/*.Cal__Container__Shadow__Bottom {
+	border-radius: 4px; overflow: hidden;
 	position: absolute; left: 30px; right: 30px; bottom: 15px; content: '';
 	box-shadow: 0 0 70px 20px rgba(50,50,50, 1);
-}
+}*/
 .Cal__Weekdays__day {
 	font-size: 13px;
 	padding: 14px 0;
@@ -88,114 +86,67 @@
 .Cal__Month__root {
 	padding: 0;
 }
-
-.Cal__Container__root .Cal__Month__root:nth-of-type(1) { transform: translateY(40px); }
-.Cal__Container__root .Cal__Month__root:nth-of-type(2) { transform: translateY(120px); }
-.Cal__Container__root .Cal__Month__root:nth-of-type(3) { transform: translateY(200px); }
-.Cal__Container__root .Cal__Month__root:nth-of-type(4) { transform: translateY(280px); }
-.Cal__Container__root .Cal__Month__root:nth-of-type(5) { transform: translateY(360px); }
-.Cal__Container__root .Cal__Month__root:nth-of-type(6) { transform: translateY(440px); }
-.Cal__Container__root .Cal__Month__root:nth-of-type(7) { transform: translateY(520px); }
-.Cal__Container__root .Cal__Month__root:nth-of-type(8) { transform: translateY(600px); }
-.Cal__Container__root .Cal__Month__root:nth-of-type(9) { transform: translateY(680px); }
-.Cal__Container__root .Cal__Month__root:nth-of-type(10) { transform: translateY(760px); }
-.Cal__Container__root .Cal__Month__root:nth-of-type(11) { transform: translateY(840px); }
-.Cal__Container__root .Cal__Month__root:nth-of-type(12) { transform: translateY(920px); }
-
-.Cal__Day__month {
-	top: -20px !important;
-	left: 26px !important;
-	right: auto !important;
-}
 .Cal__Month__rows {
-	padding: 0 22px;
-	background: none !important;
+	padding-right: 10px;
+	background: #292929;
 }
-.Cal__Month__row {
-	cursor: default;
+.Cal__Month__row.Cal__Month__partial:first-child li:first-child {
+	border: 0;
 }
-.Cal__Month__row:nth-child(2) {
-	box-shadow: none;
-}
+.Cal__Month__row:nth-child(2),
 .Cal__Month__row:first-child li {
-	background-color: transparent;
-	position: static;
-}
-
-.Cal__Day__root {
-	font-size: 14px;
-	color: #999999;
-	letter-spacing: -0.5px;
-	border: 0 !important;
-	box-shadow: none !important;
-}
-.Cal__Day__root {
-}
-.Cal__Day__root:before {
-	display: none;
-}
-.Cal__Day__root.Cal__Day__today {
-	position: relative !important;
-}
-.Cal__Day__root.Cal__Day__highlighted {
-	position: static !important;
-}
-.Cal__Day__root.Cal__Day__selected {
-	position: relative !important;
-}
-.Cal__Day__root.Cal__Day__selected.Cal__Day__highlighted .Cal__Day__day{
-	background: none !important;
-}
-.Cal__Day__root span:not(.Cal__Day__month) {
-	border-radius: 50%;
-	width: 36px;
-	height: 36px;
-	line-height: 36px;
-	display: block;
-	margin: 0 auto;
-}
-.Cal__Day__root span:not(.Cal__Day__month):hover,
-.Cal__Day__root.Cal__Day__highlighted span:not(.Cal__Day__month) {
-	background-color: #010101;
-}
-/* 다음 년도의 2018, 2019, 2020, 2021 ... 년도 span스타일*/
-.Cal__Day__root span:nth-of-type(3) {
-	top: -32px;
-	left: 50px;
-	margin: 0;
-	position: absolute;
-}
-.Cal__Day__root.Cal__Day__selected .Cal__Day__selection .Cal__Day__day {
-	top: 0;
-}
-.Cal__Day__root.Cal__Day__today span,
-.Cal__Day__root.Cal__Day__today span:hover,
-.Cal__Day__root.Cal__Day__disabled span,
-.Cal__Day__root.Cal__Day__disabled span:hover {
+	box-shadow: none;
 	background: none;
 }
-.Cal__Day__root.Cal__Day__enabled{
-
+.Cal__Day__root {
+	font-size: 13px;
+	color: rgba(153,153,153, .4);
+	letter-spacing: -0.5px;
 }
-.Cal__Day__root.Cal__Day__selected .Cal__Day__selection {
-	width: 36px;
-	height: 36px;
-	margin: -18px 0 0 -18px;
-}
-.Cal__Day__root.Cal__Day__selected .Cal__Day__selection .Cal__Day__month{
-	display: none;
-}
-.Cal__Day__root.Cal__Day__selected .Cal__Day__selection .Cal__Day__day {
-	font-size: inherit;
-}
+.Cal__Day__root.Cal__Day__enabled.Cal__Day__highlighted, 
+.Cal__Day__root.Cal__Day__enabled:active, 
 .Cal__Day__root.Cal__Day__enabled:hover {
-	position: static;
 	color: #999;
 }
+.Cal__Day__root.Cal__Day__enabled.Cal__Day__highlighted:before, 
+.Cal__Day__root.Cal__Day__enabled:active:before, 
+.Cal__Day__root.Cal__Day__enabled:hover:before {
+	background-color: #1a1a1a;	
+}
+.Cal__Day__root.Cal__Day__today:before {
+	color: #e60b25;	
+}
+/* style for size only*/
+.Cal__Day__root.Cal__Day__enabled.Cal__Day__highlighted:before, 
+.Cal__Day__root.Cal__Day__enabled:active:before, 
+.Cal__Day__root.Cal__Day__enabled:hover:before,
+.Cal__Day__root.Cal__Day__selected .Cal__Day__selection,
+.Cal__Day__root.Cal__Day__today:before {
+	width: 50px;
+	height: 50px;
+	margin: -25px 0 0 -25px;	
+}
+.Cal__Day__root.Cal__Day__today span {
+	color: #999;
+}
+.Cal__Day__root.Cal__Day__enabled:hover:before {
+	opacity: 1;
+}
+.Cal__Day__root .Cal__Day__year {
+	font-size: 11px;
+	font-family: 'notokr-regular';
+}
+.Cal__Day__root .Cal__Day__month {
+	font-size: 10px;
+	font-family: 'notokr-regular';
+}
 
 
-
-/* scrolling 시 hinting 영역 */
-.Cal__List__root.Cal__List__scrolling label {
-	display: none;
+/* 월별 Bg color 관련 스타일 */
+.Cal__Month__root:nth-of-type(odd){
+	background: #2e2e2e;
+}
+.Cal__Month__root:nth-of-type(odd) .Cal__Month__row:nth-child(2),
+.Cal__Month__root:nth-of-type(odd) li {
+	background: #2e2e2e;
 }
