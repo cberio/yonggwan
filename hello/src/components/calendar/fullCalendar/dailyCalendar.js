@@ -81,8 +81,8 @@ class DailyCalendar extends Component {
         this.autoFlowTimeline = this.autoFlowTimeline.bind(this);
         this.test = this.test.bind(this);
 
-        this.bindResources = this.bindResources.bind(this);
-        this.bindEvents = this.bindEvents.bind(this);
+        this.bindResourcesToTimeLine = this.bindResourcesToTimeLine.bind(this);
+        this.bindEventsToTimeLine = this.bindEventsToTimeLine.bind(this);
     }
 
     test (e) {
@@ -1389,10 +1389,10 @@ class DailyCalendar extends Component {
         }
         
         if(this.props.experts !== nextProps.experts)
-            this.bindResources(nextProps.experts);        
+            this.bindResourcesToTimeLine(nextProps.experts);        
 
         if(this.props.events !== nextProps.events)
-            this.bindEvents(nextProps.events);
+            this.bindEventsToTimeLine(nextProps.events);
     }
 
     /**
@@ -1401,7 +1401,7 @@ class DailyCalendar extends Component {
      * 
      * @param {array} resources 
      */
-    bindResources(_resources) {
+    bindResourcesToTimeLine(_resources) {
         let {Calendar} = this.refs;
 
         $(Calendar).fullCalendar('refetchResources', _resources);
@@ -1409,6 +1409,7 @@ class DailyCalendar extends Component {
         this.setState({
             defaultExpert: _resources[0],
             renderedExpert: _resources,
+            selectedExpert: _resources[0],
         });
     }
 
@@ -1417,7 +1418,7 @@ class DailyCalendar extends Component {
      * 
      * @param {array} events 
      */
-    bindEvents(events) {
+    bindEventsToTimeLine(events) {
         let {Calendar} = this.refs;
 
         $(Calendar).fullCalendar('removeEventSources');
@@ -1454,7 +1455,6 @@ class DailyCalendar extends Component {
 
 
     render() {
-
         let Experts = this.props.experts;
 
         const CreateOrderButtonFixed = (
