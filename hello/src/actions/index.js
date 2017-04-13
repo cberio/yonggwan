@@ -1,7 +1,5 @@
 import * as types from './actionType';
-import ShopApi from '../api/shop/shop';
-import StaffApi from '../api/shop/staff';
-import ScheduleApi from '../api/shop/schedule';
+import Shop from '../api/shop/shop';
 import moment from 'moment';
 
 /**/
@@ -98,14 +96,18 @@ export const receiveStaffs = (shop, json) => ({
 const fetchSchedules = (shop, state) => dispatch => {
   dispatch(requestSchedules(shop));
 
-  return new ScheduleApi(shop).getSchedules(state)
+  return new Shop({shopId: shop})
+    .schedules()
+    .get(state)
     .then(json => dispatch(receiveSchedules(shop, json)));
 }
 
 const fetchStaffs = (shop, state) => dispatch => {
   dispatch(requestStaffs(shop));
 
-  return new StaffApi(shop).getStaffs(state)
+  return new Shop({shopId: shop})
+    .staffs()
+    .get(state)
     .then(json => dispatch(receiveStaffs(shop, json)));
 }
 

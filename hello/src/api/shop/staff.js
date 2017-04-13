@@ -1,8 +1,8 @@
 import { DataFieldsSet } from '../mock';
 import * as ApiUtils from '../common';
 
-export default class StaffApi {
-    constructor(_shopId, _token = ApiUtils.testToken) {
+export default class Staff {
+    constructor(prop = {shopId, token = ApiUtils.testToken}) {
         this.apiUrl = ApiUtils.BASE_URL()+'shops';
         this.shopId = _shopId;
         this.token = _token;
@@ -33,7 +33,7 @@ export default class StaffApi {
      * @param {int} staffId
      * @param {URLSearchParams} params 
      */
-    getStaff(staffId, params) {
+    only(staffId, params) {
         this.paramHandler(params);
 
         return fetch(`${this.apiUrl}/${this.shopId}/staffs/${staffId}?${this.params}`, {
@@ -47,7 +47,7 @@ export default class StaffApi {
      * 
      * @param {URLSearchParams} params 
      */
-    getStaffs(params) {
+    get(params) {
         this.paramHandler(params);
 
         return fetch(`${this.apiUrl}/${this.shopId}/staffs?${this.params}`, {
@@ -62,7 +62,7 @@ export default class StaffApi {
      * @param {int} staffId
      * @param {object} data 
      */
-    updateStaff(staffId, data) {
+    update(staffId, data) {
         return fetch(`${this.apiUrl}/${this.shopId}/staffs/${staffId}`, {
             method: 'PATCH',
             headers: ApiUtils.HTTP_HEADER(this.token),
@@ -75,7 +75,7 @@ export default class StaffApi {
      * 
      * @param {object} data 
      */
-    createStaff(data) {
+    create(data) {
         return fetch(`${this.apiUrl}/${this.shopId}/staffs`, {
             method: 'POST',
             headers: ApiUtils.HTTP_HEADER(ApiUtils.testToken),

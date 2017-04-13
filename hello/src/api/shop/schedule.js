@@ -2,11 +2,11 @@ import { DataFieldsSet } from '../mock';
 import * as ApiUtils from '../common';
 import moment from 'moment';
 
-export default class ScheduleApi {
-    constructor(_shopId, _token = ApiUtils.testToken) {
+export default class Schedule {
+    constructor(prop = {shopId, token = ApiUtils.testToken}) {
         this.apiUrl = ApiUtils.BASE_URL()+'shops';
-        this.shopId = _shopId;
-        this.token = _token;
+        this.shopId = prop.shopId;
+        this.token = prop.token;
         this.params = new URLSearchParams();
         this.method = '';
     }
@@ -42,7 +42,7 @@ export default class ScheduleApi {
      * 
      * @return {Promise} 
      */
-    getSchedule(scheduleId, params) {
+    only(scheduleId, params) {
         return fetch(`${this.apiUrl}/${this.shopId}/schedules/${scheduleId}?${this.params}`, {
             method: this.method = 'PUT',
             headers: ApiUtils.HTTP_HEADER(this.token),
@@ -55,7 +55,7 @@ export default class ScheduleApi {
      * 
      * @param {Object} current state
      */
-    getSchedules(params) {
+    get(params) {
         this.paramHandler(params);
 
         return fetch(`${this.apiUrl}/${this.shopId}/schedules?${this.params}`, {
@@ -71,7 +71,7 @@ export default class ScheduleApi {
      * @param {int} scheduleId
      * @param {object} data 
      */
-    updateSchedule(scheduleId, data) {
+    update(scheduleId, data) {
         return fetch(`${this.apiUrl}/${this.shopId}/schedules/${scheduleId}`, {
             method: this.method = 'PATCH',
             headers: ApiUtils.HTTP_HEADER(this.token),
@@ -84,7 +84,7 @@ export default class ScheduleApi {
      * 
      * @param {object} data 
      */
-    createSchedule(shopId, data) {
+    create(shopId, data) {
         return fetch(`${this.apiUrl}/${shopId}/schedules`, {
             method: this.method = 'POST',
             headers: ApiUtils.HTTP_HEADER(this.token),
