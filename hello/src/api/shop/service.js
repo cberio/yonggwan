@@ -2,11 +2,35 @@ import { DataFieldsSet } from '../mock';
 import * as ApiUtils from '../common';
 
 export default class Service {
-    constructor(prop = {shopId, token = ApiUtils.testToken}) {
+    constructor({shopId = '', token = ApiUtils.testToken} = {shopId, token}) {
+        this.apiUrl = ApiUtils.BASE_URL()+`shops/${shopId}/services`;
+        this.shopId = shopId;
+        this.token = token;
+        this.params = new URLSearchParams();
+        this.method = '';
+    }
 
-        this.apiUrl = super.apiUrl;
-        this.shopId = super.shopId;
-        this.token = super.token;
-        this.params = super.params;
-    }    
+    /**
+     * type hinting method
+     */
+    fiedls() {
+        return DataFieldsSet.service
+    }
+
+    paramHandler(params = null) {
+
+    }
+
+    only(serviceId, params) {
+
+    }
+
+    get(params) {
+        this.paramHandler(params);
+
+        return fetch(`${this.apiUrl}?${this.params}`, {
+            method: 'GET',
+            headers: ApiUtils.HTTP_HEADER(this.token),
+        }).then(ApiUtils.parseJSON);
+    }
 }

@@ -93,6 +93,18 @@ export const receiveStaffs = (shop, json) => ({
   receivedAt: Date.now()
 })
 
+export const requestServices = shop =>({
+  type: types.REQUEST_SERVICE,
+  shop
+})
+
+export const receiveServices = (shop, json) => ({
+  type: types.RECEIVE_SERVICE,
+  shop,
+  services: json,
+  receivedAt: Date.now()
+})
+
 const fetchSchedules = (shop, state) => dispatch => {
   dispatch(requestSchedules(shop));
 
@@ -109,6 +121,15 @@ const fetchStaffs = (shop, state) => dispatch => {
     .staffs()
     .get(state)
     .then(json => dispatch(receiveStaffs(shop, json)));
+}
+
+const fetchServices = (shop, state) => dispatch => {
+  dispatch(requestServices(shop));
+
+  return new Shop({shopId: shop})
+    .services()
+    .get(state)
+    .then(json => dispatch(receiveServices(shop, json)));
 }
 
 /**
@@ -160,6 +181,10 @@ export const fetchSchedulesIfNeeded = shop => (dispatch, getState) => {
 export const fetchStaffsIfNeeded = shop => (dispatch, getState) => {
   if(shouldFetchStaffs(getState(), shop))
     return dispatch(fetchStaffs(shop, getState()));
+}
+
+export const fetchServicesIfNeeded = shop => (dispatch, getState) => {
+  return dispatch(fetchServices(shop, getState()));
 }
 
 //SHOP RELATED ACTIONS
