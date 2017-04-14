@@ -1068,6 +1068,7 @@ class DailyCalendar extends Component {
               let currentExpertId;
 
               // Event Card 의 상품별로 Class를 삽입합니다
+              /*
               if (event.product === 'OFF TIME') {
                   $(element).addClass('off-time');
               } else {
@@ -1078,6 +1079,11 @@ class DailyCalendar extends Component {
                       }
                   }
               }
+              */
+              // Todo..
+              // off-time 경우 class 변경
+              if(event.service)
+                $(element).addClass(event.service.color);
 
               //시간이 지난 이벤트 건 스타일 클래스 적용 (minute을 기준으로 설정)
               if (moment(event.end.format('YYYY-MM-DD HH:mm:ss')).isBefore(date, 'minute')) {
