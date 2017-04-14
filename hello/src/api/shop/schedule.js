@@ -3,14 +3,17 @@ import * as ApiUtils from '../common';
 import moment from 'moment';
 
 export default class Schedule {
-    constructor(prop = {shopId, token = ApiUtils.testToken}) {
-        this.apiUrl = ApiUtils.BASE_URL()+'shops';
-        this.shopId = prop.shopId;
-        this.token = prop.token;
+    constructor({shopId = '', token = ApiUtils.testToken} = {shopId, token}) {
+        this.apiUrl = ApiUtils.BASE_URL()+`shops/${shopId}/schedules`;
+        this.shopId = shopId;
+        this.token = token;
         this.params = new URLSearchParams();
         this.method = '';
     }
 
+    /**
+     * type hinting method
+     */
     fiedls() {
         return DataFieldsSet.schdule
     }
@@ -21,8 +24,8 @@ export default class Schedule {
      * @param {Object} calendarConfig { viewType, start, end } 
      * @return {void}
      */
-    paramHandler(_params) {
-        let calendarConfig = _params.calendarConfig;
+    paramHandler(params = null) {
+        let calendarConfig = params.calendarConfig;
 
         switch(calendarConfig.viewType) {
             default:
@@ -32,6 +35,8 @@ export default class Schedule {
                 this.params.set('end', calendarConfig.end);
                 break;
         }
+
+        this.params.set('include', 'service')
     }
 
     /**
@@ -49,7 +54,6 @@ export default class Schedule {
         }).then(ApiUtils.parseJSON)
     }
 
-
     /**
      * get schedules data with given state
      * 
@@ -58,10 +62,10 @@ export default class Schedule {
     get(params) {
         this.paramHandler(params);
 
-        return fetch(`${this.apiUrl}/${this.shopId}/schedules?${this.params}`, {
-            method: this.method = 'GET',
+        return fetch(`${this.apiUrl}?${this.params}`, {
+            method: 'GET',
             headers: ApiUtils.HTTP_HEADER(this.token),
-        }).then(ApiUtils.parseJSON)
+        }).then(ApiUtils.parseJSON);
     }
 
     /**
@@ -72,7 +76,7 @@ export default class Schedule {
      * @param {object} data 
      */
     update(scheduleId, data) {
-        return fetch(`${this.apiUrl}/${this.shopId}/schedules/${scheduleId}`, {
+        return fetch(`${this.apiUrl}/${scheduleId}`, {
             method: this.method = 'PATCH',
             headers: ApiUtils.HTTP_HEADER(this.token),
             body: data,
@@ -85,7 +89,7 @@ export default class Schedule {
      * @param {object} data 
      */
     create(shopId, data) {
-        return fetch(`${this.apiUrl}/${shopId}/schedules`, {
+        return fetch(`${this.apiUrl}`, {
             method: this.method = 'POST',
             headers: ApiUtils.HTTP_HEADER(this.token),
             body: data,

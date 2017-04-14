@@ -5,14 +5,17 @@ import Schedule from './schedule';
 import Service from './service';
 
 export default class Shop {
-    constructor(prop = {shopId, token = ApiUtils.testToken}) {
-        this.shopId = prop.shopId;
-        this.token = prop.token;
+    constructor({shopId = '', token = ApiUtils.testToken} = {shopId, token}) {
+        this.shopId = shopId;
+        this.token = token;
         this.apiUrl = ApiUtils.BASE_URL()+'shops';
         this.params = new URLSearchParams();
         this.method = '';
     }
 
+    /**
+     * type hinting method
+     */
     fiedls() {
         return DataFieldsSet.shop
     }
@@ -32,7 +35,10 @@ export default class Shop {
     }
 
     get() {
-
+        return fetch(`${this.apiUrl}?${this.params}`, {
+            method: 'PUT',
+            headers: ApiUtils.HTTP_HEADER(this.token),
+        }).then(ApiUtils.parseJSON)
     }
 
     /**
