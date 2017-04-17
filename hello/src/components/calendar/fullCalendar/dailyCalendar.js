@@ -932,241 +932,239 @@ class DailyCalendar extends Component {
         var expertUiHeight = 0;
 
         this.setState({defaultExpert: Experts[0]});
+        console.info($(Calendar));
 
         $(Calendar).fullCalendar($.extend(component.props.fcOptions, {
-          resources: [Experts[0]],
-          events: component.props.events, //스케쥴 이벤트*
-          defaultView: 'agendaDay', // init view type set
-          header: {
-              left: 'todayTimeline',
-              center: 'prev title next, changeDate',
-              right: 'agendaDayCustom agendaWeeklyCustom'
-          },
-          titleFormat: 'YYYY. M. DD',
-          firstDay: firstDay,
-          scrollTime: defaultScrollTime, //초기 렌더링시 스크롤 될 시간을 표시합니다
-          customButtons: {
-              prev: {
-                  text: '이전',
-                  click: () => {
-                      component.changeDate($(Calendar).fullCalendar('getDate').subtract(1, 'days'));
-                  }
-              },
-              next: {
-                  text: '이전',
-                  click: () => {
-                      component.changeDate($(Calendar).fullCalendar('getDate').add(1, 'days'));
-                  }
-              },
-              changeDate: {
-                  text: '날짜선택',
-                  click: function(e) {
-                      e.stopPropagation();
-                      component.isChangeDate(true);
-                  }
-              },
-              agendaDayCustom: {
-                  text: 'DAILY',
-                  click: function () {
-                      component.props.changeView('agendaDay');
-                  }
-              },
-              agendaWeeklyCustom: {
-                  text: 'WEEKLY',
-                  click: function () {
-                      component.props.changeView('agendaWeekly');
-                  }
-              },
-              todayTimeline: {
-                  text: 'TODAY',
-                  click: function() {
-                      component.changeDate(moment(date));
-                  }
-              }
-          },
-          height: window.innerHeight - expertUiHeight,
+            resources: [Experts[0]],
+            events: component.props.events, //스케쥴 이벤트*
+            defaultView: 'agendaDay', // init view type set
+            header: {
+                left: 'todayTimeline',
+                center: 'prev title next, changeDate',
+                right: 'agendaDayCustom agendaWeeklyCustom'
+            },
+            titleFormat: 'YYYY. M. DD',
+            firstDay: firstDay,
+            scrollTime: defaultScrollTime, //초기 렌더링시 스크롤 될 시간을 표시합니다
+            customButtons: {
+                prev: {
+                    text: '이전',
+                    click: () => {
+                        component.changeDate($(Calendar).fullCalendar('getDate').subtract(1, 'days'));
+                    }
+                },
+                next: {
+                    text: '이전',
+                    click: () => {
+                        component.changeDate($(Calendar).fullCalendar('getDate').add(1, 'days'));
+                    }
+                },
+                changeDate: {
+                    text: '날짜선택',
+                    click: function(e) {
+                        e.stopPropagation();
+                        component.isChangeDate(true);
+                    }
+                },
+                agendaDayCustom: {
+                    text: 'DAILY',
+                    click: function () {
+                        component.props.changeView('agendaDay');
+                    }
+                },
+                agendaWeeklyCustom: {
+                    text: 'WEEKLY',
+                    click: function () {
+                        component.props.changeView('agendaWeekly');
+                    }
+                },
+                todayTimeline: {
+                    text: 'TODAY',
+                    click: function() {
+                        component.changeDate(moment(date));
+                    }
+                }
+            },
+            height: window.innerHeight - expertUiHeight,
 
-          eventClick: function(event, jsEvent, view) {
-              component.setState({
-                  selectedEvent: $.extend(event, {
-                      class: Functions.getProductColor(event.product, Products)
-                  })
-              });
-              // 이벤트 슬롯 삭제 및 수정버튼 바인딩
-              if (!component.state.isEditEvent) {
-                  // ***수정***
-                  if (jsEvent.target.className === 'fc-ui-edit') {
-                      component.editEvent(event);
-                      // ***삭제***
-                  } else if (jsEvent.target.className === 'fc-ui-delete') {
-                      component.props.isModalConfirm('removeEvent');
-                      component.setState({isModalConfirm: true});
-                  }
-              }
-          },
-          eventDragStart: function(event, jsEvent, ui, view) {
-              component.setState({isDragging: true});
-
-              // daily 이벤트 드래그관련 타임라인 스크롤
-              $(document).bind('mousemove', function(e) {
-                  component.autoFlowTimeline(e.pageX, e.pageY, jsEvent);
-              });
-          },
-          eventDragStop: function(event, jsEvent, ui, view) {
-              // 신규 생성한 이벤트가 esc keydown 삭제 바인딩 되있을경우
-              component.setState({isDragging: false});
-              if (component.state.isAbleBindRemoveEvent) {
-                  component.setState({newEventId: undefined, isAbleBindRemoveEvent: false});
-              }
-              $(document).unbind('mousemove');
-          },
-          eventResize: function(event, delta, revertFunc, jsEvent, ui, view) {
-              /// 생성버튼 캘린더 타임라인 노드에서 상위 노드로 삽입
-              $('.full-calendar > .fc').append($('.create-order-wrap.timeline').hide());
-              // 신규 생성한 이벤트가 esc keydown 삭제 바인딩 되있을경우
-              if (component.state.isAbleBindRemoveEvent) {
-                  component.setState({newEventId: undefined, isAbleBindRemoveEvent: false});
-              }
-              // 30분 이하의 이벤트의 element에 클래스 추가
-              if (Functions.millisecondsToMinute(event.end.diff(event.start)) <= 30) {
-                  setTimeout(function() {
-                      // 20분 이하의 이벤트인경우
-                      if (Functions.millisecondsToMinute(event.end.diff(event.start)) <= 20) {
-                          $('.fc-event#ID_' + event.id).addClass('fc-short');
-                      } else {
-                          $('.fc-event#ID_' + event.id).addClass('fc-short no-expand');
-                      }
-                  }, 0);
-              }
-              // 20분 미만으로 이벤트 시간을 수정할 경우 수정을 되돌린다.
-              if (Functions.millisecondsToMinute(event.end.diff(event.start)) < 20) {
-                  revertFunc();
-                  alert('변경할 수 없습니다');
-              }
-              if (event.id === component.state.newEventId) {
-                  // off-time slot의 new evnet 클래스 시각적 제거
-                  setTimeout(function() {
-                      $('#ID_' + event.id).removeClass('new-event');
-                  }, 1);
-              }
-          },
-          eventResizeStart: function(event, jsEvent, ui, view) {
-              component.setState({isDragging: true});
-          },
-          eventResizeStop: function(event, jsEvent, ui, view) {
-              component.setState({isDragging: false});
-          },
-          windowResize: function(view) {
-              $(Calendar).fullCalendar('option', 'height', window.innerHeight - expertUiHeight);
-              component.setCalendarColumn('resize');
-          },
-          resourceRender: function(resourceObj, labelTds, bodyTds) {
-              // ...
-          },
-          eventRender: function(event, element, view) {
-              // 주단위 타임라인 에서 expert 별로 이벤트를 렌더링합니다. (filtering)
-              let currentExpertId;
-
-              // Event Card 의 상품별로 Class를 삽입합니다
-              /*
-              if (event.product === 'OFF TIME') {
-                  $(element).addClass('off-time');
-              } else {
-                  for (let i = 0; i < Products.length; i++) {
-                      if (event.product === Products[i].product) {
-                          $(element).addClass(Products[i].itemColor);
-                          break;
-                      }
-                  }
-              }
-              */
-              // Todo..
-              // off-time 경우 class 변경
-              if(event.service)
-                $(element).addClass(event.service.color);
-
-              //시간이 지난 이벤트 건 스타일 클래스 적용 (minute을 기준으로 설정)
-              if (moment(event.end.format('YYYY-MM-DD HH:mm:ss')).isBefore(date, 'minute')) {
-                  // event.editable = false;
-                  $(element).addClass('disabled');
-              }
-
-              // service time이 20분 이하인 슬롯은 class 추가하여 스타일 추가 적용
-              if (Functions.millisecondsToMinute(event.end.diff(event.start)) <= 20) {
-                  $(element).addClass('fc-short');
-              } else {
-                  $(element).removeClass('fc-short');
-              }
-
-          },
-          // 캘린더 이벤트 day 렌더링시
-          dayRender: function(d, cell) {
-              // 필요없는 node dom 삭제(all day slot 관련한 dom)
-              $('.fc-day-grid.fc-unselectable').remove();
-
-              // 오늘 날짜의 타임라인에서 예약마감버튼 바인딩
-              if (d.isSame(date, 'day')) {
-                  $('.order-deadline-button').unbind('click').bind('click', function() {
-                      //....
-                  });
-              }
-          },
-          // 캘린더 이벤트 view 렌더링시
-          viewRender: function(view, elem) {
-              console.info('VIEW Render');
-              let { Calendar } = component.refs;
-
-
-              // [1] Daily 타임라인이 다시 렌더링 된 경우
-              if (component.state.alreadyRendered) {
-                component.setCalendarColumn('again');
-              }
-              // [2] Daily 타임라인이 처음 렌더링 된 경우
-              else {
-                component.expertInputCheck();
-                component.setCalendarColumn('init');
+            eventClick: function(event, jsEvent, view) {
                 component.setState({
-                  alreadyRendered: true
+                    selectedEvent: $.extend(event, {
+                        class: Functions.getProductColor(event.product, Products)
+                    })
                 });
-              }
-              // [3] Daily 타임라인이 그려질 때 마다 실행
-              component.insertExpertInterface();
-              component.bindTimelineAccess();
-              component.setTodayButton(view.start);
-              component.setCalendarStates();
+                // 이벤트 슬롯 삭제 및 수정버튼 바인딩
+                if (!component.state.isEditEvent) {
+                    // ***수정***
+                    if (jsEvent.target.className === 'fc-ui-edit') {
+                        component.editEvent(event);
+                        // ***삭제***
+                    } else if (jsEvent.target.className === 'fc-ui-delete') {
+                        component.props.isModalConfirm('removeEvent');
+                        component.setState({isModalConfirm: true});
+                    }
+                }
+            },
+            eventDragStart: function(event, jsEvent, ui, view) {
+                component.setState({isDragging: true});
 
-              // 타임라인 내 신규예약생성 버튼 클릭시 추가되었던 클래스가 남아있으면 다시 제거
-              $('.create-order-overlap').removeClass('create-order-overlap');
-              // $('.fade-loading').removeClass('fade-loading');
-              // loading bar hide
-              component.props.loading(false);
+                // daily 이벤트 드래그관련 타임라인 스크롤
+                $(document).bind('mousemove', function(e) {
+                    component.autoFlowTimeline(e.pageX, e.pageY, jsEvent);
+                });
+            },
+            eventDragStop: function(event, jsEvent, ui, view) {
+                // 신규 생성한 이벤트가 esc keydown 삭제 바인딩 되있을경우
+                component.setState({isDragging: false});
+                if (component.state.isAbleBindRemoveEvent) {
+                    component.setState({newEventId: undefined, isAbleBindRemoveEvent: false});
+                }
+                $(document).unbind('mousemove');
+            },
+            eventResize: function(event, delta, revertFunc, jsEvent, ui, view) {
+                /// 생성버튼 캘린더 타임라인 노드에서 상위 노드로 삽입
+                $('.full-calendar > .fc').append($('.create-order-wrap.timeline').hide());
+                // 신규 생성한 이벤트가 esc keydown 삭제 바인딩 되있을경우
+                if (component.state.isAbleBindRemoveEvent) {
+                    component.setState({newEventId: undefined, isAbleBindRemoveEvent: false});
+                }
+                // 30분 이하의 이벤트의 element에 클래스 추가
+                if (Functions.millisecondsToMinute(event.end.diff(event.start)) <= 30) {
+                    setTimeout(function() {
+                        // 20분 이하의 이벤트인경우
+                        if (Functions.millisecondsToMinute(event.end.diff(event.start)) <= 20) {
+                            $('.fc-event#ID_' + event.id).addClass('fc-short');
+                        } else {
+                            $('.fc-event#ID_' + event.id).addClass('fc-short no-expand');
+                        }
+                    }, 0);
+                }
+                // 20분 미만으로 이벤트 시간을 수정할 경우 수정을 되돌린다.
+                if (Functions.millisecondsToMinute(event.end.diff(event.start)) < 20) {
+                    revertFunc();
+                    alert('변경할 수 없습니다');
+                }
+                if (event.id === component.state.newEventId) {
+                    // off-time slot의 new evnet 클래스 시각적 제거
+                    setTimeout(function() {
+                        $('#ID_' + event.id).removeClass('new-event');
+                    }, 1);
+                }
+            },
+            eventResizeStart: function(event, jsEvent, ui, view) {
+                component.setState({isDragging: true});
+            },
+            eventResizeStop: function(event, jsEvent, ui, view) {
+                component.setState({isDragging: false});
+            },
+            windowResize: function(view) {
+                $(Calendar).fullCalendar('option', 'height', window.innerHeight - expertUiHeight);
+                component.setCalendarColumn('resize');
+            },
+            resourceRender: function(resourceObj, labelTds, bodyTds) {
+                // ...
+            },
+            eventRender: function(event, element, view) {
+                // Event Card 의 상품별로 Class를 삽입합니다
+                /*
+                if (event.product === 'OFF TIME') {
+                    $(element).addClass('off-time');
+                } else {
+                    for (let i = 0; i < Products.length; i++) {
+                        if (event.product === Products[i].product) {
+                            $(element).addClass(Products[i].itemColor);
+                            break;
+                        }
+                    }
+                }
+                */
+                // Todo..
+                // off-time 경우 class 변경
+                if(event.service)
+                    $(element).addClass(event.service.color);
 
-          }, //end viewRender
-          viewDestroy: function(view, elem) {
-              // Expert input element 제거되는것을 방지함
-              component.setCalendarColumn('destroy');
-          },
-          // open customer card
-          eventDoubleClick: function(calEvent, jsEvent, view) {
-              // 신규예약 생성중에는 더블클릭 이벤트 실행않함
-              if (component.state.isNewOrder)
-                  return false;
-              if (calEvent.product === 'OFF TIME')
-                  return false;
+                //시간이 지난 이벤트 건 스타일 클래스 적용 (minute을 기준으로 설정)
+                if (moment(event.end.format('YYYY-MM-DD HH:mm:ss')).isBefore(date, 'minute')) {
+                    // event.editable = false;
+                    $(element).addClass('disabled');
+                }
 
-              let selectedDate = moment(calEvent.start);
-              // 더블클릭으로 선택된 이벤트객체를 가져옵니다
-              let selectedCard = calEvent;
-              // 선택된 이벤트객체의 리소스ID에 맞는 expert id를 찾아 가져옵니다
-              let selectedExpert = $(Calendar).fullCalendar('getResourceById', selectedCard.resourceId);
+                // service time이 20분 이하인 슬롯은 class 추가하여 스타일 추가 적용
+                if (Functions.millisecondsToMinute(event.end.diff(event.start)) <= 20) {
+                    $(element).addClass('fc-short');
+                } else {
+                    $(element).removeClass('fc-short');
+                }
 
-              // userCard 컴포넌트의 초기값을 전달한다
-              component.isUserCard(true, {
-                  selectedDate: selectedDate,
-                  selectedCard: selectedCard,
-                  selectedExpert: selectedExpert
-              });
-          }
+            },
+            // 캘린더 이벤트 day 렌더링시
+            dayRender: function(d, cell) {
+                // 필요없는 node dom 삭제(all day slot 관련한 dom)
+                $('.fc-day-grid.fc-unselectable').remove();
+
+                // 오늘 날짜의 타임라인에서 예약마감버튼 바인딩
+                if (d.isSame(date, 'day')) {
+                    $('.order-deadline-button').unbind('click').bind('click', function() {
+                        //....
+                    });
+                }
+            },
+            // 캘린더 이벤트 view 렌더링시
+            viewRender: function(view, elem) {
+                console.info('VIEW Render');
+                let { Calendar } = component.refs;
+
+
+                // [1] Daily 타임라인이 다시 렌더링 된 경우
+                if (component.state.alreadyRendered) {
+                    component.setCalendarColumn('again');
+                }
+                // [2] Daily 타임라인이 처음 렌더링 된 경우
+                else {
+                    component.expertInputCheck();
+                    component.setCalendarColumn('init');
+                    component.setState({
+                    alreadyRendered: true
+                    });
+                }
+                // [3] Daily 타임라인이 그려질 때 마다 실행
+                component.insertExpertInterface();
+                component.bindTimelineAccess();
+                component.setTodayButton(view.start);
+                component.setCalendarStates();
+
+                // 타임라인 내 신규예약생성 버튼 클릭시 추가되었던 클래스가 남아있으면 다시 제거
+                $('.create-order-overlap').removeClass('create-order-overlap');
+                // $('.fade-loading').removeClass('fade-loading');
+                // loading bar hide
+                component.props.loading(false);
+
+            }, //end viewRender
+            viewDestroy: function(view, elem) {
+                // Expert input element 제거되는것을 방지함
+                component.setCalendarColumn('destroy');
+            },
+            // open customer card
+            eventDoubleClick: function(calEvent, jsEvent, view) {
+                // 신규예약 생성중에는 더블클릭 이벤트 실행않함
+                if (component.state.isNewOrder)
+                    return false;
+                if (calEvent.product === 'OFF TIME')
+                    return false;
+
+                let selectedDate = moment(calEvent.start);
+                // 더블클릭으로 선택된 이벤트객체를 가져옵니다
+                let selectedCard = calEvent;
+                // 선택된 이벤트객체의 리소스ID에 맞는 expert id를 찾아 가져옵니다
+                let selectedExpert = $(Calendar).fullCalendar('getResourceById', selectedCard.resourceId);
+
+                // userCard 컴포넌트의 초기값을 전달한다
+                component.isUserCard(true, {
+                    selectedDate: selectedDate,
+                    selectedCard: selectedCard,
+                    selectedExpert: selectedExpert
+                });
+            }
         }));
 
         this.props.wasMount();
