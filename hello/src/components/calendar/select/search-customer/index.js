@@ -26,8 +26,8 @@ const OptionComponent = React.createClass({
 				title={this.props.option.title} >
 					<div>
 						<span className="label">{this.props.children}</span>
-						{this.props.option.rating ?
-							<span className="rating">{this.props.option.rating}</span>
+						{this.props.option.guest_class ?
+							<span className={`rating ${this.props.option.guest_class}`}>{this.props.option.guest_class}</span>
 							: ""
 						}
 					</div>
@@ -42,7 +42,7 @@ const ValueComponent = React.createClass({
 			<div className="Select-value">
 				<span className="Select-value-label">
 					<span className="label">{this.props.children}</span>
-					<span className={`rating ${this.props.value.rating}`}>{this.props.value.rating}</span>
+					<span className={`rating ${this.props.value.guest_class}`}>{this.props.value.guest_class}</span>
 					<i className="checked"><img src={Images.IMG_input_checked} alt="선택됨" /></i>
 				</span>
 			</div>

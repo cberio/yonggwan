@@ -1,8 +1,8 @@
-import React, { Component, defaultProps } from 'react';
+import React, { Component } from 'react';
 import $ from 'jquery';
 import * as actions from '../../actions';
 import { connect } from 'react-redux';
-import Experts from '../../data/experts.json';
+import Staffs from '../../data/staffs';
 import moment from 'moment';
 import Resource  from './resource';
 import { Selectable } from '../calendar/select';
@@ -22,7 +22,7 @@ class UserCard extends Component {
       slideIndex: 0,
       slideDate: this.props.selectedDate,
       slideCard: this.props.selectedCard,
-      slideExpert: this.props.selectedExpert
+      slideStaff: this.props.selectedStaff
     };
     this.initUserCards = this.initUserCards.bind(this);
     this.setUserCards = this.setUserCards.bind(this);
@@ -47,12 +47,12 @@ class UserCard extends Component {
     for (var i = 0; i < eventsAll.length; i++) {
       // 필터[1]: 선택한 이벤트의 날짜와 다른 날짜의 이벤트를 제거한다
       // 필터[2]: OFF TIME 이벤트를 제거한다
-      // 필터[3]: 다른 Expert의 이벤트를 제거한다
+      // 필터[3]: 다른 Staff의 이벤트를 제거한다
 
       if (
         moment(eventsAll[i].start).isSame(this.state.slideDate.format('YYYY-MM-DD'), 'day') && // [1]
         eventsAll[i].product !== 'OFF TIME' && // [2]
-        eventsAll[i].resourceId === this.state.slideExpert.id // [3]
+        eventsAll[i].resourceId === this.state.slideStaff.id // [3]
       ) eventsFiltered.push(eventsAll[i]);
     }
 
@@ -78,7 +78,7 @@ class UserCard extends Component {
     let _component = this;
 
     $('.slick-list').animate({'opacity': 0.1}, 200, function () {
-      if    (type === 'expert') { _component.props.changeExpert(option); }
+      if    (type === 'staff') { _component.props.changeStaff(option); }
       else if (type === 'date') { _component.props.changeDate(option); }
       $('.slick-list').css('opacity', 1);
     });
@@ -111,7 +111,7 @@ class UserCard extends Component {
     // props가 변경되어 받아오는 값을 state로 강제로 업데이트함
     this.setState({
       slideCard: nextProps.selectedCard,
-      slideExpert: nextProps.selectedExpert,
+      slideStaff: nextProps.selectedStaff,
       slideDate: nextProps.selectedDate
     });
   }
@@ -157,7 +157,7 @@ class UserCard extends Component {
             <div key={i}>
               <Resource
                 users={users}
-                expert={this.state.slideExpert}
+                staff={this.state.slideStaff}
                 slideIndex={this.state.slideIndex}
                 slideLength={cards.length}
                 isUserCard={ (bool) => this.props.isUserCard(bool) }
@@ -202,14 +202,14 @@ class UserCard extends Component {
           </div>
           <div className="customer-head">
             <Selectable
-              value={this.state.slideExpert}
+              value={this.state.slideStaff}
               type="user-card"
               selectType="selectable"
               name="epxerts"
               id="select-slide"
               className="select-expert"
-              options={Experts}
-              onChange={ (option) => this.setUserCards('expert', option)}
+              options={Staffs}
+              onChange={ (option) => this.setUserCards('staff', option)}
               clearable={false}
               searchable={false}
             />
@@ -232,15 +232,15 @@ class UserCard extends Component {
 const mapStateToProps = (state) => {
   return {
     selectedCard: state.userCard.selectedCard,
-    selectedExpert: state.userCard.selectedExpert,
+    selectedStaff: state.userCard.selectedStaff,
     selectedDate: state.userCard.selectedDate
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    changeExpert: (option) => {
-      dispatch(actions.userCardExpert(option))
+    changeStaff: (option) => {
+      dispatch(actions.userCardStaff(option))
     },
     changeDate: (option) => {
       dispatch(actions.userCardDate(option))

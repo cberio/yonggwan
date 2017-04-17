@@ -68,7 +68,7 @@ const Selectable = React.createClass({
 	propTypes: {
 		hint: React.PropTypes.string,
 		label: React.PropTypes.string,
-	},	
+	},
 	getInitialState () {
 		return {
 			value: this.props.value

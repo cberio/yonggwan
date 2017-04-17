@@ -1,7 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import $ from 'jquery';
 import moment from 'moment';
-import Products from '../../data/products.json';
 import * as Functions from '../../js/common';
 import { connect } from 'react-redux';
 // import { bindActionCreators } from 'redux';
@@ -13,8 +12,9 @@ import UserCard from '../userCard';
 // import Notifier from '../../components/notifier';
 import DailyCalendar from './fullCalendar/dailyCalendar';
 import WeeklyCalendar from './fullCalendar/weeklyCalendar';
-import Experts from '../../data/experts.json';
-import Events from '../../data/event.json';
+import Staff from '../../data/staffs';
+import Schedule from '../../data/schedules';
+import Services from '../../data/services';
 import 'fullcalendar-scheduler/node_modules/fullcalendar/dist/fullcalendar.min.css';
 import '../../css/fullcalendar-scheduler-customizing.css';
 import _ from 'lodash';
@@ -28,9 +28,9 @@ class Calendar extends Component {
       isNewOrder: false,
       newOrderStates: {
         type: undefined,
-        expert: undefined,
+        staff: undefined,
         start: undefined,
-        event: undefined
+        schedule: undefined
       }
     };
 
@@ -41,10 +41,10 @@ class Calendar extends Component {
     this.returnNewID = this.returnNewID.bind(this);
     this.timelineWasMount = this.timelineWasMount.bind(this);
     this.returnNewOrderStates = this.returnNewOrderStates.bind(this);
-    this.returnEventObj = this.returnEventObj.bind(this);
+    this.returnScheduleObj = this.returnScheduleObj.bind(this);
     this.setTimelineDate = this.setTimelineDate.bind(this);
     this.getExpert = this.getExpert.bind(this);
-    
+
     this.fetchSchedule = this.fetchSchedule.bind(this);
   }
 
@@ -54,7 +54,7 @@ class Calendar extends Component {
       isNewOrder: true,
       newOrderStates: {
         type: options.type,
-        expert: options.expert
+        staff: options.staff
       }
     }, () => this.changeView('agendaWeekly'));
   }
@@ -65,10 +65,10 @@ class Calendar extends Component {
   }
 
   getExpert(id) {
-    let ExpertsArray = _.isEmpty(this.props.staffs) ? Experts : this.props.staffs.data;
-      for (let i = 0; i < ExpertsArray.length; i++) {
-          if (ExpertsArray[i].id === id) {
-              return ExpertsArray[i];
+    let StaffArray = _.isEmpty(this.props.staffs) ? Staff : this.props.staffs.data;
+      for (let i = 0; i < StaffArray.length; i++) {
+          if (StaffArray[i].id === id) {
+              return StaffArray[i];
           }
       }
   }
@@ -82,7 +82,7 @@ class Calendar extends Component {
   }
 
   /**
-   * 
+   *
    * @param {string} YYYY-MM-DD formatted date
    */
   changeDate(date) {
@@ -98,17 +98,17 @@ class Calendar extends Component {
     });
   }
 
-  returnEventObj (newEvent) {
+  returnScheduleObj (newSchedule) {
       return {
-          product: newEvent.newOrderProduct,
-          name: (newEvent.newOrderMember.name || newEvent.newOrderUserName),
-          phone: newEvent.newOrderMember.phone,
-          picture: newEvent.newOrderMember.picture,
-          rating: newEvent.newOrderMember.rating,
-          start: newEvent.newOrderStart,
-          end: newEvent.newOrderEnd,
-          comment: newEvent.newOrderComment,
-          resourceId: (newEvent.newOrderExpert.id || newEvent.resourceId)
+          guest_name: (newSchedule.newOrderGuest.guest_name || newSchedule.newOrderGuestName),
+          guest_mobile: newSchedule.newOrderGuest.guest_mobile,
+          guest_class: newSchedule.newOrderGuest.geust_class,
+          guest_memo: newSchedule.newOrderGuestMemo,
+          picture: newSchedule.newOrderGuest.picture,
+          service_code: newSchedule.newOrderService.code,
+          start: newSchedule.newOrderStart,
+          end: newSchedule.newOrderEnd,
+          resourceId: (newSchedule.newOrderStaff.id || newSchedule.resourceId)
       };
   }
 
@@ -146,7 +146,6 @@ class Calendar extends Component {
     if (isSetting) {
       $(createButtonElem).attr('data-date', date);
     } else {
-      console.log('어쩌라구 어');
       return $(createButtonElem).attr('data-date');
     }
   }
@@ -158,9 +157,9 @@ class Calendar extends Component {
       // 시작시간을 미리 선택하지않고 이벤트를 생성중에 취소할 경우
       if (this.state.isNotAutoSelectTime || this.state.isEditEvent) {
           this.resetOrder();
-      } else if (this.state.newEventId) {
+      } else if (this.state.newScheduleID) {
           // enable editable
-          let evt = $(Calendar).fullCalendar('clientEvents', this.state.newEventId);
+          let evt = $(Calendar).fullCalendar('clientSchedule', this.state.newScheduleID);
           evt.editable = true;
           $(Calendar).fullCalendar('updateEvent', evt);
           // $(Calendar).fullCalendar('option', 'editable', true);
@@ -173,16 +172,16 @@ class Calendar extends Component {
   }
 
   // Expert를 Priority기준으로 재배열 한다
-  sortExpert(allOfExperts) {
-      //let expertNewArray = [];
-      let expertNewArray = allOfExperts.sort(function(a, b) {
+  sortExpert(allOfStaff) {
+      //let staffNewArray = [];
+      let staffNewArray = allOfStaff.sort(function(a, b) {
           return a.priority < b.priority
               ? -1
               : a.priority > b.priority
                   ? 1
                   : 0;
       });
-      return expertNewArray;
+      return staffNewArray;
   }
 
   componentDidMount() {
@@ -194,13 +193,13 @@ class Calendar extends Component {
 
   fetchSchedule() {
     const { selectedShopID } = this.props;
-    
+
     this.props.fetchSchedulesIfNeeded(selectedShopID);
   }
 
   render () {
 
-    this.sortExpert(Experts);
+    this.sortExpert(Staff);
 
     const CreateOrderButtonFixed = (_this) =>  {
       return (
@@ -270,10 +269,10 @@ class Calendar extends Component {
       if (!_this.state.isUserCard) return '';
       return (
         <UserCard
-          cards={Events}
+          cards={Schedule}
           isUserCard={(bool) => _this.isUserCard(bool)}
-          onRemoveEvent={(event) => _this.removeConfirm(event)}
-          onEditEvent={(event) => _this.editEvent(event)}
+          onRemoveEvent={(schedule) => _this.removeConfirm(schedule)}
+          onEditEvent={(schedule) => _this.editEvent(schedule)}
           onEditCustomer={""}
         />
       )
@@ -295,13 +294,13 @@ class Calendar extends Component {
       if (!_this.state.isModalConfirm) return '';
       return (
         <ModalConfirm
-          options={_this.state.newEvents}
+          options={_this.state.newSchedule}
           selectedEvent={_this.state.selectedEvent}
           editedDate={_this.state.editedDate}
-          newEventId={_this.state.newEventId}
+          newScheduleID={_this.state.newScheduleID}
           isNotAutoSelectTime={_this.state.isNotAutoSelectTime}
           modalConfirmHide={_this.modalConfirmHide}
-          step_render={(bool, newEventId, type) => _this.step_render(bool, newEventId, type)}
+          step_render={(bool, newScheduleID, type) => _this.step_render(bool, newScheduleID, type)}
           removeEvent={_this.removeEvent}
         />
       )
@@ -314,7 +313,7 @@ class Calendar extends Component {
           viewType={view}
           isModalConfirm={_this.state.isModalConfirm}
           modalConfirm={_this.step_modal}
-          newEventId={_this.state.newEventId}
+          newScheduleID={_this.state.newScheduleID}
         />
       )
     }
@@ -322,9 +321,10 @@ class Calendar extends Component {
     // Daily, Weekly FullCalendar 공통 옵션
     const fc_options = {
         schedulerLicenseKey: `${ process.env.REACT_APP_FULLCALENDAR_LISENCE ? process.env.REACT_APP_FULLCALENDAR_LISENCE : 'GPL-My-Project-Is-Open-Source'}`,
-        resourceOrder: 'priority', // expert의 정렬 순서를 무엇을 기준으로 할지 정함
+        shopServices: Services,
+        resourceOrder: 'priority', // staff의 정렬 순서를 무엇을 기준으로 할지 정함
         defaultDate: moment(this.state.viewDate), //기본 날짜
-        filterResourcesWithEvents: false, // 이벤트가 없는 expert를 숨길지 여부
+        filterResourcesWithSchedule: false, // 이벤트가 없는 staff를 숨길지 여부
         locale: 'ko', //언어선택
         longPressDelay: 125, // touch delay
         eventOverlap: false, //중복되는 시간의 이벤트 수정 여부
@@ -340,7 +340,7 @@ class Calendar extends Component {
         //slotMinutes : 20,        //슬롯 생성 분단위 범위 설정 default :30
         //minTime: '09:00',        //예약가능한 최소 시작시간 지정 (출근시간)
         //maxTime: '18:00',        //예약마감시간 지정
-        //businessHours: {},       //샵 영업시간 지정 (모든 Expert 의 업무시간이 동일한경우) (expert 별로 지정할경우는 resources 에서 선언)
+        //businessHours: {},       //샵 영업시간 지정 (모든 Expert 의 업무시간이 동일한경우) (staff 별로 지정할경우는 resources 에서 선언)
         //eventConstraint: false,  //이벤트 수정을 특정 시간 내로 제한함 (businessHours 와 관련)
         nowIndicator: true,
         dragOpacity: 1,
@@ -355,16 +355,16 @@ class Calendar extends Component {
 
     const commonViewProps = {
       fcOptions: fc_options,
-      events: _.isEmpty(this.props.schedules) ? Events : this.props.schedules.data,
-      experts: _.isEmpty(this.props.staffs) ? Experts : this.props.staffs.data,
+      schedule: Schedule,
+      staffs: Staff,
       changeView: this.changeView,
       changeDate: this.changeDate,
-      returnEventObj: this.returnEventObj,
+      returnScheduleObj: this.returnScheduleObj,
       returnNewID: this.returnNewID,
       getExpert: this.getExpert,
 
       getSlotTime: this.mouseenterSlotTime,
-      defaultExpert: function() { _.isEmpty(this.props.staffs) ? Experts[0] : this.props.staffs.data },
+      defaultExpert: function() { _.isEmpty(this.props.staffs) ? Staff[0] : this.props.staffs.data },
 
       getCreateOrderButtonFixed:    function(t) { return CreateOrderButtonFixed(t) },
       getCreateOrderButtonTimeline: function(t) { return CreateOrderButtonTimeline(t) },
@@ -463,7 +463,7 @@ const mapDispatchToProps = (dispatch) => {
   return {
     fetchSchedulesIfNeeded: shopID => (dispatch(actions.fetchSchedulesIfNeeded(shopID))),
     fetchStaffsIfNeeded: shopID => (dispatch(actions.fetchStaffsIfNeeded(shopID))),
-        
+
     setCalendarViewType: viewType => (dispatch(actions.setCalendarViewType(viewType))),
     setCalendarStart: start => (dispatch(actions.setCalendarStart(start))),
     setCalendarEnd: end => (dispatch(actions.setCalendarEnd(end))),

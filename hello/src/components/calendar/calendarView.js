@@ -3,8 +3,8 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as actions from '../../actions';
 import FullCalendar from './fullCalendar/index';
-import Experts from '../../data/experts.json';
-import Events from '../../data/event.json';
+import Staffs from '../../data/experts.json';
+import Schedules from '../../data/event.json';
 import _ from 'lodash';
 
 class CalendarView extends Component {
