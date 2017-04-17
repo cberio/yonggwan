@@ -932,7 +932,6 @@ class DailyCalendar extends Component {
         var expertUiHeight = 0;
 
         this.setState({defaultExpert: Experts[0]});
-        console.info($(Calendar));
 
         $(Calendar).fullCalendar($.extend(component.props.fcOptions, {
             resources: [Experts[0]],
@@ -1078,6 +1077,13 @@ class DailyCalendar extends Component {
                     }
                 }
                 */
+
+                // 1. 이벤트의 service 존재 확인
+                // 1-2. service가 있음                         >>> service.color 클래스 추가
+                // 1-3. service가 없음 && event.status == 05   >>> off-time 클래스 추가
+                // 1-4. 현시간 이전에 종료된 이벤트               >>> disabled 클래스 추가
+                // 1-5. 이벤트의 시작/종료 시간이 20분 이하일 경우  >>> fc-short 클래스 추가
+
                 // Todo..
                 // off-time 경우 class 변경
                 if(event.service)
