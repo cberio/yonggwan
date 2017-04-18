@@ -43,18 +43,21 @@ class Calendar extends Component {
     this.returnNewOrderStates = this.returnNewOrderStates.bind(this);
     this.returnScheduleObj = this.returnScheduleObj.bind(this);
     this.setTimelineDate = this.setTimelineDate.bind(this);
-    this.getExpert = this.getExpert.bind(this);
+    this.getStaff = this.getStaff.bind(this);
 
     this.fetchSchedule = this.fetchSchedule.bind(this);
   }
 
   // Daily Timeline 에서 예약생성 모듈로 접근시 실행하는 함수.
   newOrder(options) {
+
     this.setState({
       isNewOrder: true,
       newOrderStates: {
         type: options.type,
-        staff: options.staff
+        staff: options.staff,
+        start: options.start,
+        schedule: options.schedule
       }
     }, () => this.changeView('agendaWeekly'));
   }
@@ -64,7 +67,7 @@ class Calendar extends Component {
       return Math.floor((Math.random() * 99999) + 1);
   }
 
-  getExpert(id) {
+  getStaff(id) {
     let StaffArray = _.isEmpty(this.props.staffs) ? Staff : this.props.staffs.data;
       for (let i = 0; i < StaffArray.length; i++) {
           if (StaffArray[i].id === id) {
@@ -100,14 +103,20 @@ class Calendar extends Component {
 
   returnScheduleObj (newSchedule) {
       return {
+          reservation_dt: moment(newSchedule.newOrderStart).format('YYYY-MM-DD'),
+          start_time: moment(newSchedule.newOrderStart).format('HH:mm'),
+          end_time: moment(newSchedule.newOrderEnd).format('HH:mm'),
           guest_name: (newSchedule.newOrderGuest.guest_name || newSchedule.newOrderGuestName),
           guest_mobile: newSchedule.newOrderGuest.guest_mobile,
           guest_class: newSchedule.newOrderGuest.geust_class,
           guest_memo: newSchedule.newOrderGuestMemo,
           picture: newSchedule.newOrderGuest.picture,
+          service_id: newSchedule.newOrderService.id,
           service_code: newSchedule.newOrderService.code,
+          service_time: newSchedule.newOrderService.time,
           start: newSchedule.newOrderStart,
           end: newSchedule.newOrderEnd,
+          staff_Id: (newSchedule.newOrderStaff.id || newSchedule.resourceId),
           resourceId: (newSchedule.newOrderStaff.id || newSchedule.resourceId)
       };
   }
@@ -254,7 +263,7 @@ class Calendar extends Component {
                       <div className="create-order-ui-wrap">
                           <div className="create-order-ui-inner">
                               <div className="create-order-ui">
-                                  <button onClick={_this.newOrder} className="ui-reservation">예약생성</button>
+                                  <button onClick={() => _this.newOrder(null)} className="ui-reservation">예약생성</button>
                                   <button onClick={() => _this.createOfftime('timeline')} className="ui-offtime">OFF TIME 생성</button>
                               </div>
                           </div>
@@ -361,7 +370,7 @@ class Calendar extends Component {
       changeDate: this.changeDate,
       returnScheduleObj: this.returnScheduleObj,
       returnNewID: this.returnNewID,
-      getExpert: this.getExpert,
+      getStaff: this.getStaff,
 
       getSlotTime: this.mouseenterSlotTime,
       defaultExpert: function() { _.isEmpty(this.props.staffs) ? Staff[0] : this.props.staffs.data },

@@ -28,12 +28,12 @@ class DailyCalendar extends Component {
             isDragging: false,
             // Expert states
             defaultStaff: undefined, // 관리자가 설정한 1순위 expert
-            priorityExpert: undefined, // 타임라인 렌더링시 0순위로 기준이 되는 expert (일부 이벤트 등록시 해당된다)
+            priorityStaff: undefined, // 타임라인 렌더링시 0순위로 기준이 되는 expert (일부 이벤트 등록시 해당된다)
             // prevStaff: this.props.defaultStaff,  // 이전에 렌더링 된 expert (현재 해당 state 는 사용하지않음)
             // prevStaffAll: undefined,              // 이전에 렌더링 된 experts (현재 해당 state 는 사용하지않음)
             renderedStaff: [], // 현재 타임라인에 렌더링 된 expert
             lastStaff: undefined, // 타임라인을 재 렌더링 할때 기준이되는 expert (해당 expert로 렌더링됨)
-            selectedExpert: undefined, // 타임라인에 마우스 오버시 해당 타임라인의 expert
+            selectedStaff: undefined, // 타임라인에 마우스 오버시 해당 타임라인의 expert
             // ... etc
             timelineDate: undefined,
             selectedDate: undefined,
@@ -325,19 +325,19 @@ class DailyCalendar extends Component {
     getSlotExpert() {
       var createButtonElem = $('.create-order-wrap.timeline');
       if (this.state.renderedStaff.length > 1) {
-        return this.props.getExpert(
+        return this.props.getStaff(
           $(createButtonElem).parents('td.fc-day.fc-widget-content').data('resource-id')
         );
       } else {
         return this.state.renderedStaff[0];
       }
-      //return this.props.getExpert($(createButtonElem).parent('td.fc-day.fc-widget-content').data('resource-id'));
+      //return this.props.getStaff($(createButtonElem).parent('td.fc-day.fc-widget-content').data('resource-id'));
     }
 
     // 타임라인 내 예약생성 (+) 버튼 클릭시 ui toggling
     toggleCreateOrderUi(e) {
         this.setState({
-          selectedExpert: this.getSlotExpert(),
+          selectedStaff: this.getSlotExpert(),
           selectedDate: this.props.getSlotTime()
         });
 
@@ -415,7 +415,7 @@ class DailyCalendar extends Component {
         this.setState({
             viewTypeOrder: undefined,
             newEvents: undefined,
-            selectedExpert: undefined,
+            selectedStaff: undefined,
             selectedDate: undefined,
             selectedEvent: undefined,
             renderedEvent: undefined,
@@ -462,7 +462,7 @@ class DailyCalendar extends Component {
             // 타임라인 테이블 안에서 시작시간을 지정하여 생성하는 경우
             case 'timeline':
                 insertOfftime = $.extend(insertOfftime, {
-                    resourceId: this.state.selectedExpert.id,
+                    resourceId: this.state.selectedStaff.id,
                     start: this.state.selectedDate,
                     end: endTime
                 });
@@ -476,7 +476,7 @@ class DailyCalendar extends Component {
                 this.setState({
                     isCreateOfftime: true,
                     newEventProductTime: 20,
-                    // priorityExpert: this.state.defaultStaff,
+                    // priorityStaff: this.state.defaultStaff,
                     viewTypeOrder: 'agendaDay'
                 }, () => {
                     this.changeView('agendaWeekly');
@@ -679,7 +679,7 @@ class DailyCalendar extends Component {
                 let editedEnd = moment(component.state.selectedDate).add(component.state.newEventProductTime, 'minutes');
                 let insertEvent = $.extend(editEventObj, {
                     id: editEvent.id,
-                    resourceId: component.state.selectedExpert.id,
+                    resourceId: component.state.selectedStaff.id,
                     start: editedStart,
                     end: editedEnd
                 });
@@ -746,9 +746,9 @@ class DailyCalendar extends Component {
         }
         // view change시, 선택된 이벤트의 expert를 기본 expert로 렌더링하도록 설정해준다
         this.setState({
-            priorityExpert: this.props.getExpert(event.resourceId),
-            lastStaff: this.props.getExpert(event.resourceId),
-            selectedExpert: this.props.getExpert(event.resourceId),
+            priorityStaff: this.props.getStaff(event.resourceId),
+            lastStaff: this.props.getStaff(event.resourceId),
+            selectedStaff: this.props.getStaff(event.resourceId),
             viewTypeOrder: 'agendaDay'
         }, () => {
             // view change시, 선택된 이벤트의 요일이 처음으로 오도록 설정해준다
@@ -770,19 +770,20 @@ class DailyCalendar extends Component {
     newOrder(type) {
         let {Calendar} = this.refs;
 
-        var selectedExpert;
+        var selectedStaff;
         if (type === 'notAutoSelectTime') {
-           selectedExpert = this.state.renderedStaff.length > 1 ?
+           selectedStaff = this.state.renderedStaff.length > 1 ?
              this.state.defaultStaff :
              this.state.renderedStaff[0];
         } else {
-          selectedExpert = this.state.selectedExpert;
+          selectedStaff = this.state.selectedStaff;
         }
 
         this.props.newOrder({
           type: type,
-          expert: selectedExpert,
-          start: this.state.selectedDate
+          staff: selectedStaff,
+          start: this.state.selectedDate,
+          schedule: null
         });
     }
 
@@ -807,17 +808,17 @@ class DailyCalendar extends Component {
             lastStaff,
             defaultStaff,
             renderedStaff,
-            priorityExpert
+            priorityStaff
         } = this.state;
 
-        if (priorityExpert) {
-            $('.expert-each.checkbox[data-id="expert_' + priorityExpert.id + '"]')
+        if (priorityStaff) {
+            $('.expert-each.checkbox[data-id="expert_' + priorityStaff.id + '"]')
               .attr('data-active', true)
               .find('input')
               .prop('checked', true);
-            $(Calendar).fullCalendar('addResource', priorityExpert);
+            $(Calendar).fullCalendar('addResource', priorityStaff);
             for (let i = 0; i < renderedStaff.length; i++) {
-                if (priorityExpert.id !== renderedStaff[i].id)
+                if (priorityStaff.id !== renderedStaff[i].id)
                     $(Calendar).fullCalendar('removeResource', renderedStaff[i].id);
             }
             // 1-1 : 2명이상의 Expert를 렌더링 했었을경우 > 1순위인 Default Expert로 렌더링
@@ -888,7 +889,7 @@ class DailyCalendar extends Component {
                 $('.expert-each.checkbox input').each(function(i, elem) {
                     if (component.state.defaultStaff.id === $(elem).val()) {
                         $(elem).prop('checked', true);
-                        $(Calendar).fullCalendar('addResource', component.props.getExpert($(elem).val()));
+                        $(Calendar).fullCalendar('addResource', component.props.getStaff($(elem).val()));
                     } else {
                         $(elem).prop('checked', false);
                         $(elem).parent('.expert-each').attr('data-active', false);
@@ -903,7 +904,7 @@ class DailyCalendar extends Component {
                 }
                 if (this.state.renderedStaff.length <= 2) {
                     this.setState({
-                        lastStaff: this.props.getExpert($('.expert-each.checkbox').find('input:checked').val()),
+                        lastStaff: this.props.getStaff($('.expert-each.checkbox').find('input:checked').val()),
                         prevStaff: undefined
                     });
                 } else {
@@ -984,7 +985,13 @@ class DailyCalendar extends Component {
                   }
               }
           },
+
           height: window.innerHeight - staffsUiHeight,
+
+          // 예약마감
+          reserveDeadline: function () {
+            console.info('예약마감을 하시겠습니까?');
+          },
 
           eventClick: function(event, jsEvent, view) {
               component.setState({
@@ -1152,13 +1159,13 @@ class DailyCalendar extends Component {
               // 더블클릭으로 선택된 이벤트객체를 가져옵니다
               let selectedCard = calEvent;
               // 선택된 이벤트객체의 리소스ID에 맞는 expert id를 찾아 가져옵니다
-              let selectedExpert = $(Calendar).fullCalendar('getResourceById', selectedCard.resourceId);
+              let selectedStaff = $(Calendar).fullCalendar('getResourceById', selectedCard.resourceId);
 
               // userCard 컴포넌트의 초기값을 전달한다
               component.isUserCard(true, {
                   selectedDate: selectedDate,
                   selectedCard: selectedCard,
-                  selectedExpert: selectedExpert
+                  selectedStaff: selectedStaff
               });
           }
         }));
@@ -1212,7 +1219,7 @@ class DailyCalendar extends Component {
         this.setState({
             defaultStaff: _resources[0],
             renderedStaff: _resources,
-            selectedExpert: _resources[0],
+            selectedStaff: _resources[0],
         });
     }
 
@@ -1237,8 +1244,8 @@ class DailyCalendar extends Component {
             isEditEvent: true,
             isRequestReservation: true,
             selectedEvent: requestEvent,
-            lastStaff: this.props.getExpert(requestEvent.resourceId),
-            selectedExpert: this.props.getExpert(requestEvent.resourceId)
+            lastStaff: this.props.getStaff(requestEvent.resourceId),
+            selectedStaff: this.props.getStaff(requestEvent.resourceId)
           }, () => {
             this.setState({isNewOrder: true});
             // view change시, 선택된 이벤트의 요일이 처음으로 오도록 설정해준다
@@ -1371,15 +1378,15 @@ class DailyCalendar extends Component {
                 <dd>{this.state.defaultStaff
                         ? this.state.defaultStaff.label
                         : ""}</dd>
-                <dt>priorityExpert:
+                <dt>priorityStaff:
                 </dt>
-                <dd>{this.state.priorityExpert
-                        ? this.state.priorityExpert.label
+                <dd>{this.state.priorityStaff
+                        ? this.state.priorityStaff.label
                         : ""}</dd>
-                <dt>selectedExpert:
+                <dt>selectedStaff:
                 </dt>
-                <dd>{this.state.selectedExpert
-                        ? this.state.selectedExpert.label
+                <dd>{this.state.selectedStaff
+                        ? this.state.selectedStaff.label
                         : ""}</dd>
                       <dt>prevStaff</dt>
                 <dd>{this.state.prevStaff
@@ -1449,7 +1456,7 @@ const mapDispatchToProps = (dispatch) => {
     return {
         initUserCard: (options) => {
             dispatch(actions.userCardEvent(options.selectedCard));
-            dispatch(actions.userCardStaff(options.selectedExpert));
+            dispatch(actions.userCardStaff(options.selectedStaff));
             dispatch(actions.userCardDate(options.selectedDate));
         },
         isModalConfirm: (optionComponent) => {

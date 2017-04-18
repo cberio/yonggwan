@@ -387,7 +387,10 @@ class WeeklyCalendar extends Component {
     //예약카드 삭제 1단계
     removeConfirm(schedule) {
         this.props.isModalConfirm('removeEvent');
-        this.setState({isModalConfirm: true, selectedSchedule: schedule});
+        this.setState({
+          isModalConfirm: true,
+          selectedSchedule: schedule
+        });
     }
     //예약카드 삭제 2단계 최종삭제
 
@@ -399,7 +402,9 @@ class WeeklyCalendar extends Component {
             : component.state.selectedSchedule.id;
         $(Calendar).fullCalendar('removeEvents', [scheduleID]);
         this.modalConfirmHide();
-        this.setState({selectedSchedule: undefined});
+        this.setState({
+          selectedSchedule: undefined
+        });
         if (schedule) {
             this.props.guider(schedule.name + '님의 ' + schedule.service + ' 예약이 삭제되었습니다!');
         } else {
@@ -424,7 +429,10 @@ class WeeklyCalendar extends Component {
 
           let newScheduleID = this.props.returnNewID();
           let insertSchedule = $.extend(this.props.returnScheduleObj(newSchedule), {id: newScheduleID});
-          this.setState({isNotAutoSelectTime: true, newEventProductTime: newSchedule.newOrderTime});
+          this.setState({
+            isNotAutoSelectTime: true,
+            newEventProductTime: newSchedule.newOrderTime
+          });
           // button ui hidden
           $('.create-order-wrap.fixed').addClass('hidden');
 
@@ -446,6 +454,8 @@ class WeeklyCalendar extends Component {
         let {Calendar} = this.refs;
         this.setState({isRenderConfirm: false});
 
+        console.log(newSchedule);
+        console.log(newSchedule);
 
         if (!bool)
             return; //취소하는 경우
@@ -480,13 +490,18 @@ class WeeklyCalendar extends Component {
             /// ↓↓↓↓↓↓↓↓↓ 예약생성을 할 이벤트의 Staff 타임라인을 렌더링한다  ↓↓↓↓↓↓↓↓///
 
             // 현재 렌더링된 expert가 아닌 다른 expert로 생성하는 경우: expert view change
+                console.info(this.state.lastStaff);
+                console.info(insertSchedule.resourceId);
+
+                console.info(this.state.renderedStaff);
+                console.info(insertSchedule.resourceId);
             if ((this.state.lastStaff && this.state.lastStaff.id !== insertSchedule.resourceId) || (this.state.renderedStaff.id !== insertSchedule.resourceId)) {
                 // 선택한 expert로 view를 rendering합니다
                 $('.expert-each input#expert_w_' + insertSchedule.resourceId).prop('checked', true);
                 this.setState({
-                    lastStaff: this.props.getStaff(insertSchedule.resourceId)
+                    lastStaff: insertSchedule.resourceId
                 }, () => {
-                    this.changeStaff(this.props.getStaff(insertSchedule.resourceId));
+                    this.changeStaff(insertSchedule.resourceId);
                     setTimeout(function() {
                         component.fakeRenderNewEvent(insertSchedule, newScheduleID, 'selectedStart');
                     }, 0);
@@ -800,7 +815,7 @@ class WeeklyCalendar extends Component {
         let {Calendar} = this.refs;
         if (type === 'selectedStart') {
             insertSchedule.end = moment(insertSchedule.end).format('YYYY-MM-DDTHH:mm:ss');
-            $(Calendar).fullCalendar('renderEvent', insertSchedule, false); // stick? = true
+            $(Calendar).fullCalendar('renderEvent', insertSchedule, true); // stick? = true
             // animate scroll after event rendered
             this.autoScrollTimeline($('#ID_' + newScheduleID), 0, function() {
                 $('.fc-scroller.fc-time-grid-container').addClass('overflow-hidden');
@@ -809,19 +824,19 @@ class WeeklyCalendar extends Component {
         } else {
             let startTime = this.props.getSlotTime();
             let endTime = moment(startTime).add(this.state.newEventProductTime, 'minute').format("YYYY-MM-DDTHH:mm:ss");
-            let newInsertEvent = $.extend(insertSchedule, {
+            let newInsertSchedule = $.extend(insertSchedule, {
                 start: startTime,
                 end: endTime
             });
-            $(Calendar).fullCalendar('renderEvent', newInsertEvent, false); // stick? = true
+            $(Calendar).fullCalendar('renderEvent', newInsertSchedule, true); // stick? = true
             let realEventElem = $('#ID_' + newScheduleID);
             let fakeEventElem = $(realEventElem).clone().attr('id', 'ID_' + newScheduleID + '_FAKE');
             $(fakeEventElem).addClass('new-event').appendTo($('.fc-time-grid-container td[data-date="' + moment(this.props.getSlotTime()).format('YYYY-MM-DD') + '"]'));
             $(fakeEventElem).wrap('<div class="fc-fake-event"></div>');
             this.setState({
                 newScheduleID: newScheduleID,
-                newSchedule: $.extend(newInsertEvent, {
-                    class: Functions.getService(newInsertEvent.service_id, Services).color
+                newSchedule: $.extend(newInsertSchedule, {
+                    class: Functions.getService(newInsertSchedule.service_id, Services).color
                 })
             });
         }
@@ -840,7 +855,7 @@ class WeeklyCalendar extends Component {
         let {Calendar} = this.refs;
         // rerendering 일 경우 이벤트를 다시 등록한다
         if (rerender)
-            $(Calendar).fullCalendar('renderEvent', editSchedule, false); // stick? = true
+            $(Calendar).fullCalendar('renderEvent', editSchedule, true); // stick? = true
 
         let realEventElem = $('#ID_' + editSchedule.id).hide();
         let fakeEventElem = $(realEventElem).clone().attr('id', 'ID_' + editSchedule.id + '_FAKE').show();
@@ -1031,7 +1046,7 @@ class WeeklyCalendar extends Component {
         let bgCell = '<span class="bg-cell"></span>';
         //오늘 날짜(임시)의 .fc-day 레이어를 가져옵니다
         let daySlot = $('.fc-agendaWeekly-view .fc-bg .fc-day[data-date="' + moment(new Date()).format('YYYY-MM-DD') + '"]');
-        let color = Functions.getService(service.id, Services).color;
+        let {color} = service;
         this.setState({newEventService: service});
         // highlighting
         if (bool) {
@@ -1040,10 +1055,11 @@ class WeeklyCalendar extends Component {
             $("#render-confirm").show().css('z-index', '2').addClass('mask-white mask-overview');
             $('.create-order-wrap.fixed').addClass('hidden');
             $('.create-order-wrap.timeline').removeClass('red blue yellow green purple');
-            if (color)
-                setTimeout(function() {
-                    $('.create-order-wrap.timeline').addClass(color);
-                }, 0);
+            if (color) {
+              setTimeout(function() {
+                  $('.create-order-wrap.timeline').addClass(color);
+              }, 0);
+            }
 
         /*[공통]  활성화 가능한 타임 블록의 tr에 class="slot-highlight"를      적용해주어야 합니다
         [공통]  활성화 가능한 타임 블록의 첫번째 tr에 class="start"를  추가로 적용해주어야 합니다
@@ -1354,7 +1370,7 @@ class WeeklyCalendar extends Component {
           viewRender: function(view, elem) {
               console.info('VIEW Render');
               let { Calendar } = component.refs;
-              let expert = component.state.priorityStaff || Staffs[0];
+              let staff = component.state.priorityStaff || Staffs[0];
 
               // state를 업데이트 후에 실행해야 하는 함수
               var runAfterStatesUpdate = function () {
@@ -1389,10 +1405,10 @@ class WeeklyCalendar extends Component {
               component.props.loading(false);
 
               component.setState({
-                timelineDate:   $(Calendar).fullCalendar('getDate').format(),
-                priorityStaff: expert,
-                renderedStaff: expert,
-                lastStaff: expert
+                timelineDate: $(Calendar).fullCalendar('getDate').format(),
+                priorityStaff: staff,
+                renderedStaff: staff,
+                lastStaff: staff
               }, () => runAfterStatesUpdate());
 
 
@@ -1491,7 +1507,15 @@ class WeeklyCalendar extends Component {
                         {Staffs.map((staff, i) => {
                             return (
                                 <div className="expert-each" key={i}>
-                                    <input disabled={this.state.isRenderConfirm} className="expert-input" type="radio" name="expert_w" id={`expert_w_${staff.id}`} value={staff.id} onChange={(input) => this.changeStaff(staff, input)}/>
+                                    <input
+                                      disabled={this.state.isRenderConfirm}
+                                      className="expert-input"
+                                      type="radio"
+                                      name="expert_w"
+                                      id={`expert_w_${staff.id}`}
+                                      value={staff.id}
+                                      onChange={(input) => this.changeStaff(staff, input)}
+                                      />
                                     <label className="expert-label" htmlFor={`expert_w_${staff.id}`}>{staff.nickname || staff.staff_name}
                                         <i className="today-reservation">{9}</i>
                                     </label>
