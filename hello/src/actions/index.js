@@ -107,11 +107,16 @@ export const receiveServices = (shop, json) => ({
 
 const fetchSchedules = (shop, state) => dispatch => {
   dispatch(requestSchedules(shop));
+  dispatch(loading(true));
 
   return new Shop({shopId: shop})
     .schedules()
+    .withService()
     .get(state)
-    .then(json => dispatch(receiveSchedules(shop, json)));
+    .then(json => {
+      dispatch(receiveSchedules(shop, json));
+      dispatch(loading(false));
+    });
 }
 
 const fetchStaffs = (shop, state) => dispatch => {
@@ -147,14 +152,14 @@ const fetchServices = (shop, state) => dispatch => {
  */
 const shouldFetchSchedules = (state, shopID) => {
   const schedules = state.getSchedulesBySelectedShopID[shopID];
-  const selectedDate = state.calendarConfig.start;
+  const selectedDate =  state.calendarConfig.start.format('YYYY-MM-DD');
 
   if(!schedules)
     return true;
 
   if(schedules.isFetching)
     return false;
-  
+
   if(!schedules.schedules.data.find(schedule => schedule.reservation_dt === selectedDate))
     return true;
 
@@ -232,4 +237,14 @@ export const setCalendarStart = start => (dispatch, getState) => {
 
 export const setCalendarEnd = end => (dispatch, getState) => {
   return dispatch(fullCalendarEnd(end));
+}
+
+export const ScheduleStatus = {
+  DONE : '00',
+  CREATED : '01',
+  REQUESTED :'02',
+  CONFIRMED :'03',
+  CHANGED : '04',
+  OFFTIME : '05',
+  CANCELED : '99',
 }
