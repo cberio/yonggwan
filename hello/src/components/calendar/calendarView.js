@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as actions from '../../actions';
@@ -56,13 +57,13 @@ CalendarView.PropTypes = {
 }
 
 const mapStateToProps = (state) => {
-  const { 
-    selectedShopID, 
+  const {
+    selectedShopID,
     getStaffsBySelectedShopID,
     getSchedulesBySelectedShopID,
   } = state;
 
-  const { 
+  const {
     staffs,
     isFetching
   } = getStaffsBySelectedShopID[selectedShopID] || {
@@ -70,10 +71,10 @@ const mapStateToProps = (state) => {
     staffs: {}
   };
 
-  const { 
+  const {
     schedules,
-  } = getSchedulesBySelectedShopID[selectedShopID] || { 
-    isFetching: false, 
+  } = getSchedulesBySelectedShopID[selectedShopID] || {
+    isFetching: false,
     schedules: {}
   };
 

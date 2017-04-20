@@ -1,21 +1,28 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import Select from 'react-select';
 
 /* Selectbox */
 
-const OptionComponent = React.createClass({
+class OptionComponent extends React.Component {
+	constructor (props) {
+		super (props);
+		this.handleMouseDown = this.handleMouseDown.bind(this);
+		this.handleMouseEnter = this.handleMouseEnter.bind(this);
+		this.handleMouseMove = this.handleMouseMove.bind(this);
+	}
 	handleMouseDown (event) {
 		event.preventDefault();
 		event.stopPropagation();
 		this.props.onSelect(this.props.option, event);
-	},
+	}
 	handleMouseEnter (event) {
 		this.props.onFocus(this.props.option, event);
-	},
+	}
 	handleMouseMove (event) {
 		if (this.props.isFocused) return;
 		this.props.onFocus(this.props.option, event);
-	},
+	}
 	render () {
 		return (
 			<div className={this.props.className}
@@ -33,9 +40,9 @@ const OptionComponent = React.createClass({
 			</div>
 		);
 	}
-});
+}
 
-const ValueComponentSlide = React.createClass({
+class ValueComponentSlide extends React.Component {
 	render () {
 		console.log(this.props);
 		return (
@@ -46,9 +53,9 @@ const ValueComponentSlide = React.createClass({
 			</div>
 		);
 	}
-});
+}
 
-const ValueComponentNewOrder = React.createClass({
+class ValueComponentNewOrder extends React.Component {
 	render () {
 		return (
 			<div className="Select-value">
@@ -62,27 +69,25 @@ const ValueComponentNewOrder = React.createClass({
 			</div>
 		);
 	}
-});
+}
 
-const Selectable = React.createClass({
-	propTypes: {
-		hint: React.PropTypes.string,
-		label: React.PropTypes.string,
-	},
-	getInitialState () {
-		return {
+class Selectable extends React.Component {
+	constructor (props) {
+		super (props);
+		this.state = {
 			value: this.props.value
-		};
-	},
+		}
+		this.setValue = this.setValue.bind(this);
+	}
 	setValue (value) {
 		this.setState({ value });
     this.props.onChange(value);
-	},
+	}
   arrowRenderer () {
   	return (
   		<span>+</span>
   	);
-  },
+  }
 
 	render () {
 		return (
@@ -103,7 +108,11 @@ const Selectable = React.createClass({
 			</div>
 		);
 	}
-});
+}
 
+Selectable.propTypes = {
+	hint: PropTypes.string,
+	label: PropTypes.string,
+}
 
 module.exports = Selectable;

@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import $ from 'jquery';
 import moment from 'moment';
 import * as Functions from '../../js/common';
@@ -15,7 +16,7 @@ import WeeklyCalendar from './fullCalendar/weeklyCalendar';
 import Staff from '../../data/staffs';
 import Schedule from '../../data/schedules';
 import Services from '../../data/services';
-import 'fullcalendar-scheduler/node_modules/fullcalendar/dist/fullcalendar.min.css';
+import 'fullcalendar/dist/fullcalendar.min.css';
 import '../../css/fullcalendar-scheduler-customizing.css';
 import _ from 'lodash';
 

@@ -8,7 +8,7 @@ import '../../css/notifier.css';
 import '../../lib/jquery-custom-scrollbar-master/jquery.custom-scrollbar.js';
 import '../../lib/jquery-custom-scrollbar-master/jquery.custom-scrollbar.css';
 
-const Head = React.createClass({
+class Head extends Component {
   render () {
     // 메뉴별 new갯수를 합산 합니다
     let total = 0;
@@ -28,8 +28,9 @@ const Head = React.createClass({
       </div>
     )
   }
-});
-const TabMenu = React.createClass({
+};
+
+class TabMenu extends Component {
   render () {
     let positionLeft = (100/this.props.menus.length) * (this.props.selectedIndex)
     return (
@@ -54,7 +55,7 @@ const TabMenu = React.createClass({
       </div>
     );
   }
-});
+};
 
 class Notifier extends Component {
   constructor (props, container) {

@@ -1,22 +1,24 @@
-import React, {PropTypes} from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import moment from 'moment';
 import $ from 'jquery';
 import '../../../../lib/jquery-custom-scrollbar-master/jquery.custom-scrollbar.js';
 
 /* Selectbox - custom component */
-const OptionComponent = React.createClass({
-    propTypes: {
-        value: PropTypes.object,
-        selected: PropTypes.bool
-    },
-    getInitialState() {
-        return {value: this.props.value, selected: this.props.selected}
-    },
+class OptionComponent extends React.Component {
+    constructor (props) {
+    super (props);
+    this.state = {
+        value: this.props.value,
+        selected: this.props.selected
+    }
+    this.handleMouseDown = this.handleMouseDown.bind(this);
+  }
     handleMouseDown(event) {
         event.preventDefault();
         event.stopPropagation();
         this.props.onSelect(this.props.value, event);
-    },
+    }
     render() {
         return (
             <li className={`select-option ${this.state.selected
@@ -32,8 +34,11 @@ const OptionComponent = React.createClass({
             </li>
         );
     }
-});
-
+}
+OptionComponent.propTypes = {
+    value: PropTypes.object,
+    selected: PropTypes.bool
+}
 OptionComponent.defaultProps = {
     selected: false,
     value: {
