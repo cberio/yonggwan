@@ -69,6 +69,7 @@ class DailyCalendar extends Component {
 
         this.bindResourcesToTimeLine = this.bindResourcesToTimeLine.bind(this);
         this.bindEventsToTimeLine = this.bindEventsToTimeLine.bind(this);
+        this.colorizeEvent = this.colorizeEvent.bind(this);
     }
 
     test (e) {
@@ -730,7 +731,7 @@ class DailyCalendar extends Component {
         $(Calendar).fullCalendar('gotoDate', date.format());
         this.setState({ isChangeDate: false });
 
-        this.props.changeDate(date.format('YYYY-MM-DD'));
+        this.props.changeDate(date);
     }
 
     // 예약정보수정
@@ -919,6 +920,38 @@ class DailyCalendar extends Component {
         }
     }
 
+    /**
+     * 예약 상태에 맞는 class를 추가 합니다.
+     * (FullCalendar의 eventRender callback에 의해 실행 됩니다.)
+     * 
+     * 1. 종료시간이 지난 이벤트 >>> disabled 클래스 추가
+     * 2. service가 있음       >>> service.color 클래스 추가
+     * 3. service가 없음 && event.status == 05   >>> off-time 클래스 추가
+     * 
+     * @param {Object} event 
+     * @param {DOM} domElement 
+     * 
+     * @return {void}
+     */
+    colorizeEvent(event, domElement) {
+        console.info("@eventRender called");
+
+        // 종료시간이 지난 이벤트
+        if(this.props.services && event.service)
+            $(domElement).addClass();
+        
+        if(event.status === actions.ScheduleStatus.OFFTIME)
+            $(domElement).addClass('off-time');
+        
+        if (moment(event.end.format('YYYY-MM-DD HH:mm:ss')).isBefore(moment(), 'minute'))
+            $(domElement).addClass('disabled');
+
+        // service time이 20분 이하인 슬롯은 class 추가하여 스타일 추가 적용
+        if (Functions.millisecondsToMinute(event.end.diff(event.start)) <= 20) {
+            $(domElement).addClass('fc-short');
+        }
+    }
+
     componentDidMount() {
         const component = this;
         let {Calendar} = this.refs;
@@ -1065,43 +1098,7 @@ class DailyCalendar extends Component {
             },
             eventRender: function(event, element, view) {
                 // Event Card 의 상품별로 Class를 삽입합니다
-                /*
-                if (event.product === 'OFF TIME') {
-                    $(element).addClass('off-time');
-                } else {
-                    for (let i = 0; i < Products.length; i++) {
-                        if (event.product === Products[i].product) {
-                            $(element).addClass(Products[i].itemColor);
-                            break;
-                        }
-                    }
-                }
-                */
-
-                // 1. 이벤트의 service 존재 확인
-                // 1-2. service가 있음                         >>> service.color 클래스 추가
-                // 1-3. service가 없음 && event.status == 05   >>> off-time 클래스 추가
-                // 1-4. 현시간 이전에 종료된 이벤트               >>> disabled 클래스 추가
-                // 1-5. 이벤트의 시작/종료 시간이 20분 이하일 경우  >>> fc-short 클래스 추가
-
-                // Todo..
-                // off-time 경우 class 변경
-                if(event.service)
-                    $(element).addClass(event.service.color);
-
-                //시간이 지난 이벤트 건 스타일 클래스 적용 (minute을 기준으로 설정)
-                if (moment(event.end.format('YYYY-MM-DD HH:mm:ss')).isBefore(date, 'minute')) {
-                    // event.editable = false;
-                    $(element).addClass('disabled');
-                }
-
-                // service time이 20분 이하인 슬롯은 class 추가하여 스타일 추가 적용
-                if (Functions.millisecondsToMinute(event.end.diff(event.start)) <= 20) {
-                    $(element).addClass('fc-short');
-                } else {
-                    $(element).removeClass('fc-short');
-                }
-
+                component.colorizeEvent(event, element);
             },
             // 캘린더 이벤트 day 렌더링시
             dayRender: function(d, cell) {
@@ -1143,7 +1140,7 @@ class DailyCalendar extends Component {
                 $('.create-order-overlap').removeClass('create-order-overlap');
                 // $('.fade-loading').removeClass('fade-loading');
                 // loading bar hide
-                component.props.loading(false);
+                // component.props.loading(false);
 
             }, //end viewRender
             viewDestroy: function(view, elem) {
