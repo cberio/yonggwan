@@ -30,13 +30,35 @@ export default class Schedule {
         switch(calendarConfig.viewType) {
             default:
             case 'agendaDay':
-                this.params.set('start', calendarConfig.start);
+                this.params.set('start', (calendarConfig.start).format('YYYY-MM-DD'));
             case 'agendaWeekly':
-                this.params.set('end', calendarConfig.end);
+                this.params.set('end', (calendarConfig.end).format('YYYY-MM-DD'));
                 break;
         }
+        //this.params.set('include', 'service');
+    }
 
-        this.params.set('include', 'service')
+    /**
+     * api 호출 시 service관계를 추가 로드 합니다.
+     * 
+     */
+    withService() {
+        // 1. URLSearchParam에 'include' key로 첫 번째 value 확인
+        let relations = this.params.get('include');
+
+        // 2. value에 service가 있으면 return;
+        if(relations && relations.includes('service'))
+            return this;
+        // 3. value에 service가 없거나 'include' key 가 없음
+        else {
+            // value에 'service' 가 없음 > 'service' 추가
+            if(relations)
+                this.params.set('include', relations+',service');
+            else
+                this.params.set('include', 'service');
+        }
+
+        return this;
     }
 
     /**
