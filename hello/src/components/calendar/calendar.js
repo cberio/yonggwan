@@ -88,7 +88,19 @@ class Calendar extends Component {
   changeDate(date) {
     const { calendarConfig, selectedShopID } = this.props;
 
-    this.props.setCalendarStart(date);
+    switch(calendarConfig.viewType) {
+      case "agendaDay" : 
+        if(moment(date).isBefore(calendarConfig.start))
+          this.props.setCalendarStart(date);
+        if(moment(date).isAfter(calendarConfig.end))
+          this.props.setCalendarEnd(date);
+        break;
+      case "agendaWeek":
+        break;
+      default:
+        break;
+    }    
+
     this.props.fetchSchedulesIfNeeded(selectedShopID);
   }
 
@@ -190,6 +202,7 @@ class Calendar extends Component {
 
     this.props.fetchSchedulesIfNeeded(selectedShopID);
     this.props.fetchStaffsIfNeeded(selectedShopID);
+    this.props.fetchServicesIfNeeded(selectedShopID);
   }
 
   fetchSchedule() {
@@ -357,6 +370,7 @@ class Calendar extends Component {
       fcOptions: fc_options,
       events: _.isEmpty(this.props.schedules) ? Events : this.props.schedules.data,
       experts: _.isEmpty(this.props.staffs) ? Experts : this.props.staffs.data,
+      services: this.props.services,
       changeView: this.changeView,
       changeDate: this.changeDate,
       returnEventObj: this.returnEventObj,
@@ -423,8 +437,10 @@ class Calendar extends Component {
 Calendar.PropTypes = {
   fetchSchedulesIfNeeded: PropTypes.func.isRequired,
   fetchStaffsIfNeeded: PropTypes.func.isRequired,
+  fetchServicesIfNeeded: PropTypes.func,
   staffs: PropTypes.object.isRequired,
-  schedules: PropTypes.object.isRequired
+  schedules: PropTypes.object.isRequired,
+  services: PropTypes.object,
 }
 
 const mapStateToProps = (state) => {
@@ -432,29 +448,19 @@ const mapStateToProps = (state) => {
     calendarConfig,
     selectedShopID,
     getSchedulesBySelectedShopID,
-    getStaffsBySelectedShopID
+    getStaffsBySelectedShopID,
+    getServicesBySelectedShopID,
   } = state;
 
-  const {
-    schedules,
-  } = getSchedulesBySelectedShopID[selectedShopID] || {
-    isFetching: false,
-    schedules: {}
-  };
-
-  const {
-    staffs,
-    isFetching
-  } = getStaffsBySelectedShopID[selectedShopID] || {
-    isFetching: false,
-    staffs: {}
-  }
-
+  const { schedules } = getSchedulesBySelectedShopID[selectedShopID] || { isFetching: false, schedules: {} };
+  const { staffs } = getStaffsBySelectedShopID[selectedShopID] || { isFetching: false, staffs: {} };
+  const { services } = getServicesBySelectedShopID[selectedShopID] || { isFetching: false, services: {} };
+  
   return {
-    isFetching,
     selectedShopID,
     schedules,
     staffs,
+    services,
     calendarConfig,
   }
 }
@@ -463,6 +469,7 @@ const mapDispatchToProps = (dispatch) => {
   return {
     fetchSchedulesIfNeeded: shopID => (dispatch(actions.fetchSchedulesIfNeeded(shopID))),
     fetchStaffsIfNeeded: shopID => (dispatch(actions.fetchStaffsIfNeeded(shopID))),
+    fetchServicesIfNeeded: shopID => (dispatch(actions.fetchServicesIfNeeded(shopID))),
         
     setCalendarViewType: viewType => (dispatch(actions.setCalendarViewType(viewType))),
     setCalendarStart: start => (dispatch(actions.setCalendarStart(start))),
