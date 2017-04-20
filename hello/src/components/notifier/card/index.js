@@ -1,8 +1,8 @@
 import React from 'react';
 import $ from 'jquery';
 import moment from 'moment';
-import Experts from '../../../data/experts';
-import Products from '../../../data/products';
+import Staffs from '../../../data/staffs';
+import Services from '../../../data/services';
 import * as Functions from '../../../js/common';
 import * as actions from '../../../actions';
 import { connect } from 'react-redux';
@@ -13,26 +13,26 @@ class Card extends React.Component {
     this.requestReservation = this.requestReservation.bind(this);
   }
   getExpertName (resourceId) {
-    for (let i=0; i < Experts.length; i++) {
-      if (resourceId === Experts[i].id) return Experts[i].title;
+    for (let i=0; i < Staffs.length; i++) {
+      if (resourceId === Staffs[i].id) return Staffs[i].staff_name;
     }
   }
-  requestReservation (event) {
+  requestReservation (schedule) {
     // 현재 페이지가 예약 페이지가 아닌경우 예약페이지로 이동에 대한 방안이 필요함
     if (location.pathname.indexOf('reservation') < 0) location.pathname = '/reservation/overview'; //임시
     // 예약 페이지로 전환 후, 렌더링시 바로 예약요청카드가 보여지도록 세팅함
-    this.props.showRequestReservation(event);
+    this.props.showRequestReservation(schedule);
   }
   render () {
-    const { id, resourceId, rating, className, product, name,
-            phone, start, end, picture, comment, comment_admin,
+    const { id, resourceId, guest_class, className, service_code, name,
+            phone, start, end, picture, guest_memo, staff_memo,
             kakao, line, history
-          } = this.props.event;
+          } = this.props.schedule;
     const content = (
       <div className="card-content">
         <div className="service clearfix">
           <div className="lt">
-            <span className={`product ${Functions.getProductColor(product, Products)}`}>{product}</span>
+            <span className={`product ${Functions.getService(service_code, Services).color}`}>{Functions.getService(service_code, Services).name}</span>
             {this.props.CardType === '변경' ? <span className="time last">00.00(목)00:00~00:00</span> : null}
             <span className="time">
               <span>{moment(start).locale('ko').format('MM.DD(ddd)hh:mm') +"~"+ moment(end).format('hh:mm')}</span>
@@ -49,29 +49,29 @@ class Card extends React.Component {
               <div className="picture">
                 {picture && <img src={picture} alt={name} width="32" height="32" />}
               </div>
-              {rating && rating.toUpperCase() !=='NORMAL' && <i className={`rating-bullet ${rating.toUpperCase()}`}>{rating}</i>}
+              {guest_class && guest_class.toUpperCase() !=='NORMAL' && <i className={`rating-bullet ${guest_class.toUpperCase()}`}>{guest_class}</i>}
             </div>
             <span className="name">{name}</span>
-            {rating && rating.toUpperCase() !=='NORMAL' && <span className={`rating ${rating.toUpperCase()}`}>{rating}</span>}
+            {guest_class && guest_class.toUpperCase() !=='NORMAL' && <span className={`rating ${guest_class.toUpperCase()}`}>{guest_class}</span>}
           </div>
           <p className="comment">
-            {comment}
+            {guest_memo}
           </p>
         </div>
       </div>
     )
     return (
       this.props.CardType === '요청' ? (
-        <button onClick={ () => this.requestReservation(this.props.event) } className="link">{content}</button>
+        <button onClick={ () => this.requestReservation(this.props.schedule) } className="link">{content}</button>
       ): content
     );
   }
 }
 const mapDispatchToProps = (dispatch) => {
   return {
-    showRequestReservation: (event) => dispatch(actions.requestReservation({
+    showRequestReservation: (schedule) => dispatch(actions.requestReservation({
       condition: true,
-      requestEvent: event
+      requestEvent: schedule
     }))
   }
 }

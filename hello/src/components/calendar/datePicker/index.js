@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import $ from 'jquery';
 import InfiniteCalendar from 'react-infinite-calendar';
-import 'react-infinite-calendar/styles.min.css';
+import 'react-infinite-calendar/styles.css';
 import '../../../css/date-picker-customizing.css';
 
 export default class DatePicker extends Component {
@@ -32,7 +32,6 @@ export default class DatePicker extends Component {
       <div className="">
         <InfiniteCalendar
           showHeader={false}
-          showOverlay={false}
           selectedDate={this.props.selectedDate || date}
           locale={{ name: 'ko' }}
           autoFocus={true}
@@ -42,7 +41,8 @@ export default class DatePicker extends Component {
           className={`date-picker ${this.props.className}`}
           keyboardSupport={true}
           onSelect={ (date) => this.props.onChange(date) }
-          onScroll={function(scrollTop) {
+          displayOptions={{
+            showOverlay: false
           }}
           theme={{
               selectionColor: '#e60b25',

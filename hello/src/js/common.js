@@ -37,23 +37,26 @@ export function millisecondsToTime (ms) {
    }
 }
 
-/* Product의 item color를 text로 반환*/
-export function getProductColor (productName, products) {
-  for (let i = 0; i < products.length; i++) {
-    if (productName === products[i].product) {
-      return products[i].itemColor;
-      break;
-    }
-  }
-  return '';
+/* Return service object*/
+export function getService (serviceID, services) {
+  return services.find((service) => service.id == serviceID );
 }
-/* Product의 상품가격을 반환*/
-export function getProductPrice (productName, products) {
-  for (let i = 0; i < products.length; i++) {
-    if (productName === products[i].product) {
-      return products[i].price;
-      break;
-    }
-  }
-  return '';
+
+/* Return staff object*/
+export function getStaff (staffID, staffs) {
+  return staffs.find((staff) => staff.id === staffID );
+}
+
+/* 숫자를 인수로 받아 3자리단위에 콤마삽입하여 반환 (금액 표현) */
+export function numberWithCommas (num) {
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+/* 숫자를 인수로 받아 하이픈을 삽입하여 반환 (핸드폰번호 표현) */
+export function getPhoneStr (num) { // num = 01012345678
+  var num_all = num.replace(/(^02.{0}|^01.{1}|[0-9]{3})([0-9]+)([0-9]{4})/,"$1-$2-$3"); // 010-1234-5678
+  var num_first  = num.replace(/(^02.{0}|^01.{1}|[0-9]{3})([0-9]+)([0-9]{4})/,"$1"); // 010
+  var num_middle = num.replace(/(^02.{0}|^01.{1}|[0-9]{3})([0-9]+)([0-9]{4})/,"$2"); // 1234
+  var num_last   = num.replace(/(^02.{0}|^01.{1}|[0-9]{3})([0-9]+)([0-9]{4})/,"$3"); // 5678
+  return num_all;
 }

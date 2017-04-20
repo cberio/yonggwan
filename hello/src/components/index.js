@@ -1,13 +1,22 @@
-import React, { Component } from 'react';
-import { Match } from 'react-router';
+import React from 'react';
+import { Route } from 'react-router';
 import { DailyContainer, WeeklyContainer } from './calendar/container';
 
-class Container extends Component {
+const emptyComponent = ({param}) => {
+  return (
+    <div>
+      빈 컨텐츠
+    </div>
+  )
+}
+
+class Container extends React.Component {
   render () {
     return (
       <div id="container">
-        <Match pattern="/reservation/daily" component={DailyContainer} />
-        <Match pattern="/reservation/weekly" component={WeeklyContainer} />
+        <Route path="/reservation/daily" component={DailyContainer} />
+        <Route path="/reservation/weekly" component={WeeklyContainer} />
+        <Route component={emptyComponent} />
       </div>
     );
   }

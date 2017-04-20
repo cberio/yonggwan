@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import moment from 'moment';
-import Products from '../../data/products.json';
+import Services from '../../data/services';
 import {SelectableCustom, SearchProduct, CreatableCustom} from '../calendar/select';
 import DatePicker from '../calendar/datePicker';
 import Slider from 'react-slick';
@@ -23,7 +23,7 @@ class Resource extends Component {
         this.changeDate = this.changeDate.bind(this);
         this.changeTime = this.changeTime.bind(this);
         this.changeProduct = this.changeProduct.bind(this);
-        this.changePrice = this.changePrice.bind(this);
+        this.changeAmount = this.changeAmount.bind(this);
         this.handleChange = this.handleChange.bind(this);
     }
 
@@ -55,7 +55,7 @@ class Resource extends Component {
         isChangeProduct: !this.state.isChangeProduct
       });
     }
-    changePrice(condition) {
+    changeAmount(condition) {
       this.setState({
         isChangePrice: !this.state.isChangePrice
       });
@@ -80,7 +80,7 @@ class Resource extends Component {
         const mapToHistoryList = (user, history, i) => {
           return (
             <div key={i} className={`history-list ${history.product
-                ? Functions.getProductColor(history.product, Products)
+                ? Functions.getProductColor(history.service, Services)
                 : ''}${this.state.historyActiveIndex === i
                     ? " active"
                     : ''}`}>
@@ -252,7 +252,7 @@ class Resource extends Component {
         ];
 
         return (
-            <div className={`customer-detail ${Functions.getProductColor(user.product, Products)}`}>
+            <div className={`customer-detail ${Functions.getProductColor(user.service, Services)}`}>
                 <div className="product">
                     <div className="res-info">
                         <span className="tit">예약시간</span>
@@ -315,7 +315,7 @@ class Resource extends Component {
                                   className="change-product arrow-border-dark"
                                   placeholder="검색어를 입력하세요"
                                   noResultsText="결과가 없습니다"
-                                  options={Products}
+                                  options={Services}
                                   value={null}
                                   onChange={this.inputChangeProduct}
                                 />
@@ -325,12 +325,12 @@ class Resource extends Component {
                           ? (
                             /* 선결제인경우*/
                             <span className="price edit-ui">
-                              <button onClick={this.changePrice} className="">선결제 :&nbsp;{Functions.getProductPrice(user.product, Products)}&#xFFE6;</button>
-                              <button onClick={this.changePrice} className="price-change">금액변경</button>
+                              <button onClick={this.changeAmount} className="">선결제 :&nbsp;{Functions.getService(user.service_code, Services).amount}&#xFFE6;</button>
+                              <button onClick={this.changeAmount} className="price-change">금액변경</button>
                               {this.state.isChangePrice
                                 ? <CreatableCustom
                                     type="changePayment"
-                                    onDestroy={this.changePrice}
+                                    onDestroy={this.changeAmount}
                                     handleIncrement={null}
                                     handleDecrement={null}
                                   />
@@ -340,7 +340,7 @@ class Resource extends Component {
                           : (
                             /* 선결제가 아닌 경우 */
                             <span className="price">
-                              <span>{Functions.getProductPrice(user.product, Products)}&#xFFE6;</span>
+                              <span>{Functions.getService(user.service_code, Services).amount}&#xFFE6;</span>
                             </span>)
                         }
                     </div>

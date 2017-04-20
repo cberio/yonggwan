@@ -9,7 +9,7 @@ export function userCardEvent (options) {
     options
   };
 }
-export function userCardExpert (options) {
+export function userCardStaff (options) {
   return {
     type : types.USER_CARD_EXPERT,
     options

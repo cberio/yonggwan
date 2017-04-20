@@ -3,9 +3,9 @@ import $ from 'jquery';
 import moment from 'moment';
 import update from 'react-addons-update';
 import { SearchCustomer, SearchProduct, Selectable } from '../select';
-import Experts from '../../../data/experts.json';
-import Products from '../../../data/products.json';
-import Customers from '../../../data/customers.json';
+import Staffs from '../../../data/staffs';
+import Services from '../../../data/services';
+import Guests from '../../../data/guests';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import * as Images from '../../../require/images';
 import * as Functions from '../../../js/common';
@@ -16,17 +16,17 @@ export default class NewOrder extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      newOrderStep : 1,
-      newOrderUserName : undefined,
-      newOrderUserSex : undefined,
-      newOrderUserPhone: ["","",""],
-      newOrderProduct : undefined,
-      newOrderClassName: undefined,
-      newOrderExpert : this.props.selectedExpert,
-      newOrderMember : {},
-      newOrderStart : this.props.selectedDate,
-      newOrderEnd : undefined,
-      newOrderTime: undefined
+      newOrderStep : 1, //int 1-3
+      newOrderGuestName : undefined, //str
+      newOrderSex : 0,// int 0-2
+      newOrderPhone: ["","",""], //array
+      newOrderService : undefined, //object (service object)
+      newOrderClassName: undefined, //str
+      newOrderStaff : this.props.selectedStaff, //object
+      newOrderGuest : {},  //object
+      newOrderStart : this.props.selectedDate, // moment format
+      newOrderEnd : undefined, // moment format
+      newOrderTime: undefined // HH:mm
     };
     this.documentBinding = this.documentBinding.bind(this);
     this.initEditEvent = this.initEditEvent.bind(this);
@@ -34,9 +34,9 @@ export default class NewOrder extends Component {
     this.nextStep = this.nextStep.bind(this);
     this.changeStep = this.changeStep.bind(this);
     this.autoFocus = this.autoFocus.bind(this);
-    this.inputChangeExpert = this.inputChangeExpert.bind(this);
-    this.inputChangeProduct = this.inputChangeProduct.bind(this);
-    this.inputChangeCustomer = this.inputChangeCustomer.bind(this);
+    this.inputChangeStaff = this.inputChangeStaff.bind(this);
+    this.inputChangeService = this.inputChangeService.bind(this);
+    this.inputChangeGuest = this.inputChangeGuest.bind(this);
     this.inputChangeUserPhone = this.inputChangeUserPhone.bind(this);
     this.inputChangeUserSex = this.inputChangeUserSex.bind(this);
     this.inputChangeOrderStart = this.inputChangeOrderStart.bind(this);
@@ -62,16 +62,15 @@ export default class NewOrder extends Component {
   initEditEvent (e) {
     this.setState({
       newOrderStep: 3,
-      newOrderProduct : e.product,
-      newOrderProductFullObject : this.getProductObj(e.product),
-      newOrderClassName: this.getProductColor(e.product),
-      newOrderExpert : this.getExpertObj(e.resourceId),
-      newOrderMember : {
-        name: e.name,
-        phone: e.phone,
+      newOrderService : Functions.getService(e.service.code),
+      newOrderClassName: Functions.getService(e.service.code).color,
+      newOrderStaff : Functions.getStaff(e.resourceId),
+      newOrderGuest : {
+        name: e.guest_name,
+        phone: e.guest_mobile,
         kakao: e.kakao,
         line: e.line,
-        rating: e.rating,
+        rating: e.guest_class,
         picture: e.picture
       },
       newOrderStart : moment(e.start).format(),
@@ -86,36 +85,18 @@ export default class NewOrder extends Component {
     $('.new-order-wrap-container').insertAfter('.fc-toolbar.fc-header-toolbar');
   }
 
-  setNewOrderExpert (expert) {
-    this.setState({ newOrderExpert: expert });
+  setNewOrderStaff (staff) {
+    this.setState({ newOrderStaff: staff });
   }
 
-  getExpertObj (id) {
-    for (let i = 0; i < Experts.length; i++) {
-      if (Experts[i].id === id) {
-        return Experts[i];
-      }
-    }
-  }
-
-  getEventObj () {
+  getScheduleObj () {
     return this.state;
   }
 
   getProductObj (productName) {
-    for (let i = 0; i < Products.length; i++) {
-      if (productName === Products[i].product) {
-        return Products[i];
-        break;
-      }
-    }
-  }
-
-  // Product 의 item color를 리턴함
-  getProductColor (product) {
-    for (let i = 0; i < Products.length; i++) {
-      if (product === Products[i].product) {
-        return Products[i].itemColor;
+    for (let i = 0; i < Services.length; i++) {
+      if (productName === Services[i].name) {
+        return Services[i];
         break;
       }
     }
@@ -160,41 +141,40 @@ export default class NewOrder extends Component {
   }
 
   autoFocus (e) {
-    let phone = this.state.newOrderUserPhone;
+    let phone = this.state.newOrderPhone;
     if (phone[0].length >= 3 && phone[1].length >= 4 && e.target.value.length >= 4) this.refs.next.focus();
   }
 
-  inputChangeProduct (e)   {
-    let endTime = moment(this.state.newOrderStart).add(e.serviceTime, 'minute');
-        endTime = endTime.format("YYYY-MM-DDTHH:mm:ss");
+  inputChangeService (e)   {
+    let productTime = moment.duration(e.time).asMinutes(); // mm
+    let endTime = moment(this.state.newOrderStart).add(productTime, 'minutes');
     this.setState({
-      newOrderProductFullObject: e,
-      newOrderProduct: e.label,
-      newOrderClassName: e.itemColor,
-      newOrderTime: e.serviceTime,
-      newOrderEnd: endTime
+      newOrderService: e,
+      newOrderClassName: e.color,
+      newOrderTime: e.time,
+      newOrderEnd: endTime.format()
     });
   }
-  inputChangeExpert (obj) {
+  inputChangeStaff (obj) {
     this.setState({
-      newOrderExpert : obj
+      newOrderStaff : obj
     });
   }
   inputChangeUserPhone (e, idx) {
     this.setState({
-      newOrderUserPhone: update(
-        this.state.newOrderUserPhone, {
+      newOrderPhone: update(
+        this.state.newOrderPhone, {
         [idx]: { $set: e.target.value }
       })
     });
   }
-  inputChangeCustomer (e)  {
+  inputChangeGuest (e)  {
     if (e === null) {
       // clearable
-      this.setState({newOrderMember: -1, newOrderUserName: undefined});
+      this.setState({newOrderGuest: -1, newOrderGuestName: undefined});
     } else {
       // set values
-      this.setState({ newOrderMember: e, newOrderUserName: e.value });
+      this.setState({ newOrderGuest: e, newOrderGuestName: e.value });
       // ↓↓ focusing ↓↓
       // focus__1. customer의 phone데이터가 있는경우 NEXT 버튼 포커스
       if (e.phone) {
@@ -205,7 +185,7 @@ export default class NewOrder extends Component {
       }
     }
   }
-  inputChangeUserSex (e)   { this.setState({ newOrderUserSex : e.target.value }); }
+  inputChangeUserSex (e)   { this.setState({ newOrderSex : e.target.value }); }
   inputChangeOrderStart (e){ this.setState({ newOrderStart : e.target.value }); }
   inputChangeOrderEnd (e)  { this.setState({ newOrderEnd : e.target.value }); }
 
@@ -236,18 +216,18 @@ export default class NewOrder extends Component {
             type="radio"
             id="user-mail"
             name="user-sex"
-            value="mail"
+            value={1}
             onChange={this.inputChangeUserSex}
-            defaultChecked={state.newOrderUserSex === 'mail' ? true : false}
+            defaultChecked={state.newOrderSex === 1 ? true : false}
           />
           <label htmlFor="user-mail">남성</label>
           <input
             type="radio"
             id="user-femail"
             name="user-sex"
-            value="femail"
+            value={2}
             onChange={this.inputChangeUserSex}
-            defaultChecked={state.newOrderUserSex === 'femail' ? true : false}
+            defaultChecked={state.newOrderSex === 2 ? true : false}
           />
           <label htmlFor="user-femail">여성</label>
         </div>
@@ -256,19 +236,19 @@ export default class NewOrder extends Component {
           name="products"
           className="search-product"
           placeholder="상품명 검색"
-          options={Products}
-          value={this.state.newOrderProductFullObject}
-          onChange={this.inputChangeProduct}
+          options={Services}
+          value={this.state.newOrderService}
+          onChange={this.inputChangeService}
         />
         <br />
         <Selectable
-          value={this.props.selectedExpert}
+          value={this.props.selectedStaff}
           selectType="selectable"
           name="epxerts"
           className="select-expert"
           placeholder="선택"
-          options={Experts}
-          onChange={this.inputChangeExpert}
+          options={Staffs}
+          onChange={this.inputChangeStaff}
           searchable={false}
         />
       </div>
@@ -280,24 +260,22 @@ export default class NewOrder extends Component {
           autoFocus={true}
           className="search-customer"
           placeholder="고객님의 이름을 입력해주세요"
-          options={Customers}
-          value={this.state.newOrderMember.name}
-          onChange={this.inputChangeCustomer}
+          options={Guests}
+          value={this.state.newOrderGuest.guest_name}
+          onChange={this.inputChangeGuest}
         />
         {
-          this.state.newOrderMember.name ? (
+          this.state.newOrderGuest.guest_name ? (
             <div className="user-card-basic clearfix">
               <div className="info">
                 <span className="picture">
-                  <span className="thumbnail">{state.newOrderMember.picture && <img src={state.newOrderMember.picture} alt={state.newOrderMember.name} />}</span>
-                  {state.newOrderMember.rating ? <i className={`rating ${state.newOrderMember.rating.toLowerCase()}`}>{state.newOrderMember.rating}</i> : undefined }
+                  <span className="thumbnail">{state.newOrderGuest.picture && <img src={state.newOrderGuest.picture} alt={state.newOrderGuest.guest_name} />}</span>
+                  {state.newOrderGuest.rating ? <i className={`rating ${state.newOrderGuest.rating.toLowerCase()}`}>{state.newOrderGuest.rating}</i> : undefined }
                 </span>
-                <span className="name">{state.newOrderMember.name}</span>
-                <span className="phone">{state.newOrderMember.phone && (
-                    state.newOrderMember.phone[0] + '-' +
-                    state.newOrderMember.phone[1] + '-' +
-                    state.newOrderMember.phone[2]
-                  )}
+                <span className="user">
+                  <span className="name">{state.newOrderGuest.guest_name}</span>
+                  <span className="phone">{state.newOrderGuest.guest_mobile && Functions.getPhoneStr(state.newOrderGuest.guest_mobile)}
+                </span>
                 </span>
               </div>
               <div className="util">
@@ -305,20 +283,20 @@ export default class NewOrder extends Component {
                   <button className="btn-edit" onClick="">수정</button>
                 </div>
                 <div className="sns">
-                  {state.newOrderMember.phone ? <a href={state.newOrderMember.phone} target="_blank"><img src={Images.IMG_mms} alt="MMS" title="MMS"/></a> : undefined }
-                  {state.newOrderMember.kakao ? <a href={state.newOrderMember.kakao} target="_blank"><img src={Images.IMG_kakao} alt="Kakao talk" title="카카오톡"/></a> : undefined }
-                  {state.newOrderMember.line ? <a href={state.newOrderMember.line} target="_blank"><img src={Images.IMG_line} alt="Line" title="라인"/></a> : undefined }
+                  {state.newOrderGuest.guest_mobile ? <a href={state.newOrderGuest.guest_mobile} target="_blank"><img src={Images.IMG_mms} alt="MMS" title="MMS"/></a> : undefined }
+                  {state.newOrderGuest.kakao ? <a href={state.newOrderGuest.kakao} target="_blank"><img src={Images.IMG_kakao} alt="Kakao talk" title="카카오톡"/></a> : undefined }
+                  {state.newOrderGuest.line ? <a href={state.newOrderGuest.line} target="_blank"><img src={Images.IMG_line} alt="Line" title="라인"/></a> : undefined }
                 </div>
               </div>
             </div>
           ) : (
             <div className="customer-phone">
               {
-                !this.state.newOrderMember.phone ? (
+                !this.state.newOrderGuest.guest_mobile ? (
                   <div>
-                    <input type="text" maxLength="3" value={this.state.newOrderUserPhone[0]} onChange={ (e) => this.inputChangeUserPhone(e, 0)} ref="phone"/><i>-</i>
-                    <input type="text" maxLength="4" value={this.state.newOrderUserPhone[1]} onChange={ (e) => this.inputChangeUserPhone(e, 1)} /><i>-</i>
-                    <input type="text" maxLength="4" value={this.state.newOrderUserPhone[2]} onChange={ (e) => this.inputChangeUserPhone(e, 2)} onKeyUp={this.autoFocus} />
+                    <input type="text" maxLength="3" value={this.state.newOrderPhone[0]} onChange={ (e) => this.inputChangeUserPhone(e, 0)} ref="phone"/><i>-</i>
+                    <input type="text" maxLength="4" value={this.state.newOrderPhone[1]} onChange={ (e) => this.inputChangeUserPhone(e, 1)} /><i>-</i>
+                    <input type="text" maxLength="4" value={this.state.newOrderPhone[2]} onChange={ (e) => this.inputChangeUserPhone(e, 2)} onKeyUp={this.autoFocus} />
                   </div>
                 ) : ""
               }
@@ -335,22 +313,22 @@ export default class NewOrder extends Component {
             <button onClick={()=> {$('.viewview.order').hide() }}>X</button>
             <span>isModalConfirm</span> : {this.props.isModalConfirm ? 'true' : ""} <br />
             <span>newOrderStep</span> : {this.state.newOrderStep !== undefined ? this.state.newOrderStep : ""} <br />
-            <span>newOrderExpert</span> : {this.state.newOrderExpert ? this.state.newOrderExpert.title : ""} <br />
-            <span>newOrderProduct</span> : {this.state.newOrderProduct ? this.state.newOrderProduct : ""} <br />
+            <span>newOrderStaff</span> : {this.state.newOrderStaff ? this.state.newOrderStaff.label : ""} <br />
+            <span>newOrderService</span> : {this.state.newOrderService ? this.state.newOrderService.name : ""} <br />
             <span>newOrderClassName</span> : {this.state.newOrderClassName ? this.state.newOrderClassName : ""} <br />
-            <span>newOrderUserName</span> : {this.state.newOrderUserName ? this.state.newOrderUserName : ""} <br />
-            <span>newOrderUserPhone</span> : {this.state.newOrderUserPhone.length ? this.state.newOrderUserPhone : ''} <br />
-            <span>newOrderUserSex</span> : {this.state.newOrderUserSex ? this.state.newOrderUserSex : ""} <br />
+            <span>newOrderGuestName</span> : {this.state.newOrderGuestName ? this.state.newOrderGuestName : ""} <br />
+            <span>newOrderPhone</span> : {this.state.newOrderPhone.length ? this.state.newOrderPhone : ''} <br />
+            <span>newOrderSex</span> : {this.state.newOrderSex} <br />
             <span>newOrderStart</span> : {this.state.newOrderStart ? this.state.newOrderStart : ""} <br />
             <span>newOrderEnd</span> : {this.state.newOrderEnd ? this.state.newOrderEnd : ""} <br />
             <span>newOrderTime</span> : {this.state.newOrderTime ? this.state.newOrderTime : ""} <br />
-            <span>newOrderMember</span>  <div style={{margin: '0 -5px -5px'}}>(기존고객일경우 고객정보) : <br />
-                                            <i style={{paddingRight: '7px'}}>name:</i><p>{this.state.newOrderMember.name}</p>
-                                            <i style={{paddingRight: '7px'}}>phone:</i><p>{this.state.newOrderMember.phone}</p>
-                                            <i style={{paddingRight: '7px'}}>kako:</i><p>{this.state.newOrderMember.kakao}</p>
-                                            <i style={{paddingRight: '7px'}}>line:</i><p>{this.state.newOrderMember.line}</p>
-                                            <i style={{paddingRight: '7px'}}>rating:</i><p>{this.state.newOrderMember.rating}</p>
-                                            <i style={{paddingRight: '7px'}}>picture:</i><p>{this.state.newOrderMember.picture}</p>
+            <span>newOrderGuest</span>  <div style={{margin: '0 -5px -5px'}}>(기존고객일경우 고객정보) : <br />
+                                            <i style={{paddingRight: '7px'}}>name:</i><p>{this.state.newOrderGuest.guest_name}</p>
+                                            <i style={{paddingRight: '7px'}}>phone:</i><p>{this.state.newOrderGuest.guest_mobile}</p>
+                                            <i style={{paddingRight: '7px'}}>kako:</i><p>{this.state.newOrderGuest.kakao}</p>
+                                            <i style={{paddingRight: '7px'}}>line:</i><p>{this.state.newOrderGuest.line}</p>
+                                            <i style={{paddingRight: '7px'}}>rating:</i><p>{this.state.newOrderGuest.rating}</p>
+                                            <i style={{paddingRight: '7px'}}>picture:</i><p>{this.state.newOrderGuest.picture}</p>
                                           </div>
           </div>
           {
@@ -359,7 +337,7 @@ export default class NewOrder extends Component {
                 <div className="new-order-navigator-inner">
                   <h2>{title}</h2>
                   <ol className="navigator">
-                    <li className={step === 1 ? 'active': undefined}>
+                    <li className={step === 1 ? 'active': ''}>
                       <button
                         onClick={ () => {this.changeStep(1)} }
                         disabled={false}
@@ -367,7 +345,7 @@ export default class NewOrder extends Component {
                         <i>1</i>.서비스선택
                       </button>
                     </li>
-                    <li className={step === 2 ? 'active': undefined}>
+                    <li className={step === 2 ? 'active': ''}>
                       <button
                         onClick={ () => {this.changeStep(2)} }
                         disabled={step < 2 ? true : false}
@@ -375,7 +353,7 @@ export default class NewOrder extends Component {
                         <i>2</i>.고객정보 입력
                       </button>
                       </li>
-                    <li className={step === 3 ? 'active': undefined}>
+                    <li className={step === 3 ? 'active': ''}>
                       <button
                         onClick={ () => {this.changeStep(3)} }
                         disabled={step < 3 ? true : false}
@@ -399,25 +377,26 @@ export default class NewOrder extends Component {
                     transitionAppear={true}
                     transitionAppearTimeout={200}>
                   <div className="new-order-inner">
-                    { state.newOrderExpert.title && (
+                    { state.newOrderStaff.id && (
                       <div className="has-expert">
                         <div>
                           <span className="thumbnail">
-                            {state.newOrderExpert.picture && <img src={state.newOrderExpert.picture} alt={state.newOrderExpert.title} />}
+                            {state.newOrderStaff.picture && <img src={state.newOrderStaff.picture} alt={state.newOrderStaff.nickname} />}
                             </span>
-                          <span className="label">{state.newOrderExpert.title}</span>
+                          <span className="label">{state.newOrderStaff.nickname}</span>
                         </div>
                       </div>
                     ) }
-                    <div className={`user-card-service${state.newOrderProduct ? ' '+ Functions.getProductColor(state.newOrderProduct, Products): ''}`}>
+                    <div className={`user-card-service${state.newOrderService ? ' '+ state.newOrderService.color: ''}`}>
                       <div className="service-info">
                         <div className="lt">
                           <p className="product">
                             <button className="inner" onClick={ () => {this.setState({newOrderStep: 1})} }>
-                              {this.state.newOrderProduct ? (
+                              {this.state.newOrderService ? (
                                 <p>
-                                  <span className="service">{this.state.newOrderProduct}</span>
-                                  <span className="time">{Functions.minuteToTime(this.state.newOrderTime)}</span>
+                                  <span className="service">{this.state.newOrderService.name}</span>
+                                  {/*<span className="time">{Functions.minuteToTime(this.state.newOrderTime)}</span>*/}
+                                  <span className="time">{this.state.newOrderTime}분</span>
                                 </p>
                               ) : (
                                 '서비스 입력'
@@ -439,11 +418,11 @@ export default class NewOrder extends Component {
                         <div className="rt">
                           <button disabled={step < 2 ? true : false} onClick={ () => {this.setState({newOrderStep:2})} }>
                             <p className="user">
-                              { (this.state.newOrderUserName || this.state.newOrderMember.name) ? (this.state.newOrderUserName || this.state.newOrderMember.name) : '고객정보 입력'}
+                              { (this.state.newOrderGuestName || this.state.newOrderGuest.guest_name) ? (this.state.newOrderGuestName || this.state.newOrderGuest.guest_name) : '고객정보 입력'}
                             </p>
                             <p className="picture">
                               <span className="thumbnail">
-                                {this.state.newOrderMember.picture ? <img src={this.state.newOrderMember.picture} alt={this.state.newOrderMember.name} /> : null}
+                                {this.state.newOrderGuest.picture ? <img src={this.state.newOrderGuest.picture} alt={this.state.newOrderGuest.guest_name} /> : null}
                               </span>
                             </p>
                           </button>
@@ -457,11 +436,11 @@ export default class NewOrder extends Component {
                     <div className="complete">
                       <button
                         ref="next"
-                        className={`new-order-submit ${(state.newOrderMember.name||state.newOrderUserName)? 'has-customer' :''}`}
+                        className={`new-order-submit ${(state.newOrderGuest.guest_name||state.newOrderGuestName)? 'has-customer' :''}`}
                         disabled={ /* NEXT 버튼의 활성화 비활성화 여부를 결정합니다 */
                           step === 1 ? (
                             /* [ 스텝 1 : "서비스선택" 단계 ] */
-                            (state.newOrderProduct && state.newOrderExpert.title) ? false : true ) : (
+                            (state.newOrderService && state.newOrderStaff.label) ? false : true ) : (
                             step === 2 ? ( false /* [ 스텝 2 : "고객정보입력" 단계 ] */ ) : (
                             step === 3 ? ( false /* [ 스텝 3 : "예약시간선택" 단계 ] */ ) : (
                                             true /* [ 기본 (해당없음) ] */
@@ -469,7 +448,7 @@ export default class NewOrder extends Component {
                         }
                         onClick={this.nextStep}>
                         <span>
-                          {step === 2 ? (state.newOrderUserName || state.newOrderMember.name ? 'NEXT' : 'SKIP') : 'NEXT'}
+                          {step === 2 ? (state.newOrderGuestName || state.newOrderGuest.guest_name ? 'NEXT' : 'SKIP') : 'NEXT'}
                         </span>
                         <i className="bullet"></i>
                       </button>
@@ -479,23 +458,23 @@ export default class NewOrder extends Component {
               </div>
             ) : this.props.isNotAutoSelectTime || this.props.isEditEvent ? (
               <div>
-                {state.newOrderExpert.title && (
+                {state.newOrderStaff.label && (
                   <div className="has-expert">
                     <div>
                       <span className="thumbnail">
-                        {state.newOrderExpert.picture && <img src={state.newOrderExpert.picture} alt={state.newOrderExpert.title} />}
+                        {state.newOrderStaff.picture && <img src={state.newOrderStaff.picture} alt={state.newOrderStaff.label} />}
                         </span>
-                      <span className="label">{state.newOrderExpert.title}</span>
+                      <span className="label">{state.newOrderStaff.label}</span>
                     </div>
                   </div>
                 )}
                 <div className={`new-order-card ${this.props.isNotAutoSelectTime ? 'new-order-render' : this.props.isEditEvent ? 'new-order-edit' : ''} `}>
-                  <div className={`user-card-service${state.newOrderProduct ? ' '+ Functions.getProductColor(state.newOrderProduct, Products): ''}`}>
+                  <div className={`user-card-service${state.newOrderService ? ' '+ state.newOrderService.color: ''}`}>
                     <div className="service-info">
                       <div className="lt">
                         <p className="product">
                           <button className="inner" onClick={ () => {this.setState({newOrderStep: 1})} }>
-                            <span className="service">{this.state.newOrderProduct}</span>
+                            <span className="service">{this.state.newOrderService.name}</span>
                             <span className="time">{Functions.minuteToTime(this.state.newOrderTime)}</span>
                           </button>
                         </p>
@@ -514,12 +493,12 @@ export default class NewOrder extends Component {
                         <button disabled={step < 2 ? true : false} onClick={ () => {this.setState({newOrderStep:2})} }>
                           <p className="picture">
                             <span className="thumbnail">
-                              {this.state.newOrderMember.picture ? <img src={this.state.newOrderMember.picture} alt={this.state.newOrderUserName} /> : ''}
+                              {this.state.newOrderGuest.picture ? <img src={this.state.newOrderGuest.picture} alt={this.state.newOrderGuestName} /> : ''}
                             </span>
-                            {this.state.newOrderMember.rating ? <span className={`rating ${this.state.newOrderMember.rating.toLowerCase()}`}>{this.state.newOrderMember.rating}</span> : ''}
+                            {this.state.newOrderGuest.rating ? <span className={`rating ${this.state.newOrderGuest.rating.toLowerCase()}`}>{this.state.newOrderGuest.rating}</span> : ''}
                           </p>
                           <p className="user">
-                            <span>{this.state.newOrderUserName ? this.state.newOrderUserName : this.state.newOrderMember.name}</span>
+                            <span>{this.state.newOrderGuestName ? this.state.newOrderGuestName : this.state.newOrderGuest.guest_name}</span>
                           </p>
                         </button>
                       </div>

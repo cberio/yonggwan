@@ -548,6 +548,9 @@
 .search-customer .Select-value-label .rating.VIP{
   color: #d47b00;
 }
+.search-customer .Select-value-label .rating.NEW{
+  color: #49bd49;
+}
 .search-customer .Select-value-label .rating.BAD{
   color: #b1282f;
 }

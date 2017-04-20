@@ -3,12 +3,12 @@ import ReactDOM from 'react-dom';
 import $ from 'jquery';
 import { connect } from 'react-redux';
 import CardContainer from './cardContainer';
-import Events from '../../data/event';
+import Schedules from '../../data/schedules';
 import '../../css/notifier.css';
 import '../../lib/jquery-custom-scrollbar-master/jquery.custom-scrollbar.js';
 import '../../lib/jquery-custom-scrollbar-master/jquery.custom-scrollbar.css';
 
-const Head = React.createClass({
+class Head extends Component {
   render () {
     // 메뉴별 new갯수를 합산 합니다
     let total = 0;
@@ -28,8 +28,9 @@ const Head = React.createClass({
       </div>
     )
   }
-});
-const TabMenu = React.createClass({
+};
+
+class TabMenu extends Component {
   render () {
     let positionLeft = (100/this.props.menus.length) * (this.props.selectedIndex)
     return (
@@ -54,7 +55,7 @@ const TabMenu = React.createClass({
       </div>
     );
   }
-});
+};
 
 class Notifier extends Component {
   constructor (props, container) {
@@ -113,10 +114,10 @@ class Notifier extends Component {
             </div>
             <div className="notifier-contents">
               {
-                Events.map((event, i) => {
-                  if (event.product === 'OFF TIME') return;
+                Schedules.map((schedule, i) => {
+                  if (schedule.code === '05') return;
                   return (
-                    <CardContainer event={event} key={i} index={i} CardType="요청" cardDistroy={this.cardDistroy}/>
+                    <CardContainer schedule={schedule} key={i} index={i} CardType="요청" cardDistroy={this.cardDistroy}/>
                   )
                 })
               }

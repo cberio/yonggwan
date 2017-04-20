@@ -1,25 +1,33 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import Select from 'react-select';
+import * as Functions from '../../../../js/common';
 import * as Images from '../../../../require/images';
 
 /* Search */
-const OptionComponent = React.createClass({
+class OptionComponent extends React.Component {
+	constructor (props) {
+		super(props);
+		this.handleMouseDown = this.handleMouseDown.bind(this);
+		this.handleMouseEnter = this.handleMouseEnter.bind(this);
+		this.handleMouseMove = this.handleMouseMove.bind(this);
+	}
 	handleMouseDown (event) {
 		event.preventDefault();
 		event.stopPropagation();
 		this.props.onSelect(this.props.option, event);
-	},
+	}
 	handleMouseEnter (event) {
 		this.props.onFocus(this.props.option, event);
-	},
+	}
 	handleMouseMove (event) {
 		if (this.props.isFocused) return;
 		this.props.onFocus(this.props.option, event);
-	},
+	}
 	render () {
 		return (
 			<div
-				className={`${this.props.option.itemColor +' '+ this.props.className}`}
+				className={`${this.props.option.color +' '+ this.props.className}`}
 				onMouseDown={this.handleMouseDown}
 				onMouseEnter={this.handleMouseEnter}
 				onMouseMove={this.handleMouseMove}
@@ -27,32 +35,29 @@ const OptionComponent = React.createClass({
 					<div>
 						<i className="bullet"></i>
 						<span className="label">{this.props.children}</span>
-						<span className="service-time">{this.props.option.serviceTime}분</span>
-						<span className="price">{this.props.option.price} ￦</span>
+						<span className="service-time">{this.props.option.time}분</span>
+						<span className="price">{Functions.numberWithCommas(this.props.option.amount)} ￦</span>
 					</div>
 			</div>
 		);
 	}
-});
+}
 
-const ValueComponent = React.createClass({
+class ValueComponent extends React.Component {
 	render () {
 		return (
 			<div className="Select-value">
 				<span className="Select-value-label">
-					<span className={`label ${this.props.value.itemColor}`}>{this.props.children}</span>
-					<span className="service-time">{this.props.value.serviceTime}분</span>
+					<span className={`label ${this.props.value.color}`}>{this.props.children}</span>
+					<span className="service-time">{this.props.value.time}분</span>
 					<i className="checked"><img src={Images.IMG_input_checked} alt="선택됨" /></i>
 				</span>
 			</div>
 		);
 	}
-});
+}
 
-const GenderFilterComponent = React.createClass({
-	propTypes: {
-		onChange: React.PropTypes.func.isRequired
-	},
+class GenderFilterComponent extends React.Component {
 	render () {
 		return (
 			<div className="Select-filter-wrap">
@@ -94,15 +99,18 @@ const GenderFilterComponent = React.createClass({
 			</div>
 		);
 	}
-})
+}
 
-
-
-const SearchProduct = React.createClass({
-	propTypes: {
-		hint: React.PropTypes.string,
-		label: React.PropTypes.string,
-	},
+class SearchProduct extends React.Component {
+	constructor (props) {
+		super (props);
+		this.state = {
+			genderCode: 0,
+			value: this.props.value
+		}
+		this.setGenderCode = this.setGenderCode.bind(this);
+		this.setValue = this.setValue.bind(this);
+	}
 	componentDidMount () {
 		let _component = this;
 		if (this.props.autoDropdown) {
@@ -110,7 +118,7 @@ const SearchProduct = React.createClass({
 				_component.dropDownSelectOptions();
 			},0);
 		}
-	},
+	}
 	// react-select 모듈의 옵션에 초기 자동 드롭다운 옵션이 없으므로 트리거하여 드롭다운 하도록 함수
 	dropDownSelectOptions () {
 		this.refs.select.handleMouseDown({
@@ -118,29 +126,24 @@ const SearchProduct = React.createClass({
 			preventDefault: function () {},
 			stopPropagation: function () {}
 		});
-	},
-	getInitialState () {
-		return {
-			genderCode: 0,
-			value: this.props.value
-		};
-	},
+	}
+
 	setGenderCode (value) {
 		this.setState({
 			genderCode: value
 		});
-	},
+	}
 	setValue (value) {
 		this.setState({ value });
     this.props.onChange(value);
-	},
+	}
   arrowRenderer () {
   	return (
   		<span>+</span>
   	);
-  },
+  }
 	getGenderCode(productObj, inputStr){
-		let code = productObj.gender *1;
+		let code = productObj.sex *1;
 
 		switch (this.state.genderCode *1) {
 			case 0 :
@@ -157,15 +160,16 @@ const SearchProduct = React.createClass({
 			default :
 				return false;
 		}
-	},
+	}
 
 	render () {
+		{/*filterOption={this.getGenderCode}*/}
 		return (
 			<div className={`Select-wrap searchable ${this.props.className}`} id={this.props.id ? this.props.id : ''}>
 				<Select
 					ref="select"
-					filterOption={this.getGenderCode}
 					noResultsText={this.props.noResultsText}
+					matchProp="any"
 					matchPos="any"
 					ignoreCase={false}
           searchable={true}
@@ -187,7 +191,16 @@ const SearchProduct = React.createClass({
 			</div>
 		);
 	}
-});
+}
+
+GenderFilterComponent.propTypes = {
+	onChange: PropTypes.func.isRequired
+}
+
+SearchProduct.propTypes = {
+	hint: PropTypes.string,
+	label: PropTypes.string,
+}
 
 
 module.exports = SearchProduct;

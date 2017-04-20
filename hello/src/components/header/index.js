@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router';
+import { NavLink } from 'react-router-dom';
 import { connect } from 'react-redux';
 import * as Images from '../../require/images';
 import * as actions from '../../actions';
@@ -14,19 +14,19 @@ class Header extends Component {
     return (
       <header id="header">
       	<h1 className="header-brand-logo">
-          <Link to="/">HELLO<sup>™</sup>SHOP</Link>
+          <NavLink to="/">HELLO<sup>™</sup>SHOP</NavLink>
         </h1>
         <ul className="header-nav">
           {/* 2depth를 가지고있는 1depth li에는 has-submenu 클래스 추가*/}
           <li className="nav-reservation has-submenu">
-            <Link to="/reservation/daily" activeClassName={"active"}>예약현황</Link>
+            <NavLink to="/reservation/daily" activeClassName={"active"}>예약현황</NavLink>
               <ul className="header-nav-sub">
-                <li className="nav-daily"><Link to="/reservation/daily" activeClassName={"active"}>DAILY</Link></li>
-                <li className="nav-overview"><Link to="/reservation/weekly" activeClassName={"active"}>WEEKLY</Link></li>
+                <li className="nav-daily"><NavLink to="/reservation/daily" activeClassName={"active"}>DAILY</NavLink></li>
+                <li className="nav-overview"><NavLink to="/reservation/weekly" activeClassName={"active"}>WEEKLY</NavLink></li>
               </ul>
           </li>
-          <li className="nav-customer"><Link to="/customer" activeClassName={"active"}>고객</Link></li>
-          <li className="nav-search"><Link to="/search" activeClassName={"active"}>검색</Link></li>
+          <li className="nav-customer"><NavLink to="/customer" activeClassName={"active"}>고객</NavLink></li>
+          <li className="nav-search"><NavLink to="/search" activeClassName={"active"}>검색</NavLink></li>
         </ul>
         <div className="nav-notifier-wrap">
           <div className="nav-notifier">
@@ -37,10 +37,10 @@ class Header extends Component {
           </div>
         </div>
         <div className="link-profile">
-          <Link to="/">
+          <NavLink to="/">
             Profile
             <img src={picture ? picture : Images.IMG_no_picture} alt="" />
-          </Link>
+          </NavLink>
         </div>
       </header>
     );

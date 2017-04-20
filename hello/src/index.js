@@ -2,10 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Home from './container/home/index';
 import { Login } from './container/login/index';
-import { Match, Miss } from 'react-router';
-import { BrowserRouter as Router } from 'react-router';
+import { Route, BrowserRouter as Router } from 'react-router-dom';
 import AsyncComponents from './components/asyncComponents';
-
 import { createStore, applyMiddleware, compose } from 'redux';
 import { Provider } from 'react-redux';
 import Reducers from './reducers';
@@ -66,9 +64,9 @@ ReactDOM.render(
     <Router>
       <div style={{height: '100%'}}>
         <div id="wrapper-outer">
-          <Match pattern="/" component={Home} />
-          <Match pattern="/login" component={Login} />
-          <Miss component={NotFound} />
+          <Route path="/" component={Home} />
+          <Route path="/login" component={Login} />
+          <Route component={NotFound} />
         </div>
         <AsyncComponents />
       </div>
