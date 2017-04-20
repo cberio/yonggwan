@@ -8,6 +8,7 @@ import {calendarConfig} from './calendar';
 import selectedShopID from './shop';
 import {getSchedulesBySelectedShopID} from './schedule';
 import {getStaffsBySelectedShopID} from './staffs';
+import {getServicesBySelectedShopID} from './service';
 
 const Reducers = combineReducers({
   userCard, modalConfirm, notifier, guider, loading,
@@ -15,6 +16,7 @@ const Reducers = combineReducers({
   selectedShopID,
   getSchedulesBySelectedShopID,
   getStaffsBySelectedShopID,
+  getServicesBySelectedShopID,
 });
 
 export default Reducers;

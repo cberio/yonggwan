@@ -1,7 +1,5 @@
 import * as types from './actionType';
-import ShopApi from '../api/shop/shop';
-import StaffApi from '../api/shop/staff';
-import ScheduleApi from '../api/shop/schedule';
+import Shop from '../api/shop/shop';
 import moment from 'moment';
 
 /**/
@@ -95,18 +93,48 @@ export const receiveStaffs = (shop, json) => ({
   receivedAt: Date.now()
 })
 
+export const requestServices = shop =>({
+  type: types.REQUEST_SERVICE,
+  shop
+})
+
+export const receiveServices = (shop, json) => ({
+  type: types.RECEIVE_SERVICE,
+  shop,
+  services: json,
+  receivedAt: Date.now()
+})
+
 const fetchSchedules = (shop, state) => dispatch => {
   dispatch(requestSchedules(shop));
+  dispatch(loading(true));
 
-  return new ScheduleApi(shop).getSchedules(state)
-    .then(json => dispatch(receiveSchedules(shop, json)));
+  return new Shop({shopId: shop})
+    .schedules()
+    .withService()
+    .get(state)
+    .then(json => {
+      dispatch(receiveSchedules(shop, json));
+      dispatch(loading(false));
+    });
 }
 
 const fetchStaffs = (shop, state) => dispatch => {
   dispatch(requestStaffs(shop));
 
-  return new StaffApi(shop).getStaffs(state)
+  return new Shop({shopId: shop})
+    .staffs()
+    .get(state)
     .then(json => dispatch(receiveStaffs(shop, json)));
+}
+
+const fetchServices = (shop, state) => dispatch => {
+  dispatch(requestServices(shop));
+
+  return new Shop({shopId: shop})
+    .services()
+    .get(state)
+    .then(json => dispatch(receiveServices(shop, json)));
 }
 
 /**
@@ -124,14 +152,14 @@ const fetchStaffs = (shop, state) => dispatch => {
  */
 const shouldFetchSchedules = (state, shopID) => {
   const schedules = state.getSchedulesBySelectedShopID[shopID];
-  const selectedDate = state.calendarConfig.start;
+  const selectedDate =  state.calendarConfig.start.format('YYYY-MM-DD');
 
   if(!schedules)
     return true;
 
   if(schedules.isFetching)
     return false;
-  
+
   if(!schedules.schedules.data.find(schedule => schedule.reservation_dt === selectedDate))
     return true;
 
@@ -158,6 +186,10 @@ export const fetchSchedulesIfNeeded = shop => (dispatch, getState) => {
 export const fetchStaffsIfNeeded = shop => (dispatch, getState) => {
   if(shouldFetchStaffs(getState(), shop))
     return dispatch(fetchStaffs(shop, getState()));
+}
+
+export const fetchServicesIfNeeded = shop => (dispatch, getState) => {
+  return dispatch(fetchServices(shop, getState()));
 }
 
 //SHOP RELATED ACTIONS
@@ -205,4 +237,14 @@ export const setCalendarStart = start => (dispatch, getState) => {
 
 export const setCalendarEnd = end => (dispatch, getState) => {
   return dispatch(fullCalendarEnd(end));
+}
+
+export const ScheduleStatus = {
+  DONE : '00',
+  CREATED : '01',
+  REQUESTED :'02',
+  CONFIRMED :'03',
+  CHANGED : '04',
+  OFFTIME : '05',
+  CANCELED : '99',
 }

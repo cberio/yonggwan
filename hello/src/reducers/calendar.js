@@ -3,8 +3,8 @@ import moment from 'moment';
 
 const initialState = {
     viewType: 'agendaDay',
-    start: moment().format('YYYY-MM-DD'),
-    end: moment().format('YYYY-MM-DD'),
+    start: moment().add('-7', 'days'),
+    end: moment().add('7', 'days'),
 }
 
 export const calendarConfig = (state = initialState, action) => {
