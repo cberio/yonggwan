@@ -81,6 +81,19 @@ export const receiveSchedules = (shop, json) => ({
   receivedAt: Date.now()
 });
 
+export const createSchedule = (shop, schedule) => ({
+  type: types.CREATE_SCHEDULE,
+  shop,
+  schedule,
+})
+
+export const scheduleCreated = (shop, json) => ({
+  type: types.SCHEDULE_CREATED,
+  shop,
+  schedules: json,
+  receivedAt: Date.now(),
+})
+
 export const requestStaffs = shop =>({
   type: types.REQUEST_STAFF,
   shop
@@ -117,6 +130,10 @@ const fetchSchedules = (shop, state) => dispatch => {
       dispatch(receiveSchedules(shop, json));
       dispatch(loading(false));
     });
+}
+
+const createSchedule = (shop, state) => dispatch => {
+
 }
 
 const fetchStaffs = (shop, state) => dispatch => {
