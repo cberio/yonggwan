@@ -738,7 +738,7 @@ class DailyCalendar extends Component {
     editEvent(event) {
         let {Calendar} = this.refs;
         let component = this;
-        let type = event.service.status === '05'
+        let type = event.service.status === actions.ScheduleStatus.OFFTIME
             ? 'off-time'
             : 'edit';
         // 예약카드 상세보기에서 예약수정을 클릭한경우
@@ -1017,6 +1017,10 @@ class DailyCalendar extends Component {
             },
             height: window.innerHeight - staffsUiHeight,
 
+            // 예약마감
+            reserveDeadline: function () {
+                console.info('예약마감을 하시겠습니까?');
+            },
             eventClick: function(event, jsEvent, view) {
                 component.setState({
                     selectedEvent: $.extend(event, {
@@ -1157,13 +1161,13 @@ class DailyCalendar extends Component {
                 // 더블클릭으로 선택된 이벤트객체를 가져옵니다
                 let selectedCard = calEvent;
                 // 선택된 이벤트객체의 리소스ID에 맞는 expert id를 찾아 가져옵니다
-                let selectedExpert = $(Calendar).fullCalendar('getResourceById', selectedCard.resourceId);
+                let selectedStaff  = $(Calendar).fullCalendar('getResourceById', selectedCard.resourceId);
 
                 // userCard 컴포넌트의 초기값을 전달한다
                 component.isUserCard(true, {
                     selectedDate: selectedDate,
                     selectedCard: selectedCard,
-                    selectedExpert: selectedExpert
+                    selectedExpert: selectedStaff
                 });
             }
         }));
