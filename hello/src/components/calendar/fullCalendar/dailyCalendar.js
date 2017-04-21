@@ -633,7 +633,7 @@ class DailyCalendar extends Component {
             this.setState({
                 newEventId: newEventId,
                 newEvents: $.extend(newInsertEvent, {
-                    class: Functions.getProductColor(newInsertEvent.product, Services)
+                    class: Functions.getService(newInsertEvent.product, Services).color
                 })
             });
         }
@@ -662,7 +662,7 @@ class DailyCalendar extends Component {
         this.setState({
             newEventId: editEvent.id,
             newEvents: $.extend(editEvent, {
-                class: Functions.getProductColor(editEvent.product, Services)
+                class: Functions.getService(editEvent.product, Services).color
             }),
             newEventProductTime: Functions.millisecondsToMinute(moment(editEvent.end).diff(moment(editEvent.start)))
         });
@@ -924,14 +924,14 @@ class DailyCalendar extends Component {
     /**
      * 예약 상태에 맞는 class를 추가 합니다.
      * (FullCalendar의 eventRender callback에 의해 실행 됩니다.)
-     * 
+     *
      * 1. 종료시간이 지난 이벤트 >>> disabled 클래스 추가
      * 2. service가 있음       >>> service.color 클래스 추가
      * 3. service가 없음 && event.status == 05   >>> off-time 클래스 추가
-     * 
-     * @param {Object} event 
-     * @param {DOM} domElement 
-     * 
+     *
+     * @param {Object} event
+     * @param {DOM} domElement
+     *
      * @return {void}
      */
     colorizeEvent(event, domElement) {
@@ -940,10 +940,7 @@ class DailyCalendar extends Component {
         // 종료시간이 지난 이벤트
         if(this.props.services && event.service)
             $(domElement).addClass();
-        
-        if(event.status === actions.ScheduleStatus.OFFTIME)
-            $(domElement).addClass('off-time');
-        
+
         if (moment(event.end.format('YYYY-MM-DD HH:mm:ss')).isBefore(moment(), 'minute'))
             $(domElement).addClass('disabled');
 
@@ -956,7 +953,7 @@ class DailyCalendar extends Component {
     componentDidMount() {
         const component = this;
         let {Calendar} = this.refs;
-        let Staffs = this.props.staffs;
+        let Staffs = this.props.staff;
         var date = this.props.fcOptions.defaultDate;
         var time = date.get('hour');
         var day = date.get('date');
@@ -969,7 +966,7 @@ class DailyCalendar extends Component {
 
         $(Calendar).fullCalendar($.extend(component.props.fcOptions, {
             resources: [Staffs[0]],
-            events: component.props.events, //스케쥴 이벤트*
+            events: component.props.schedule, //스케쥴 이벤트*
             defaultView: 'agendaDay', // init view type set
             header: {
                 left: 'todayTimeline',
@@ -1023,7 +1020,7 @@ class DailyCalendar extends Component {
             eventClick: function(event, jsEvent, view) {
                 component.setState({
                     selectedEvent: $.extend(event, {
-                        class: Functions.getProductColor(event.product, Services)
+                        class: Functions.getService(event.product, Services).color
                     })
                 });
                 // 이벤트 슬롯 삭제 및 수정버튼 바인딩
@@ -1202,8 +1199,8 @@ class DailyCalendar extends Component {
         if(this.props.experts !== nextProps.experts)
             this.bindResourcesToTimeLine(nextProps.experts);
 
-        if(this.props.events !== nextProps.events)
-            this.bindEventsToTimeLine(nextProps.events);
+        if(this.props.schedule !== nextProps.schedule)
+            this.bindEventsToTimeLine(nextProps.schedule);
     }
 
     /**
@@ -1264,7 +1261,7 @@ class DailyCalendar extends Component {
 
 
     render() {
-        let Staffs = this.props.staffs;
+        let Staffs = this.props.staff;
         let StaffsInterfaceComponent = null;
 
         var StaffsInputAll = (

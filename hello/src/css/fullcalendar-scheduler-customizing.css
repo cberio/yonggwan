@@ -1,4 +1,4 @@
- 				/* fullcalendar-scheduler.css 에서 수정될 부분만 적용합니다 */
+			/* fullcalendar-scheduler.css 에서 수정될 부분만 적용합니다 */
 /*-------------------------------------------------------------------------------------------------*/
 
 .full-calendar {
@@ -1904,7 +1904,7 @@
 
 
 /* 하단 타임라인 예약 마감버튼  */
-.order-deadline-button {
+.fc .order-deadline-button {
 	margin: 30px auto 20px;
 	display: block;
 	width: 122px;

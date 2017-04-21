@@ -15,7 +15,7 @@ import DailyCalendar from './fullCalendar/dailyCalendar';
 import WeeklyCalendar from './fullCalendar/weeklyCalendar';
 import Staff from '../../data/staffs';
 import Schedule from '../../data/schedules';
-import Services from '../../data/services';
+import Service from '../../data/services';
 import 'fullcalendar/dist/fullcalendar.min.css';
 import '../../css/fullcalendar-scheduler-customizing.css';
 import _ from 'lodash';
@@ -93,7 +93,7 @@ class Calendar extends Component {
     const { calendarConfig, selectedShopID } = this.props;
 
     switch(calendarConfig.viewType) {
-      case "agendaDay" : 
+      case "agendaDay" :
         if(moment(date).isBefore(calendarConfig.start))
           this.props.setCalendarStart(date);
         if(moment(date).isAfter(calendarConfig.end))
@@ -103,7 +103,7 @@ class Calendar extends Component {
         break;
       default:
         break;
-    }    
+    }
 
     this.props.fetchSchedulesIfNeeded(selectedShopID);
   }
@@ -344,7 +344,7 @@ class Calendar extends Component {
     // Daily, Weekly FullCalendar 공통 옵션
     const fc_options = {
         schedulerLicenseKey: `${ process.env.REACT_APP_FULLCALENDAR_LISENCE ? process.env.REACT_APP_FULLCALENDAR_LISENCE : 'GPL-My-Project-Is-Open-Source'}`,
-        shopServices: Services,
+        shopServices: Service,
         resourceOrder: 'priority', // staff의 정렬 순서를 무엇을 기준으로 할지 정함
         defaultDate: moment(this.state.viewDate), //기본 날짜
         filterResourcesWithSchedule: false, // 이벤트가 없는 staff를 숨길지 여부
@@ -378,8 +378,10 @@ class Calendar extends Component {
 
     const commonViewProps = {
       fcOptions: fc_options,
-      schedule: _.isEmpty(this.props.schedules) ? Schedule : this.props.schedules.data,
-      staffs: _.isEmpty(this.props.staffs) ? Staff : this.props.staffs.data,
+      //schedule: _.isEmpty(this.props.schedules) ? Schedule : this.props.schedules.data,
+      //staffs: _.isEmpty(this.props.staffs) ? Staff : this.props.staffs.data,
+      schedule: Schedule,
+      staff: Staff,
       services: this.props.services,
       changeView: this.changeView,
       changeDate: this.changeDate,
@@ -465,7 +467,7 @@ const mapStateToProps = (state) => {
   const { schedules } = getSchedulesBySelectedShopID[selectedShopID] || { isFetching: false, schedules: {} };
   const { staffs } = getStaffsBySelectedShopID[selectedShopID] || { isFetching: false, staffs: {} };
   const { services } = getServicesBySelectedShopID[selectedShopID] || { isFetching: false, services: {} };
-  
+
   return {
     selectedShopID,
     schedules,

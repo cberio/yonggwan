@@ -7804,10 +7804,11 @@ TimeGrid.mixin({
 			return shopServices.find(function(service){
 				return service.id == serviceID;
 			});
-		  // return shopServices.find((service) => service.code == serviceCode );
 		}
 
-		classes.unshift('fc-time-grid-event', 'fc-v-event');
+		// shop service color를 추가함. ( offtime || color )
+		var serviceColor = event.status == '05' ? 'off-time' : getService(event.shop_service_id).color;
+		classes.unshift('fc-time-grid-event', 'fc-v-event', serviceColor);
 
 		if (view.isMultiDayEvent(event)) { // if the event appears to span more than one day...
 			// Don't display time text on segments that run entirely through a day.
@@ -7850,7 +7851,7 @@ TimeGrid.mixin({
 				+
 					(
 						// OFF TIME 일 경우 컨텐츠
-						event.status === '05' ? (
+						event.status == '05' ? (
 								'<div class="fc-product">OFF TIME</div>' +
 							(seg.isStart && seg.isEnd ?
 								'<div class="fc-service-time">'+ this.millisecondsToTime(seg.end.diff(seg.start)) +'</div>' : ''

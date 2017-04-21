@@ -348,6 +348,8 @@ class WeeklyCalendar extends Component {
         } else {
             timeout = 0;
         }
+        console.info(selector); // << not fined
+
         var x = ($(selector).parents('td:eq(0)').position().left - 36) - ($(timeline).width() / 2 - $(selector).width());
         var y = (Number($(selector).css('top').replace('px', '')) - 24) - ($(timeline).height() / 2 - $(selector).height());
 
@@ -1170,7 +1172,7 @@ class WeeklyCalendar extends Component {
     componentDidMount() {
         const component = this;
         let {Calendar} = this.refs;
-        let Staffs = this.props.staffs;
+        let Staffs = this.props.staff;
         var date = this.props.fcOptions.defaultDate;
         var time = date.get('hour');
         var day = date.get('date');
@@ -1496,7 +1498,7 @@ class WeeklyCalendar extends Component {
     }
 
     render() {
-        let Staffs = this.props.staffs;
+        let Staffs = this.props.staff;
         let StaffsInterfaceComponent = null;
         let NewOrderComponent = null;
 
