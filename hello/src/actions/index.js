@@ -81,8 +81,8 @@ export const receiveSchedules = (shop, json) => ({
   receivedAt: Date.now()
 });
 
-export const createSchedule = (shop, schedule) => ({
-  type: types.CREATE_SCHEDULE,
+export const creatingSchedule = (shop, schedule) => ({
+  type: types.CREATING_SCHEDULE,
   shop,
   schedule,
 })
@@ -132,8 +132,17 @@ const fetchSchedules = (shop, state) => dispatch => {
     });
 }
 
-const createSchedule = (shop, state) => dispatch => {
+const createScheduleAPI = (shop, state) => dispatch => {
+  dispatch(creatingSchedule(shop));
+  dispatch(loading(true));
 
+  return new Shop({shopId: shop})
+    .schedules()
+    .create()
+    .then(json => {
+      dispatch(scheduleCreated(shop, json));
+      dispatch(loading(false));
+    });
 }
 
 const fetchStaffs = (shop, state) => dispatch => {

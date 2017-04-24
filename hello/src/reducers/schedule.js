@@ -27,7 +27,7 @@ const schedules = (state = initialState, action) => {
         schedules: action.schedules,
         receivedAt: action.receivedAt
       }
-    case types.CREATE_SCHEDULE:
+    case types.CREATING_SCHEDULE:
       return {
         ...state,
         isFetching: true,
@@ -63,7 +63,7 @@ export const getSchedulesBySelectedShopID = (state = {}, action) => {
 export const createSchedule = (state = {}, action) => {
   switch(action.type){
     case types.SCHEDULE_CREATED:
-    case types.CREATE_SCHEDULE:
+    case types.CREATING_SCHEDULE:
       return {
         ...state,
         [action.shop]: schedules(state[action.shop], action)
