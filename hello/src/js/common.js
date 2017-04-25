@@ -39,11 +39,13 @@ export function millisecondsToTime (ms) {
 
 /* Return service object*/
 export function getService (serviceID, services) {
+  if(!services) return '';
   return services.find((service) => service.id == serviceID );
 }
 
 /* Return staff object*/
 export function getStaff (staffID, staffs) {
+  if(!staffs) return '';
   return staffs.find((staff) => staff.id === staffID );
 }
 

@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import $ from 'jquery';
 import * as actions from '../../actions';
 import { connect } from 'react-redux';
-import Staffs from '../../data/staffs';
 import moment from 'moment';
 import Resource  from './resource';
 import { Selectable } from '../calendar/select';
@@ -39,39 +38,34 @@ class UserCard extends Component {
   }
 
   initUserCards () {
-    // 모든 예약 카드들을 모두 가져와 복제한다
-    var eventsAll = this.props.cards;
-    var eventsFiltered = [];
-    var initialSlideIndex;
-
-    for (var i = 0; i < eventsAll.length; i++) {
+    const componnent = this;
+    var slides = this.props.schedules.filter(function(slide){
       // 필터[1]: 선택한 이벤트의 날짜와 다른 날짜의 이벤트를 제거한다
+      var case1 = moment(slide.start).isSame(componnent.state.slideDate.format('YYYY-MM-DD'), 'day');
+
       // 필터[2]: OFF TIME 이벤트를 제거한다
+      var case2 = slide.status !== actions.ScheduleStatus.OFFTIME;
       // 필터[3]: 다른 Staff의 이벤트를 제거한다
-
-      if (
-        moment(eventsAll[i].start).isSame(this.state.slideDate.format('YYYY-MM-DD'), 'day') && // [1]
-        eventsAll[i].product !== 'OFF TIME' && // [2]
-        eventsAll[i].resourceId === this.state.slideStaff.id // [3]
-      ) eventsFiltered.push(eventsAll[i]);
-    }
-
-    for (var j = 0; j < eventsFiltered.length; j++) {
-      if (eventsFiltered[j].id === this.state.slideCard.id) {
-        initialSlideIndex = j;
+      var case3 = slide.resourceId == componnent.state.slideStaff.id // [3]      
+      return case1 && case2 && case3;
+    })
+    var initialSlideIndex;
+    for (var i = 0; i < slides.length; i++ ) {
+      if (slides[i].id === this.state.slideCard) {
+        initialSlideIndex = i;
         break;
       }
     }
-
+    console.log(slides);
     // display max length of slides
     $('em.all').ready(function(){
-      $('em.all').html(eventsFiltered.length);
+      $('em.all').html(slides.length);
     });
-
-    //if (!this.state.slideIndex) this.setState({ slideIndex: initialSlideIndex });무한루프 (?)
-
-    this.slides = eventsFiltered;
-    return eventsFiltered;
+    // this.setState({
+    //   slideIndex: initialSlideIndex
+    // });
+    this.slides = slides;
+    return slides;
   }
 
   setUserCards (type, option) {
@@ -157,7 +151,8 @@ class UserCard extends Component {
             <div key={i}>
               <Resource
                 users={users}
-                staff={this.state.slideStaff}
+                staffs={this.state.slideStaff}
+                services={this.props.services}
                 slideIndex={this.state.slideIndex}
                 slideLength={cards.length}
                 isUserCard={ (bool) => this.props.isUserCard(bool) }
@@ -187,9 +182,12 @@ class UserCard extends Component {
     return (
       <div className="customer-detail-wrap modal-mask mask-full" ref="mask">
         {test}
-        <div className="viewview">
-          {this.state.slideDate ? this.state.slideDate.format() : ''}
-        </div>
+        <dl className="viewview">
+          <dt>slideIndex: </dt><dd>{this.state.slideIndex ? this.state.slideIndex : ''}</dd>
+          <dt>slideDate: </dt><dd>{this.state.slideDate ? this.state.slideDate.format() : ''}</dd>
+          <dt>slideCard: </dt><dd>{this.state.slideCard ? this.state.slideCard.guest_name : ''}</dd>
+          <dt>slideStaff: </dt><dd>{this.state.slideStaff ? this.state.slideStaff.label : ''}</dd>
+        </dl>
         <div className="slider">
           <div className="slider-date">
             <button onClick={ () => this.isChangeDate(!this.state.isChangeDate) }>
@@ -208,7 +206,7 @@ class UserCard extends Component {
               name="epxerts"
               id="select-slide"
               className="select-expert"
-              options={Staffs}
+              options={this.props.staffs}
               onChange={ (option) => this.setUserCards('staff', option)}
               clearable={false}
               searchable={false}

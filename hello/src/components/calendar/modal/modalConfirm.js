@@ -21,7 +21,7 @@ class ModalConfirm extends Component {
     const options = props.options;
 
     // 1.신규예약 생성시 모달 컨텐츠
-    const optionComponent_NewEvent = (props) => (
+    const optionComponent_Schedule = (props) => (
       <div className="modal-layer layer-center order-confirm">
         <div className="confirm-content">
           <p><span className="date">
@@ -35,18 +35,18 @@ class ModalConfirm extends Component {
           <p><span className={`product ${options.class}`}>{options.product}</span> 예약을 생성하시겠습니까?</p>
         </div>
         <div className="confirm-ui">
-          <button onClick={ () => this.props.step_render(true, this.props.newEventId, this.props.isNotAutoSelectTime)} ref={(t) => { this.input = t; }}>확인</button>
+          <button onClick={ () => this.props.renderNewSchedule(true, this.props.newScheduleId, this.props.unknownStart)} ref={(t) => { this.input = t; }}>확인</button>
           <button onClick={ () => this.props.modalConfirmHide()}>취소</button>
         </div>
       </div>
     );
     // 2.예약변경시 모달 컨텐츠
-    const optionComponent_EditEvent = (props) => (
+    const optionComponent_EditSchedule = (props) => (
       <div className="modal-layer layer-center order-confirm">
         <div className="confirm-content">
           <p><span className="date">
-              {moment(props.selectedEvent.start).locale('ko').format('YYYY년 MM월 DD일(ddd) A HH:mm')} -
-              {moment(props.selectedEvent.end).locale('ko').format('A HH:mm')}</span>
+              {moment(props.selectedSchedule.start).locale('ko').format('YYYY년 MM월 DD일(ddd) A HH:mm')} -
+              {moment(props.selectedSchedule.end).locale('ko').format('A HH:mm')}</span>
           </p>
           <p>
             {options.name ? <span className="name">{options.name}</span> : <span className="name">이름없음</span>}
@@ -66,28 +66,28 @@ class ModalConfirm extends Component {
           <p>으로 변경하시겠습니까?</p>
         </div>
         <div className="confirm-ui">
-          <button onClick={ () => this.props.step_render(true, this.props.newEventId, this.props.isNotAutoSelectTime)} ref={(t) => { this.input = t; }}>확인</button>
+          <button onClick={ () => this.props.renderNewSchedule(true, this.props.newScheduleId, this.props.unknownStart)} ref={(t) => { this.input = t; }}>확인</button>
           <button onClick={ () => this.props.modalConfirmHide()}>취소</button>
         </div>
       </div>
     );
 
     // 3.예약삭제시 모달 컨텐츠
-    const optionComponent_RemoveEvent = (props) => (
+    const optionComponent_RemoveSchedule = (props) => (
       <div className="modal-layer layer-center order-confirm">
         <div className="confirm-content">
           <p><span className="date">
-              {moment(props.selectedEvent.start).locale('ko').format('YYYY년 MM월 DD일(ddd) A HH:mm')} -
-              {moment(props.selectedEvent.end).locale('ko').format('A HH:mm')}</span>
+              {moment(props.selectedSchedule.start).locale('ko').format('YYYY년 MM월 DD일(ddd) A HH:mm')} -
+              {moment(props.selectedSchedule.end).locale('ko').format('A HH:mm')}</span>
           </p>
           <p>
-            {props.selectedEvent.name ? <span className="name">{props.selectedEvent.name}</span> : <span className="name">고객명 미입력</span>}
-            {props.selectedEvent.rating ? <span className={`rating ${props.selectedEvent.rating.toUpperCase()}`}>{props.selectedEvent.rating}</span> : undefined} 님의
+            {props.selectedSchedule.guest_name ? <span className="name">{props.selectedSchedule.guest_name}</span> : <span className="name">고객명 미입력</span>}
+            {props.selectedSchedule.rating ? <span className={`rating ${props.selectedSchedule.rating.toUpperCase()}`}>{props.selectedSchedule.rating}</span> : undefined} 님의
           </p>
-          <p><span className={`product ${props.selectedEvent.class}`}>{props.selectedEvent.product}</span> 예약을 삭제하시겠습니까?</p>
+          <p><span className={`product ${props.selectedSchedule.class}`}>{props.selectedSchedule.product}</span> 예약을 삭제하시겠습니까?</p>
         </div>
         <div className="confirm-ui">
-          <button onClick={ () => this.props.removeEvent()} ref={(t) => { this.input = t; }}>확인</button>
+          <button onClick={ () => this.props.removeSchedule()} ref={(t) => { this.input = t; }}>확인</button>
           <button onClick={ () => this.props.modalConfirmHide()}>취소</button>
         </div>
       </div>
@@ -96,9 +96,9 @@ class ModalConfirm extends Component {
     return (
       <div className="modal-mask mask-full">
         {
-          this.props.optionComponent === 'removeEvent' ? optionComponent_RemoveEvent(this.props) : (
-          this.props.optionComponent === 'editEvent' ?   optionComponent_EditEvent(this.props) : (
-          this.props.optionComponent === 'newEvent' ?    optionComponent_NewEvent(this.props) : <div>"error : undefined props optionComponent"</div>
+          this.props.optionComponent === 'removeSchedule' ? optionComponent_RemoveSchedule(this.props) : (
+          this.props.optionComponent === 'editSchedule' ?   optionComponent_EditSchedule(this.props) : (
+          this.props.optionComponent === 'newSchedule' ?    optionComponent_Schedule(this.props) : <div>"error : undefined props optionComponent"</div>
           ))
         }
       </div>
@@ -121,7 +121,7 @@ ModalConfirm.defaultProps = {
     start: undefined,
     end: undefined
   },
-  selectedEvent: {
+  selectedSchedule: {
     start: undefined,
     end: undefined,
     name: undefined,

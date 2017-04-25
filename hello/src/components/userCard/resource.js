@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import moment from 'moment';
-import Services from '../../data/services';
-import {SelectableCustom, SearchProduct, CreatableCustom} from '../calendar/select';
+import {SelectableCustom, SearchService, CreatableCustom} from '../calendar/select';
 import DatePicker from '../calendar/datePicker';
 import Slider from 'react-slick';
 import * as Functions from '../../js/common';
@@ -80,7 +79,7 @@ class Resource extends Component {
         const mapToHistoryList = (user, history, i) => {
           return (
             <div key={i} className={`history-list ${history.product
-                ? Functions.getProductColor(history.service, Services)
+                ? Functions.getService(history.service, this.props.services).color
                 : ''}${this.state.historyActiveIndex === i
                     ? " active"
                     : ''}`}>
@@ -192,7 +191,6 @@ class Resource extends Component {
           );
         };
 
-
         const datePicker = (
           <DatePicker
             height={420}
@@ -252,7 +250,7 @@ class Resource extends Component {
         ];
 
         return (
-            <div className={`customer-detail ${Functions.getProductColor(user.service, Services)}`}>
+            <div className={`customer-detail ${Functions.getService(user.shop_service_id, this.props.services).color}`}>
                 <div className="product">
                     <div className="res-info">
                         <span className="tit">예약시간</span>
@@ -306,7 +304,7 @@ class Resource extends Component {
                                 <span className="service-time">{Functions.minuteToTime(moment(user.end).diff(moment(user.start), 'minute', true))}</span>
                             </button>
                             {this.state.isChangeProduct
-                              ? <SearchProduct
+                              ? <SearchService
                                   selectType="searchable"
                                   autoDropdown={true}
                                   customFilterComponent={true}
@@ -315,7 +313,7 @@ class Resource extends Component {
                                   className="change-product arrow-border-dark"
                                   placeholder="검색어를 입력하세요"
                                   noResultsText="결과가 없습니다"
-                                  options={Services}
+                                  options={this.props.services}
                                   value={null}
                                   onChange={this.inputChangeProduct}
                                 />
@@ -325,7 +323,7 @@ class Resource extends Component {
                           ? (
                             /* 선결제인경우*/
                             <span className="price edit-ui">
-                              <button onClick={this.changeAmount} className="">선결제 :&nbsp;{Functions.getService(user.service_code, Services).amount}&#xFFE6;</button>
+                              <button onClick={this.changeAmount} className="">선결제 :&nbsp;{Functions.getService(user.shop_service_id, this.props.services).amount}&#xFFE6;</button>
                               <button onClick={this.changeAmount} className="price-change">금액변경</button>
                               {this.state.isChangePrice
                                 ? <CreatableCustom
@@ -340,7 +338,7 @@ class Resource extends Component {
                           : (
                             /* 선결제가 아닌 경우 */
                             <span className="price">
-                              <span>{Functions.getService(user.service_code, Services).amount}&#xFFE6;</span>
+                              <span>{Functions.getService(user.shop_service_id, this.props.services).amount}&#xFFE6;</span>
                             </span>)
                         }
                     </div>

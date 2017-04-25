@@ -27,7 +27,7 @@ class Card extends React.Component {
     const { id, resourceId, guest_class, className, service_code, name,
             phone, start, end, picture, guest_memo, staff_memo,
             kakao, line, history
-          } = this.props.schedule;
+          } = this.props.schedules;
     const content = (
       <div className="card-content">
         <div className="service clearfix">
