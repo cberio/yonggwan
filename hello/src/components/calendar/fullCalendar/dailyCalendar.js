@@ -65,6 +65,7 @@ class DailyCalendar extends Component {
         this.changeDate = this.changeDate.bind(this);
         this.isChangeDate = this.isChangeDate.bind(this);
         this.bindTimelineAccess = this.bindTimelineAccess.bind(this);
+        this.bindTimelineScroller = this.bindTimelineScroller.bind(this);
         this.setCalendarStates = this.setCalendarStates.bind(this);
         this.toggleCreateOrderUi = this.toggleCreateOrderUi.bind(this);
         this.autoScrollTimeline = this.autoScrollTimeline.bind(this);
@@ -218,6 +219,19 @@ class DailyCalendar extends Component {
             $('.fc-view-container .fc-agendaDay-view').attr('style', '');
         }
 
+    }
+    // 다중 타임라인을 렌더링 했을경우 스크롤러 관련 바인딩
+    bindTimelineScroller () {
+      var scroller = $('#daily .fc-view-container');
+      var timeGridAxis = $('#daily .fc-slats-clone');
+      var thisX = $(scroller).scrollLeft();
+      var thisY = $(scroller).scrollTop();
+      $(scroller).on('scroll', function(e) {
+        var thisNewX = $(this).scrollLeft();
+        if (thisX !== thisNewX)
+          $(timeGridAxis).css('left', thisNewX);
+          thisX = thisNewX;
+      })
     }
 
     /// 타임라인 빈 슬롯에 마우스오버시 신규생성 버튼 활성화 관련 바인딩 ///
@@ -1101,11 +1115,12 @@ class DailyCalendar extends Component {
                     component.staffInputCheck();
                     component.setCalendarColumn('init');
                     component.setState({
-                    alreadyRendered: true
+                      alreadyRendered: true
                     });
                 }
                 // [3] Daily 타임라인이 그려질 때 마다 실행
                 component.bindTimelineAccess();
+                component.bindTimelineScroller();
                 component.setTodayButton(view.start);
                 component.setCalendarStates();
                 component.insertStaffInterface();

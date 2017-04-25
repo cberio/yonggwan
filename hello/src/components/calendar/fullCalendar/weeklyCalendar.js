@@ -1402,7 +1402,7 @@ class WeeklyCalendar extends Component {
               component.bindTimelineAccess();
 
               //** expert ui 의 레이어를 상단으로 이동 **
-              $('.expert-weekly').append($('.fc-widget-header-custom'));
+              $('.expert-weekly').insertAfter($('.fc-toolbar.fc-header-toolbar'));
               // 타임라인 내 신규예약생성 버튼 클릭시 추가되었던 클래스가 남아있으면 다시 제거
               $('.create-order-overlap').removeClass('create-order-overlap');
               // Insert Helper & Buttons

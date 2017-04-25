@@ -1244,6 +1244,9 @@
 #weekly .fc-toolbar.fc-header-toolbar h2 .weekDay {
 	display: none;
 }
+#weekly .fc-resource-header-container {
+	display: none;
+}
 
 .fc-agendaWeekly-view td.fc-head-container {	
 	width: 100%;	
