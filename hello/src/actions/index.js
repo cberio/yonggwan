@@ -1,6 +1,7 @@
 import * as types from './actionType';
 import Shop from '../api/shop/shop';
 import moment from 'moment';
+import ApiException from '../api/error';
 
 /**/
 export function userCardEvent (options) {
@@ -81,15 +82,13 @@ export const receiveSchedules = (shop, json) => ({
   receivedAt: Date.now()
 });
 
-export const creatingSchedule = (shop, schedule) => ({
+export const creatingSchedule = (scheduleData) => ({
   type: types.CREATING_SCHEDULE,
-  shop,
-  schedule,
+  schedules: scheduleData,
 })
 
-export const scheduleCreated = (shop, json) => ({
+export const scheduleCreated = (scheduleData, json) => ({
   type: types.SCHEDULE_CREATED,
-  shop,
   schedules: json,
   receivedAt: Date.now(),
 })
@@ -132,17 +131,20 @@ const fetchSchedules = (shop, state) => dispatch => {
     });
 }
 
-const createScheduleAPI = (shop, state) => dispatch => {
-  dispatch(creatingSchedule(shop));
+export const createNewSchedule = scheduleData => (dispatch, getState) => {
+  dispatch(creatingSchedule(scheduleData));
   dispatch(loading(true));
 
-  return new Shop({shopId: shop})
+  return new Shop({shopId: getState().selectedShopID})
     .schedules()
-    .create()
+    .create(scheduleData)
     .then(json => {
-      dispatch(scheduleCreated(shop, json));
-      dispatch(loading(false));
-    });
+      if(json.success)
+        dispatch(scheduleCreated(scheduleData, json));
+      else
+        new ApiException(json).showError();
+    })
+    .then(() => dispatch(loading(false)));
 }
 
 const fetchStaffs = (shop, state) => dispatch => {
