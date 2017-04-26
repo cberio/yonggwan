@@ -470,28 +470,15 @@ class DailyCalendar extends Component {
     bindNewOfftime(order, type) {
         let {Calendar} = this.refs;
         let component = this;
-        let defaultMinute = 20;
-        let endTime = this.state.selectedDate;
-            endTime = moment(endTime).add(defaultMinute, 'minute');
-            endTime = endTime.format("YYYY-MM-DDTHH:mm:ss");
-        let newScheduleId = this.props.returnNewID();
-        // event option
-        let insertOfftime = {
-            status: actions.ScheduleStatus.OFFTIME,
-            id: newScheduleId
-        };
+       
         switch (order) {
             // 타임라인 테이블 안에서 시작시간을 지정하여 생성하는 경우
             case 'timeline':
-                insertOfftime = $.extend(insertOfftime, {
-                    resourceId: this.state.selectedStaff.id,
-                    start: this.state.selectedDate,
-                    end: endTime
-                });
                 /// 생성버튼 캘린더 타임라인 노드에서 상위 노드로 삽입
                 $('.full-calendar > .fc').append($('.create-order-wrap.timeline').hide());
                 $('.timeline .create-order-ui-wrap').hide();
-                this.renderNewOfftime(insertOfftime);
+                
+                this.renderNewOfftime();
                 break;
             // '주 단위' 에서 시작시간을 지정하지 않고 생성하는 경우
             case 'weekly':
@@ -506,9 +493,23 @@ class DailyCalendar extends Component {
     }
 
     // offtime 생성 2/2
-    renderNewOfftime(insertOfftime) {
+    renderNewOfftime() {
         let component = this;
         let {Calendar} = this.refs;
+        
+        let defaultMinute = 20;
+        let endTime = this.state.selectedDate;
+            endTime = moment(endTime).add(defaultMinute, 'minute');
+            endTime = endTime.format("YYYY-MM-DDTHH:mm:ss");
+        let newScheduleId = this.props.returnNewID();
+        // event option
+        let insertOfftime = {
+            status: actions.ScheduleStatus.OFFTIME,
+            id: newScheduleId,
+            resourceId: this.state.selectedStaff.id,
+            start: this.state.selectedDate,
+            end: endTime
+        };
 
         // A _ 퀵생성 (우측하단 예약생성버튼)을 통해 offtime을 생성한 경우
         if (component.state.isCreateOfftime) {
