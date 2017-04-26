@@ -202,6 +202,8 @@ class Calendar extends Component {
 
   // Expert를 Priority기준으로 재배열 한다
   sortExpert(allOfStaff) {
+      if(_.isEmpty(allOfStaff))
+        return;
       //let staffNewArray = [];
       let staffNewArray = allOfStaff.sort(function(a, b) {
           return a.priority < b.priority
@@ -228,8 +230,8 @@ class Calendar extends Component {
   }
 
   render () {
+    this.sortExpert(this.props.staffs.data);
 
-    this.sortExpert(this.props.staffs);
     const CreateOrderButtonFixed = (_this) =>  {
       return (
         <div className="create-order-wrap fixed">
@@ -386,9 +388,9 @@ class Calendar extends Component {
       fcOptions: fc_options,
       //schedule: _.isEmpty(this.props.schedules) ? Schedule : this.props.schedules.data,
       //staffs: _.isEmpty(this.props.staffs) ? Staff : this.props.staffs.data,
-      schedules: this.props.schedules,
-      staffs: this.props.staffs,
-      services: this.props.services,
+      schedules: this.props.schedules.data,
+      staffs: this.props.staffs.data,
+      services: this.props.services.data,
       changeView: this.changeView,
       changeDate: this.changeDate,
       returnScheduleObj: this.returnScheduleObj,
@@ -471,14 +473,9 @@ const mapStateToProps = (state) => {
     getServicesBySelectedShopID,
   } = state;
 
-  // const { schedules } = getSchedulesBySelectedShopID[selectedShopID] || { isFetching: false, schedules: {} };
-  // const { staffs } = getStaffsBySelectedShopID[selectedShopID] || { isFetching: false, staffs: {} };
-  // const { services } = getServicesBySelectedShopID[selectedShopID] || { isFetching: false, services: {} };
-
-  /* 임시 데이터 */
-  const schedules = require('../../data/schedules').default;
-  const staffs = require('../../data/staffs').default;
-  const services = require('../../data/services').default;
+  const { schedules } = getSchedulesBySelectedShopID[selectedShopID] || { isFetching: false, schedules: { data: require('../../data/schedules').default} };
+  const { staffs } = getStaffsBySelectedShopID[selectedShopID] || { isFetching: false, staffs: { data: require('../../data/staffs').default} };
+  const { services } = getServicesBySelectedShopID[selectedShopID] || { isFetching: false, services: { data: require('../../data/staffs').default} };
 
   return {
     selectedShopID,
