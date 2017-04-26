@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import $ from 'jquery';
 import moment from 'moment';
 import update from 'react-addons-update';
-import { SearchCustomer, SearchProduct, Selectable } from '../select';
+import { SearchGuest, SearchService, Selectable } from '../select';
 import Staffs from '../../../data/staffs';
 import Services from '../../../data/services';
 import Guests from '../../../data/guests';
@@ -21,7 +21,6 @@ export default class NewOrder extends Component {
       newOrderSex : 0,// int 0-2
       newOrderPhone: ["","",""], //array
       newOrderService : undefined, //object (service object)
-      newOrderClassName: undefined, //str
       newOrderStaff : this.props.selectedStaff, //object
       newOrderGuest : {},  //object
       newOrderStart : this.props.selectedDate, // moment format
@@ -63,7 +62,6 @@ export default class NewOrder extends Component {
     this.setState({
       newOrderStep: 3,
       newOrderService : Functions.getService(e.service.code),
-      newOrderClassName: Functions.getService(e.service.code).color,
       newOrderStaff : Functions.getStaff(e.resourceId),
       newOrderGuest : {
         name: e.guest_name,
@@ -93,15 +91,6 @@ export default class NewOrder extends Component {
     return this.state;
   }
 
-  getProductObj (productName) {
-    for (let i = 0; i < Services.length; i++) {
-      if (productName === Services[i].name) {
-        return Services[i];
-        break;
-      }
-    }
-  }
-
   backToStep (step) {
     this.setState({ newOrderStep : step });
   }
@@ -113,10 +102,10 @@ export default class NewOrder extends Component {
         this.setState({ newOrderStep : 2 });
         break;
       case 2 :
-        if (this.props.isNotAutoSelectTime) {
-          this.props.createEvent(true, this.state);
+        if (this.props.unknownStart) {
+          this.props.renderNewScheduleUnknownStart(true, this.state);
         } else {
-          this.props.step_confirm(true, this.state);
+          this.props.beforeInitConfirmRenderNewSchedule(true, this.state);
         }
         this.setState({ newOrderStep : 3 });
         break;
@@ -146,11 +135,10 @@ export default class NewOrder extends Component {
   }
 
   inputChangeService (e)   {
-    let productTime = moment.duration(e.time).asMinutes(); // mm
-    let endTime = moment(this.state.newOrderStart).add(productTime, 'minutes');
+    let serviceTime = moment.duration(e.time).asMinutes(); // mm
+    let endTime = moment(this.state.newOrderStart).add(serviceTime, 'minutes');
     this.setState({
       newOrderService: e,
-      newOrderClassName: e.color,
       newOrderTime: e.time,
       newOrderEnd: endTime.format()
     });
@@ -231,7 +219,7 @@ export default class NewOrder extends Component {
           />
           <label htmlFor="user-femail">여성</label>
         </div>
-        <SearchProduct
+        <SearchService
           selectType="searchable"
           name="products"
           className="search-product"
@@ -255,7 +243,7 @@ export default class NewOrder extends Component {
     );
     const newOrderStep_2 = (
       <div className="service-input">
-        <SearchCustomer
+        <SearchGuest
           name="customer"
           autoFocus={true}
           className="search-customer"
@@ -308,14 +296,13 @@ export default class NewOrder extends Component {
 
     return (
       <div className="new-order-wrap-container">
-        <div className={`new-order-wrap step-${this.state.newOrderStep} ${this.props.isNotAutoSelectTime || this.props.isEditEvent ? '' : 'hidden'}`}>
+        <div className={`new-order-wrap step-${this.state.newOrderStep} ${this.props.unknownStart || this.props.isEditEvent ? '' : 'hidden'}`}>
           <div className="viewview order">
             <button onClick={()=> {$('.viewview.order').hide() }}>X</button>
             <span>isModalConfirm</span> : {this.props.isModalConfirm ? 'true' : ""} <br />
             <span>newOrderStep</span> : {this.state.newOrderStep !== undefined ? this.state.newOrderStep : ""} <br />
             <span>newOrderStaff</span> : {this.state.newOrderStaff ? this.state.newOrderStaff.label : ""} <br />
             <span>newOrderService</span> : {this.state.newOrderService ? this.state.newOrderService.name : ""} <br />
-            <span>newOrderClassName</span> : {this.state.newOrderClassName ? this.state.newOrderClassName : ""} <br />
             <span>newOrderGuestName</span> : {this.state.newOrderGuestName ? this.state.newOrderGuestName : ""} <br />
             <span>newOrderPhone</span> : {this.state.newOrderPhone.length ? this.state.newOrderPhone : ''} <br />
             <span>newOrderSex</span> : {this.state.newOrderSex} <br />
@@ -332,7 +319,7 @@ export default class NewOrder extends Component {
                                           </div>
           </div>
           {
-            (step > 2) && (!this.props.isNotAutoSelectTime) && (!this.props.isEditEvent) ? '' : (
+            (step > 2) && (!this.props.unknownStart) && (!this.props.isEditEvent) ? '' : (
               <div className="new-order-navigator">
                 <div className="new-order-navigator-inner">
                   <h2>{title}</h2>
@@ -456,7 +443,7 @@ export default class NewOrder extends Component {
                   </div>
                 </ReactCSSTransitionGroup>
               </div>
-            ) : this.props.isNotAutoSelectTime || this.props.isEditEvent ? (
+            ) : this.props.unknownStart || this.props.isEditEvent ? (
               <div>
                 {state.newOrderStaff.label && (
                   <div className="has-expert">
@@ -468,7 +455,7 @@ export default class NewOrder extends Component {
                     </div>
                   </div>
                 )}
-                <div className={`new-order-card ${this.props.isNotAutoSelectTime ? 'new-order-render' : this.props.isEditEvent ? 'new-order-edit' : ''} `}>
+                <div className={`new-order-card ${this.props.unknownStart ? 'new-order-render' : this.props.isEditEvent ? 'new-order-edit' : ''} `}>
                   <div className={`user-card-service${state.newOrderService ? ' '+ state.newOrderService.color: ''}`}>
                     <div className="service-info">
                       <div className="lt">

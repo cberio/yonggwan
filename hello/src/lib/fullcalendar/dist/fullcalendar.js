@@ -5603,18 +5603,25 @@ var DayTableMixin = FC.DayTableMixin = {
 	/* Header Rendering
 	------------------------------------------------------------------------------------------------------------------*/
 
-
+	/* 수정: 커스텀 엘리먼트 view에따라 반환하도록 수정 */
 	renderHeadHtml: function() {
 		var view = this.view;
 
-		return '' +
-			'<div class="fc-row ' + view.widgetHeaderClass + '">' +
-				'<table>' +
-					'<thead>' +
-						this.renderHeadTrHtml() +
-					'</thead>' +
-				'</table>' +
-			'</div>';
+		if (view.name === 'agendaDay') {
+				return '<div class="fc-row fc-widget-hedaer fc-widget-header-custom"></div>'; // <-해당 element에 Staff Ui를 inserting
+		} else {
+			/****
+			***** 아래가 view 상관없이 원래 반환하던 소스 ****
+			*****/
+			return '' +
+				'<div class="fc-row ' + view.widgetHeaderClass + '">' +
+					'<table>' +
+						'<thead>' +
+							this.renderHeadTrHtml() +
+						'</thead>' +
+					'</table>' +
+				'</div>';
+		}
 	},
 
 
@@ -7801,13 +7808,18 @@ TimeGrid.mixin({
 		// 수정: Shop 서비스 object
 		var shopServices = this.view.opt('shopServices');
 		var getService = function (serviceID) {
-			return shopServices.find(function(service){
-				return service.id == serviceID;
+			if (shopServices) return shopServices.find(function(service){
+					return service.id == serviceID;
 			});
 		}
+		var thisService = getService(event.shop_service_id);
 
 		// shop service color를 추가함. ( offtime || color )
-		var serviceColor = event.status == '05' ? 'off-time' : getService(event.shop_service_id).color;
+		var serviceColor = event.status == '05'
+			? 'off-time'
+			: thisService
+				? thisService.color
+				: '';
 		classes.unshift('fc-time-grid-event', 'fc-v-event', serviceColor);
 
 		if (view.isMultiDayEvent(event)) { // if the event appears to span more than one day...
@@ -7877,9 +7889,9 @@ TimeGrid.mixin({
 							(event.shop_service_id ?
 								'<div class="fc-product">' +
 								// 20분이하의 상품인경우 글자수 자름?
-								(fromMinutes <= 20 && htmlEscape(getService(event.shop_service_id).name).length > 15?
-									htmlEscape(getService(event.shop_service_id).name).slice(0, 15) + '...' :
-									htmlEscape(getService(event.shop_service_id).name)
+								(fromMinutes <= 20 && htmlEscape(thisService.name).length > 15?
+									htmlEscape(thisService.name).slice(0, 15) + '...' :
+									htmlEscape(thisService.name)
 								) +
 
 								'</div>' :
@@ -13586,6 +13598,16 @@ var AgendaView = FC.AgendaView = View.extend({
 
 		this.scroller.render();
 		var timeGridWrapEl = this.scroller.el.addClass('fc-time-grid-container');
+		// 수정 : 추가 엘리먼트 {
+		var timeGridHeadEl = '' +
+				'<div class="fc-resource-header-container">' +
+						'<div class="fc-resource-header-table">' +
+								'<div class="fc-resource-header-row">' +
+								'</div>' +
+							'</div>' +
+				'</div>';
+				timeGridHeadEl = $(timeGridHeadEl).appendTo(timeGridWrapEl);
+		// }
 		var timeGridEl = $('<div class="fc-time-grid" />').appendTo(timeGridWrapEl);
 
 		// 수정 : 오늘의 데일리 타임라인에 예약 마감버튼 삽입 {
@@ -13991,13 +14013,6 @@ var agendaTimeGridMethods = {
 						htmlEscape(weekText) // inner HTML
 					) +
 				'</th>';
-		}
-		// 수정 view type 별로 element return
-		else if (view.type === 'agendaDay') {
-			return (
-				'<th class="fc-axis ' + view.widgetHeaderClass + '" ' + view.axisStyleAttr() + '></th>'+
-				'<th class="fc-resource-cell-unselected"></th>'
-			);
 		} else {
 			return '<th class="fc-axis ' + view.widgetHeaderClass + '" ' + view.axisStyleAttr() + '></th>';
 		}

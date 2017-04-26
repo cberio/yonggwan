@@ -57,7 +57,7 @@ class ValueComponent extends React.Component {
 	}
 }
 
-class SearchCustomer extends React.Component {
+class SearchGuest extends React.Component {
 	constructor (props) {
 		super(props);
 		this.state = {
@@ -96,9 +96,9 @@ class SearchCustomer extends React.Component {
 	}
 }
 
-SearchCustomer.propTypes = {
+SearchGuest.propTypes = {
 	hint: PropTypes.string,
 	label: PropTypes.string,
 }
 
-module.exports = SearchCustomer;
+module.exports = SearchGuest;

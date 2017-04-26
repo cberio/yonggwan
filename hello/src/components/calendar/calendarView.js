@@ -40,7 +40,7 @@ class CalendarView extends Component {
           <FullCalendar events={this.props.schedules.data}
                         defaultView={this.props.defaultView}
                         experts={this.props.staffs.data}
-                        defaultExpert={_.isEmpty(this.props.staffs) ? Experts[0] : this.props.staffs.data }
+                        defaultStaff={_.isEmpty(this.props.staffs) ? Experts[0] : this.props.staffs.data }
                         currentViewType={this.state.renderedViewType}
                         setRenderedViewType={ (e) => this.setRenderedViewType(e)} />
         </div>

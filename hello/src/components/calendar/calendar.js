@@ -13,9 +13,6 @@ import UserCard from '../userCard';
 // import Notifier from '../../components/notifier';
 import DailyCalendar from './fullCalendar/dailyCalendar';
 import WeeklyCalendar from './fullCalendar/weeklyCalendar';
-import Staff from '../../data/staffs';
-import Schedule from '../../data/schedules';
-import Service from '../../data/services';
 import 'fullcalendar/dist/fullcalendar.min.css';
 import '../../css/fullcalendar-scheduler-customizing.css';
 import _ from 'lodash';
@@ -36,7 +33,7 @@ class Calendar extends Component {
     };
 
     this.changeDate = this.changeDate.bind(this);
-    this.newOrder = this.newOrder.bind(this);
+    this.newOrderByDailyTimeline = this.newOrderByDailyTimeline.bind(this);
     this.newOrderCancel = this.newOrderCancel.bind(this);
     this.changeView = this.changeView.bind(this);
     this.returnNewID = this.returnNewID.bind(this);
@@ -44,14 +41,13 @@ class Calendar extends Component {
     this.returnNewOrderStates = this.returnNewOrderStates.bind(this);
     this.returnScheduleObj = this.returnScheduleObj.bind(this);
     this.setTimelineDate = this.setTimelineDate.bind(this);
-    this.getStaff = this.getStaff.bind(this);
+    this.runUserCardSlide = this.runUserCardSlide.bind(this);
 
     this.fetchSchedule = this.fetchSchedule.bind(this);
   }
 
   // Daily Timeline 에서 예약생성 모듈로 접근시 실행하는 함수.
-  newOrder(options) {
-
+  newOrderByDailyTimeline(options) {
     this.setState({
       isNewOrder: true,
       newOrderStates: {
@@ -68,13 +64,19 @@ class Calendar extends Component {
       return Math.floor((Math.random() * 99999) + 1);
   }
 
-  getStaff(id) {
-    let StaffArray = _.isEmpty(this.props.staffs) ? Staff : this.props.staffs.data;
-      for (let i = 0; i < StaffArray.length; i++) {
-          if (StaffArray[i].id === id) {
-              return StaffArray[i];
-          }
-      }
+  runUserCardSlide (t, calSchedule, jsEvent, view) {
+    let selectedDate = moment(calSchedule.start);
+    // 더블클릭으로 선택된 이벤트객체를 가져옵니다
+    let selectedCard = calSchedule;
+    // 선택된 이벤트객체의 리소스ID에 맞는 expert id를 찾아 가져옵니다
+    let selectedStaff  = $(t.refs.Calendar).fullCalendar('getResourceById', selectedCard.resourceId);
+
+    // userCard 컴포넌트의 초기값을 전달한다
+    t.isUserCard(true, {
+        selectedDate: selectedDate,
+        selectedCard: selectedCard,
+        selectedStaff: selectedStaff
+    });
   }
 
   changeView (type) {
@@ -117,14 +119,17 @@ class Calendar extends Component {
   returnScheduleObj (newSchedule) {
       return {
           reservation_dt: moment(newSchedule.newOrderStart).format('YYYY-MM-DD'),
+          shop_id: null,
           start_time: moment(newSchedule.newOrderStart).format('HH:mm'),
           end_time: moment(newSchedule.newOrderEnd).format('HH:mm'),
+          user_id: null,
+          guest_id: null,
+          status: '01',
           guest_name: (newSchedule.newOrderGuest.guest_name || newSchedule.newOrderGuestName),
           guest_mobile: newSchedule.newOrderGuest.guest_mobile,
           guest_class: newSchedule.newOrderGuest.geust_class,
           guest_memo: newSchedule.newOrderGuestMemo,
-          picture: newSchedule.newOrderGuest.picture,
-          service_id: newSchedule.newOrderService.id,
+          shop_service_id: newSchedule.newOrderService.id,
           service_code: newSchedule.newOrderService.code,
           service_time: newSchedule.newOrderService.time,
           start: newSchedule.newOrderStart,
@@ -177,7 +182,7 @@ class Calendar extends Component {
       /// 생성버튼 캘린더 타임라인 노드에서 상위 노드로 삽입
       $('.full-calendar > .fc').append($('.create-order-wrap.timeline').hide());
       // 시작시간을 미리 선택하지않고 이벤트를 생성중에 취소할 경우
-      if (this.state.isNotAutoSelectTime || this.state.isEditEvent) {
+      if (this.state.unknownStart || this.state.isEditEvent) {
           this.resetOrder();
       } else if (this.state.newScheduleID) {
           // enable editable
@@ -190,7 +195,9 @@ class Calendar extends Component {
       $('.create-order-wrap.fixed').removeClass('hidden');
       $('#render-confirm').hide();
 
-      this.setState({isNewOrder: false});
+      this.setState({
+        isNewOrder: false
+      });
   }
 
   // Expert를 Priority기준으로 재배열 한다
@@ -222,8 +229,7 @@ class Calendar extends Component {
 
   render () {
 
-    this.sortExpert(Staff);
-
+    this.sortExpert(this.props.staffs);
     const CreateOrderButtonFixed = (_this) =>  {
       return (
         <div className="create-order-wrap fixed">
@@ -233,8 +239,8 @@ class Calendar extends Component {
                 </button>
             </div>
             <div className="create-order-ui">
-                <button onClick={() => _this.newOrder('notAutoSelectTime')} className="ui-reservation">예약생성</button>
-                <button onClick={() => _this.createOfftime('weekly')} className="ui-offtime">OFF TIME 생성</button>
+                <button onClick={() => _this.newOrder('unknownStart')} className="ui-reservation">예약생성</button>
+                <button onClick={() => _this.bindNewOfftime('weekly')} className="ui-offtime">OFF TIME 생성</button>
             </div>
         </div>
       )
@@ -244,7 +250,7 @@ class Calendar extends Component {
         return (
           <div data-date="" className={`create-order-wrap timeline${_this.state.isCreateOfftime
               ? " off-time"
-              : _this.state.isNotAutoSelectTime
+              : _this.state.unknownStart
                   ? " has-card"
                   : _this.state.isEditEvent
                       ? " edit"
@@ -253,12 +259,12 @@ class Calendar extends Component {
                   <div className="create-order-slot">
                       {_this.state.isCreateOfftime
                           ? (
-                              <button className="create-button" onClick={() => _this.createOfftime('render', 'offtime')}>
+                              <button className="create-button" onClick={() => _this.bindNewOfftime('render', 'offtime')}>
                                   <i className="time"></i>
                                   <span>+</span>
                               </button>
                           )
-                          : _this.state.isNotAutoSelectTime || _this.state.isEditEvent
+                          : _this.state.unknownStart || _this.state.isEditEvent
                               ? (
                                   <button className="create-button create-event">
                                       <i className="time"></i>
@@ -278,7 +284,7 @@ class Calendar extends Component {
                           <div className="create-order-ui-inner">
                               <div className="create-order-ui">
                                   <button onClick={() => _this.newOrder(null)} className="ui-reservation">예약생성</button>
-                                  <button onClick={() => _this.createOfftime('timeline')} className="ui-offtime">OFF TIME 생성</button>
+                                  <button onClick={() => _this.bindNewOfftime('timeline')} className="ui-offtime">OFF TIME 생성</button>
                               </div>
                           </div>
                       </div>
@@ -292,11 +298,12 @@ class Calendar extends Component {
       if (!_this.state.isUserCard) return '';
       return (
         <UserCard
-          cards={Schedule}
+          schedules={this.props.schedules}
+          services={this.props.services}
+          staffs={this.props.staffs}
           isUserCard={(bool) => _this.isUserCard(bool)}
           onRemoveEvent={(schedule) => _this.removeConfirm(schedule)}
           onEditEvent={(schedule) => _this.editEvent(schedule)}
-          onEditCustomer={""}
         />
       )
     }
@@ -321,9 +328,9 @@ class Calendar extends Component {
           selectedEvent={_this.state.selectedEvent}
           editedDate={_this.state.editedDate}
           newScheduleID={_this.state.newScheduleID}
-          isNotAutoSelectTime={_this.state.isNotAutoSelectTime}
+          unknownStart={_this.state.unknownStart}
           modalConfirmHide={_this.modalConfirmHide}
-          step_render={(bool, newScheduleID, type) => _this.step_render(bool, newScheduleID, type)}
+          renderNewSchedule={(bool, newScheduleID, type) => _this.renderNewSchedule(bool, newScheduleID, type)}
           removeEvent={_this.removeEvent}
         />
       )
@@ -335,7 +342,7 @@ class Calendar extends Component {
         <RenderEventConfirm
           viewType={view}
           isModalConfirm={_this.state.isModalConfirm}
-          modalConfirm={_this.step_modal}
+          modalConfirm={_this.beforeFinalConfirmRenderNewSchedule}
           newScheduleID={_this.state.newScheduleID}
         />
       )
@@ -344,7 +351,6 @@ class Calendar extends Component {
     // Daily, Weekly FullCalendar 공통 옵션
     const fc_options = {
         schedulerLicenseKey: `${ process.env.REACT_APP_FULLCALENDAR_LISENCE ? process.env.REACT_APP_FULLCALENDAR_LISENCE : 'GPL-My-Project-Is-Open-Source'}`,
-        shopServices: Service,
         resourceOrder: 'priority', // staff의 정렬 순서를 무엇을 기준으로 할지 정함
         defaultDate: moment(this.state.viewDate), //기본 날짜
         filterResourcesWithSchedule: false, // 이벤트가 없는 staff를 숨길지 여부
@@ -380,17 +386,18 @@ class Calendar extends Component {
       fcOptions: fc_options,
       //schedule: _.isEmpty(this.props.schedules) ? Schedule : this.props.schedules.data,
       //staffs: _.isEmpty(this.props.staffs) ? Staff : this.props.staffs.data,
-      schedule: Schedule,
-      staff: Staff,
+      schedules: this.props.schedules,
+      staffs: this.props.staffs,
       services: this.props.services,
       changeView: this.changeView,
       changeDate: this.changeDate,
       returnScheduleObj: this.returnScheduleObj,
       returnNewID: this.returnNewID,
-      getStaff: this.getStaff,
 
       getSlotTime: this.mouseenterSlotTime,
-      defaultExpert: function() { _.isEmpty(this.props.staffs) ? Staff[0] : this.props.staffs.data },
+      // defaultStaff: function() { _.isEmpty(this.props.staffs) ? Staff[0] : this.props.staffs.data },
+      defaultStaff: this.props.staffs[0],
+      runUserCardSlide: function(t, calSchedule, jsEvent, view) { this.runUserCardSlide(t, calSchedule, jsEvent, view) },
 
       getCreateOrderButtonFixed:    function(t) { return CreateOrderButtonFixed(t) },
       getCreateOrderButtonTimeline: function(t) { return CreateOrderButtonTimeline(t) },
@@ -416,7 +423,7 @@ class Calendar extends Component {
         ref="daily"
         wasMount={ () => this.timelineWasMount('agendaDay') }
         setTimelineDate={ (date) => this.setTimelineDate(date) }
-        newOrder={ (options) => this.newOrder(options) }
+        newOrder={ (options) => this.newOrderByDailyTimeline(options) }
       />
     );
 
@@ -464,9 +471,14 @@ const mapStateToProps = (state) => {
     getServicesBySelectedShopID,
   } = state;
 
-  const { schedules } = getSchedulesBySelectedShopID[selectedShopID] || { isFetching: false, schedules: {} };
-  const { staffs } = getStaffsBySelectedShopID[selectedShopID] || { isFetching: false, staffs: {} };
-  const { services } = getServicesBySelectedShopID[selectedShopID] || { isFetching: false, services: {} };
+  // const { schedules } = getSchedulesBySelectedShopID[selectedShopID] || { isFetching: false, schedules: {} };
+  // const { staffs } = getStaffsBySelectedShopID[selectedShopID] || { isFetching: false, staffs: {} };
+  // const { services } = getServicesBySelectedShopID[selectedShopID] || { isFetching: false, services: {} };
+
+  /* 임시 데이터 */
+  const schedules = require('../../data/schedules').default;
+  const staffs = require('../../data/staffs').default;
+  const services = require('../../data/services').default;
 
   return {
     selectedShopID,

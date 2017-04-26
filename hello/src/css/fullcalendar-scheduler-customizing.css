@@ -14,6 +14,7 @@
 	display: none;
 }
 .fc-scroller.fc-time-grid-container {
+	background-color: #ebebeb;
 	overflow-x: auto !important;
 	/*min-height: 678px;*/
 }
@@ -31,7 +32,8 @@
 }
 
 .fc-toolbar.fc-header-toolbar {
-	background-color: #FFF;
+	background-color: #d9d9d9;
+	border-bottom: 1px solid #bfbfbf;
 	height: 52px;
 	z-index: 2;
 	margin-bottom: 0;
@@ -192,6 +194,7 @@
 .expert-ui {
 	height: 40px;
 	z-index: 2;
+	background-color: #d9d9d9;
 }
 .expert-ui .expert-inner {
 	height: 100%;
@@ -211,13 +214,7 @@
 	overflow: hidden;
 }
 .expert-ui .expert-each.all {
-	border-right: 1px solid #d7d7d7;
-	/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#ffffff+0,e5e5e5+100 */
-	background: rgb(255,255,255); /* Old browsers */
-	background: -moz-linear-gradient(top,  rgba(255,255,255,1) 0%, rgba(229,229,229,1) 100%); /* FF3.6-15 */
-	background: -webkit-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(229,229,229,1) 100%); /* Chrome10-25,Safari5.1-6 */
-	background: linear-gradient(to bottom,  rgba(255,255,255,1) 0%,rgba(229,229,229,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#e5e5e5',GradientType=0 ); /* IE6-9 */
+	border-right: 1px solid #bfbfbf;	
 }
 .expert-each .expert-input{
 	position: absolute;
@@ -246,12 +243,11 @@
 	width: 14px;
 	height: 14px;
 	border-radius: 50%;
-	background-color: #fff;
 	position: absolute; 
 	left: 18px;
 	top: 50%;
 	margin-top: -8px;
-	border: 1px solid #e9e9e9;
+	border: 1px solid #a6a6a6;
 		 -o-transition: .1s border ease-out;
 	-webkit-transition: .1s border ease-out;
 			transition: .1s border ease-out;
@@ -267,8 +263,12 @@
 .expert-each .expert-input:checked ~ .expert-label {
 	color: #000;
 }
-.expert-each .today-reservation {
+.expert-each .expert-label:hover .today-reservation,
+.expert-each .expert-input:focus ~ .expert-label .today-reservation,
+.expert-each .expert-input:checked ~ .expert-label .today-reservation {
 	color: #e60b25;
+}
+.expert-each .today-reservation {	
 	padding-left: 3px;
 	font-style: normal;
 }
@@ -372,7 +372,8 @@
 	z-index: -1;
 }
 .fc-bg-inner:before {
-	display: block;
+	display: none;
+	/*display: block;*/
 	content:'';
 	width: 16px;
 	height: 9px;
@@ -1196,8 +1197,7 @@
 .expert-ui.expert-weekly {
 	height: 38px;
 	text-align: center;
-	background-color: #fff;	
-	border-bottom: 1px solid #d7d7d7;
+	border-bottom: 1px solid #a6a6a6;
 	-webkit-box-shadow: 0 2px 3px 1px rgba(0,0,0,0.1);
 			box-shadow: 0 2px 3px 1px rgba(0,0,0,0.1);
 }
@@ -1232,8 +1232,7 @@
 	border-left: 1px solid #e6e6e6 !important;
 }
 
-#weekly .fc-toolbar.fc-header-toolbar {
-	background-color: #fafafa;
+#weekly .fc-toolbar.fc-header-toolbar {	
 }
 #weekly .fc-toolbar.fc-header-toolbar h2 {
 	width: 250px;
@@ -1243,6 +1242,9 @@
 	margin-left: -125px;
 }
 #weekly .fc-toolbar.fc-header-toolbar h2 .weekDay {
+	display: none;
+}
+#weekly .fc-resource-header-container {
 	display: none;
 }
 
@@ -1594,17 +1596,23 @@
 }
 .multi-experts .fc-agendaDay-view .fc-head-container {
 	padding-right: 0;
+	border: 0;
+}
+.fc-view .fc-head {
+	border-color: #bfbfbf;
+	background-color: #d9d9d9;
 }
 
 #daily .fc-view-container {
 	overflow: auto;
 }
-
-.fc-agendaDay-view .fc-head {
-	/*display: none;*/
+#daily .fc-view .fc-head,
+#daily .fc-head-container {
+	border-bottom: 1px solid #a6a6a6;
 }
+
 .fc-agendaDay-view .fc-head-container {
-	background-color: #f7f7f7;
+	border-top: 0;
 	padding-right: 50px;
 }
 .fc-agendaDay-view .fc-head-container th {
@@ -1613,18 +1621,38 @@
 	color: #999;
 	height: 36px;
 	line-height: 36px;
+	border: 0;
 }
 .fc-agendaDay-view .fc-head-container th.fc-resource-cell-unselected {
 	width: auto;
-	border-right-color: transparent;
 }
 .fc-agendaDay-view .fc-head-container th .expert-each.all,
 .fc-agendaDay-view .fc-head-container th.fc-resource-cell .expert-each {
 	float: none;
 }
 .fc-agendaDay-view .fc-head-container .fc-row.fc-widget-header {
-	border-top: 1px solid #fff;
 }
+.fc-widget-header-custom {
+	min-height: 40px;
+}
+
+.fc-resource-header-container {
+	position: absolute;
+	left: 50px; right: 16px; top: 0;
+	background: #fc0; height: 40px;
+	z-index: 2; opacity: .1;
+}
+.fc-resource-header-table{
+	display: table;
+	width: 100%;
+}
+.fc-resource-header-row {
+	display: table-row;
+}
+.fc-resource-header-row > div {
+	display: table-cell;
+}
+
 .fc-agendaDay-view .fc-time-grid-container {
 }
 .fc-agendaDay-view .fc-time-grid .fc-bg table {
@@ -1636,7 +1664,7 @@
 .fc-agendaDay-view .fc-time-grid .fc-slats-clone {	
 	width: 50px; position: absolute; 
 	left: 0; top: 0; padding-top: 35px;
-	background: #f2f2f2; z-index: 4;
+	background: #ebebeb; z-index: 4;
 }
 .fc-agendaDay-view .fc-time-grid .fc-slats.create-order-overlap {
 	z-index: 4;
@@ -1644,7 +1672,7 @@
 
 .fc-agendaDay-view .fc-head-container .fc-axis {
 	width: 80px !important;
-	border: 0 !important;
+	border-right: 1px solid #bfbfbf;
 	padding: 0;
 }
 .fc-agendaDay-view .fc-time-grid .fc-axis {

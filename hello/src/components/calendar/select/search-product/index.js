@@ -101,7 +101,7 @@ class GenderFilterComponent extends React.Component {
 	}
 }
 
-class SearchProduct extends React.Component {
+class SearchService extends React.Component {
 	constructor (props) {
 		super (props);
 		this.state = {
@@ -197,10 +197,10 @@ GenderFilterComponent.propTypes = {
 	onChange: PropTypes.func.isRequired
 }
 
-SearchProduct.propTypes = {
+SearchService.propTypes = {
 	hint: PropTypes.string,
 	label: PropTypes.string,
 }
 
 
-module.exports = SearchProduct;
+module.exports = SearchService;

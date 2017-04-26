@@ -4,15 +4,15 @@ import moment from 'moment';
 import ApiException from '../api/error';
 
 /**/
-export function userCardEvent (options) {
+export function userCardSchedule (options) {
   return {
-    type : types.USER_CARD_EVENT,
+    type : types.USER_CARD_SCHEDULE,
     options
   };
 }
 export function userCardStaff (options) {
   return {
-    type : types.USER_CARD_EXPERT,
+    type : types.USER_CARD_STAFF,
     options
   };
 }
@@ -167,16 +167,16 @@ const fetchServices = (shop, state) => dispatch => {
 
 /**
  * whether call api request or not.
- * 
- * 1) state in reducer is undefined : call api 
+ *
+ * 1) state in reducer is undefined : call api
  * 2) state in reducer is not empty and is pending api call : do not call api
  * 3) state in reducer has data and data has schedule in given date : do not call api
  * 4) schedule has updated (not implemented) : call api
- * 
- * @param {Object} current state 
- * @param {string} shopID 
- * 
- * @return {boolean} 
+ *
+ * @param {Object} current state
+ * @param {string} shopID
+ *
+ * @return {boolean}
  */
 const shouldFetchSchedules = (state, shopID) => {
   const schedules = state.getSchedulesBySelectedShopID[shopID];
@@ -268,11 +268,11 @@ export const setCalendarEnd = end => (dispatch, getState) => {
 }
 
 export const ScheduleStatus = {
-  DONE : '00',
-  CREATED : '01',
-  REQUESTED :'02',
-  CONFIRMED :'03',
-  CHANGED : '04',
-  OFFTIME : '05',
-  CANCELED : '99',
+  DONE : '00',     //지난예약건
+  CREATED : '01', //지나지않은 예약건
+  REQUESTED :'02',//예약요청건
+  CONFIRMED :'03',//예약요청건 확인
+  CHANGED : '04',//예약수정건
+  OFFTIME : '05',//오프타임
+  CANCELED : '99',//예약취소건
 }
