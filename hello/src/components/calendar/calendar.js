@@ -400,6 +400,7 @@ class Calendar extends Component {
       // defaultStaff: function() { _.isEmpty(this.props.staffs) ? Staff[0] : this.props.staffs.data },
       defaultStaff: this.props.staffs[0],
       runUserCardSlide: function(t, calSchedule, jsEvent, view) { this.runUserCardSlide(t, calSchedule, jsEvent, view) },
+      createNewSchedule: (scheduleData) => this.props.createNewSchedule(scheduleData),
 
       getCreateOrderButtonFixed:    function(t) { return CreateOrderButtonFixed(t) },
       getCreateOrderButtonTimeline: function(t) { return CreateOrderButtonTimeline(t) },
@@ -491,6 +492,7 @@ const mapDispatchToProps = (dispatch) => {
     fetchSchedulesIfNeeded: shopID => (dispatch(actions.fetchSchedulesIfNeeded(shopID))),
     fetchStaffsIfNeeded: shopID => (dispatch(actions.fetchStaffsIfNeeded(shopID))),
     fetchServicesIfNeeded: shopID => (dispatch(actions.fetchServicesIfNeeded(shopID))),
+    createNewSchedule: scheduleData => (dispatch(actions.createNewSchedule(scheduleData))),
 
     setCalendarViewType: viewType => (dispatch(actions.setCalendarViewType(viewType))),
     setCalendarStart: start => (dispatch(actions.setCalendarStart(start))),
