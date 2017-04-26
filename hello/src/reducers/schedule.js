@@ -38,7 +38,7 @@ const schedules = (state = initialState, action) => {
         ...state,
         isFetching: false,
         didInvalidate: false,
-        schedules: action.schedules,
+        schedules: action.schedule,
         receivedAt: action.receivedAt
       }
     default:
@@ -66,7 +66,7 @@ export const createSchedule = (state = {}, action) => {
     case types.CREATING_SCHEDULE:
       return {
         ...state,
-        [action.shop]: schedules(state[action.shop], action)
+        newSchedule: schedules(state[action.shop], action)
       }
     default:
       return state;
