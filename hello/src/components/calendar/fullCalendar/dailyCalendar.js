@@ -511,95 +511,48 @@ class DailyCalendar extends Component {
             end: endTime
         };
 
-        // A _ 퀵생성 (우측하단 예약생성버튼)을 통해 offtime을 생성한 경우
-        if (component.state.isCreateOfftime) {
-            $('.fc-agendaWeekly-view .fc-content-skeleton').attr('style', '');
-            // 타임라인 예약생성 버튼 상위로 노드로 삽입
-            $('.full-calendar > .fc').append($('.create-order-wrap.timeline').hide());
+        component.props.createNewSchedule({
+            reservation_dt: moment(this.state.selectedDate).format('YYYY-MM-DD'),
+            start_time: moment(this.state.selectedDate).format('HH:mm'),
+            end_time: moment(this.state.selectedDate).add(defaultMinute, 'minute').format('HH:mm'),
+            status: actions.ScheduleStatus.OFFTIME,
+            staff_id: this.state.selectedStaff.id, 
+        });
+        
+        // B _ 타임라인 내에서 오프타임을 생성한 경우
+        // render event
+        $(Calendar).fullCalendar('renderEvent', insertOfftime, true); //stick?  true
+        $('#ID_' + insertOfftime.id).addClass('new-event');
+        $('.create-order-wrap.fixed').removeClass('hidden');
+        component.props.guider('OFF TIME이 생성되었습니다!');
 
-            if (this.state.viewTypeOrder === 'agendaDay') {
-                // daily 로 view를 변경한 후 오프타임 렌더링
-                $(Calendar).fullCalendar('gotoDate', moment(insertOfftime.start).format('YYYY-MM-DD'));
-                this.changeView('agendaDay', function() {
-                    // render event
-                    $(Calendar).fullCalendar('renderEvent', insertOfftime, true); //stick?  true
-                    component.autoScrollTimeline($('#ID_' + insertOfftime.id));
-                    //$('.fc-scroller.fc-time-grid-container').animate({scrollTop: $('#ID_'+ insertOfftime.id).css('top') }, 300);
-                });
-            } else {
-                $(Calendar).fullCalendar('renderEvent', insertOfftime, true); //stick?  true
-            }
-            $('#ID_' + insertOfftime.id).addClass('new-event');
-            $('.create-order-wrap.fixed').removeClass('hidden');
-            component.props.guider('OFF TIME이 생성되었습니다!');
-            // component.state.isAbleBindRemoveEvent 가 true일경우 ESC key등의 이벤트 발생시 삭제가 가능하도록 접근성 바인딩을 합니다
-            component.setState({
-                viewTypeOrder: undefined,
-                isCreateOfftime: false,
-                newScheduleServiceTime: undefined,
-                newScheduleId: insertOfftime.id,
-                isAbleBindRemoveEvent: true
-            }, () => {
-                // callback
-                // ESC key 입력시 신규생성한 event 삭제
-                $(document).bind('keydown', function(e) {
-                    if (e.which === 27 && !component.state.isModalConfirm) {
-                        if (component.state.isAbleBindRemoveEvent) {
-                            /// 생성버튼 캘린더 타임라인 노드에서 상위 노드로 삽입 (event remove 시 버튼의 부모 dom이 다시 그려지면서 버튼 dom도 사라지기떄문)
-                            $('.full-calendar > .fc').append($('.create-order-wrap.timeline').hide());
-                            $(Calendar).fullCalendar('removeEvents', [component.state.newScheduleId]);
-                            component.setState({isAbleBindRemoveEvent: false, newScheduleId: undefined});
-                            component.props.guider('OFF TIME이 삭제되었습니다!');
-                        }
-                        $(document).unbind('keydown');
-                    }
-                });
-                // 타 영역 클릭시, 신규생성한 off-time slot의 new evnet 클래스 시각적 제거 (접근성 바인딩)
-                $('body').one('click', function(e) {
-                    if (insertOfftime.id === component.state.newScheduleId) {
-                        $('#ID_' + insertOfftime.id).removeClass('new-event');
+        // component.state.isAbleBindRemoveEvent 가 true일경우 ESC key등의 이벤트 발생시 삭제가 가능하도록 접근성 바인딩을 합니다
+        component.setState({
+            newScheduleId: insertOfftime.id,
+            isAbleBindRemoveEvent: true
+        }, () => {
+            // callback
+            // ESC key 입력시 신규생성한 event 삭제
+            $(document).bind('keydown', function(e) {
+                if (e.which === 27 && !component.state.isModalConfirm) {
+                    if (component.state.isAbleBindRemoveEvent) {
+                        /// 생성버튼 캘린더 타임라인 노드에서 상위 노드로 삽입 (event remove 시 버튼의 부모 dom이 다시 그려지면서 버튼 dom도 사라지기떄문)
+                        $('.full-calendar > .fc').append($('.create-order-wrap.timeline').hide());
+                        $(Calendar).fullCalendar('removeEvents', [component.state.newScheduleId]);
                         component.setState({isAbleBindRemoveEvent: false, newScheduleId: undefined});
+                        component.props.guider('OFF TIME이 삭제되었습니다!');
                     }
-                });
+                    $(document).unbind('keydown');
+                }
             });
-
-            // B _ 타임라인 내에서 오프타임을 생성한 경우
-        } else {
-            //$(Calendar).fullCalendar('gotoDate', moment(insertOfftime.start).format('YYYY-MM-DD'));
-            // render event
-            $(Calendar).fullCalendar('renderEvent', insertOfftime, true); //stick?  true
-            $('#ID_' + insertOfftime.id).addClass('new-event');
-            $('.create-order-wrap.fixed').removeClass('hidden');
-            component.props.guider('OFF TIME이 생성되었습니다!');
-
-            // component.state.isAbleBindRemoveEvent 가 true일경우 ESC key등의 이벤트 발생시 삭제가 가능하도록 접근성 바인딩을 합니다
-            component.setState({
-                newScheduleId: insertOfftime.id,
-                isAbleBindRemoveEvent: true
-            }, () => {
-                // callback
-                // ESC key 입력시 신규생성한 event 삭제
-                $(document).bind('keydown', function(e) {
-                    if (e.which === 27 && !component.state.isModalConfirm) {
-                        if (component.state.isAbleBindRemoveEvent) {
-                            /// 생성버튼 캘린더 타임라인 노드에서 상위 노드로 삽입 (event remove 시 버튼의 부모 dom이 다시 그려지면서 버튼 dom도 사라지기떄문)
-                            $('.full-calendar > .fc').append($('.create-order-wrap.timeline').hide());
-                            $(Calendar).fullCalendar('removeEvents', [component.state.newScheduleId]);
-                            component.setState({isAbleBindRemoveEvent: false, newScheduleId: undefined});
-                            component.props.guider('OFF TIME이 삭제되었습니다!');
-                        }
-                        $(document).unbind('keydown');
-                    }
-                });
-                // 타 영역 클릭시, 신규생성한 off-time slot의 new evnet 클래스 시각적 제거 (접근성 바인딩)
-                $('body').one('click', function(e) {
-                    if (insertOfftime.id === component.state.newScheduleId) {
-                        $('#ID_' + insertOfftime.id).removeClass('new-event');
-                        component.setState({isAbleBindRemoveEvent: false, newScheduleId: undefined});
-                    }
-                });
+            // 타 영역 클릭시, 신규생성한 off-time slot의 new evnet 클래스 시각적 제거 (접근성 바인딩)
+            $('body').one('click', function(e) {
+                if (insertOfftime.id === component.state.newScheduleId) {
+                    $('#ID_' + insertOfftime.id).removeClass('new-event');
+                    component.setState({isAbleBindRemoveEvent: false, newScheduleId: undefined});
+                }
             });
-        }
+        });
     }
 
     // 예약 변경시 이벤트를 렌더링합니다 (실제 이벤트를 생성한 후 최종확인 버튼을통해 삭제할지 말지 결정합니다)
