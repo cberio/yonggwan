@@ -7,6 +7,7 @@ import * as Functions from '../../../js/common';
 import moment from 'moment';
 import update from 'react-addons-update';
 import 'fullcalendar-scheduler';
+import _ from 'lodash';
 
 class DailyCalendar extends Component {
     constructor(props) {
@@ -487,8 +488,6 @@ class DailyCalendar extends Component {
                     start: this.state.selectedDate,
                     end: endTime
                 });
-
-                console.log(insertOfftime);
                 /// 생성버튼 캘린더 타임라인 노드에서 상위 노드로 삽입
                 $('.full-calendar > .fc').append($('.create-order-wrap.timeline').hide());
                 $('.timeline .create-order-ui-wrap').hide();
@@ -496,33 +495,7 @@ class DailyCalendar extends Component {
                 break;
             // '주 단위' 에서 시작시간을 지정하지 않고 생성하는 경우
             case 'weekly':
-                this.setState({
-                    isCreateOfftime: true,
-                    newScheduleServiceTime: 20,
-                    // priorityStaff: this.state.defaultStaff,
-                    viewTypeOrder: 'agendaDay'
-                }, () => {
-                    this.changeView('agendaWeekly');
-                    offTime();
-                });
-                //call back
-                var offTime = function() {
-                    // esc 바인딩
-                    $(document).bind('keydown', function(e) {
-                        if (e.which === 27 && component.state.isCreateOfftime) {
-                            component.setState({
-                              isCreateOfftime: false,
-                              newScheduleServiceTime: undefined,
-                              newScheduleId: undefined,
-                              isAbleBindRemoveEvent: false
-                            });
-                            $('#render-confirm').hide();
-                            // show create order ui
-                            $('.create-order-wrap.fixed').removeClass('hidden');
-                            $(document).unbind('keydown');
-                        }
-                    });
-                };
+                this.changeView('agendaWeekly');
                 break;
             default:
                 break;
@@ -530,7 +503,7 @@ class DailyCalendar extends Component {
         // 타임라인 내 신규예약생성 버튼 클릭시 추가되었던 클래스가 남아있으면 다시 제거
         if ($('.create-order-overlap').length)
             $('.create-order-overlap').removeClass('create-order-overlap');
-        }
+    }
 
     // offtime 생성 2/2
     renderNewOfftime(insertOfftime) {
@@ -1213,9 +1186,9 @@ class DailyCalendar extends Component {
         $(Calendar).fullCalendar('refetchResources', _resources);
 
         this.setState({
-            defaultStaff: _resources[0],
+            defaultStaff: _resources ? _resources[0] : undefined,
             renderedStaff: _resources,
-            selectedStaff: _resources[0],
+            selectedStaff: _resources ? _resources[0] : undefined,
         });
     }
 
@@ -1269,7 +1242,7 @@ class DailyCalendar extends Component {
           </div>
         )
 
-        var StaffsInputEach = Staffs.map((staff, i) => {
+        var StaffsInputEach = !_.isEmpty(Staffs) ? Staffs.map((staff, i) => {
             return (
                 <div
                   className="expert-each checkbox"
@@ -1290,13 +1263,13 @@ class DailyCalendar extends Component {
                     </label>
                 </div>
             )
-        })
+        }) : () => (<div></div>)
 
         StaffsInterfaceComponent = (
             <div className="expert-wrap">
                 <div className="expert-ui expert-daily">
                     <div className="expert-inner">
-                        {Staffs.length >= 2 && StaffsInputAll}
+                        {Staffs && Staffs.length >= 2 && StaffsInputAll}
                         {StaffsInputEach}
                     </div>
                 </div>
