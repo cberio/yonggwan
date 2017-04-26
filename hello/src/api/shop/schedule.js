@@ -110,11 +110,11 @@ export default class Schedule {
      * 
      * @param {object} data 
      */
-    create(shopId, data) {
+    create(data) {
         return fetch(`${this.apiUrl}`, {
             method: this.method = 'POST',
-            headers: ApiUtils.HTTP_HEADER(this.token),
-            body: data,
+            headers: ApiUtils.HTTP_HEADER(this.token, ApiUtils.ContentType.json),
+            body: JSON.stringify(data),
         }).then(ApiUtils.parseJSON)
     }
 }
