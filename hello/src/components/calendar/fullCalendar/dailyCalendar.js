@@ -468,9 +468,6 @@ class DailyCalendar extends Component {
 
     // Offtime 스케쥴 생성 1/2 (바인딩단계)
     bindNewOfftime(order, type) {
-        let {Calendar} = this.refs;
-        let component = this;
-       
         switch (order) {
             // 타임라인 테이블 안에서 시작시간을 지정하여 생성하는 경우
             case 'timeline':
@@ -498,59 +495,57 @@ class DailyCalendar extends Component {
         let {Calendar} = this.refs;
         
         let defaultMinute = 20;
-        let endTime = this.state.selectedDate;
-            endTime = moment(endTime).add(defaultMinute, 'minute');
-            endTime = endTime.format("YYYY-MM-DDTHH:mm:ss");
-        let newScheduleId = this.props.returnNewID();
-        // event option
-        let insertOfftime = {
-            status: actions.ScheduleStatus.OFFTIME,
-            id: newScheduleId,
-            resourceId: this.state.selectedStaff.id,
-            start: this.state.selectedDate,
-            end: endTime
-        };
-
-        component.props.createNewSchedule({
+        let offTimeObject = {
             reservation_dt: moment(this.state.selectedDate).format('YYYY-MM-DD'),
             start_time: moment(this.state.selectedDate).format('HH:mm'),
             end_time: moment(this.state.selectedDate).add(defaultMinute, 'minute').format('HH:mm'),
             status: actions.ScheduleStatus.OFFTIME,
             staff_id: this.state.selectedStaff.id, 
-        });
-        
-        // B _ 타임라인 내에서 오프타임을 생성한 경우
-        // render event
-        $(Calendar).fullCalendar('renderEvent', insertOfftime, true); //stick?  true
-        $('#ID_' + insertOfftime.id).addClass('new-event');
-        $('.create-order-wrap.fixed').removeClass('hidden');
-        component.props.guider('OFF TIME이 생성되었습니다!');
+            start: moment(this.state.selectedDate),
+            end: moment(this.state.selectedDate).add(defaultMinute, 'minute'),
+            title: 'off-time',
+        }
 
-        // component.state.isAbleBindRemoveEvent 가 true일경우 ESC key등의 이벤트 발생시 삭제가 가능하도록 접근성 바인딩을 합니다
-        component.setState({
-            newScheduleId: insertOfftime.id,
-            isAbleBindRemoveEvent: true
-        }, () => {
-            // callback
-            // ESC key 입력시 신규생성한 event 삭제
-            $(document).bind('keydown', function(e) {
-                if (e.which === 27 && !component.state.isModalConfirm) {
-                    if (component.state.isAbleBindRemoveEvent) {
+        //api call 이전에 화면에 먼저 그리는건 왜 안되냐
+        //$(Calendar).fullCalendar('renderEvent', offTimeObject, true); //stick?  true
+
+        component.props.createNewSchedule(offTimeObject).then((createdOffTimeResult) => {
+            
+            // off-time 저장 후 반환된 데이터 (올바르게 생성되었는지 확인해야 함)
+            let createdSchedule = createdOffTimeResult.schedules.data;
+
+            // render event
+            $(Calendar).fullCalendar('renderEvent', createdSchedule, true); //stick?  true
+            $('#ID_' + createdSchedule.id).addClass('new-event');
+            $('.create-order-wrap.fixed').removeClass('hidden');
+            component.props.guider('OFF TIME이 생성되었습니다!');
+
+            // component.state.isAbleBindRemoveEvent 가 true일경우 ESC key등의 이벤트 발생시 삭제가 가능하도록 접근성 바인딩을 합니다
+            component.setState({
+                newScheduleId: createdSchedule.id,
+                isAbleBindRemoveEvent: true
+            }, () => {
+                // callback
+                // ESC key 입력시 신규생성한 event 삭제
+                $(document).bind('keydown', function(e) {
+                    if (e.which === 27 && !component.state.isModalConfirm) {
+                        
                         /// 생성버튼 캘린더 타임라인 노드에서 상위 노드로 삽입 (event remove 시 버튼의 부모 dom이 다시 그려지면서 버튼 dom도 사라지기떄문)
                         $('.full-calendar > .fc').append($('.create-order-wrap.timeline').hide());
                         $(Calendar).fullCalendar('removeEvents', [component.state.newScheduleId]);
                         component.setState({isAbleBindRemoveEvent: false, newScheduleId: undefined});
                         component.props.guider('OFF TIME이 삭제되었습니다!');
+                        
+                        $(document).unbind('keydown');
                     }
-                    $(document).unbind('keydown');
-                }
-            });
-            // 타 영역 클릭시, 신규생성한 off-time slot의 new evnet 클래스 시각적 제거 (접근성 바인딩)
-            $('body').one('click', function(e) {
-                if (insertOfftime.id === component.state.newScheduleId) {
-                    $('#ID_' + insertOfftime.id).removeClass('new-event');
-                    component.setState({isAbleBindRemoveEvent: false, newScheduleId: undefined});
-                }
+                });
+                // 타 영역 클릭시, 신규생성한 off-time slot의 new evnet 클래스 시각적 제거 (접근성 바인딩)
+                $('body').one('click', function(e) {
+                    if (createdSchedule.id === component.state.newScheduleId) {
+                        $('#ID_' + createdSchedule.id).removeClass('new-event');
+                        component.setState({isAbleBindRemoveEvent: false, newScheduleId: undefined});
+                    }
+                });
             });
         });
     }
@@ -844,8 +839,6 @@ class DailyCalendar extends Component {
      * @return {void}
      */
     colorizeEvent(event, domElement) {
-        console.info("@eventRender called");
-
         // 종료시간이 지난 이벤트
         if(this.props.services && event.service)
             $(domElement).addClass();
