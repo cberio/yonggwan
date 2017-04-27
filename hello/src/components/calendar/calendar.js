@@ -94,12 +94,14 @@ class Calendar extends Component {
   changeDate(date) {
     const { calendarConfig, selectedShopID } = this.props;
 
+    this.props.setCalendarCurrent(date);
+
     switch(calendarConfig.viewType) {
       case "agendaDay" :
         if(moment(date).isBefore(calendarConfig.start))
           this.props.setCalendarStart(date);
         if(moment(date).isAfter(calendarConfig.end))
-          this.props.setCalendarEnd(date);
+          this.props.setCalendarEnd(date.add('7', 'days'));
         break;
       case "agendaWeek":
         break;
@@ -497,6 +499,7 @@ const mapDispatchToProps = (dispatch) => {
     setCalendarViewType: viewType => (dispatch(actions.setCalendarViewType(viewType))),
     setCalendarStart: start => (dispatch(actions.setCalendarStart(start))),
     setCalendarEnd: end => (dispatch(actions.setCalendarEnd(end))),
+    setCalendarCurrent: current => (dispatch(actions.setCalendarCurrent(current))),
     // or simply do...
     // actions: bindActionCreators(acations, dispatch)
     // this will dispatch all action

@@ -139,12 +139,13 @@ export const createNewSchedule = scheduleData => (dispatch, getState) => {
     .schedules()
     .create(scheduleData)
     .then(json => {
-      if(json.success)
-        dispatch(scheduleCreated(scheduleData, json));
+      if(json.success){
+        dispatch(loading(false));
+        return dispatch(scheduleCreated(scheduleData, json));
+      }
       else
         new ApiException(json).showError();
-    })
-    .then(() => dispatch(loading(false)));
+    });
 }
 
 const fetchStaffs = (shop, state) => dispatch => {
@@ -180,14 +181,17 @@ const fetchServices = (shop, state) => dispatch => {
  */
 const shouldFetchSchedules = (state, shopID) => {
   const schedules = state.getSchedulesBySelectedShopID[shopID];
-  const selectedDate =  state.calendarConfig.start.format('YYYY-MM-DD');
+  const selectedDate = state.calendarConfig.current.format('YYYY-MM-DD');
 
   if(!schedules)
     return true;
 
   if(schedules.isFetching)
+    return false;  
+  
+  if(state.calendarConfig.current.isBetween(state.calendarConfig.start, state.calendarConfig.end))
     return false;
-
+  
   if(!schedules.schedules.data.find(schedule => schedule.reservation_dt === selectedDate))
     return true;
 
@@ -206,6 +210,18 @@ const shouldFetchStaffs = (state, shopID) => {
   return staffs.didInvalidate;
 }
 
+const shouldFetchServices = (state, shopID) => {
+  const services = state.getServicesBySelectedShopID[shopID];
+
+  if(!services)
+    return true;
+  
+  if(services.isFetching)
+    return false;
+  
+  return services.didInvalidate;
+}
+
 export const fetchSchedulesIfNeeded = shop => (dispatch, getState) => {
   if(shouldFetchSchedules(getState(), shop))
     return dispatch(fetchSchedules(shop, getState()));
@@ -217,7 +233,8 @@ export const fetchStaffsIfNeeded = shop => (dispatch, getState) => {
 }
 
 export const fetchServicesIfNeeded = shop => (dispatch, getState) => {
-  return dispatch(fetchServices(shop, getState()));
+  if(shouldFetchServices(getState(), shop))
+    return dispatch(fetchServices(shop, getState()));
 }
 
 //SHOP RELATED ACTIONS
@@ -233,6 +250,10 @@ export const invalidateShop = shop => ({
 });
 
 // FullCalendar RELATED ACTIONS
+const fullCalendarCurrent = current => ({
+  type: types.FULLCALENDAR_CURRENT,
+  current
+});
 
 const fullCalendarStart = start => ({
   type: types.FULLCALENDAR_START,
@@ -265,6 +286,10 @@ export const setCalendarStart = start => (dispatch, getState) => {
 
 export const setCalendarEnd = end => (dispatch, getState) => {
   return dispatch(fullCalendarEnd(end));
+}
+
+export const setCalendarCurrent = current => (dispatch, getState) => {
+  return dispatch(fullCalendarCurrent(current));
 }
 
 export const ScheduleStatus = {
