@@ -504,10 +504,12 @@ class DailyCalendar extends Component {
             start: moment(this.state.selectedDate),
             end: moment(this.state.selectedDate).add(defaultMinute, 'minute'),
             title: 'off-time',
+            resourceId: this.state.selectedStaff.id, 
         }
 
-        //api call 이전에 화면에 먼저 그리는건 왜 안되냐
-        //$(Calendar).fullCalendar('renderEvent', offTimeObject, true); //stick?  true
+        // FullCalendar에 먼저 이벤트를 그립니다.
+        // let temporarySchedule = $(Calendar).fullCalendar('renderEvent', offTimeObject);
+        // $('#ID_' + temporarySchedule._id).addClass('new-event');
 
         component.props.createNewSchedule(offTimeObject).then((createdOffTimeResult) => {
             
@@ -530,13 +532,15 @@ class DailyCalendar extends Component {
                 $(document).bind('keydown', function(e) {
                     if (e.which === 27 && !component.state.isModalConfirm) {
                         
-                        /// 생성버튼 캘린더 타임라인 노드에서 상위 노드로 삽입 (event remove 시 버튼의 부모 dom이 다시 그려지면서 버튼 dom도 사라지기떄문)
-                        $('.full-calendar > .fc').append($('.create-order-wrap.timeline').hide());
-                        $(Calendar).fullCalendar('removeEvents', [component.state.newScheduleId]);
-                        component.setState({isAbleBindRemoveEvent: false, newScheduleId: undefined});
-                        component.props.guider('OFF TIME이 삭제되었습니다!');
-                        
-                        $(document).unbind('keydown');
+                        if(component.state.isAbleBindRemoveEvent){
+                            /// 생성버튼 캘린더 타임라인 노드에서 상위 노드로 삽입 (event remove 시 버튼의 부모 dom이 다시 그려지면서 버튼 dom도 사라지기떄문)
+                            $('.full-calendar > .fc').append($('.create-order-wrap.timeline').hide());
+                            $(Calendar).fullCalendar('removeEvents', [component.state.newScheduleId]);
+                            component.setState({isAbleBindRemoveEvent: false, newScheduleId: undefined});
+                            component.props.guider('OFF TIME이 삭제되었습니다!');
+                            
+                            $(document).unbind('keydown');
+                        }
                     }
                 });
                 // 타 영역 클릭시, 신규생성한 off-time slot의 new evnet 클래스 시각적 제거 (접근성 바인딩)
