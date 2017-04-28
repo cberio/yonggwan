@@ -24,7 +24,7 @@ var guest = [
     id: 453123,
     shop_id: 1,
     user_id: null,
-    guest_class: 'NORMAL',
+    guest_class: 'NEW',
     guest_name: '홍길순',
     label: '홍길순',
     guest_mobile: '01099991234',
@@ -64,7 +64,7 @@ var guest = [
     id: 546755,
     shop_id: 1,
     user_id: null,
-    guest_class: 'NORMAL',
+    guest_class: 'NEW',
     guest_name: '박미순',
     label: '박미순',
     guest_mobile: '01092992472',
@@ -124,7 +124,7 @@ var guest = [
     id: 676442,
     shop_id: 1,
     user_id: null,
-    guest_class: 'NORMAL',
+    guest_class: 'NEW',
     guest_name: '사무혁',
     label: '사무혁',
     guest_mobile: '01010109992',
@@ -144,7 +144,7 @@ var guest = [
     id: 123456,
     shop_id: 1,
     user_id: null,
-    guest_class: 'NORMAL',
+    guest_class: 'NEW',
     guest_name: '황보관',
     label: '황보관',
     guest_mobile: '01000282947',
@@ -159,7 +159,27 @@ var guest = [
 
     kakao: 'agcd@co.kr',
     line: 'agcd@co.kr'
-  }
-];
+  },
+  {
 
+      id: 6,
+      shop_id: 1,
+      user_id: 666,
+      guest_class: '',
+      guest_name: '이건희',
+      label: '이건희',
+      guest_mobile: '01000013434',
+      guest_sex: 1,
+      residual_count: null,
+      residual_money: 0.00,
+      memo: '옆집 황가네식당 사장님',
+      picture: null,
+      is_activated: 1,
+      created_user_id: 455,
+      updated_user_id: 455,
+
+      kakao: 'a22222@co.kr',
+      line: 'fwe3532333421@co.kr'
+  }
+]
 export default guest;

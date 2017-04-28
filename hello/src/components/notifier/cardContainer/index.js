@@ -17,24 +17,24 @@ class CardContainer extends React.Component {
       if (condition) this.refs.button.focus();
     });
   }
-  getButtonText (CardType) {
-    switch (CardType) {
+  getButtonText (cardType) {
+    switch (cardType) {
       case '취소' : return '지우기';
       case '요청' : return '취소하기';
       case '변경' : return '지우기';
       default :     return '';
     }
   }
-  getButtonClass (CardType) {
-    switch (CardType) {
+  getButtonClass (cardType) {
+    switch (cardType) {
       case '취소' : return 'remove';
       case '요청' : return 'cancel';
       case '변경' : return 'remove';
       default :     return null;
     }
   }
-  getModalText (CardType) {
-    switch (CardType) {
+  getModalText (cardType) {
+    switch (cardType) {
       case '취소' : return '.....?';
       case '요청' : return '예약요청을 취소 하시겠습니까?';
       case '변경' : return '.....?';
@@ -44,13 +44,20 @@ class CardContainer extends React.Component {
   render () {
     return (
       <div className="card">
-        <Card CardType={this.props.CardType} event={this.props.event} />
+        <Card
+          cardType={this.props.cardType}
+          schedule={this.props.schedule}
+        />
         <div className="card-foot">
-          <button className={this.getButtonClass(this.props.CardType)} onClick={ () => this.toggleModal(true) }>{this.getButtonText(this.props.CardType)}</button>
+          <button
+            className={this.getButtonClass(this.props.cardType)}
+            onClick={ () => this.toggleModal(true) }>
+              {this.getButtonText(this.props.cardType)}
+          </button>
         </div>
         <div className="card-modal" style={{display: this.state.isModal ? 'block' : 'none'}}>
           <div className="modal-message">
-            <p>{this.getModalText(this.props.CardType)}</p>
+            <p>{this.getModalText(this.props.cardType)}</p>
           </div>
           <div className="modal-ui">
             <button onClick={ () => this.props.cardDistroy(this.props.index)} ref="button">확인</button>

@@ -8,7 +8,19 @@ import * as actions from '../../actions';
 class Header extends Component {
   constructor (props) {
     super (props);
+    this.state = {
+      isPopover: false
+    }
+    this.handleMouseToggle = this.handleMouseToggle.bind(this);
   }
+
+  // 샵관리 네비링크 팝오버 레이어 토글링
+  handleMouseToggle (condition) {
+    this.setState({
+      isPopover: condition
+    })
+  }
+
   render() {
     let picture = false;
     return (
@@ -19,7 +31,7 @@ class Header extends Component {
         <ul className="header-nav">
           {/* 2depth를 가지고있는 1depth li에는 has-submenu 클래스 추가*/}
           <li className="nav-reservation has-submenu">
-            <NavLink to="/reservation/daily" activeClassName={"active"}>예약현황</NavLink>
+            <NavLink to="/reservation/daily" activeClassName={"active"}>예약</NavLink>
               <ul className="header-nav-sub">
                 <li className="nav-daily"><NavLink to="/reservation/daily" activeClassName={"active"}>DAILY</NavLink></li>
                 <li className="nav-overview"><NavLink to="/reservation/weekly" activeClassName={"active"}>WEEKLY</NavLink></li>
@@ -31,16 +43,23 @@ class Header extends Component {
         <div className="nav-notifier-wrap">
           <div className="nav-notifier">
             <button className={`button${this.props.isNotifier? ' active' : ''}`} onClick={ () => this.props.toggleNotifier(!this.props.isNotifier) }>
-              <i>미리알림</i>
+              <i>알림</i>
               <span className="state">7</span>
             </button>
           </div>
         </div>
         <div className="link-profile">
-          <NavLink to="/">
+          <NavLink
+            to="/"
+            onMouseOver={ e => this.handleMouseToggle(true) }
+            onMouseLeave={ e => this.handleMouseToggle(false) }
+            onFocus={ e => this.handleMouseToggle(true) }
+            onBlur={ e => this.handleMouseToggle(false) }
+          >
             Profile
             <img src={picture ? picture : Images.IMG_no_picture} alt="" />
           </NavLink>
+          {this.state.isPopover && <div className="link-profile-popover">샵관리</div>}
         </div>
       </header>
     );

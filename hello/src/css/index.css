@@ -9,12 +9,27 @@ body {overflow: hidden;}
 #root #wrapper-outer {width: 100%;height: 100%;display: table; table-layout: fixed;}
 #root #wrapper-outer #wrapper {display: table-row;}
 
-#header {min-width: 68px; width: 80px;background-color: #000;color: #FFF;z-index: 2;display: table-cell;position: relative;vertical-align: top;}
-#header .header-brand-logo a{height: 90px;text-indent: -9999px;display: block;overflow: hidden;background: url(../image/common/brand-logo.png) center 33px no-repeat;}
+#header {
+  min-width: 68px; width: 80px;background-color: #000;color: #FFF;
+  z-index: 2;display: table-cell;position: relative;vertical-align: top;
+}
+#header .header-brand-logo a{
+  height: 90px;text-indent: -9999px;display: block;overflow: hidden;
+  background: url(../image/common/brand-logo.png) center 33px no-repeat;
+}
 
 #header .header-nav{margin-bottom: 90px;}
-#header .header-nav > li > a{text-indent: -9999px;height: 58px;line-height: 58px;color: #fff;display: block;overflow: hidden;background-repeat: no-repeat;background-position: center center;position: relative;}
-
+#header .header-nav > li.has-submenu:hover {
+  background-color: #1a1a1a;
+}
+#header .header-nav > li > a{
+  font-size: 11px; height: 72px;line-height: 105px;color: rgba(255,255,255, .35);text-align: center;
+  display: block;overflow: hidden;background-repeat: no-repeat;
+  background-position: center 18px;position: relative;
+}
+#header .header-nav > li > a:focus,
+#header .header-nav > li > a:hover,
+#header .header-nav > li > a.active {color: #fff;}
 #header .header-nav > li:not(.has-submenu) > a.active{background-color: #333;}
 #header .header-nav > li.nav-reservation > a{background-image: url(../image/common/nav-daily.png);}
 #header .header-nav > li.nav-customer > a{background-image: url(../image/common/nav-customer.png);}
@@ -38,8 +53,13 @@ body {overflow: hidden;}
 #header .header-nav-sub li button {border: 0; background: none; text-shadow: none;  box-shadow: none;position: absolute;left: 0;right: 0;top: 0;bottom: 0;}
 #header .header-nav-sub li a,
 #header .header-nav-sub li button{
-  line-height: 22px;font-size: 11px;font-family: 'notokr-bold'; letter-spacing: -0.2px;color: rgba(255,255,255, .3);display: block;height: 22px;
-  border-radius: 12px;background-color: #202020;width: 72%;margin: 0 14%;
+  line-height: 22px;font-size: 11px;font-family: 'notokr-bold'; letter-spacing: -0.2px;
+  color: rgba(255,255,255, .3);display: block;height: 22px;
+  border-radius: 12px;width: 72%;margin: 0 14%; 
+}
+#header .header-nav-sub a.active,
+#header .header-nav-sub button.active{
+  background-color: #202020;
 }
 #header .header-nav-sub li a:hover,
 #header .header-nav-sub li button:hover,
@@ -58,18 +78,26 @@ body {overflow: hidden;}
 	width: 36px;margin: 0 auto;border: 1px solid #000;position: relative;
 }
 #header .nav-notifier .button{
-	display: block;width: 100%;overflow: hidden;padding: 0 1px;height: 34px;
+	display: block;width: 100%;overflow: hidden;padding: 0 1px;height: 54px;
 	background-image: url(../image/common/nav-notifier.png); background-repeat: no-repeat; background-position: 0 0;
 }
 #header .nav-notifier .button:hover,
 #header .nav-notifier .button:focus  {
-	background-position: 0 -34px;
+	background-position: -34px 0;
 }
 #header .nav-notifier .button.active {
-	background-position: 0 -68px !important;
+	background-position: -68px 0 !important;
 }
 #header .nav-notifier .button i {
-	text-indent: -9999px;color: transparent;overflow: hidden;display: block;
+  color: rgba(255,255,255, .35);
+  font-style: normal;
+  line-height: 92px;
+	display: block;
+}
+#header .nav-notifier .button:hover i,
+#header .nav-notifier .button:focus i,
+#header .nav-notifier .button.active i{
+  color: #fff;
 }
 #header .nav-notifier .button .state{
 	font-size: 12px;height: 18px;line-height: 18px;color: #fff;font-family: 'notokr-bold';
@@ -77,10 +105,27 @@ body {overflow: hidden;}
 	padding: 0 5px;background-color: #e60b25;display: block;letter-spacing: -0.3px;
 }
 
-#header .link-profile {position: absolute;left: 0;right: 0;bottom: 0;border-top: 1px solid #333333;background-color: #000;}
-#header .link-profile a{display: block;width: 44px;height: 44px;border-radius: 50%;overflow: hidden;margin: 18px auto;text-indent: -9999px;font-size: 0;}
+#header .link-profile {position: absolute;left: 0;right: 0;bottom: 0; background-color: #000;}
+#header .link-profile a{display: block;width: 44px;height: 44px;overflow: hidden;margin: 18px auto;text-indent: -9999px;font-size: 0;}
 #header .link-profile a img{display: block;width: 100%;height: 100%;}
-
+#header .link-profile-popover {
+  font-size: 12px; position: absolute; right: -67%; top: 50%; margin-top: -11px;background-color: #474747;
+  color: #dedede; height: 23px; line-height: 23px; padding: 0 5px 0 0; 
+  border-radius: 0 3px 3px 0;
+}
+#header .link-profile-popover:after {
+  width: 0;
+  height: 0;
+  display: block;
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  margin-left: -14px;
+  border-top: 11px solid transparent;
+  border-bottom: 12px solid transparent;
+  border-right: 14px solid #474747;
+}
 #container {height: 100%;display: table-cell;}
 
 /* 투명 마스크 (접근성 클릭관련 레이어)*/
@@ -111,7 +156,7 @@ body {overflow: hidden;}
 .loading-mask .loading-progressbar {
   text-align: center;color: #FFF;font-size: 20px;
   position: absolute; top: 50%; left: 50%;
-  width: 50px;height: 50px;margin: -25px 0 0 -25px;    
+  width: 50px;height: 50px;margin: -25px 0 0 -25px;
 }
 
 
@@ -285,7 +330,7 @@ body {overflow: hidden;}
   /* 미리알림 활성화시 mask 포지션*/
   .opened-notifier .modal-mask {
     left: 426px;
-  }  
+  }
 }
 /* // 데스크톱 END */
 
@@ -294,7 +339,7 @@ body {overflow: hidden;}
   /* 미리알림 활성화시 mask 포지션*/
   .opened-notifier .modal-mask {
     left: 320px;
-  }  
+  }
 }
 
 
@@ -304,7 +349,7 @@ body {overflow: hidden;}
 	#header .header-nav{
     margin-bottom: 20px;
   }
-  
+
 }
 
 @media screen and (min-height: 1024px) {
@@ -314,4 +359,3 @@ body {overflow: hidden;}
   }
 
 }
-

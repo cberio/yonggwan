@@ -4965,7 +4965,7 @@ Grid.mixin({
 
 
 	// Generic utility for generating the HTML classNames for an event segment's element
-	getSegClasses: function(seg, isDraggable, isResizable) {
+	getSegClasses: function(seg, isDraggable, isResizable, thisService, shopServices, scheduleStatus, isBefore, isShort) {
 		var view = this.view;
 		var classes = [
 			'fc-event',
@@ -4979,14 +4979,29 @@ Grid.mixin({
 		if (isResizable) {
 			classes.push('fc-resizable');
 		}
-		// 수정 evnet.type 클래스로 반환 (예약요청 카드 해당)
-		if (seg.event.type === 'request') {
-			classes.push('fc-request');
-		}
-
 		// event is currently selected? attach a className.
 		if (view.isEventSelected(seg.event)) {
 			classes.push('fc-selected');
+		}
+
+		// 이하 수정: 추가 클래스
+		if (seg.event.status == scheduleStatus.REQUESTED) {
+			classes.push('fc-request');
+		}
+		// 오프타임
+		if (seg.event.status == scheduleStatus.OFFTIME) {
+			classes.push('off-time');
+		}
+		// service color
+		if (thisService) {
+			classes.push(thisService.color);
+		}
+		// 지난 예약건
+		if (isBefore) {
+			classes.push('disabled');
+		}
+		if (isShort) {
+			classes.push('fc-short');
 		}
 
 		return classes;
@@ -5607,21 +5622,14 @@ var DayTableMixin = FC.DayTableMixin = {
 	renderHeadHtml: function() {
 		var view = this.view;
 
-		if (view.name === 'agendaDay') {
-				return '<div class="fc-row fc-widget-hedaer fc-widget-header-custom"></div>'; // <-해당 element에 Staff Ui를 inserting
-		} else {
-			/****
-			***** 아래가 view 상관없이 원래 반환하던 소스 ****
-			*****/
-			return '' +
-				'<div class="fc-row ' + view.widgetHeaderClass + '">' +
-					'<table>' +
-						'<thead>' +
-							this.renderHeadTrHtml() +
-						'</thead>' +
-					'</table>' +
-				'</div>';
-		}
+		return '' +
+			'<div class="fc-row ' + view.widgetHeaderClass + '">' +
+				'<table>' +
+					'<thead>' +
+						this.renderHeadTrHtml() +
+					'</thead>' +
+				'</table>' +
+			'</div>';
 	},
 
 
@@ -7786,10 +7794,33 @@ TimeGrid.mixin({
 		var view = this.view;
 		var event = seg.event;
 		var eventId = event.id;
+
+		// 수정: 추가 guest class
+		var shopGuestClass = this.view.opt('guestClass');
+		var guestClass = event.guest_class ? shopGuestClass[event.guest_class] : '';
+		// 수정: 추가 schedule status
+		var scheduleStatus = this.view.opt('scheduleStatus');
+		// 수정: Shop 서비스 object
+		var shopServices = this.view.opt('shopServices');
+		var getService = function (serviceID) {
+			if (shopServices) {
+				return shopServices.find(function(service){
+					return service.id == serviceID;
+				});
+			} else {
+				return '';
+			}
+		}
+		var thisService = getService(event.shop_service_id);
+		// 수정: 지난시간 스케쥴
+		var isBefore =  event.status == scheduleStatus.DONE || moment(event.end.format('YYYY-MM-DD HH:mm:ss')).isBefore(moment(), 'minute');
+		// 수정: 20분 이하의 스케쥴
+		var isShort = moment.duration(event.end.diff(event.start), 'milliseconds').asMinutes() <= 20;
+
 		var isDraggable = view.isEventDraggable(event);
 		var isResizableFromStart = !disableResizing && seg.isStart && view.isEventResizableFromStart(event);
 		var isResizableFromEnd = !disableResizing && seg.isEnd && view.isEventResizableFromEnd(event);
-		var classes = this.getSegClasses(seg, isDraggable, isResizableFromStart || isResizableFromEnd);
+		var classes = this.getSegClasses(seg, isDraggable, isResizableFromStart || isResizableFromEnd, thisService, shopServices, scheduleStatus, isBefore, isShort);
 		var skinCss = cssToStr(this.getSegSkinCss(seg));
 
 		// *** 수정 : (추가) 1. event.color로 입력받은 text 를 클래스로 반환
@@ -7805,22 +7836,7 @@ TimeGrid.mixin({
 		var duration = moment.duration(seg.end.diff(seg.start), 'milliseconds');
 		var fromMinutes = Math.floor(duration.asMinutes());
 
-		// 수정: Shop 서비스 object
-		var shopServices = this.view.opt('shopServices');
-		var getService = function (serviceID) {
-			if (shopServices) return shopServices.find(function(service){
-					return service.id == serviceID;
-			});
-		}
-		var thisService = getService(event.shop_service_id);
-
-		// shop service color를 추가함. ( offtime || color )
-		var serviceColor = event.status == '05'
-			? 'off-time'
-			: thisService
-				? thisService.color
-				: '';
-		classes.unshift('fc-time-grid-event', 'fc-v-event', serviceColor);
+		classes.unshift('fc-time-grid-event', 'fc-v-event');
 
 		if (view.isMultiDayEvent(event)) { // if the event appears to span more than one day...
 			// Don't display time text on segments that run entirely through a day.
@@ -7852,7 +7868,7 @@ TimeGrid.mixin({
 				' style="' + skinCss + '"' :
 				''
 				) +
-			'>' + // *수정*  이하 slot display 추가 컨텐츠
+			'>' + // 수정: 이하 slot display 추가 컨텐츠
 				'<div class="fc-time-helper"><span>' +
 					event.start.locale('en').format('a hh:mm') + ' - ' +
 					event.end.locale('en').format('a hh:mm') +
@@ -7863,7 +7879,7 @@ TimeGrid.mixin({
 				+
 					(
 						// OFF TIME 일 경우 컨텐츠
-						event.status == '05' ? (
+						event.status == scheduleStatus.OFFTIME ? (
 								'<div class="fc-product">OFF TIME</div>' +
 							(seg.isStart && seg.isEnd ?
 								'<div class="fc-service-time">'+ this.millisecondsToTime(seg.end.diff(seg.start)) +'</div>' : ''
@@ -7881,8 +7897,8 @@ TimeGrid.mixin({
 								'<button class="fc-ui-edit">수정</button>' +
 							'</div>'
 						) : (
-							// OFF TIME이 아닌 일반 예약인 경우 컨텐츠
-							(event.status === '02'?
+							// OFF TIME이 아닌 경우 컨텐츠
+							(event.status == scheduleStatus.REQUESTED ?
 								'<div class="fc-type-icon">예약요청</div>' :
 								''
 							) +
@@ -7893,7 +7909,6 @@ TimeGrid.mixin({
 									htmlEscape(thisService.name).slice(0, 15) + '...' :
 									htmlEscape(thisService.name)
 								) +
-
 								'</div>' :
 								''
 							) +
@@ -7912,13 +7927,13 @@ TimeGrid.mixin({
 							'<div class="fc-user">' +
 								'<div class="fc-picture">' +
 									'<span class="picture">' + (event.picture ? '<img src="'+ event.picture + '" alt="'+ event.guest_name +'" />': '') + '</span>' +
-									(event.guest_class ? '<span class="rating '+ event.guest_class.toUpperCase() +'">'+ event.guest_class.toUpperCase() +'</span>' : '' ) +
+									(guestClass ? '<span class="rating '+ guestClass +'">'+ guestClass +'</span>' : '' ) +
 								'</div>' +
 								'<span class="fc-name">' + (event.guest_name ? event.guest_name : '이름없음') + '</span>'	+
 							'</div>'
 							+
-							(event.comment ?
-								'<p class="fc-comment">' + event.comment + '</p>' :
+							(event.guest_memo ?
+								'<p class="fc-comment">' + event.guest_memo + '</p>' :
 								'<p class="fc-comment">메모가 없습니다.</p>'
 							) +
 							'<div class="fc-ui">'+
@@ -8466,7 +8481,8 @@ var View = FC.View = Class.extend(EmitterMixin, ListenerMixin, {
 				end: this.calendar.applyTimezone(this.intervalEnd)
 			},
 			this.opt('titleFormat') || this.computeTitleFormat(),
-			this.opt('titleRangeSeparator')
+			//this.opt('titleRangeSeparator')
+			this.opt('titleRangeSeparatorCustom')
 		);
 	},
 
@@ -10088,7 +10104,8 @@ function Toolbar(calendar, toolbarOptions) {
 	// 수정: date, day 의 tag 분리
 	function updateTitle(text) {
 		if (el) {
-			el.find('h2 span.date').text(text);
+			el.find('h2 span.date').text(text.replace('-', '~'));
+			// durl
 			el.find('h2 span.weekDay').text(moment(text, 'YYYY. M. DD').locale('ko').format('dddd'));
 		}
 	}
@@ -11299,7 +11316,10 @@ Calendar.mixin({
 
 Calendar.defaults = {
 
-	titleRangeSeparator: ' \u2013 ', // en dash
+	// ***** 수정: 커스텀 옵션 (대시 에서 물결로 대체){
+	//titleRangeSeparator: ' \u2013 ', // en dash (-)
+	titleRangeSeparatorCustom: ' \u007E ', // en tilde (~)
+	// ***** }
 	monthYearFormat: 'MMMM YYYY', // required for en. other locales rely on datepicker computable option
 
 	defaultTimedEventDuration: '02:00:00',
@@ -13601,12 +13621,10 @@ var AgendaView = FC.AgendaView = View.extend({
 		// 수정 : 추가 엘리먼트 {
 		var timeGridHeadEl = '' +
 				'<div class="fc-resource-header-container">' +
-						'<div class="fc-resource-header-table">' +
-								'<div class="fc-resource-header-row">' +
-								'</div>' +
+						'<div class="fc-resource-header">' +
 							'</div>' +
 				'</div>';
-				timeGridHeadEl = $(timeGridHeadEl).appendTo(timeGridWrapEl);
+		$('.fc-widget-content').append(timeGridHeadEl);
 		// }
 		var timeGridEl = $('<div class="fc-time-grid" />').appendTo(timeGridWrapEl);
 

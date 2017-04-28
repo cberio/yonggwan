@@ -36,7 +36,7 @@ var histories = [
       guest_id : 1, //integer|예약자 고유 id
       user_id : 123, //integer|예약자 user id
       guest_name : '홍고객', //max 100|고객이름
-      guest_class : 'NORMAL', //max 10|고객등급
+      guest_class : '', //max 10|고객등급
       guest_mobile : '01012345678', // 고객휴대번호
       service_code : 'B', //max 10|상품코드
       shop_service_id : 2, //integer|서비스 고유 id

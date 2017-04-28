@@ -13,7 +13,7 @@ class AsyncComponents extends Component {
   render () {
     const CardModalComponent = (
       <CardModal
-        CardType="변경"
+        cardType="변경"
         event={{
           "id": "1111",
           "resourceId": "B",

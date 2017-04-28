@@ -19,21 +19,32 @@ class Card extends React.Component {
   }
   requestReservation (schedule) {
     // 현재 페이지가 예약 페이지가 아닌경우 예약페이지로 이동에 대한 방안이 필요함
-    if (location.pathname.indexOf('reservation') < 0) location.pathname = '/reservation/overview'; //임시
+    if (location.pathname.indexOf('reservation') < 0) location.pathname = '/reservation/weekly'; //임시
     // 예약 페이지로 전환 후, 렌더링시 바로 예약요청카드가 보여지도록 세팅함
     this.props.showRequestReservation(schedule);
   }
   render () {
-    const { id, resourceId, guest_class, className, service_code, name,
-            phone, start, end, picture, guest_memo, staff_memo,
-            kakao, line, history
-          } = this.props.schedules;
+    console.log(this.props.schedule)
+    const { id,
+            resourceId,
+            guest_class,
+            shop_service_id,
+            guest_name,
+            guest_mobile,
+            start,
+            end,
+            picture,
+            guest_memo,
+            staff_memo,
+            kakao,
+            line
+          } = this.props.schedule;
     const content = (
       <div className="card-content">
         <div className="service clearfix">
           <div className="lt">
-            <span className={`product ${Functions.getService(service_code, Services).color}`}>{Functions.getService(service_code, Services).name}</span>
-            {this.props.CardType === '변경' ? <span className="time last">00.00(목)00:00~00:00</span> : null}
+            <span className={`product ${Functions.getService(shop_service_id, Services).color}`}>{Functions.getService(shop_service_id, Services).name}</span>
+            {this.props.cardType === '변경' ? <span className="time last">00.00(목)00:00~00:00</span> : null}
             <span className="time">
               <span>{moment(start).locale('ko').format('MM.DD(ddd)hh:mm') +"~"+ moment(end).format('hh:mm')}</span>
               <span className="expert">{this.getExpertName(resourceId)}</span>
@@ -49,10 +60,10 @@ class Card extends React.Component {
               <div className="picture">
                 {picture && <img src={picture} alt={name} width="32" height="32" />}
               </div>
-              {guest_class && guest_class.toUpperCase() !=='NORMAL' && <i className={`rating-bullet ${guest_class.toUpperCase()}`}>{guest_class}</i>}
+              {guest_class && <i className={`rating-bullet ${guest_class}`}>{guest_class}</i>}
             </div>
             <span className="name">{name}</span>
-            {guest_class && guest_class.toUpperCase() !=='NORMAL' && <span className={`rating ${guest_class.toUpperCase()}`}>{guest_class}</span>}
+            {guest_class && <span className={`rating ${guest_class}`}>{guest_class}</span>}
           </div>
           <p className="comment">
             {guest_memo}
@@ -61,7 +72,7 @@ class Card extends React.Component {
       </div>
     )
     return (
-      this.props.CardType === '요청' ? (
+      this.props.cardType === '요청' ? (
         <button onClick={ () => this.requestReservation(this.props.schedule) } className="link">{content}</button>
       ): content
     );
