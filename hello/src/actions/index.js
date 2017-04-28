@@ -1,6 +1,7 @@
 import * as types from './actionType';
 import Shop from '../api/shop/shop';
 import moment from 'moment';
+import ApiException from '../api/error';
 
 /**/
 export function userCardSchedule (options) {
@@ -81,6 +82,17 @@ export const receiveSchedules = (shop, json) => ({
   receivedAt: Date.now()
 });
 
+export const creatingSchedule = (scheduleData) => ({
+  type: types.CREATING_SCHEDULE,
+  schedules: scheduleData,
+})
+
+export const scheduleCreated = (scheduleData, json) => ({
+  type: types.SCHEDULE_CREATED,
+  schedules: json,
+  receivedAt: Date.now(),
+})
+
 export const requestStaffs = shop =>({
   type: types.REQUEST_STAFF,
   shop
@@ -119,6 +131,23 @@ const fetchSchedules = (shop, state) => dispatch => {
     });
 }
 
+export const createNewSchedule = scheduleData => (dispatch, getState) => {
+  dispatch(creatingSchedule(scheduleData));
+  dispatch(loading(true));
+
+  return new Shop({shopId: getState().selectedShopID})
+    .schedules()
+    .create(scheduleData)
+    .then(json => {
+      if(json.success){
+        dispatch(loading(false));
+        return dispatch(scheduleCreated(scheduleData, json));
+      }
+      else
+        new ApiException(json).showError();
+    });
+}
+
 const fetchStaffs = (shop, state) => dispatch => {
   dispatch(requestStaffs(shop));
 
@@ -152,14 +181,17 @@ const fetchServices = (shop, state) => dispatch => {
  */
 const shouldFetchSchedules = (state, shopID) => {
   const schedules = state.getSchedulesBySelectedShopID[shopID];
-  const selectedDate =  state.calendarConfig.start.format('YYYY-MM-DD');
+  const selectedDate = state.calendarConfig.current.format('YYYY-MM-DD');
 
   if(!schedules)
     return true;
 
   if(schedules.isFetching)
+    return false;  
+  
+  if(state.calendarConfig.current.isBetween(state.calendarConfig.start, state.calendarConfig.end))
     return false;
-
+  
   if(!schedules.schedules.data.find(schedule => schedule.reservation_dt === selectedDate))
     return true;
 
@@ -178,6 +210,18 @@ const shouldFetchStaffs = (state, shopID) => {
   return staffs.didInvalidate;
 }
 
+const shouldFetchServices = (state, shopID) => {
+  const services = state.getServicesBySelectedShopID[shopID];
+
+  if(!services)
+    return true;
+  
+  if(services.isFetching)
+    return false;
+  
+  return services.didInvalidate;
+}
+
 export const fetchSchedulesIfNeeded = shop => (dispatch, getState) => {
   if(shouldFetchSchedules(getState(), shop))
     return dispatch(fetchSchedules(shop, getState()));
@@ -189,7 +233,8 @@ export const fetchStaffsIfNeeded = shop => (dispatch, getState) => {
 }
 
 export const fetchServicesIfNeeded = shop => (dispatch, getState) => {
-  return dispatch(fetchServices(shop, getState()));
+  if(shouldFetchServices(getState(), shop))
+    return dispatch(fetchServices(shop, getState()));
 }
 
 //SHOP RELATED ACTIONS
@@ -205,6 +250,10 @@ export const invalidateShop = shop => ({
 });
 
 // FullCalendar RELATED ACTIONS
+const fullCalendarCurrent = current => ({
+  type: types.FULLCALENDAR_CURRENT,
+  current
+});
 
 const fullCalendarStart = start => ({
   type: types.FULLCALENDAR_START,
@@ -237,6 +286,10 @@ export const setCalendarStart = start => (dispatch, getState) => {
 
 export const setCalendarEnd = end => (dispatch, getState) => {
   return dispatch(fullCalendarEnd(end));
+}
+
+export const setCalendarCurrent = current => (dispatch, getState) => {
+  return dispatch(fullCalendarCurrent(current));
 }
 
 export const ScheduleStatus = {

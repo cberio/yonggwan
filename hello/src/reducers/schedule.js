@@ -27,6 +27,20 @@ const schedules = (state = initialState, action) => {
         schedules: action.schedules,
         receivedAt: action.receivedAt
       }
+    case types.CREATING_SCHEDULE:
+      return {
+        ...state,
+        isFetching: true,
+        didInvalidate: false,
+      }
+    case types.SCHEDULE_CREATED:
+      return {
+        ...state,
+        isFetching: false,
+        didInvalidate: false,
+        schedules: action.schedule,
+        receivedAt: action.receivedAt
+      }
     default:
       return state;
   }
@@ -40,6 +54,19 @@ export const getSchedulesBySelectedShopID = (state = {}, action) => {
       return {
         ...state,
         [action.shop]: schedules(state[action.shop], action)
+      }
+    default:
+      return state;
+  }
+}
+
+export const createSchedule = (state = {}, action) => {
+  switch(action.type){
+    case types.SCHEDULE_CREATED:
+    case types.CREATING_SCHEDULE:
+      return {
+        ...state,
+        newSchedule: schedules(state[action.shop], action)
       }
     default:
       return state;

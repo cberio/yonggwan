@@ -7,6 +7,7 @@ import * as Functions from '../../../js/common';
 import moment from 'moment';
 import update from 'react-addons-update';
 import 'fullcalendar-scheduler';
+import _ from 'lodash';
 
 class DailyCalendar extends Component {
     constructor(props) {
@@ -512,62 +513,18 @@ class DailyCalendar extends Component {
 
     // Offtime 스케쥴 생성 1/2 (바인딩단계)
     bindNewOfftime(order, type) {
-        let {Calendar} = this.refs;
-        let component = this;
-        let defaultMinute = 20;
-        let endTime = this.state.selectedDate;
-            endTime = moment(endTime).add(defaultMinute, 'minute');
-            endTime = endTime.format("YYYY-MM-DDTHH:mm:ss");
-        let newScheduleId = this.props.returnNewID();
-        // event option
-        let insertOfftime = {
-            status: actions.ScheduleStatus.OFFTIME,
-            id: newScheduleId
-        };
         switch (order) {
             // 타임라인 테이블 안에서 시작시간을 지정하여 생성하는 경우
             case 'timeline':
-                insertOfftime = $.extend(insertOfftime, {
-                    resourceId: this.state.selectedStaff.id,
-                    start: this.state.selectedDate,
-                    end: endTime
-                });
-
-                console.log(insertOfftime);
                 /// 생성버튼 캘린더 타임라인 노드에서 상위 노드로 삽입
                 $('.full-calendar > .fc').append($('.create-order-wrap.timeline').hide());
                 $('.timeline .create-order-ui-wrap').hide();
-                this.renderNewOfftime(insertOfftime);
+                
+                this.renderNewOfftime();
                 break;
             // '주 단위' 에서 시작시간을 지정하지 않고 생성하는 경우
             case 'weekly':
-                this.setState({
-                    isCreateOfftime: true,
-                    newScheduleServiceTime: 20,
-                    // priorityStaff: this.state.defaultStaff,
-                    viewTypeOrder: 'agendaDay'
-                }, () => {
-                    this.changeView('agendaWeekly');
-                    offTime();
-                });
-                //call back
-                var offTime = function() {
-                    // esc 바인딩
-                    $(document).bind('keydown', function(e) {
-                        if (e.which === 27 && component.state.isCreateOfftime) {
-                            component.setState({
-                              isCreateOfftime: false,
-                              newScheduleServiceTime: undefined,
-                              newScheduleId: undefined,
-                              isAbleBindRemoveEvent: false
-                            });
-                            $('#render-confirm').hide();
-                            // show create order ui
-                            $('.create-order-wrap.fixed').removeClass('hidden');
-                            $(document).unbind('keydown');
-                        }
-                    });
-                };
+                this.changeView('agendaWeekly');
                 break;
             default:
                 break;
@@ -575,102 +532,71 @@ class DailyCalendar extends Component {
         // 타임라인 내 신규예약생성 버튼 클릭시 추가되었던 클래스가 남아있으면 다시 제거
         if ($('.create-order-overlap').length)
             $('.create-order-overlap').removeClass('create-order-overlap');
-        }
+    }
 
     // offtime 생성 2/2
-    renderNewOfftime(insertOfftime) {
+    renderNewOfftime() {
         let component = this;
         let {Calendar} = this.refs;
-
-        // A _ 퀵생성 (우측하단 예약생성버튼)을 통해 offtime을 생성한 경우
-        if (component.state.isCreateOfftime) {
-            $('.fc-agendaWeekly-view .fc-content-skeleton').attr('style', '');
-            // 타임라인 예약생성 버튼 상위로 노드로 삽입
-            $('.full-calendar > .fc').append($('.create-order-wrap.timeline').hide());
-
-            if (this.state.viewTypeOrder === 'agendaDay') {
-                // daily 로 view를 변경한 후 오프타임 렌더링
-                $(Calendar).fullCalendar('gotoDate', moment(insertOfftime.start).format('YYYY-MM-DD'));
-                this.changeView('agendaDay', function() {
-                    // render event
-                    $(Calendar).fullCalendar('renderEvent', insertOfftime, true); //stick?  true
-                    component.autoScrollTimeline($('#ID_' + insertOfftime.id));
-                    //$('.fc-scroller.fc-time-grid-container').animate({scrollTop: $('#ID_'+ insertOfftime.id).css('top') }, 300);
-                });
-            } else {
-                $(Calendar).fullCalendar('renderEvent', insertOfftime, true); //stick?  true
-            }
-            $('#ID_' + insertOfftime.id).addClass('new-event');
-            $('.create-order-wrap.fixed').removeClass('hidden');
-            component.props.guider('OFF TIME이 생성되었습니다!');
-            // component.state.isAbleBindRemoveEvent 가 true일경우 ESC key등의 이벤트 발생시 삭제가 가능하도록 접근성 바인딩을 합니다
-            component.setState({
-                viewTypeOrder: undefined,
-                isCreateOfftime: false,
-                newScheduleServiceTime: undefined,
-                newScheduleId: insertOfftime.id,
-                isAbleBindRemoveEvent: true
-            }, () => {
-                // callback
-                // ESC key 입력시 신규생성한 event 삭제
-                $(document).bind('keydown', function(e) {
-                    if (e.which === 27 && !component.state.isModalConfirm) {
-                        if (component.state.isAbleBindRemoveEvent) {
-                            /// 생성버튼 캘린더 타임라인 노드에서 상위 노드로 삽입 (event remove 시 버튼의 부모 dom이 다시 그려지면서 버튼 dom도 사라지기떄문)
-                            $('.full-calendar > .fc').append($('.create-order-wrap.timeline').hide());
-                            $(Calendar).fullCalendar('removeEvents', [component.state.newScheduleId]);
-                            component.setState({isAbleBindRemoveEvent: false, newScheduleId: undefined});
-                            component.props.guider('OFF TIME이 삭제되었습니다!');
-                        }
-                        $(document).unbind('keydown');
-                    }
-                });
-                // 타 영역 클릭시, 신규생성한 off-time slot의 new evnet 클래스 시각적 제거 (접근성 바인딩)
-                $('body').one('click', function(e) {
-                    if (insertOfftime.id === component.state.newScheduleId) {
-                        $('#ID_' + insertOfftime.id).removeClass('new-event');
-                        component.setState({isAbleBindRemoveEvent: false, newScheduleId: undefined});
-                    }
-                });
-            });
-
-            // B _ 타임라인 내에서 오프타임을 생성한 경우
-        } else {
-            //$(Calendar).fullCalendar('gotoDate', moment(insertOfftime.start).format('YYYY-MM-DD'));
-            // render event
-            $(Calendar).fullCalendar('renderEvent', insertOfftime, true); //stick?  true
-            $('#ID_' + insertOfftime.id).addClass('new-event');
-            $('.create-order-wrap.fixed').removeClass('hidden');
-            component.props.guider('OFF TIME이 생성되었습니다!');
-
-            // component.state.isAbleBindRemoveEvent 가 true일경우 ESC key등의 이벤트 발생시 삭제가 가능하도록 접근성 바인딩을 합니다
-            component.setState({
-                newScheduleId: insertOfftime.id,
-                isAbleBindRemoveEvent: true
-            }, () => {
-                // callback
-                // ESC key 입력시 신규생성한 event 삭제
-                $(document).bind('keydown', function(e) {
-                    if (e.which === 27 && !component.state.isModalConfirm) {
-                        if (component.state.isAbleBindRemoveEvent) {
-                            /// 생성버튼 캘린더 타임라인 노드에서 상위 노드로 삽입 (event remove 시 버튼의 부모 dom이 다시 그려지면서 버튼 dom도 사라지기떄문)
-                            $('.full-calendar > .fc').append($('.create-order-wrap.timeline').hide());
-                            $(Calendar).fullCalendar('removeEvents', [component.state.newScheduleId]);
-                            component.setState({isAbleBindRemoveEvent: false, newScheduleId: undefined});
-                            component.props.guider('OFF TIME이 삭제되었습니다!');
-                        }
-                        $(document).unbind('keydown');
-                    }
-                });
-                // 타 영역 클릭시, 신규생성한 off-time slot의 new evnet 클래스 시각적 제거 (접근성 바인딩)
-                $('body').one('click', function(e) {
-                    if (insertOfftime.id === component.state.newScheduleId) {
-                        $('#ID_' + insertOfftime.id).removeClass('new-event');
-                        component.setState({isAbleBindRemoveEvent: false, newScheduleId: undefined});
-                    }
-                });
-            });
+        
+        let defaultMinute = 20;
+        let offTimeObject = {
+            reservation_dt: moment(this.state.selectedDate).format('YYYY-MM-DD'),
+            start_time: moment(this.state.selectedDate).format('HH:mm'),
+            end_time: moment(this.state.selectedDate).add(defaultMinute, 'minute').format('HH:mm'),
+            status: actions.ScheduleStatus.OFFTIME,
+            staff_id: this.state.selectedStaff.id, 
+            start: moment(this.state.selectedDate),
+            end: moment(this.state.selectedDate).add(defaultMinute, 'minute'),
+            title: 'off-time',
+            resourceId: this.state.selectedStaff.id, 
         }
+
+        // FullCalendar에 먼저 이벤트를 그립니다.
+        // let temporarySchedule = $(Calendar).fullCalendar('renderEvent', offTimeObject);
+        // $('#ID_' + temporarySchedule._id).addClass('new-event');
+
+        component.props.createNewSchedule(offTimeObject).then((createdOffTimeResult) => {
+            
+            // off-time 저장 후 반환된 데이터 (올바르게 생성되었는지 확인해야 함)
+            let createdSchedule = createdOffTimeResult.schedules.data;
+
+            // render event
+            $(Calendar).fullCalendar('renderEvent', createdSchedule, true); //stick?  true
+            $('#ID_' + createdSchedule.id).addClass('new-event');
+            $('.create-order-wrap.fixed').removeClass('hidden');
+            component.props.guider('OFF TIME이 생성되었습니다!');
+
+            // component.state.isAbleBindRemoveEvent 가 true일경우 ESC key등의 이벤트 발생시 삭제가 가능하도록 접근성 바인딩을 합니다
+            component.setState({
+                newScheduleId: createdSchedule.id,
+                isAbleBindRemoveEvent: true
+            }, () => {
+                // callback
+                // ESC key 입력시 신규생성한 event 삭제
+                $(document).bind('keydown', function(e) {
+                    if (e.which === 27 && !component.state.isModalConfirm) {
+                        
+                        if(component.state.isAbleBindRemoveEvent){
+                            /// 생성버튼 캘린더 타임라인 노드에서 상위 노드로 삽입 (event remove 시 버튼의 부모 dom이 다시 그려지면서 버튼 dom도 사라지기떄문)
+                            $('.full-calendar > .fc').append($('.create-order-wrap.timeline').hide());
+                            $(Calendar).fullCalendar('removeEvents', [component.state.newScheduleId]);
+                            component.setState({isAbleBindRemoveEvent: false, newScheduleId: undefined});
+                            component.props.guider('OFF TIME이 삭제되었습니다!');
+                            
+                            $(document).unbind('keydown');
+                        }
+                    }
+                });
+                // 타 영역 클릭시, 신규생성한 off-time slot의 new evnet 클래스 시각적 제거 (접근성 바인딩)
+                $('body').one('click', function(e) {
+                    if (createdSchedule.id === component.state.newScheduleId) {
+                        $('#ID_' + createdSchedule.id).removeClass('new-event');
+                        component.setState({isAbleBindRemoveEvent: false, newScheduleId: undefined});
+                    }
+                });
+            });
+        });
     }
 
     // 예약 변경시 이벤트를 렌더링합니다 (실제 이벤트를 생성한 후 최종확인 버튼을통해 삭제할지 말지 결정합니다)
@@ -1216,9 +1142,9 @@ class DailyCalendar extends Component {
         $(Calendar).fullCalendar('refetchResources', _resources);
 
         this.setState({
-            defaultStaff: _resources[0],
+            defaultStaff: _resources ? _resources[0] : undefined,
             renderedStaff: _resources,
-            selectedStaff: _resources[0],
+            selectedStaff: _resources ? _resources[0] : undefined,
         });
     }
 
@@ -1265,7 +1191,7 @@ class DailyCalendar extends Component {
         let Staffs = this.props.staffs;
         let TimelineControlerComponent = (
           <div className="fc-resource-controler-wrap">
-            {this.state.renderedStaff.length >= 2 ? (
+            {this.state.renderedStaff && this.state.renderedStaff.length >= 2 ? (
                 <div>
                   <button className="fc-resource-controler prev" onClick={() => this.scrollTimeline('prev')}>이전</button>
                   <button className="fc-resource-controler next" onClick={() => this.scrollTimeline('next')}>다음</button>
@@ -1291,7 +1217,7 @@ class DailyCalendar extends Component {
           </div>
         )
 
-        var StaffsInputEach = Staffs.map((staff, i) => {
+        var StaffsInputEach = !_.isEmpty(Staffs) ? Staffs.map((staff, i) => {
             return (
                 <div
                   className="expert-each checkbox"
@@ -1313,13 +1239,13 @@ class DailyCalendar extends Component {
                     </label>
                 </div>
             )
-        })
+        }) : () => (<div></div>)
 
         StaffsInterfaceComponent = (
             <div className="expert-wrap">
                 <div className="expert-ui expert-daily">
                     <div className="expert-inner">
-                        {Staffs.length >= 2 && StaffsInputAll}
+                        {Staffs && Staffs.length >= 2 && StaffsInputAll}
                         <div className="expert-each-wrap">
                           {StaffsInputEach}
                         </div>

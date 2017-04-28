@@ -94,12 +94,14 @@ class Calendar extends Component {
   changeDate(date) {
     const { calendarConfig, selectedShopID } = this.props;
 
+    this.props.setCalendarCurrent(date);
+
     switch(calendarConfig.viewType) {
       case "agendaDay" :
         if(moment(date).isBefore(calendarConfig.start))
           this.props.setCalendarStart(date);
         if(moment(date).isAfter(calendarConfig.end))
-          this.props.setCalendarEnd(date);
+          this.props.setCalendarEnd(date.add('7', 'days'));
         break;
       case "agendaWeek":
         break;
@@ -207,6 +209,8 @@ class Calendar extends Component {
 
   // Expert를 Priority기준으로 재배열 한다
   sortExpert(allOfStaff) {
+      if(_.isEmpty(allOfStaff))
+        return;
       //let staffNewArray = [];
       let staffNewArray = allOfStaff.sort(function(a, b) {
           return a.priority < b.priority
@@ -238,8 +242,8 @@ class Calendar extends Component {
   }
 
   render () {
+    this.sortExpert(this.props.staffs.data);
 
-    this.sortExpert(this.props.staffs);
     const CreateOrderButtonFixed = (_this) =>  {
       return (
         <div className="create-order-wrap fixed">
@@ -418,9 +422,9 @@ class Calendar extends Component {
       fcOptions: fc_options,
       //schedule: _.isEmpty(this.props.schedules) ? Schedule : this.props.schedules.data,
       //staffs: _.isEmpty(this.props.staffs) ? Staff : this.props.staffs.data,
-      schedules: this.props.schedules,
-      staffs: this.props.staffs,
-      services: this.props.services,
+      schedules: this.props.schedules.data,
+      staffs: this.props.staffs.data,
+      services: this.props.services.data,
       changeView: this.changeView,
       changeDate: this.changeDate,
       returnScheduleObj: this.returnScheduleObj,
@@ -430,6 +434,7 @@ class Calendar extends Component {
       // defaultStaff: function() { _.isEmpty(this.props.staffs) ? Staff[0] : this.props.staffs.data },
       defaultStaff: this.props.staffs[0],
       runUserCardSlide: function(t, calSchedule, jsEvent, view) { this.runUserCardSlide(t, calSchedule, jsEvent, view) },
+      createNewSchedule: (scheduleData) => this.props.createNewSchedule(scheduleData),
 
       getTodayTimelineButton:       function(t) { return TodayTimelineButton(t) },
       getCreateOrderButtonFixed:    function(t) { return CreateOrderButtonFixed(t) },
@@ -504,14 +509,9 @@ const mapStateToProps = (state) => {
     getServicesBySelectedShopID,
   } = state;
 
-  // const { schedules } = getSchedulesBySelectedShopID[selectedShopID] || { isFetching: false, schedules: {} };
-  // const { staffs } = getStaffsBySelectedShopID[selectedShopID] || { isFetching: false, staffs: {} };
-  // const { services } = getServicesBySelectedShopID[selectedShopID] || { isFetching: false, services: {} };
-
-  /* 임시 데이터 */
-  const schedules = require('../../data/schedules').default;
-  const staffs = require('../../data/staffs').default;
-  const services = require('../../data/services').default;
+  const { schedules } = getSchedulesBySelectedShopID[selectedShopID] || { isFetching: false, schedules: { data: require('../../data/schedules').default} };
+  const { staffs } = getStaffsBySelectedShopID[selectedShopID] || { isFetching: false, staffs: { data: require('../../data/staffs').default} };
+  const { services } = getServicesBySelectedShopID[selectedShopID] || { isFetching: false, services: { data: require('../../data/staffs').default} };
 
   return {
     selectedShopID,
@@ -527,10 +527,12 @@ const mapDispatchToProps = (dispatch) => {
     fetchSchedulesIfNeeded: shopID => (dispatch(actions.fetchSchedulesIfNeeded(shopID))),
     fetchStaffsIfNeeded: shopID => (dispatch(actions.fetchStaffsIfNeeded(shopID))),
     fetchServicesIfNeeded: shopID => (dispatch(actions.fetchServicesIfNeeded(shopID))),
+    createNewSchedule: scheduleData => (dispatch(actions.createNewSchedule(scheduleData))),
 
     setCalendarViewType: viewType => (dispatch(actions.setCalendarViewType(viewType))),
     setCalendarStart: start => (dispatch(actions.setCalendarStart(start))),
     setCalendarEnd: end => (dispatch(actions.setCalendarEnd(end))),
+    setCalendarCurrent: current => (dispatch(actions.setCalendarCurrent(current))),
     // or simply do...
     // actions: bindActionCreators(acations, dispatch)
     // this will dispatch all action
