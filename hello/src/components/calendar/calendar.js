@@ -141,10 +141,10 @@ class Calendar extends Component {
       };
   }
 
+  // 주/일단위 컴포넌트 componentDidMount 에서 실행하는 공통 사용함수
   timelineWasMount (view) {
-    setTimeout(function(){
-      $('.nav-reservation > a').addClass('active');
-    },0);
+    this.insertElements();
+
     var viewChangeButtons = $('.fc-toolbar.fc-header-toolbar .fc-right button');
     if (view === 'agendaDay') {
       $('.fc-agendaDayCustom-button').addClass('fc-state-active');
@@ -154,6 +154,11 @@ class Calendar extends Component {
         isNewOrder: false
       });
     }
+  }
+
+  insertElements () {
+    // 캘린더상단 오늘로이동 버튼 삽입
+    $('.fc-today-timeline-button-wrap').appendTo('.fc-left');
   }
 
   returnNewOrderStates () {
@@ -217,9 +222,14 @@ class Calendar extends Component {
       return staffNewArray;
   }
 
+  // GNB 메뉴 활성화
+  activeGnb() {
+    $('.nav-reservation > a').addClass('active');
+  }
+
   componentDidMount() {
     const { selectedShopID } = this.props;
-
+    this.activeGnb();
     this.props.fetchSchedulesIfNeeded(selectedShopID);
     this.props.fetchStaffsIfNeeded(selectedShopID);
     this.props.fetchServicesIfNeeded(selectedShopID);
@@ -298,6 +308,26 @@ class Calendar extends Component {
         )
     };
 
+    const TodayTimelineButton = (_this) => {
+      if (moment(_this.state.timelineDate).isSame(moment(new Date), 'day')) {
+        return (
+          <div className="fc-today-timeline-button-wrap today">
+            <button className="fc-today-timeline-button today" disabled={true}>
+              {moment(new Date()).format('DD')}
+            </button>
+          </div>
+        )
+      } else {
+        return (
+          <div className="fc-today-timeline-button-wrap">
+            <button className="fc-today-timeline-button" onClick={() =>_this.changeDate(moment(new Date))}>
+              {moment(new Date()).format('DD')}
+            </button>
+          </div>
+        )
+      }
+    }
+
     const UserCardComponent = (_this) => {
       if (!_this.state.isUserCard) return '';
       return (
@@ -355,6 +385,8 @@ class Calendar extends Component {
     // Daily, Weekly FullCalendar 공통 옵션
     const fc_options = {
         schedulerLicenseKey: `${ process.env.REACT_APP_FULLCALENDAR_LISENCE ? process.env.REACT_APP_FULLCALENDAR_LISENCE : 'GPL-My-Project-Is-Open-Source'}`,
+        scheduleStatus: actions.ScheduleStatus,
+        guestClass: actions.GuestClass,
         resourceOrder: 'priority', // staff의 정렬 순서를 무엇을 기준으로 할지 정함
         defaultDate: moment(this.state.viewDate), //기본 날짜
         filterResourcesWithSchedule: false, // 이벤트가 없는 staff를 숨길지 여부
@@ -404,6 +436,7 @@ class Calendar extends Component {
       runUserCardSlide: function(t, calSchedule, jsEvent, view) { this.runUserCardSlide(t, calSchedule, jsEvent, view) },
       createNewSchedule: (scheduleData) => this.props.createNewSchedule(scheduleData),
 
+      getTodayTimelineButton:       function(t) { return TodayTimelineButton(t) },
       getCreateOrderButtonFixed:    function(t) { return CreateOrderButtonFixed(t) },
       getCreateOrderButtonTimeline: function(t) { return CreateOrderButtonTimeline(t) },
       getDatePickerComponent:       function(t) { return DatePickerComponent(t) },

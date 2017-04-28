@@ -17,8 +17,8 @@ class CardModal extends React.Component {
     this.refs.button.focus();
   }
 
-  getTitleText (CardType) {
-    switch (CardType) {
+  getTitleText (cardType) {
+    switch (cardType) {
       case '취소' : return '예약취소';
       case '요청' : return '예약요청';
       case '변경' : return '예약변경';
@@ -32,10 +32,10 @@ class CardModal extends React.Component {
       <div className="notifier-modal-wrap">
         <div className="notifier bounceInRight">
           <div className="head-by-menu">
-            <p>{this.getTitleText(this.props.CardType)}</p>
+            <p>{this.getTitleText(this.props.cardType)}</p>
             <button ref='button' onClick={ () => this.props.toggleNotifier(false) }>닫기</button>
           </div>
-          <Card CardType={this.props.CardType} event={this.props.event}/>
+          <Card cardType={this.props.cardType} event={this.props.event}/>
         </div>
       </div>
     );

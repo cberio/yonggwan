@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import $ from 'jquery';
+import * as actions from '../../actions';
 import { connect } from 'react-redux';
 import CardContainer from './cardContainer';
 import Schedules from '../../data/schedules';
@@ -61,7 +62,14 @@ class Notifier extends Component {
   constructor (props, container) {
     super (props);
     this.state = {
-      menus:[ { title: "ALL"}, { title: "메모", new: 7}, { title: "변경", new: 0}, { title: "취소", new: 2}, { title: "신규", new: 14}, { title: "요청", new: 0} ],
+      menus:[
+        { title: "ALL"},
+        { title: "메모", new: 7},
+        { title: "변경", new: 0},
+        { title: "취소", new: 2},
+        { title: "신규", new: 14},
+        { title: "요청", new: 0}
+      ],
       menuSelectedIndex: 5,
       scrolerHeight: null
     };
@@ -69,11 +77,15 @@ class Notifier extends Component {
     this.menuToggle = this.menuToggle.bind(this);
     this.setScrolerHeight = this.setScrolerHeight.bind(this);
   }
+
   // tabmenu toggle
   menuToggle (i) {
-    this.setState({menuSelectedIndex: i});
+    this.setState({
+      menuSelectedIndex: i
+    });
     return false;
   }
+
   setScrolerHeight (isInit) {
     this.setState({
       scrolerHeight: window.innerHeight - (
@@ -85,19 +97,22 @@ class Notifier extends Component {
       if (isInit) $('.scroller').customScrollbar({'updateOnWindowResize': true});
     });
   }
+
   cardDistroy (index) {
     console.log('index: '+index);
   }
+
   componentDidMount () {
-    let _component = this;
-    _component.setScrolerHeight(true);
+    this.setScrolerHeight(true);
     $('body').addClass('opened-notifier');
   }
+
   componentWillUnmount() {
     $('body').removeClass('opened-notifier');
   }
+
   render () {
-    // prop CardType은 메뉴의 title과 동일하게 입력하면, 카드의 텍스트등이 형식에 맞춰 display 됨.
+    // prop cardType은 메뉴의 title과 동일하게 입력하면, 카드의 텍스트등이 형식에 맞춰 display 됨.
     return (
       <div className="notifier-wrap">
         <div className="notifier">
@@ -115,9 +130,15 @@ class Notifier extends Component {
             <div className="notifier-contents">
               {
                 Schedules.map((schedule, i) => {
-                  if (schedule.code === '05') return;
+                  if (schedule.status == actions.ScheduleStatus.OFFTIME) return;
                   return (
-                    <CardContainer schedule={schedule} key={i} index={i} CardType="요청" cardDistroy={this.cardDistroy}/>
+                    <CardContainer
+                      schedule={schedule}
+                      key={i}
+                      index={i}
+                      cardType="요청"
+                      cardDistroy={this.cardDistroy}
+                    />
                   )
                 })
               }

@@ -222,7 +222,7 @@ class WeeklyCalendar extends Component {
             lastY = $(timeline).scrollTop(),
             direction;
 
-        $(timeline).scroll(function() {
+        $(timeline).scroll(function(e) {
             if (isScrollingControler)
                 return false;
             isScrollingTimeline = true;
@@ -253,11 +253,11 @@ class WeeklyCalendar extends Component {
         });
 
         $(controlerElem).niceScroll({
-            background: '#d2d2d2',
+            background: '#b3b3b3',
             railpadding: {
-                top: -4
+                top: 0
             },
-            cursorcolor: '#9da1a5',
+            cursorcolor: '#7c7e80',
             cursorborder: false,
             cursorwidth: '4px',
             autohidemode: false,
@@ -320,7 +320,7 @@ class WeeklyCalendar extends Component {
             return elem.format();
         });
 
-        if (renderedDates.indexOf(date.format('YYYY-MM-DD')) !== -1) {
+        if (renderedDates.indexOf(moment(date).format('YYYY-MM-DD')) !== -1) {
             return true;
         } else {
             return false;
@@ -951,10 +951,10 @@ class WeeklyCalendar extends Component {
         // 해당 날짜가 이미 타임라인에 렌더링 되어있는 경우
         if (this.checkRenderedDate(date)) {
             var scrollX = $(this.controler).scrollLeft();
-            var positionX = $('th.fc-day-header.fc-widget-header[data-date="' + date.format('YYYY-MM-DD') + '"]').position().left;
+            var positionX = $('th.fc-day-header.fc-widget-header[data-date="' + moment(date).format('YYYY-MM-DD') + '"]').position().left;
             $(this.controler).getNiceScroll(0).doScrollLeft(scrollX + positionX, 200);
         } else {
-            $(Calendar).fullCalendar('gotoDate', date.format());
+            $(Calendar).fullCalendar('gotoDate', date);
         }
 
         this.setState({isChangeDate: false});
@@ -1197,13 +1197,19 @@ class WeeklyCalendar extends Component {
           shopServices: component.props.services,
           defaultView: 'agendaWeekly', // init view type set
           header: {
-              left: 'todayTimeline agendaDay',
+              left: '',
               center: 'prevTimeline title nextTimeline, changeDate',
-              right: 'agendaDayCustom agendaWeeklyCustom'
+              right: 'agendaViewSwitch'
           },
           firstDay: firstDay,
           scrollTime: defaultScrollTime, //초기 렌더링시 스크롤 될 시간을 표시합니다
           navLinks: true, //(캘린더 상단 날자 활성화) can click day/week names to navigate views
+          navLinkDayClick: function (date, jsEvent) {
+            // 커스텀 함수를 통해 뷰를 체인지함 {
+            component.props.setTimelineDate(date);
+            component.props.changeView('agendaDay');
+            // }
+          },
           customButtons: {
               changeDate: {
                   text: '날짜선택',
@@ -1212,22 +1218,10 @@ class WeeklyCalendar extends Component {
                       component.isChangeDate(true);
                   }
               },
-              agendaDayCustom: {
+              agendaViewSwitch: {
                   text: 'DAILY',
                   click: function () {
                       component.props.changeView('agendaDay');
-                  }
-              },
-              agendaWeeklyCustom: {
-                  text: 'WEEKLY',
-                  click: function () {
-                      component.props.changeView('agendaWeekly');
-                  }
-              },
-              todayTimeline: {
-                  text: 'TODAY',
-                  click: function() {
-                      component.changeDate(moment(date));
                   }
               },
               prevTimeline: {
@@ -1249,7 +1243,7 @@ class WeeklyCalendar extends Component {
                   eventLimit: 1,
                   type: 'agenda',
                   buttonText: 'WEEKLY',
-                  titleFormat: 'YYYY.MM.DD',
+                  titleFormat: 'YYYY. MM. DD',
                   duration: {
                       weeks: 4
                   }
@@ -1323,38 +1317,11 @@ class WeeklyCalendar extends Component {
                 renderedStaff,
                 lastStaff
               } = component.state;
-
               let currentStaff = priorityStaff || renderedStaff || lastStaff || Staffs[0];
 
-              if (schedule.resourceId !== currentStaff.id) {
+              // schedule filtering
+              if (schedule.resourceId !== currentStaff.id)
                   return false;
-              }
-
-              // Event Card 의 상품별로 Class를 삽입합니다
-              if (schedule.service_code === '05') {
-                  $(element).addClass('off-time');
-              } else {
-                  for (let i = 0; i < Staffs.length; i++) {
-                      if (schedule.service === Staffs[i].service) {
-                          $(element).addClass(Staffs[i].itemColor);
-                          break;
-                      }
-                  }
-              }
-
-              //시간이 지난 이벤트 건 스타일 클래스 적용 (minute을 기준으로 설정)
-              if (moment(schedule.end.format('YYYY-MM-DD HH:mm:ss')).isBefore(date, 'minute')) {
-                  // event.editable = false;
-                  $(element).addClass('disabled');
-              }
-
-              // service time이 20분 이하인 슬롯은 class 추가하여 스타일 추가 적용
-              if (Functions.millisecondsToMinute(schedule.end.diff(schedule.start)) <= 20) {
-                  $(element).addClass('fc-short');
-              } else {
-                  $(element).removeClass('fc-short');
-              }
-
           },
 
           eventAfterAllRender: function(view) {
@@ -1365,13 +1332,6 @@ class WeeklyCalendar extends Component {
           dayRender: function(d, cell) {
               // 필요없는 node dom 삭제(all day slot 관련한 dom)
               $('.fc-day-grid.fc-unselectable').remove();
-
-              // 오늘 날짜의 타임라인에서 예약마감버튼 바인딩
-              if (d.isSame(date, 'day')) {
-                  $('.order-deadline-button').unbind('click').bind('click', function() {
-                      //....
-                  });
-              }
           },
           // 캘린더 이벤트 view 렌더링시
           viewRender: function(view, elem) {
@@ -1529,8 +1489,9 @@ class WeeklyCalendar extends Component {
                                       value={staff.id}
                                       onChange={(input) => this.changeStaff(staff, input)}
                                       />
-                                    <label className="expert-label" htmlFor={`expert_w_${staff.id}`}>{staff.nickname || staff.staff_name}
-                                        <i className="today-reservation">{9}</i>
+                                    <label className="expert-label" htmlFor={`expert_w_${staff.id}`}>
+                                        <span>{staff.nickname || staff.staff_name}</span>
+                                        <i className="today-count">{9}</i>
                                     </label>
                                 </div>
                             )
@@ -1691,6 +1652,7 @@ class WeeklyCalendar extends Component {
             <div ref="Calendar" id="weekly">
                 {NewOrderComponent}
                 {StaffsInterfaceComponent}
+                {this.props.getTodayTimelineButton(this)}
                 {this.props.getCreateOrderButtonFixed(this)}
                 {this.props.getCreateOrderButtonTimeline(this)}
                 {this.props.getDatePickerComponent(this)}

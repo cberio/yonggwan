@@ -301,3 +301,9 @@ export const ScheduleStatus = {
   OFFTIME : '05',//오프타임
   CANCELED : '99',//예약취소건
 }
+
+export const GuestClass = {  
+  NEW : 'NEW',
+  VIP : 'VIP',
+  BAD : 'BAD'
+}

@@ -30,7 +30,7 @@ class ModalConfirm extends Component {
           </p>
           <p>
             {options.name ? <span className="name">{options.name}</span> : <span className="name">고객명 미입력</span>}
-            {options.rating ? <span className={`rating ${options.rating.toUpperCase()}`}>{options.rating}</span> : undefined} 님의
+            {options.guest_class ? <span className={`rating ${options.guest_class}`}>{options.guest_class}</span> : undefined} 님의
           </p>
           <p><span className={`product ${options.class}`}>{options.product}</span> 예약을 생성하시겠습니까?</p>
         </div>
@@ -50,7 +50,7 @@ class ModalConfirm extends Component {
           </p>
           <p>
             {options.name ? <span className="name">{options.name}</span> : <span className="name">이름없음</span>}
-            {options.rating ? <span className={`rating ${options.rating.toUpperCase()}`}>{options.rating}</span> : undefined} 님의
+            {options.guest_class ? <span className={`rating ${options.guest_class}`}>{options.guest_class}</span> : undefined} 님의
           </p>
           <p><span className={`product ${options.class}`}>{options.product}</span> 예약을</p>
           <p className="change-date">
@@ -82,7 +82,7 @@ class ModalConfirm extends Component {
           </p>
           <p>
             {props.selectedSchedule.guest_name ? <span className="name">{props.selectedSchedule.guest_name}</span> : <span className="name">고객명 미입력</span>}
-            {props.selectedSchedule.rating ? <span className={`rating ${props.selectedSchedule.rating.toUpperCase()}`}>{props.selectedSchedule.rating}</span> : undefined} 님의
+            {props.selectedSchedule.guest_class ? <span className={`rating ${props.selectedSchedule.guest_class}`}>{props.selectedSchedule.guest_class}</span> : undefined} 님의
           </p>
           <p><span className={`product ${props.selectedSchedule.class}`}>{props.selectedSchedule.product}</span> 예약을 삭제하시겠습니까?</p>
         </div>
