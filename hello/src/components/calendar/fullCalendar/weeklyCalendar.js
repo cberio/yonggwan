@@ -1204,7 +1204,7 @@ class WeeklyCalendar extends Component {
           firstDay: firstDay,
           scrollTime: defaultScrollTime, //초기 렌더링시 스크롤 될 시간을 표시합니다
           navLinks: true, //(캘린더 상단 날자 활성화) can click day/week names to navigate views
-          navLinkDayClick: function (date, jsEvent) {
+          navLinkDayClick: function (date, jsEvent) { 
             // 커스텀 함수를 통해 뷰를 체인지함 {
             component.props.setTimelineDate(date);
             component.props.changeView('agendaDay');
