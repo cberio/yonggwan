@@ -4,7 +4,6 @@ import $ from 'jquery';
 import moment from 'moment';
 import * as Functions from '../../js/common';
 import { connect } from 'react-redux';
-// import { bindActionCreators } from 'redux';
 import * as actions from '../../actions';
 import DatePicker from './datePicker';
 import ModalConfirm from './modal/modalConfirm';
@@ -91,17 +90,17 @@ class Calendar extends Component {
    *
    * @param {string} YYYY-MM-DD formatted date
    */
-  changeDate(date) {
+  changeDate(momentDate) {
     const { calendarConfig, selectedShopID } = this.props;
 
-    this.props.setCalendarCurrent(date);
+    this.props.setCalendarCurrent(momentDate);
 
     switch(calendarConfig.viewType) {
       case "agendaDay" :
-        if(moment(date).isBefore(calendarConfig.start))
-          this.props.setCalendarStart(date);
-        if(moment(date).isAfter(calendarConfig.end))
-          this.props.setCalendarEnd(date.add('7', 'days'));
+        if(momentDate.isBefore(calendarConfig.start))
+          this.props.setCalendarStart(momentDate);
+        if(momentDate.isAfter(calendarConfig.end))
+          this.props.setCalendarEnd(momentDate.add('7', 'days'));
         break;
       case "agendaWeek":
         break;
@@ -144,6 +143,7 @@ class Calendar extends Component {
   // 주/일단위 컴포넌트 componentDidMount 에서 실행하는 공통 사용함수
   timelineWasMount (view) {
     this.insertElements();
+    this.activeGnb(view, true);
 
     var viewChangeButtons = $('.fc-toolbar.fc-header-toolbar .fc-right button');
     if (view === 'agendaDay') {
@@ -222,22 +222,34 @@ class Calendar extends Component {
       return staffNewArray;
   }
 
-  // GNB 메뉴 활성화
-  activeGnb() {
-    $('.nav-reservation > a').addClass('active');
+  // GNB 예약 활성/비활성화
+  activeGnb(view, condition) {
+    if(!condition) {
+      $('.nav-reservation a').removeClass('active');
+    } else {
+      $('.nav-reservation > a').addClass('active');
+      $('.nav-reservation .header-nav-sub a').removeClass('active');
+      if (view == 'agendaDay') {
+        $('.nav-daily > a').addClass('active');
+      } else {
+        $('.nav-overview > a').addClass('active');
+      }
+    }
   }
 
   componentDidMount() {
     const { selectedShopID } = this.props;
-    this.activeGnb();
     this.props.fetchSchedulesIfNeeded(selectedShopID);
     this.props.fetchStaffsIfNeeded(selectedShopID);
     this.props.fetchServicesIfNeeded(selectedShopID);
   }
 
+  componentWillUnmount() {
+    this.activeGnb(null, false);
+  }
+
   fetchSchedule() {
     const { selectedShopID } = this.props;
-
     this.props.fetchSchedulesIfNeeded(selectedShopID);
   }
 
@@ -260,7 +272,7 @@ class Calendar extends Component {
       )
     }
 
-    const CreateOrderButtonTimeline = (_this) => {
+    const CreateOrderButtonTimeline = (_this, view) => {
         return (
           <div data-date="" className={`create-order-wrap timeline${_this.state.isCreateOfftime
               ? " off-time"
@@ -271,14 +283,14 @@ class Calendar extends Component {
                       : ""}`}>
               <div className="create-order-inner">
                   <div className="create-order-slot">
-                      {_this.state.isCreateOfftime
+                      {_this.state.isCreateOfftime && view === 'agendaWeekly'
                           ? (
                               <button className="create-button" onClick={() => _this.bindNewOfftime('render', 'offtime')}>
                                   <i className="time"></i>
                                   <span>+</span>
                               </button>
                           )
-                          : _this.state.unknownStart || _this.state.isEditEvent
+                          : (_this.state.unknownStart || _this.state.isEditEvent) && view === 'agendaWeekly'
                               ? (
                                   <button className="create-button create-event">
                                       <i className="time"></i>
@@ -332,9 +344,9 @@ class Calendar extends Component {
       if (!_this.state.isUserCard) return '';
       return (
         <UserCard
-          schedules={this.props.schedules}
-          services={this.props.services}
-          staffs={this.props.staffs}
+          schedules={this.props.schedules.data}
+          services={this.props.services.data}
+          staffs={this.props.staffs.data}
           isUserCard={(bool) => _this.isUserCard(bool)}
           onRemoveEvent={(schedule) => _this.removeConfirm(schedule)}
           onEditEvent={(schedule) => _this.editEvent(schedule)}
@@ -387,6 +399,7 @@ class Calendar extends Component {
         schedulerLicenseKey: `${ process.env.REACT_APP_FULLCALENDAR_LISENCE ? process.env.REACT_APP_FULLCALENDAR_LISENCE : 'GPL-My-Project-Is-Open-Source'}`,
         scheduleStatus: actions.ScheduleStatus,
         guestClass: actions.GuestClass,
+        shopServices: this.props.services.data,
         resourceOrder: 'priority', // staff의 정렬 순서를 무엇을 기준으로 할지 정함
         defaultDate: moment(this.state.viewDate), //기본 날짜
         filterResourcesWithSchedule: false, // 이벤트가 없는 staff를 숨길지 여부
@@ -433,12 +446,13 @@ class Calendar extends Component {
       getSlotTime: this.mouseenterSlotTime,
       // defaultStaff: function() { _.isEmpty(this.props.staffs) ? Staff[0] : this.props.staffs.data },
       defaultStaff: this.props.staffs[0],
-      runUserCardSlide: function(t, calSchedule, jsEvent, view) { this.runUserCardSlide(t, calSchedule, jsEvent, view) },
       createNewSchedule: (scheduleData) => this.props.createNewSchedule(scheduleData),
+      activeGnb: (view, condition) => this.activeGnb(view, condition),
+      runUserCardSlide:             function(t, calSchedule, jsEvent, view) { this.runUserCardSlide(t, calSchedule, jsEvent, view) },
 
       getTodayTimelineButton:       function(t) { return TodayTimelineButton(t) },
       getCreateOrderButtonFixed:    function(t) { return CreateOrderButtonFixed(t) },
-      getCreateOrderButtonTimeline: function(t) { return CreateOrderButtonTimeline(t) },
+      getCreateOrderButtonTimeline: function(t, view) { return CreateOrderButtonTimeline(t, view) },
       getDatePickerComponent:       function(t) { return DatePickerComponent(t) },
       getUserCardComponent:         function(t) { return UserCardComponent(t) },
       getModalConfirmComponent:     function(t) { return ModalConfirmComponent(t) },
@@ -478,7 +492,7 @@ class Calendar extends Component {
 
     return (
       <div className="calendar">
-        {viewview}
+        {/*viewview*/}
         <div className="full-calendar">
           {
             this.state.viewType === 'agendaWeekly'
@@ -509,9 +523,12 @@ const mapStateToProps = (state) => {
     getServicesBySelectedShopID,
   } = state;
 
-  const { schedules } = getSchedulesBySelectedShopID[selectedShopID] || { isFetching: false, schedules: { data: require('../../data/schedules').default} };
-  const { staffs } = getStaffsBySelectedShopID[selectedShopID] || { isFetching: false, staffs: { data: require('../../data/staffs').default} };
-  const { services } = getServicesBySelectedShopID[selectedShopID] || { isFetching: false, services: { data: require('../../data/staffs').default} };
+  // const { schedules } = getSchedulesBySelectedShopID[selectedShopID] || { isFetching: false, schedules: { data: require('../../data/schedules').default} };
+  // const { staffs } = getStaffsBySelectedShopID[selectedShopID] || { isFetching: false, staffs: { data: require('../../data/staffs').default} };
+  // const { services } = getServicesBySelectedShopID[selectedShopID] || { isFetching: false, services: { data: require('../../data/services').default} };
+  const { schedules } = { isFetching: false, schedules: { data: require('../../data/schedules').default} };
+  const { staffs } = { isFetching: false, staffs: { data: require('../../data/staffs').default} };
+  const { services } = { isFetching: false, services: { data: require('../../data/services').default} };
 
   return {
     selectedShopID,

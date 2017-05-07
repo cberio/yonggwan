@@ -49,6 +49,24 @@ export function getStaff (staffID, staffs) {
   return staffs.find((staff) => staff.id === staffID );
 }
 
+/* Return guest object*/
+export function getGuest (guestID, guests) {
+  if(!guests) return '';
+  return guests.find((guest) => guest.id === guestID );
+}
+
+/* Return history array*/
+export function getHistory (guestID, histories) {
+  var history = [];
+  histories.find(his => {
+    let case1 = his.guest_id === guestID;
+    let case2 = true;
+    let case3 = true;
+    if (case1 && case2 && case3) history.push(his);
+  })
+  return history;
+}
+
 /* 숫자를 인수로 받아 3자리단위에 콤마삽입하여 반환 (금액 표현) */
 export function numberWithCommas (num) {
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");

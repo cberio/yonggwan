@@ -3,6 +3,9 @@ import moment from 'moment';
 import {SelectableCustom, SearchService, CreatableCustom} from '../calendar/select';
 import DatePicker from '../calendar/datePicker';
 import Slider from 'react-slick';
+import Histories from '../../data/histories';
+import Guests from '../../data/guests';
+import * as actions from '../../actions';
 import * as Functions from '../../js/common';
 import * as Images from '../../require/images';
 
@@ -73,8 +76,15 @@ class Resource extends Component {
         }
     }
 
+
     render() {
         console.info('Render UserCard Resourcs');
+
+        const state = this.state;
+        const props = this.props;
+        const user = props.users;
+        const user_guestInfo = Functions.getGuest(user.guest_id, Guests);
+        const user_historyInfo = Functions.getHistory(user.guest_id, Histories);
 
         const mapToHistoryList = (user, history, i) => {
           return (
@@ -90,9 +100,9 @@ class Resource extends Component {
                                     ? history.product
                                     : '서비스 정보 없음'}</span>
                             <span className="info-etc">
-                                {user.type === 'request' && user.prepayment
+                                {user.status == actions.ScheduleStatus.REQUESTED && user.prepayment
                                     ? '예약요청 | 선결제'
-                                    : user.type === 'request'
+                                    : user.status == actions.ScheduleStatus.REQUESTED
                                         ? '예약요청'
                                         : user.prepayment
                                             ? '선결제'
@@ -120,19 +130,14 @@ class Resource extends Component {
           )
         }
 
-        const mapToHistory = (user) => {
-
-            if (!user.history) {
-                return <p className="no-history">시술내역이 없습니다.</p>
-            }
-
-            var { history } = user;
-            var listLength = history.length;
+        const mapToHistory = (user, histories) => {
+            if (!histories.length)
+              return <p className="no-history">시술내역이 없습니다.</p>
 
             return (
               <div className="history-container">
                   {
-                     history.map((history, i) => {
+                     histories.map((history, i) => {
                       return mapToHistoryList(user, history, i)
                     })
                   }
@@ -150,9 +155,9 @@ class Resource extends Component {
                               ? history.product
                               : '서비스 정보 없음'}
                       </span>
-                      <span className="info-etc">{user.type === 'request' && user.prepayment
+                      <span className="info-etc">{user.status == actions.ScheduleStatus.REQUESTED && user.prepayment
                               ? '예약요청 | 선결제'
-                              : user.type === 'request'
+                              : user.status == actions.ScheduleStatus.REQUESTED
                                   ? '예약요청'
                                   : user.prepayment
                                       ? '선결제'
@@ -166,18 +171,18 @@ class Resource extends Component {
                   }
                 </div>
                 <div className="history-comment">
-                  {history.comment
+                  {history.staff_memo
                       ? (
                           <p className="comment" contentEditable>
                             <div className="comment-inner">
-                              {history.comment}
+                              {history.staff_memo}
                             </div>
                           </p>
                       )
                       : (
                           <p className="comment no-comment" contentEditable>
                             <div className="comment-inner">
-                              {history.comment}
+                              {history.staff_memo}
                             </div>
                           </p>
                       )
@@ -195,15 +200,11 @@ class Resource extends Component {
           <DatePicker
             height={420}
             selectedDate={""}
-            onChange={""}
+            onChange={(momentDate) => console.log(momentDate)}
             onClose={this.changeDate}
             className="user-card-event-datepicker"
           />
         );
-
-        const state = this.state;
-        const props = this.props;
-        const user = props.users;
 
         // 테스트용 데이터 1,2
         const DATA1 = [
@@ -300,7 +301,7 @@ class Resource extends Component {
                         <span className="tit">상품명</span>
                         <span className="service-name edit-ui">
                             <button onClick={() => this.changeProduct(true)} className="service-name-button">
-                                <span className="service-text">{user.product}</span>
+                                <span className="service-text">{Functions.getService(user.shop_service_id, this.props.services).name}</span>
                                 <span className="service-time">{Functions.minuteToTime(moment(user.end).diff(moment(user.start), 'minute', true))}</span>
                             </button>
                             {this.state.isChangeProduct
@@ -323,7 +324,9 @@ class Resource extends Component {
                           ? (
                             /* 선결제인경우*/
                             <span className="price edit-ui">
-                              <button onClick={this.changeAmount} className="">선결제 :&nbsp;{Functions.getService(user.shop_service_id, this.props.services).amount}&#xFFE6;</button>
+                              <button onClick={this.changeAmount} className="">선결제 :&nbsp;
+                                {Functions.numberWithCommas(Functions.getService(user.shop_service_id, this.props.services).amount)}
+                              &#xFFE6;</button>
                               <button onClick={this.changeAmount} className="price-change">금액변경</button>
                               {this.state.isChangePrice
                                 ? <CreatableCustom
@@ -338,7 +341,9 @@ class Resource extends Component {
                           : (
                             /* 선결제가 아닌 경우 */
                             <span className="price">
-                              <span>{Functions.getService(user.shop_service_id, this.props.services).amount}&#xFFE6;</span>
+                              <span>
+                                {Functions.numberWithCommas(Functions.getService(user.shop_service_id, this.props.services).amount)}
+                              &#xFFE6;</span>
                             </span>)
                         }
                     </div>
@@ -356,16 +361,14 @@ class Resource extends Component {
                 <div className="user-card-basic clearfix">
                     <div className="info">
                         <span className="picture">
-                            {user.picture
-                                ? <span className="thumbnail"><img src={user.picture} alt={user.name}/></span>
+                            {user_guestInfo && user_guestInfo.picture
+                                ? <span className="thumbnail"><img src={user_guestInfo.picture} alt={user.guest_name}/></span>
                                 : <span className="thumbnail"></span>}
                         </span>
                         <span className="user">
-                          <span className="name">{user.name}</span>
-                          <span className={user.rating ? user.rating.toLowerCase() + ' rating' : 'rating'}>{user.rating}</span>
-                          <span className="phone">{typeof(user.phone) !== 'undefined'
-                                  ? (user.phone[0] + '-' + user.phone[1] + '-' + user.phone[2])
-                                  : user.phone}</span>
+                          <span className="name">{user.guest_name}</span>
+                          <span className={user.guest_class ? user.guest_class.toLowerCase() + ' rating' : 'rating'}>{user.guest_class}</span>
+                          <span className="phone">{user.guest_mobile ? Functions.getPhoneStr(user.guest_mobile) : '연락처 없음'}</span>
                         </span>
                     </div>
                     <div className="util">
@@ -374,12 +377,12 @@ class Resource extends Component {
                         </div>
                         <div className="sns">
                             <a href="#" target="_blank"><img src={Images.IMG_mms} alt="MMS" title="MMS"/></a>
-                            {user.kakao
-                                ? <a href={user.kakao} target="_blank"><img src={Images.IMG_kakao} alt="Kakao talk" title="카카오톡"/></a>
-                                : undefined}
-                            {user.line
-                                ? <a href={user.line} target="_blank"><img src={Images.IMG_line} alt="Line" title="라인"/></a>
-                                : undefined}
+                            {user_guestInfo && user_guestInfo.kakao
+                                ? <a href={user_guestInfo.kakao} target="_blank"><img src={Images.IMG_kakao} alt="Kakao talk" title="카카오톡"/></a>
+                                : ''}
+                            {user_guestInfo && user_guestInfo.line
+                                ? <a href={user_guestInfo.line} target="_blank"><img src={Images.IMG_line} alt="Line" title="라인"/></a>
+                                : ''}
                         </div>
                     </div>
                 </div>
@@ -403,34 +406,34 @@ class Resource extends Component {
                     {this.state.visibleDetails === 'history'
                       ? (
                         <div className="history">
-                          {mapToHistory(user)}
+                          {mapToHistory(user, user_historyInfo)}
                           <div className="indicator">
-                              {user.history.length > 3
+                              {user_historyInfo.length > 3
                                   ? <button className="prev" onClick={""}>이전</button>
                                   : ''
                               }
-                              {user.history.length > 3
-                                  ? <div><input type="text" defaultValue="1" maxLength="2"/>
+                              {user_historyInfo.length > 3
+                                  ? <div><input type="text" defaultValue={1} maxLength={2}/>
                                           /
-                                          <span>{user.history.length}</span>
+                                          <span>{user_historyInfo.length}</span>
                                       </div>
-                                  : <div><input type="text" defaultValue="1" disabled/>
+                                  : <div><input type="text" defaultValue={1} disabled/>
                                       /
-                                      <span>{user.history.length}</span>
+                                      <span>{user_historyInfo.length}</span>
                                   </div>
                               }
-                              {user.history.length > 3
-                                  ? <button className="next" onClick={""}>다음</button>
+                              {user_historyInfo.length > 3
+                                  ? <button className="next" onClick={null}>다음</button>
                                   : ''}
                           </div>
                         </div>
                       )
-                      : user.comment_admin
+                      : user.staff_memo
                           ? (
                               <div className="comments">
                                   <div className="comment-inner">
                                     <span className="caption">[관리자]</span>
-                                    <p className="comment" contentEditable={true} onKeyDown={this.handleChange}>{user.comment_admin}</p>
+                                    <p className="comment" contentEditable={true} onKeyDown={this.handleChange}>{user.staff_memo}</p>
                                   </div>
                               </div>
                           )
@@ -443,13 +446,11 @@ class Resource extends Component {
                           )
                     }
                 </div>
-                {user.type === 'request'
-                    ? (
-                        <div className="request-approve">
-                            <button>예약요청 바로승인</button>
-                        </div>
-                    )
-                    : ''
+                {user.status == actions.ScheduleStatus.REQUESTED ? (
+                    <div className="request-approve">
+                        <button onClick={null}>예약요청 바로승인</button>
+                    </div>
+                  ) : ''
                 }
             </div>
         );
@@ -458,30 +459,7 @@ class Resource extends Component {
 
 Resource.defaultProps = {
     users: {
-        id: undefined,
-        type: undefined,
-        prepayment: false,
-        rating: undefined,
-        colorClass: "",
-        product: "서비스 미설정",
-        name: "이름없음",
-        phone: "연락처가 없습니다",
-        start: undefined,
-        end: undefined,
-        picture: undefined,
-        comment: undefined,
-        comment_admin: undefined,
-        kakao: undefined,
-        line: undefined,
-        history: [
-            {
-                date: undefined,
-                time: undefined,
-                product: undefined,
-                comment: undefined,
-                picture: []
-            }
-        ]
+      id: null
     }
 }
 

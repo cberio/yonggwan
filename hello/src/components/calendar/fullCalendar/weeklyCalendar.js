@@ -9,6 +9,7 @@ import update from 'react-addons-update';
 import NewOrder from '../newOrder';
 import 'jquery.nicescroll';
 import 'fullcalendar-scheduler';
+import _ from 'lodash';
 
 class WeeklyCalendar extends Component {
     constructor(props) {
@@ -253,6 +254,7 @@ class WeeklyCalendar extends Component {
         });
 
         $(controlerElem).niceScroll({
+            bouncescroll: true,
             background: '#b3b3b3',
             railpadding: {
                 top: 0
@@ -1204,7 +1206,7 @@ class WeeklyCalendar extends Component {
           firstDay: firstDay,
           scrollTime: defaultScrollTime, //초기 렌더링시 스크롤 될 시간을 표시합니다
           navLinks: true, //(캘린더 상단 날자 활성화) can click day/week names to navigate views
-          navLinkDayClick: function (date, jsEvent) { 
+          navLinkDayClick: function (date, jsEvent) {
             // 커스텀 함수를 통해 뷰를 체인지함 {
             component.props.setTimelineDate(date);
             component.props.changeView('agendaDay');
@@ -1477,7 +1479,7 @@ class WeeklyCalendar extends Component {
             <div className="expert-wrap">
                 <div className="expert-ui expert-weekly">
                     <div className="expert-inner">
-                        {Staffs.map((staff, i) => {
+                        { !_.isEmpty(Staffs) ? Staffs.map((staff, i) => {
                             return (
                                 <div className="expert-each" key={i}>
                                     <input
@@ -1496,6 +1498,7 @@ class WeeklyCalendar extends Component {
                                 </div>
                             )
                         })
+                        : ''
                       }
                     </div>
                 </div>
@@ -1654,12 +1657,12 @@ class WeeklyCalendar extends Component {
                 {StaffsInterfaceComponent}
                 {this.props.getTodayTimelineButton(this)}
                 {this.props.getCreateOrderButtonFixed(this)}
-                {this.props.getCreateOrderButtonTimeline(this)}
+                {this.props.getCreateOrderButtonTimeline(this, 'agendaWeekly')}
                 {this.props.getDatePickerComponent(this)}
                 {this.props.getUserCardComponent(this)}
                 {this.props.getModalConfirmComponent(this)}
                 {this.props.getRenderConfirmComponent(this, 'agendaWeekly')}
-                {viewview}
+                {/*viewview*/}
                 {test}
             </div>
         );

@@ -66,10 +66,10 @@
 }
 .customer-detail .product:not(:hover){border-left-color: transparent !important;border-right-color: transparent !important;border-top-color: transparent !important;}
 .customer-detail .product:hover{border-bottom-width: 2px;margin-bottom: -1px;}
-.customer-detail .product button {font: inherit;color: inherit;line-height: inherit;}
+.customer-detail .product button {padding: 0; font: inherit;color: inherit;line-height: inherit;height: auto;}
 .customer-detail .product span {}
-.customer-detail .product .edit-ui {padding-right: 20px;background-position: right center;background-repeat: no-repeat;}
-.customer-detail .product .edit-ui:hover{background-image: url(../image/common/icon-edit.png);}
+.customer-detail .product .edit-ui {padding-right: 15px;background-position: right center;background-repeat: no-repeat;}
+.customer-detail .product .edit-ui:hover{background-image: url(../image/common/icon-edit-split.png);}
 .customer-detail .product .edit-ui button {border-bottom: 1px dashed #ccc5c2; }
 .customer-detail .product .edit-ui:hover button,
 .customer-detail .product .edit-ui button:focus{border-bottom-color: #807570;}
@@ -79,7 +79,7 @@
 .customer-detail .product .res-info .time{font-size: 22px;line-height: 28px;color: #555555;position: relative;display: inline-block;}
 .customer-detail .product .res-info .time em{font-size: 13px;letter-spacing: -0.3px; margin-left: 3px;margin-top: -5px;display: inline-block;vertical-align: middle;}
 .customer-detail .product .res-info .time-date{margin-right: 10px;}
-.customer-detail .product .res-info .time-hour{position: relative;}
+.customer-detail .product .res-info .time-hour{}
 .customer-detail .product .type .service-name{font-size: 20px;line-height: 28px;letter-spacing: -0.3px;color: #555555;display: block;float: left;position: relative;}
 .customer-detail .product .type .service-name .service-time{font-size: 13px;font-family: 'notokr-medium';color: #888;display: inline;margin-left: 5px;}
 .customer-detail .product .price{font-size: 20px;color: #555555;display: block;line-height: 28px;clear: both;position: relative;background: none !important;}
@@ -92,14 +92,15 @@
 .customer-detail .product .ui{position: absolute;top:33px;right: 20px;}
 .customer-detail .product .ui .ui-each{display: block;}
 .customer-detail .product .ui .ui-each:first-of-type{margin-bottom: 13px;}
-.customer-detail .product .ui .ui-each button{width: 54px;height: 54px;border-radius: 50%;background: rgba(0,0,0, .1) url(../image/common/icon-utils.png) no-repeat;opacity: .5;}
+.customer-detail .product .ui .ui-each button{width: 44px;height: 44px;border-radius: 50%;background: rgba(0,0,0, .1) url(../image/common/icon-utils.png) no-repeat;opacity: .5;}
 .customer-detail .product .ui .ui-each button:hover,
 .customer-detail .product .ui .ui-each button:focus{opacity: 1;}
 .customer-detail .product .ui .ui-each .title{font-size: 11px;letter-spacing: -0.6px;color: #666;font-family: 'notokr-medium';text-align: center;visibility: hidden;display: block;margin-top: 3px;}
 .customer-detail .product .ui .ui-each button:hover ~ .title,
 .customer-detail .product .ui .ui-each button:focus ~ .title{visibility: visible;}
 
-.customer-detail .product .ui .ui-edit button{background-position: -54px 0;}
+.customer-detail .product .ui .ui-edit button{background-position: -44px 0;}
+.customer-detail .product .ui .ui-delete button{background-position: -44px -44px;}
 .customer-detail .product .ui .ui-delete .title{display: none !important;}
 
 .customer-detail .user-card-basic {background-color: #fff;}
@@ -118,7 +119,7 @@
 .customer-detail .bottom .history .history-list{}
 .customer-detail .bottom .history .history-list:hover .history-list-button,
 .customer-detail .bottom .history .history-list .history-list-button:focus {background-color: #f2f2f2;}
-.customer-detail .bottom .history .history-list .history-list-button {display: block;width: 100%;text-align: left;padding: 0 30px;}
+.customer-detail .bottom .history .history-list .history-list-button {display: block;width: 100%;text-align: left;padding: 0 30px;height: auto;}
 .customer-detail .bottom .history .history-list .content{padding: 20px 30px 20px 13px;border-bottom: 1px solid #E6E6E6;position: relative;}
 .customer-detail .bottom .history .history-list:last-child .content{border-bottom: 0;}
 .customer-detail .bottom .history .history-list .content:after{
@@ -254,6 +255,7 @@
 .red.customer-detail .product .type .service-name .service-time{color: #B2988F;}
 .red.customer-detail .product .price .won{color: #B2988F;}
 .red.customer-detail .product{border-color: #E6BAAC;}
+.red.customer-detail .product .edit-ui:hover{background-position: right -90px;}
 
 /*.blue.customer-head{background-color: #6274B3;}*/
 .blue.customer-detail .product .res-info .time{color: #3550B3;}
@@ -266,6 +268,7 @@
 .blue.customer-detail .product .type .service-name .service-time{color: #A1A5B3;}
 .blue.customer-detail .product .price .won{color: #A1A5B3;}
 .blue.customer-detail .product{border-color: #ACB9E6;}
+.blue.customer-detail .product .edit-ui:hover{background-position: right -30px;}
 
 /*.yellow.customer-head{background-color: #D9A521;}*/
 .yellow.customer-detail .product .res-info .time{color: #CC8100;}
@@ -278,6 +281,7 @@
 .yellow.customer-detail .product .type .service-name .service-time{color: #B3B08F;}
 .yellow.customer-detail .product .price .won{color: #B3B08F;}
 .yellow.customer-detail .product{border-color: #CCBE99;}
+.yellow.customer-detail .product .edit-ui:hover{background-position: right 0;}
 
 /*.purple.customer-head{background-color: #8F6BB3;}*/
 .purple.customer-detail .product .res-info .time{color: #7435B3;}
@@ -290,6 +294,7 @@
 .purple.customer-detail .product .type .service-name .service-time{color: #AAA1B3;}
 .purple.customer-detail .product .price .won{color: #AAA1B3;}
 .purple.customer-detail .product{border-color: #C9ACE6;}
+.purple.customer-detail .product .edit-ui:hover{background-position: right -120px;}
 
 /*.green.customer-head{background-color: #56b39e;}*/
 .green.customer-detail .product .res-info .time{color: #1f997e;}
@@ -302,7 +307,7 @@
 .green.customer-detail .product .type .service-name .service-time{color: #a1b3af;}
 .green.customer-detail .product .price .won{color: #a1b3af;}
 .green.customer-detail .product{border-color: #99ccc0;}
-
+.green.customer-detail .product .edit-ui:hover{background-position: right -60px;}
 
 @media screen and (max-height: 1024px) {
     .slider{ margin-top: 50px; }

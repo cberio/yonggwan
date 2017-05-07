@@ -1,6 +1,6 @@
 var guest = [
   {
-    id: 201928, //integer|guest 고유 id
+    id: 1, //integer|guest 고유 id
     shop_id: 1, //integer|shop 고유 id,
     user_id: null, //integer,nullable|고객 user id
     guest_class: 'VIP', //max 10|고객 등급
@@ -161,7 +161,6 @@ var guest = [
     line: 'agcd@co.kr'
   },
   {
-
       id: 6,
       shop_id: 1,
       user_id: 666,
