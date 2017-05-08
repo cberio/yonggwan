@@ -126,6 +126,7 @@ const fetchSchedules = (shop, state) => dispatch => {
     .withService()
     .get(state)
     .then(json => {
+      console.info(json);
       dispatch(receiveSchedules(shop, json));
       dispatch(loading(false));
     });

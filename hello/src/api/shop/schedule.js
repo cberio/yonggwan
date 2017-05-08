@@ -4,7 +4,8 @@ import moment from 'moment';
 
 export default class Schedule {
     constructor({shopId = '', token = ApiUtils.testToken} = {shopId, token}) {
-        this.apiUrl = ApiUtils.BASE_URL()+`shops/${shopId}/schedules`;
+        this.subUrl = process.env.REACT_APP_CURRENT_USER ? `shops/${shopId}/schedules` : 'shops/schedule.json';
+        this.apiUrl = ApiUtils.BASE_URL() + this.subUrl;
         this.shopId = shopId;
         this.token = token;
         this.params = new URLSearchParams();

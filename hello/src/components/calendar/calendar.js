@@ -523,12 +523,12 @@ const mapStateToProps = (state) => {
     getServicesBySelectedShopID,
   } = state;
 
-  // const { schedules } = getSchedulesBySelectedShopID[selectedShopID] || { isFetching: false, schedules: { data: require('../../data/schedules').default} };
-  // const { staffs } = getStaffsBySelectedShopID[selectedShopID] || { isFetching: false, staffs: { data: require('../../data/staffs').default} };
-  // const { services } = getServicesBySelectedShopID[selectedShopID] || { isFetching: false, services: { data: require('../../data/services').default} };
-  const { schedules } = { isFetching: false, schedules: { data: require('../../data/schedules').default} };
-  const { staffs } = { isFetching: false, staffs: { data: require('../../data/staffs').default} };
-  const { services } = { isFetching: false, services: { data: require('../../data/services').default} };
+  const { schedules } = getSchedulesBySelectedShopID[selectedShopID] || { isFetching: false, schedules: { data: require('../../data/schedules').default} };
+  const { staffs } = getStaffsBySelectedShopID[selectedShopID] || { isFetching: false, staffs: { data: require('../../data/staffs').default} };
+  const { services } = getServicesBySelectedShopID[selectedShopID] || { isFetching: false, services: { data: require('../../data/services').default} };
+  // const { schedules } = { isFetching: false, schedules: { data: require('../../data/schedules').default} };
+  // const { staffs } = { isFetching: false, staffs: { data: require('../../data/staffs').default} };
+  // const { services } = { isFetching: false, services: { data: require('../../data/services').default} };
 
   return {
     selectedShopID,

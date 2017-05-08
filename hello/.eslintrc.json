@@ -12,6 +12,7 @@
         "semi": [1, "always"],
         "indent": [1, 4],
         "comma-dangle": [0],
-        "linebreak-style":"off" 
+        "linebreak-style":"off",
+        "curly": [1, "multi"]
     }
 }

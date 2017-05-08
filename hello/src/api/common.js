@@ -9,12 +9,15 @@ export const HTTP_HEADER = (token, contentType = ContentType.formData) => ({
     'Content-Type': contentType,
 });
 
-export const BASE_URL = (http = true , env = process.env.NODE_ENV) => {
-    let protocol = http ? 'http://' : 'https://';
-    let url = process.env.REACT_APP_API_URL ? process.env.REACT_APP_API_URL : 'helloshop-api-jws.azurewebsites.net';
-    let suffix = '/api/v1/';
-    
-    return `${protocol}${url}${suffix}`;
+export const BASE_URL = (http = true) => {
+    const protocol = http ? 'http://' : 'https://';
+    const url = process.env.REACT_APP_API_URL;
+    const suffix = '/api/v1/';
+
+    if (process.env.REACT_APP_CURRENT_USER)
+        return `${protocol}${url}${suffix}`;
+
+    return `${process.env.PUBLIC_URL}/data/`;
 }
 
 export const parseJSON = response => {
