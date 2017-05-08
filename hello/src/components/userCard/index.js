@@ -39,6 +39,7 @@ class UserCard extends Component {
 
   initUserCards () {
     const componnent = this;
+    console.log(this.props.schedules)
     var slides = this.props.schedules.filter(function(slide){
       // 필터[1]: 선택한 이벤트의 날짜와 다른 날짜의 이벤트를 제거한다
       var case1 = moment(slide.start).isSame(componnent.state.slideDate.format('YYYY-MM-DD'), 'day');
@@ -46,7 +47,7 @@ class UserCard extends Component {
       // 필터[2]: OFF TIME 이벤트를 제거한다
       var case2 = slide.status !== actions.ScheduleStatus.OFFTIME;
       // 필터[3]: 다른 Staff의 이벤트를 제거한다
-      var case3 = slide.resourceId == componnent.state.slideStaff.id // [3]      
+      var case3 = slide.resourceId == componnent.state.slideStaff.id // [3]
       return case1 && case2 && case3;
     })
     var initialSlideIndex;
@@ -131,6 +132,7 @@ class UserCard extends Component {
     var slideSettings = {
       draggable: false,
       infinite: false,
+      accessibility: false,
       speed: 500,
       dots: false,
       initialSlide: this.state.slideIndex,
@@ -169,7 +171,7 @@ class UserCard extends Component {
       <DatePicker
         height={520}
         selectedDate={this.state.slideDate}
-        onChange={ (date) => this.setUserCards('date', date) }
+        onChange={ (momentDate) => this.setUserCards('date', momentDate) }
         onClose={ () => this.isChangeDate(false)}
         className="user-card-slide-datepicker"
       />

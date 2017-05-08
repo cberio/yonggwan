@@ -120,19 +120,21 @@ class DailyCalendar extends Component {
 
     // 이벤트 element를 타임라인 바깥영역으로 드래그 시 타임라인 스크롤링 이벤트
     autoFlowTimeline(x, y, jsEvent) {
-        var timeline = $('.fc-view-container'),
-            offset = timeline.offset();
+        var timelineContainer = $('.fc-view-container'),
+            timeline = $(timelineContainer).find('> .fc-agendaDay-view'),
+            offset = timelineContainer.offset();
         var max = {
             left: offset.left,
-            right: offset.left + timeline.width()
+            right: offset.left + timelineContainer.width()
         };
-        var thisLeft = $(timeline).scrollLeft();
-        if (x <= max.left + 1) {
-            $(timeline).scrollLeft(thisLeft - 5);
-            console.log('trigger left');
-        } else if (x >= max.right - 1) {
-            $(timeline).scrollLeft(thisLeft + 5);
-            console.log('trigger right');
+        var thisLeft = $(timelineContainer).scrollLeft();
+
+        if(thisLeft <= timeline.width() - timelineContainer.width()) {
+          if (x <= max.left + 1) {
+              $(timelineContainer).scrollLeft(thisLeft - 5);
+          } else if (x >= max.right - 1) {
+              $(timelineContainer).scrollLeft(thisLeft + 5);
+          }
         }
     }
 
@@ -174,11 +176,36 @@ class DailyCalendar extends Component {
         let selector = $('.fc-head-container .fc-resource-cell');
         let timeGridHeader = $('.fc-resource-header');
 
+        var scroller = $('#daily .fc-view-container');
+        var handleStart = 'mousedown';
+        var handleMove = 'mousemove';
+        var handleEnd = 'mouseup';
+        var startPos;
+        var dragPos;
+        var scrollPos;
+
+        // return: binded controler elements
         var getStaffControlerEl = function(staff, isMulti) {
           var wrapEl = $('<div class="fc-resource-header-each" />');
-          var innerEl = $('<div class="fc-resource-header-inner" />').appendTo(wrapEl);
-          innerEl.prepend('<div class="fc-resource-label">'+ staff.nickname +'</div');
+          var innerEl = $('<div class="fc-resource-header-inner" />')
+            .appendTo(wrapEl)
+            .prepend('<div class="fc-resource-label">'+ staff.nickname +'</div')
+            // 드래그관련 바인딩
+            .on(handleStart, function (e) {
+                scrollPos = $(scroller).scrollLeft();
+                startPos = e.pageX;
+                $(document)
+                  .on(handleMove, function (e) {
+                      dragPos = startPos - e.pageX;
+                      $(scroller).scrollLeft(dragPos + scrollPos);
+                      //$(scroller).scrollLeft($(scroller).scrollLeft()+1);
+                  })
+                  .on(handleEnd, function (e) {
+                      $(document).off(handleMove);
+                  });
+            })
 
+          // 다중 타임라인을 렌더링한경우: 타임라인 언마운트 버튼삽입
           if (isMulti) {
             $('<button class="fc-resource-button" />').appendTo(innerEl)
             .on('click', function() {
@@ -205,6 +232,18 @@ class DailyCalendar extends Component {
           $('.fc-resource-controler-wrap').insertBefore('.fc-view-container');
         }
 
+        // 다중 타임라인을 렌더한경우: 스크린 사이즈 및 각 타임라인 최소사이즈 등을 고려하여 width를 적용함
+        var setTimelineSize = function () {
+          if (
+              staffLength >= 2 &&
+              windowWidth < (headerWidth + timeSlatWidth + (columnMinWidth * staffLength))
+            ) {
+              $('.fc-view-container .fc-agendaDay-view').width(timeSlatWidth + (columnMinWidth * staffLength));
+          } else {
+              $('.fc-view-container .fc-agendaDay-view').attr('style', '');
+          }
+        }
+
         switch (type) {
                 // case ************************************************ //
             case 'init':
@@ -214,22 +253,10 @@ class DailyCalendar extends Component {
                 // case ************************************************ //
             case 'again':
                 insertStaffControler();
+                setTimelineSize();
                 break;
                 // case ************************************************ //
             case 'destroy':
-                //var staffElem = $('.expert-each.checkbox');
-                // Expert level 별로 재정렬한다.
-                /*let staffElemNew = staffElem.detach().sort(function(a, b) {
-                    return $(a).data('priority') < $(b).data('priority')
-                        ? -1
-                        : $(a).data('priority') > $(b).data('priority')
-                            ? 1
-                            : 0;
-                });
-                */
-                //$(staffElemNew).appendTo('.expert-daily .expert-inner');
-                //$('.expert-daily').appendTo('.expert-wrap');
-                //$('.fc-view-container > .fc-view').removeClass('inserted-expert');
                 break;
                 // case ************************************************ //
             case 'resize':
@@ -238,17 +265,9 @@ class DailyCalendar extends Component {
                 break;
         }
 
-
-        if (
-            staffLength >= 2 &&
-            windowWidth < (headerWidth + timeSlatWidth + (columnMinWidth * staffLength))
-          ) {
-            $('.fc-view-container .fc-agendaDay-view').width(timeSlatWidth + (columnMinWidth * staffLength));
-        } else {
-            $('.fc-view-container .fc-agendaDay-view').attr('style', '');
-        }
-
     }
+
+
     // 타임라인 좌우 스크롤시 타임라인 시간 그리드 스크롤 바인딩
     bindTimelineScroller () {
       var scroller = $('#daily .fc-view-container');
@@ -257,7 +276,7 @@ class DailyCalendar extends Component {
       var thisY = $(scroller).scrollTop();
       $(scroller).on('scroll', function(e) {
         var thisNewX = $(this).scrollLeft();
-        console.log(thisNewX);
+        //console.log(thisNewX);
         if (thisX !== thisNewX)
           $(timeGridAxis).css('left', thisNewX);
           thisX = thisNewX;
@@ -519,7 +538,7 @@ class DailyCalendar extends Component {
                 /// 생성버튼 캘린더 타임라인 노드에서 상위 노드로 삽입
                 $('.full-calendar > .fc').append($('.create-order-wrap.timeline').hide());
                 $('.timeline .create-order-ui-wrap').hide();
-                
+
                 this.renderNewOfftime();
                 break;
             // '주 단위' 에서 시작시간을 지정하지 않고 생성하는 경우
@@ -538,18 +557,18 @@ class DailyCalendar extends Component {
     renderNewOfftime() {
         let component = this;
         let {Calendar} = this.refs;
-        
+
         let defaultMinute = 20;
         let offTimeObject = {
             reservation_dt: moment(this.state.selectedDate).format('YYYY-MM-DD'),
             start_time: moment(this.state.selectedDate).format('HH:mm'),
             end_time: moment(this.state.selectedDate).add(defaultMinute, 'minute').format('HH:mm'),
             status: actions.ScheduleStatus.OFFTIME,
-            staff_id: this.state.selectedStaff.id, 
+            staff_id: this.state.selectedStaff.id,
             start: moment(this.state.selectedDate),
             end: moment(this.state.selectedDate).add(defaultMinute, 'minute'),
             title: 'off-time',
-            resourceId: this.state.selectedStaff.id, 
+            resourceId: this.state.selectedStaff.id,
         }
 
         // FullCalendar에 먼저 이벤트를 그립니다.
@@ -557,7 +576,7 @@ class DailyCalendar extends Component {
         // $('#ID_' + temporarySchedule._id).addClass('new-event');
 
         component.props.createNewSchedule(offTimeObject).then((createdOffTimeResult) => {
-            
+
             // off-time 저장 후 반환된 데이터 (올바르게 생성되었는지 확인해야 함)
             let createdSchedule = createdOffTimeResult.schedules.data;
 
@@ -576,14 +595,14 @@ class DailyCalendar extends Component {
                 // ESC key 입력시 신규생성한 event 삭제
                 $(document).bind('keydown', function(e) {
                     if (e.which === 27 && !component.state.isModalConfirm) {
-                        
+
                         if(component.state.isAbleBindRemoveEvent){
                             /// 생성버튼 캘린더 타임라인 노드에서 상위 노드로 삽입 (event remove 시 버튼의 부모 dom이 다시 그려지면서 버튼 dom도 사라지기떄문)
                             $('.full-calendar > .fc').append($('.create-order-wrap.timeline').hide());
                             $(Calendar).fullCalendar('removeEvents', [component.state.newScheduleId]);
                             component.setState({isAbleBindRemoveEvent: false, newScheduleId: undefined});
                             component.props.guider('OFF TIME이 삭제되었습니다!');
-                            
+
                             $(document).unbind('keydown');
                         }
                     }
@@ -875,10 +894,6 @@ class DailyCalendar extends Component {
     }
 
     componentDidMount() {
-
-      $('*').scroll(function(){
-        console.log($(this))
-      })
         const component = this;
         let {Calendar} = this.refs;
         let Staffs = this.props.staffs;
@@ -1080,10 +1095,6 @@ class DailyCalendar extends Component {
                 let selectedCard = calSchedule;
                 // 선택된 이벤트객체의 리소스ID에 맞는 expert id를 찾아 가져옵니다
                 let selectedStaff  = $(Calendar).fullCalendar('getResourceById', selectedCard.resourceId);
-
-                console.log(selectedDate);
-                console.log(selectedCard);
-                console.log(selectedStaff);
 
                 // userCard 컴포넌트의 초기값을 전달한다
                 component.isUserCard(true, {
@@ -1383,7 +1394,7 @@ class DailyCalendar extends Component {
                 {this.props.getUserCardComponent(this)}
                 {this.props.getModalConfirmComponent(this)}
                 {this.props.getRenderConfirmComponent(this, 'agendaDay')}
-                {viewview}
+                {/*viewview*/}
                 {test}
             </div>
         );

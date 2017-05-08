@@ -1,6 +1,5 @@
 			/* fullcalendar-scheduler.css 에서 수정될 부분만 적용합니다 */
 /*-------------------------------------------------------------------------------------------------*/
-
 .full-calendar {
 	position: relative;
 }
@@ -167,7 +166,8 @@
 	background-position: center top;
 }
 
-.fc-day-header.fc-widget-header {
+.fc-day-header.fc-widget-header,
+.fc-axis.fc-widget-header {
 	border-color: #d1d1d1;
 }
 .fc-day-header.fc-widget-header.fc-today a:after {
@@ -698,7 +698,7 @@
 /* 시간이 지난 slot style*/
 .fc-agendaWeekly-view .fc-event.disabled:not(.new-event):not(.fc-request):hover{border-left-width: 1px;padding-left: 1px;}
 .fc-agendaDay-view    .fc-event.disabled:not(.new-event):not(.fc-request):hover{border-left-width: 1px;padding-left: 2px;}
-.fc-event.disabled {cursor: default;}
+.fc-event.disabled {/*cursor: default;*/}
 .fc-event.disabled:not(.new-event):not(:hover) {border-color: transparent;}
 .fc-event.disabled:not(.new-event) .fc-content {opacity: .5;}
 
@@ -1326,6 +1326,9 @@
 	margin: 0 !important;
 }
 .fc-agendaWeekly-view .fc-scroller.fc-time-grid-container {
+	/* 스크롤바 width만큼 margin 음수값 적용 (400% 했을경우 date header cell과 타임라인 slot cell 사이즈 오차관련)*/
+	/* 브라우저별 스크롤바 사이즈 재확인 필요(?) */
+	margin-right: -15px;
 	background-color: #fff;
 }
 .fc-agendaWeekly-view .fc-time-grid table {
@@ -1670,7 +1673,7 @@
 /* expert timeline ui */
 .fc-resource-header-container {
 	position: absolute;
-	left: 0; right: 0; top: 12px;
+	left: 0; right: 0; top: 11px;
 	z-index: 2;
 	height: 28px;
 }
@@ -1712,6 +1715,7 @@
 	display: inline-block;
 	height: 28px;
 	padding: 0 12px;
+	cursor: pointer;
 }
 .fc-resource-header-inner:after {
 	display: block;
@@ -2034,7 +2038,7 @@
 		line-height: 42px;
 	}
 	.fc-header-toolbar .fc-center button {
-		margin-top: 8px;
+		margin-top: 5px;
 	}
 	.fc-header-toolbar .fc-right {
 		margin-top: 10px;

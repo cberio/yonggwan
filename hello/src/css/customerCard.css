@@ -12,7 +12,7 @@
 .user-card-basic .info .user .phone{font-size: 16px;color: #666666;display: block;clear: both;}
 .user-card-basic .util{float: right;}
 .user-card-basic .util .ui{margin: -2px 0 8px 0;text-align: right;}
-.user-card-basic .util .ui button{color: #000;opacity: .5;letter-spacing: -0.6px;font-size: 12px;line-height: 12px;font-family: 'notokr-medium';padding-bottom: 2px;border-bottom: 1px solid transparent;}
+.user-card-basic .util .ui button{color: #000;opacity: .5;letter-spacing: -0.6px;font-size: 12px;line-height: 12px;font-family: 'notokr-medium';padding: 0 0 2px 0;height: auto;border-bottom: 1px solid transparent;}
 .user-card-basic .util .ui button:hover,
 .user-card-basic .util .ui button:focus {opacity: 1; border-bottom-color: #000;}
 .user-card-basic .util .ui .btn-edit{padding-right: 8px;background: url(../image/common/bullet-arrow-edit.png) right 2px no-repeat;}
