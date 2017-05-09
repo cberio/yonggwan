@@ -4,21 +4,25 @@ import modalConfirm from './modalConfirm';
 import notifier from './notifier';
 import guider from './guider';
 import loading from './loading';
-import {calendarConfig} from './calendar';
+import { calendarConfig } from './calendar';
 import selectedShopID from './shop';
-import {getSchedulesBySelectedShopID, createSchedule} from './schedule';
-import {getStaffsBySelectedShopID} from './staffs';
-import {getServicesBySelectedShopID} from './service';
+import { getSchedulesBySelectedShopID, createSchedule } from './schedule';
+import { getStaffsBySelectedShopID } from './staffs';
+import { getServicesBySelectedShopID } from './service';
 
 
 const Reducers = combineReducers({
-  userCard, modalConfirm, notifier, guider, loading,
-  calendarConfig,
-  selectedShopID,
-  getSchedulesBySelectedShopID,
-  getStaffsBySelectedShopID,
-  getServicesBySelectedShopID,
-  createSchedule,
+    userCard, 
+    modalConfirm,
+    notifier,
+    guider,
+    loading,
+    calendarConfig,
+    selectedShopID,
+    getSchedulesBySelectedShopID,
+    getStaffsBySelectedShopID,
+    getServicesBySelectedShopID,
+    createSchedule,
 });
 
 export default Reducers;
