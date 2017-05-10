@@ -63,7 +63,7 @@ class Calendar extends Component {
       return Math.floor((Math.random() * 99999) + 1);
   }
 
-  runUserCardSlide (t, calSchedule, jsEvent, view) {
+  runUserCardSlide(t, calSchedule, jsEvent, view) {
     let selectedDate = moment(calSchedule.start);
     // 더블클릭으로 선택된 이벤트객체를 가져옵니다
     let selectedCard = calSchedule;
@@ -78,7 +78,7 @@ class Calendar extends Component {
     });
   }
 
-  changeView (type) {
+  changeView(type) {
     this.setState({
       viewType: type
     });
@@ -111,13 +111,13 @@ class Calendar extends Component {
     this.props.fetchSchedulesIfNeeded(selectedShopID);
   }
 
-  setTimelineDate (date) {
+  setTimelineDate(date) {
     this.setState({
       viewDate: date
     });
   }
 
-  returnScheduleObj (newSchedule) {
+  returnScheduleObj(newSchedule) {
       return {
           reservation_dt: moment(newSchedule.newOrderStart).format('YYYY-MM-DD'),
           shop_id: null,
@@ -141,7 +141,7 @@ class Calendar extends Component {
   }
 
   // 주/일단위 컴포넌트 componentDidMount 에서 실행하는 공통 사용함수
-  timelineWasMount (view) {
+  timelineWasMount(view) {
     this.insertElements();
     this.activeGnb(view, true);
 
@@ -156,16 +156,16 @@ class Calendar extends Component {
     }
   }
 
-  insertElements () {
+  insertElements() {
     // 캘린더상단 오늘로이동 버튼 삽입
     $('.fc-today-timeline-button-wrap').appendTo('.fc-left');
   }
 
-  returnNewOrderStates () {
+  returnNewOrderStates() {
     return this.state.newOrderStates;
   }
 
-  toggleCreateOrderFixedUi () {
+  toggleCreateOrderFixedUi() {
     //우측하단 예약생성 고정버튼 Ui toggle
     $('.create-order-wrap.fixed .create-order-ui').toggle();
 
@@ -176,11 +176,11 @@ class Calendar extends Component {
 
   // 타임라인 예약생성 버튼의 data-date 값을 set/return
   mouseenterSlotTime(isSetting, date) {
-    var createButtonElem =  $('.create-order-wrap.timeline');
+    const createButtonElem = $('.create-order-wrap.timeline');
     if (isSetting) {
       $(createButtonElem).attr('data-date', date);
     } else {
-      return $(createButtonElem).attr('data-date');
+      $(createButtonElem).attr('data-date');
     }
   }
 
@@ -253,7 +253,7 @@ class Calendar extends Component {
     this.props.fetchSchedulesIfNeeded(selectedShopID);
   }
 
-  render () {
+  render() {
     this.sortExpert(this.props.staffs.data);
 
     const CreateOrderButtonFixed = (_this) =>  {
@@ -512,6 +512,7 @@ Calendar.PropTypes = {
   staffs: PropTypes.object.isRequired,
   schedules: PropTypes.object.isRequired,
   services: PropTypes.object,
+  selectedShopID: PropTypes.number.isRequired,
 }
 
 const mapStateToProps = (state) => {
@@ -523,9 +524,9 @@ const mapStateToProps = (state) => {
     getServicesBySelectedShopID,
   } = state;
 
-  const { schedules } = getSchedulesBySelectedShopID[selectedShopID] || { isFetching: false, schedules: { data: require('../../data/schedules').default} };
-  const { staffs } = getStaffsBySelectedShopID[selectedShopID] || { isFetching: false, staffs: { data: require('../../data/staffs').default} };
-  const { services } = getServicesBySelectedShopID[selectedShopID] || { isFetching: false, services: { data: require('../../data/services').default} };
+  const { schedules } = getSchedulesBySelectedShopID[selectedShopID] || { isFetching: false, schedules: { data: require('../../data/schedules').default } };
+  const { staffs } = getStaffsBySelectedShopID[selectedShopID] || { isFetching: false, staffs: { data: require('../../data/staffs').default } };
+  const { services } = getServicesBySelectedShopID[selectedShopID] || { isFetching: false, services: { data: require('../../data/services').default } };
   // const { schedules } = { isFetching: false, schedules: { data: require('../../data/schedules').default} };
   // const { staffs } = { isFetching: false, staffs: { data: require('../../data/staffs').default} };
   // const { services } = { isFetching: false, services: { data: require('../../data/services').default} };
