@@ -8,6 +8,7 @@ import Guests from '../../data/guests';
 import * as actions from '../../actions';
 import * as Functions from '../../js/common';
 import * as Images from '../../require/images';
+import _ from 'lodash';
 
 class Resource extends Component {
     constructor(props) {
@@ -18,21 +19,25 @@ class Resource extends Component {
             isChangeProduct: false,
             isChangePrice: false,
             visibleDetails: 'history',
-            historyActiveIndex: -1
+            historyActiveIndex: null,
+            slideIndex: 0,
         };
         this.toggleDetails = this.toggleDetails.bind(this);
-        this.toggleHistorys = this.toggleHistorys.bind(this);
+        this.toggleHistories = this.toggleHistories.bind(this);
         this.changeDate = this.changeDate.bind(this);
         this.changeTime = this.changeTime.bind(this);
         this.changeProduct = this.changeProduct.bind(this);
         this.changeAmount = this.changeAmount.bind(this);
         this.handleChange = this.handleChange.bind(this);
+        this.slideNext = this.slideNext.bind(this);
+        this.slidePrev = this.slidePrev.bind(this);
+        this.slideChange = this.slideChange.bind(this);
+        this.slideAfter = this.slideAfter.bind(this);
     }
 
     handleChange (e) {
       console.log(e.target.innerHTML);
     }
-
     changeDate(date) {
         if (moment.isMoment(date))
             alert();
@@ -65,17 +70,35 @@ class Resource extends Component {
     toggleDetails(type) {
         this.setState({visibleDetails: type});
     }
-    toggleHistorys(i) {
+    toggleHistories(i) {
         if (i === this.state.historyActiveIndex) {
-          this.setState({historyActiveIndex: -1});
+          this.setState({historyActiveIndex: null});
         }
         else {
             this.setState({historyActiveIndex: i}, () => {
-              this.refs.inputDetail.focus();
+              //this.refs.inputDetail.focus();
             });
         }
     }
-
+    // <Slider /> 의 Value를 세팅하고 슬라이드를 이동함
+    slideChange(e) {
+      if (isNaN(e.target.value))
+        e.target.value = '';
+      this.refs.slider.slickGoTo(e.target.value -1);
+    }
+    // <Slider /> 가 슬라이딩 된후 Value를 세팅함
+    slideAfter(idx) {
+      this.setState({
+        slideIndex: idx
+      });
+      this.refs.slideValue.value = idx +1 // set vlaue to input element
+    }
+    slidePrev() {
+      this.refs.slider.slickPrev();
+    }
+    slideNext() {
+      this.refs.slider.slickNext();
+    }
 
     render() {
         console.info('Render UserCard Resourcs');
@@ -85,38 +108,53 @@ class Resource extends Component {
         const user = props.users;
         const user_guestInfo = Functions.getGuest(user.guest_id, Guests);
         const user_historyInfo = Functions.getHistory(user.guest_id, Histories);
+        const lengthOfHistorySlide = 3;
 
         const mapToHistoryList = (user, history, i) => {
+
+          if (state.historyActiveIndex !== null && (state.historyActiveIndex !== i)) {
+              console.log('ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ');
+              console.log(state.historyActiveIndex);
+              console.log(i);
+              console.log('ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ');
+              return '';
+          }
+
           return (
-            <div key={i} className={`history-list ${history.product
-                ? Functions.getService(history.service, this.props.services).color
+            <div key={i} className={`history-list ${history.shop_service_id
+                ? Functions.getService(history.shop_service_id, this.props.services).color
                 : ''}${this.state.historyActiveIndex === i
                     ? " active"
                     : ''}`}>
-                <button className="history-list-button" onClick={() => this.toggleHistorys(i)}>
+                <button className="history-list-button" onClick={() => this.toggleHistories(i)}>
                     <div className="content">
                         <div className="info">
-                            <span className="product-name">{history.product
-                                    ? history.product
+                            <span className="product-name">{history.shop_service_id
+                                    ? Functions.getService(history.shop_service_id, this.props.services).name
                                     : '서비스 정보 없음'}</span>
                             <span className="info-etc">
-                                {user.status == actions.ScheduleStatus.REQUESTED && user.prepayment
+                                {history.status == actions.ScheduleStatus.REQUESTED && !_.isEmpty(history.payments)
                                     ? '예약요청 | 선결제'
-                                    : user.status == actions.ScheduleStatus.REQUESTED
+                                    : history.status == actions.ScheduleStatus.REQUESTED
                                         ? '예약요청'
-                                        : user.prepayment
+                                        : !_.isEmpty(history.payments)
                                             ? '선결제'
                                             : ''
                                   }
                             </span>
-                            {moment(history.date).isSame(moment(new Date()), 'day')
+                            {moment(history.reservation_dt).isSame(moment(new Date()), 'day')
                                 ? <span className="date today">당일예약</span>
-                                : <span className="date">{`${history.date}(${moment(history.date).locale('ko').format('ddd')})`}</span>
+                                : <span className="date">
+                                  {`
+                                    ${moment(history.reservation_dt).format('YYYY. MM. DD')}
+                                    (${moment(history.reservation_dt).locale('ko').format('ddd')})
+                                  `}
+                                </span>
                             }
                         </div>
-                        {history.comment
+                        {history.guest_memo
                             ? (
-                                <p className="comment">{history.comment}</p>
+                                <p className="comment">[고객] {history.guest_memo}</p>
                             )
                             : (
                                 <p className="comment no-comment">메모없음</p>
@@ -131,43 +169,62 @@ class Resource extends Component {
         }
 
         const mapToHistory = (user, histories) => {
+            // guest history를 3개씩 그룹지어 매핑 (3개씩 하나의 슬라이드)
+            var chunkHistories = _.chunk(histories, lengthOfHistorySlide);
             if (!histories.length)
               return <p className="no-history">시술내역이 없습니다.</p>
 
-            return (
-              <div className="history-container">
-                  {
-                     histories.map((history, i) => {
-                      return mapToHistoryList(user, history, i)
-                    })
-                  }
-              </div>
-            )
-
+            return chunkHistories.map((chunkHistory, j) => {
+              return (
+                <div className="history-container" key={j} >
+                    {chunkHistory.map((history, i) => {
+                        return mapToHistoryList(user, history, parseInt(j+''+i))
+                      })
+                    }
+                </div>
+              )
+            })
         }
 
         const historyDetail = (user, history) => {
           return (
             <div className="history-detail">
                 <div className="history-detail-info">
-                  <button ref="inputDetail" onClick={() => this.toggleHistorys(this.state.historyActiveIndex)}>
-                      <span className="product-name">{history.product
-                              ? history.product
-                              : '서비스 정보 없음'}
-                      </span>
-                      <span className="info-etc">{user.status == actions.ScheduleStatus.REQUESTED && user.prepayment
+                  <button ref="inputDetail" onClick={() => this.toggleHistories(this.state.historyActiveIndex)}>
+                      <div>
+                        <span className="product-name">
+                          {history.shop_service_id
+                              ? Functions.getService(history.shop_service_id, this.props.services).name
+                              : '서비스 정보 없음'
+                            }
+                        </span>
+                        <span className="info-etc">
+                          {history.status == actions.ScheduleStatus.REQUESTED && !_.isEmpty(history.payments)
                               ? '예약요청 | 선결제'
-                              : user.status == actions.ScheduleStatus.REQUESTED
+                              : history.status == actions.ScheduleStatus.REQUESTED
                                   ? '예약요청'
-                                  : user.prepayment
+                                  : !_.isEmpty(history.payments)
                                       ? '선결제'
                                       : ''
                             }
-                      </span>
+                        </span>
+                      </div>
+                      <div>
+                        <span className="product-amount">
+                          {history.shop_service_id
+                              ? Functions.numberWithCommas(Functions.getService(history.shop_service_id, this.props.services).amount)
+                              : 0
+                          }&#xFFE6;{/* WON 특수문자*/}
+                        </span>
+                        <span className="prepayment-amount">
+                          {Functions.numberWithCommas(370000.00)}
+                          &#xFFE6;{/* WON 특수문자*/}(잔액)
+                        </span>
+                      </div>
                   </button>
-                  {moment(history.date).isSame(moment(new Date()), 'day')
+                  {moment(history.reservation_dt).isSame(moment(new Date()), 'day')
                       ? <span className="date today">당일예약</span>
-                      : <span className="date">{`${history.date}(${moment(history.date).locale('ko').format('ddd')})`}</span>
+                      : <span className="date">{`${history.reservation_dt}(${moment(history.reservation_dt).locale('ko').format('ddd')})`}</span>
                   }
                 </div>
                 <div className="history-comment">
@@ -406,25 +463,53 @@ class Resource extends Component {
                     {this.state.visibleDetails === 'history'
                       ? (
                         <div className="history">
-                          {mapToHistory(user, user_historyInfo)}
+                          {
+                            user_historyInfo.length ? (
+                              <Slider
+                                ref="slider"
+                                initialSlide={this.state.slideIndex}
+                                arrows={false}
+                                draggable={false}
+                                infinite={false}
+                                accessibility={false}
+                                speed={250}
+                                dots={false}
+                                slidesToShow={1}
+                                slidesToScroll={1}
+                                afterChange={ newIndex => this.slideAfter(newIndex) }
+                              >
+                                { mapToHistory(user, user_historyInfo) }
+                              </Slider>
+                            )
+                            : ''
+                          }
                           <div className="indicator">
-                              {user_historyInfo.length > 3
-                                  ? <button className="prev" onClick={""}>이전</button>
+                              {user_historyInfo.length > lengthOfHistorySlide && (this.state.slideIndex +1) > 1
+                                  ? <button className="prev" onClick={this.slidePrev}>이전</button>
                                   : ''
                               }
-                              {user_historyInfo.length > 3
-                                  ? <div><input type="text" defaultValue={1} maxLength={2}/>
-                                          /
-                                          <span>{user_historyInfo.length}</span>
-                                      </div>
-                                  : <div><input type="text" defaultValue={1} disabled/>
-                                      /
-                                      <span>{user_historyInfo.length}</span>
-                                  </div>
+                              {user_historyInfo.length > lengthOfHistorySlide
+                                  ? <div>
+                                      <input
+                                        type="text"
+                                        ref="slideValue"
+                                        defaultValue={this.state.slideIndex +1}
+                                        maxLength={2}
+                                        onChange={this.slideChange}
+                                      /> /<span>{Math.ceil(user_historyInfo.length /lengthOfHistorySlide)}</span>
+                                    </div>
+                                  : <div>
+                                      <input
+                                        type="text"
+                                        defaultValue={1}
+                                        disabled
+                                      /> /<span>{1}</span>
+                                    </div>
                               }
-                              {user_historyInfo.length > 3
-                                  ? <button className="next" onClick={null}>다음</button>
-                                  : ''}
+                              {user_historyInfo.length > lengthOfHistorySlide && (this.state.slideIndex +1)  < Math.ceil(user_historyInfo.length /lengthOfHistorySlide)
+                                  ? <button className="next" onClick={this.slideNext}>다음</button>
+                                  : ''
+                              }
                           </div>
                         </div>
                       )
@@ -459,7 +544,6 @@ class Resource extends Component {
 
 Resource.defaultProps = {
     users: {
-      id: null
     }
 }
 

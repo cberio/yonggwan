@@ -194,14 +194,14 @@ class DailyCalendar extends Component {
             .on(handleStart, function (e) {
                 scrollPos = $(scroller).scrollLeft();
                 startPos = e.pageX;
-                $(document)
+                $(window)
                   .on(handleMove, function (e) {
                       dragPos = startPos - e.pageX;
                       $(scroller).scrollLeft(dragPos + scrollPos);
                       //$(scroller).scrollLeft($(scroller).scrollLeft()+1);
                   })
                   .on(handleEnd, function (e) {
-                      $(document).off(handleMove);
+                      $(window).off(handleMove);
                   });
             })
 
@@ -724,8 +724,8 @@ class DailyCalendar extends Component {
         }, () => {
             // view change시, 선택된 이벤트의 요일이 처음으로 오도록 설정해준다
             let fcOptions = {
-                firstDay: moment(schedule.start).day(),
-                gotoDate: moment(schedule.start).format('YYYY-MM-DD'),
+                firstDay: moment(schedule.reservation_dt).day(),
+                gotoDate: moment(schedule.reservation_dt).format('YYYY-MM-DD'),
                 editable: false
             };
             $(Calendar).fullCalendar('option', fcOptions);
@@ -1003,10 +1003,16 @@ class DailyCalendar extends Component {
                     component.setState({newScheduleId: undefined, isAbleBindRemoveEvent: false});
                 }
                 // 30분 이하의 이벤트의 element에 클래스 추가
-                if (Functions.millisecondsToMinute(schedule.end.diff(schedule.start)) <= 30) {
+                if (Functions.millisecondsToMinute(
+                  moment(schedule.reservation_dt + 'T'+ schedule.end_time)
+                    .diff(schedule.reservation_dt +'T'+ schedule.start_time)
+                ) <= 30) {
                     setTimeout(function() {
                         // 20분 이하의 이벤트인경우
-                        if (Functions.millisecondsToMinute(schedule.end.diff(schedule.start)) <= 20) {
+                        if (Functions.millisecondsToMinute(
+                          moment(schedule.reservation_dt + 'T'+ schedule.end_time)
+                            .diff(schedule.reservation_dt +'T'+ schedule.start_time)
+                          ) <= 20) {
                             $('.fc-event#ID_' + schedule.id).addClass('fc-short');
                         } else {
                             $('.fc-event#ID_' + schedule.id).addClass('fc-short no-expand');
@@ -1014,7 +1020,10 @@ class DailyCalendar extends Component {
                     }, 0);
                 }
                 // 20분 미만으로 이벤트 시간을 수정할 경우 수정을 되돌린다.
-                if (Functions.millisecondsToMinute(schedule.end.diff(schedule.start)) < 20) {
+                if (Functions.millisecondsToMinute(
+                  moment(schedule.reservation_dt + 'T'+ schedule.end_time)
+                  .diff(schedule.reservation_dt +'T'+ schedule.start_time)
+                ) < 20) {
                     revertFunc();
                     alert('변경할 수 없습니다');
                 }
@@ -1090,7 +1099,7 @@ class DailyCalendar extends Component {
                     return false;
 
                 // *****고객카드 슬라이더를 호출함******
-                let selectedDate = moment(calSchedule.start);
+                let selectedDate = moment(calSchedule.reservation_dt);
                 // 더블클릭으로 선택된 이벤트객체를 가져옵니다
                 let selectedCard = calSchedule;
                 // 선택된 이벤트객체의 리소스ID에 맞는 expert id를 찾아 가져옵니다

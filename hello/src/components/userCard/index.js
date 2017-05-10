@@ -39,7 +39,6 @@ class UserCard extends Component {
 
   initUserCards () {
     const componnent = this;
-    console.log(this.props.schedules)
     var slides = this.props.schedules.filter(function(slide){
       // 필터[1]: 선택한 이벤트의 날짜와 다른 날짜의 이벤트를 제거한다
       var case1 = moment(slide.start).isSame(componnent.state.slideDate.format('YYYY-MM-DD'), 'day');
@@ -57,7 +56,6 @@ class UserCard extends Component {
         break;
       }
     }
-    console.log(slides);
     // display max length of slides
     $('em.all').ready(function(){
       $('em.all').html(slides.length);

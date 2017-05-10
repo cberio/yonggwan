@@ -19,7 +19,7 @@
 .user-card-basic .util .ui .btn-delete{background: url(../image/common/slot-ui-delete.png) center center no-repeat;text-indent: -9999px;overflow: hidden;}
 
 .user-card-basic .util .sns{float: right;}
-.user-card-basic .util .sns a{margin-left: 9px;opacity: .7;display: block;float: left;}
+.user-card-basic .util .sns a{margin-left: 6px;opacity: .7;display: block;float: left;}
 .user-card-basic .util .sns a:hover,
 .user-card-basic .util .sns a:focus{opacity: 1;}
 
