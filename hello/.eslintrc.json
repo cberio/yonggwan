@@ -1,23 +1,21 @@
 {
+    "extends": "airbnb",
+    "plugins": [
+        "react",
+        "jsx-a11y",
+        "import"
+    ],
     "env": {
-        "browser": true,
-        "commonjs": true,
-        "es6": true,
-        "node": true
-    },
-    "parserOptions": {
-        "ecmaFeatures": {
-            "jsx": true
-        },
-        "sourceType": "module"
+        "es6": true
     },
     "rules": {
-        "no-const-assign": "warn",
-        "no-this-before-super": "warn",
-        "no-undef": "warn",
-        "no-unreachable": "warn",
-        "no-unused-vars": "off",
-        "constructor-super": "warn",
-        "valid-typeof": "warn"
+        "semi": [1, "always"],
+        "indent": [1, 4, { "SwitchCase": 1 }],
+        "comma-dangle": [0],
+        "linebreak-style": "off",
+        "curly": [1, "multi"],
+        "max-len": [1, 120],
+        "class-methods-use-this": "off",
+        "no-trailing-spaces": [1, { "skipBlankLines": true }]
     }
 }
