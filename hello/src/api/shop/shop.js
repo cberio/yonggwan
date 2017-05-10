@@ -5,10 +5,11 @@ import Schedule from './schedule';
 import Service from './service';
 
 export default class Shop {
-    constructor({shopId = '', token = ApiUtils.testToken} = {shopId, token}) {
+    constructor({ shopId = '', token = ApiUtils.testToken } = { shopId, token }) {
+        this.subUrl = process.env.REACT_APP_CURRENT_USER ? 'shops/' : 'shops/shop.json';
+        this.apiUrl = ApiUtils.BASE_URL() + this.subUrl;
         this.shopId = shopId;
         this.token = token;
-        this.apiUrl = ApiUtils.BASE_URL()+'shops';
         this.params = new URLSearchParams();
         this.method = '';
     }
@@ -17,12 +18,12 @@ export default class Shop {
      * type hinting method
      */
     fiedls() {
-        return DataFieldsSet.shop
+        return DataFieldsSet.shop;
     }
 
     /**
      * get a shop data with given params
-     * 
+     *
      * @param {URLSearchParams} params
      */
     only(params) {
@@ -31,40 +32,40 @@ export default class Shop {
         return fetch(`${this.apiUrl}?${params}`, {
             method: 'PUT',
             headers: ApiUtils.HTTP_HEADER(this.token),
-        }).then(ApiUtils.parseJSON)
+        }).then(ApiUtils.parseJSON);
     }
 
     get() {
         return fetch(`${this.apiUrl}?${this.params}`, {
             method: 'PUT',
             headers: ApiUtils.HTTP_HEADER(this.token),
-        }).then(ApiUtils.parseJSON)
+        }).then(ApiUtils.parseJSON);
     }
 
     /**
      * update shop with given data
-     * 
-     * @param {object} data 
+     *
+     * @param {object} data
      */
     update(data) {
         return fetch(`${this.apiUrl}/${this.shopId}`, {
             method: 'PATCH',
             headers: ApiUtils.HTTP_HEADER(this.token),
             body: data,
-        }).then(ApiUtils.parseJSON)
+        }).then(ApiUtils.parseJSON);
     }
 
     /**
      * create new shop with given data
-     * 
-     * @param {object} data 
+     *
+     * @param {object} data
      */
     create(data) {
         return fetch(`${this.apiUrl}`, {
             method: 'POST',
             headers: ApiUtils.HTTP_HEADER(this.token),
             body: data,
-        }).then(ApiUtils.parseJSON)
+        }).then(ApiUtils.parseJSON);
     }
 
     staffs() {

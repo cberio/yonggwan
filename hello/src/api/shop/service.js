@@ -2,8 +2,9 @@ import { DataFieldsSet } from '../mock';
 import * as ApiUtils from '../common';
 
 export default class Service {
-    constructor({shopId = '', token = ApiUtils.testToken} = {shopId, token}) {
-        this.apiUrl = ApiUtils.BASE_URL()+`shops/${shopId}/services`;
+    constructor({ shopId = '', token = ApiUtils.testToken } = { shopId, token }) {
+        this.subUrl = process.env.REACT_APP_CURRENT_USER ? `shops/${shopId}/services` : 'shops/service.json';
+        this.apiUrl = ApiUtils.BASE_URL() + this.subUrl;
         this.shopId = shopId;
         this.token = token;
         this.params = new URLSearchParams();
@@ -14,7 +15,7 @@ export default class Service {
      * type hinting method
      */
     fiedls() {
-        return DataFieldsSet.service
+        return DataFieldsSet.service;
     }
 
     paramHandler(params = null) {
