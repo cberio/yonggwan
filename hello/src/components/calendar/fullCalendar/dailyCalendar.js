@@ -904,7 +904,7 @@ class DailyCalendar extends Component {
         var firstDay = date.format('d');
         var defaultScrollTime = date.subtract(1, 'hour').format('HH:mm'); //현재시간으로부터 1시간 이전의 시간
         var staffsUiHeight = $('.expert-ui.expert-daily').height();
-        this.setState({defaultStaff: Staffs[0]});
+        this.setState({defaultStaff: _.isEmpty(Staffs) ? undefined : Staffs[0]});
 
         // 스케쥴러 init 실행
         $(Calendar).fullCalendar($.extend(component.props.fcOptions, {
