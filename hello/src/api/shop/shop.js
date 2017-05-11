@@ -28,9 +28,10 @@ export default class Shop {
      */
     only(params) {
         this.apiUrl += this.shopId;
+        this.method = 'PUT';
 
         return fetch(`${this.apiUrl}?${params}`, {
-            method: 'PUT',
+            method: this.method,
             headers: ApiUtils.HTTP_HEADER(this.token),
         }).then(ApiUtils.parseJSON);
     }
