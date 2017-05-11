@@ -178,9 +178,9 @@ class Calendar extends Component {
   mouseenterSlotTime(isSetting, date) {
     const createButtonElem = $('.create-order-wrap.timeline');
     if (isSetting) {
-      $(createButtonElem).attr('data-date', date);
+      return $(createButtonElem).attr('data-date', date);
     } else {
-      $(createButtonElem).attr('data-date');
+      return $(createButtonElem).attr('data-date');
     }
   }
 
