@@ -1,3 +1,4 @@
+import merge from 'lodash/merge';
 import * as types from '../actions/actionType';
 
 const initialState = {
@@ -34,12 +35,12 @@ export const schedules = (state = initialState, action) => {
                 didInvalidate: false,
             };
         case types.SCHEDULE_CREATED:
-            console.info(state.schedules, action.createdSchedule);
+            console.info(merge({}, Object.assign({}, action.createdSchedule), state.schedules));
             return {
                 ...state,
                 isFetching: false,
                 didInvalidate: false,
-                schedules: Object.assign({}, action.createdSchedule, state.schedules),
+                schedules: merge({}, action.createdSchedule, state.schedules),
                 createdSchedule: action.createdSchedule,
                 receivedAt: action.receivedAt
             };
