@@ -448,7 +448,7 @@ class Calendar extends Component {
       getSlotTime: this.mouseenterSlotTime,
       // defaultStaff: function() { _.isEmpty(this.props.staffs) ? Staff[0] : this.props.staffs.data },
       defaultStaff: this.props.staffs[0],
-      createNewSchedule: (scheduleData) => this.props.createNewSchedule(scheduleData),
+      saveSchedule: (scheduleData) => this.props.saveSchedule(scheduleData),
       activeGnb: (view, condition) => this.activeGnb(view, condition),
       runUserCardSlide:             function(t, calSchedule, jsEvent, view) { this.runUserCardSlide(t, calSchedule, jsEvent, view) },
 
@@ -539,19 +539,20 @@ const mapStateToProps = (state) => {
   const {
     calendarConfig,
     selectedShopID,
-    getSchedulesBySelectedShopID,
+    scheduleReducer,
     getStaffsBySelectedShopID,
     getServicesBySelectedShopID,
     getGuestsBySelectedShopID,
   } = state;
 
-  const { schedules } = getSchedulesBySelectedShopID[selectedShopID] || { isFetching: false, didInvalidate: false, schedules: { data: require('../../data/schedules').default } };
+  const { schedules } = scheduleReducer[selectedShopID] || { isFetching: false, didInvalidate: false, schedules: { data: require('../../data/schedules').default } };
   const { staffs } = getStaffsBySelectedShopID[selectedShopID] || { isFetching: false, didInvalidate: false, staffs: { data: require('../../data/staffs').default } };
   const { services } = getServicesBySelectedShopID[selectedShopID] || { isFetching: false, didInvalidate: false, services: { data: require('../../data/services').default } };
   const { guests } = getGuestsBySelectedShopID[selectedShopID] || { isFetching: false, didInvalidate: false, guests: {} };
   // const { schedules } = { isFetching: false, schedules: { data: require('../../data/schedules').default} };
   // const { staffs } = { isFetching: false, staffs: { data: require('../../data/staffs').default} };
   // const { services } = { isFetching: false, services: { data: require('../../data/services').default} };
+  // debugger;
 
   return {
     selectedShopID,
@@ -568,7 +569,7 @@ const mapDispatchToProps = (dispatch) => {
     fetchSchedulesIfNeeded: shopID => (dispatch(actions.fetchSchedulesIfNeeded(shopID))),
     fetchStaffsIfNeeded: shopID => (dispatch(actions.fetchStaffsIfNeeded(shopID))),
     fetchServicesIfNeeded: shopID => (dispatch(actions.fetchServicesIfNeeded(shopID))),
-    createNewSchedule: scheduleData => (dispatch(actions.createNewSchedule(scheduleData))),
+    saveSchedule: scheduleData => (dispatch(actions.saveSchedule(scheduleData))),
     fetchGuestsIfNeeded: shopID => (dispatch(actions.fetchGuestsIfNeeded(shopID))),
 
     setCalendarViewType: viewType => (dispatch(actions.setCalendarViewType(viewType))),

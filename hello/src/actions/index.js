@@ -81,13 +81,28 @@ export const receiveSchedules = (shop, json) => ({
     receivedAt: Date.now()
 });
 
-export const creatingSchedule = scheduleData => ({
-    type: types.CREATING_SCHEDULE,
+export const createSchedule = (scheduleData, shop) => ({
+    type: types.CREATE_SCHEDULE,
+    shop,
     schedules: scheduleData,
 });
 
-export const scheduleCreated = (scheduleData, json) => ({
+export const scheduleCreated = (scheduleData, json, getState) => ({
     type: types.SCHEDULE_CREATED,
+    shop: getState().selectedShopID,
+    createdSchedule: json,
+    receivedAt: Date.now(),
+});
+
+export const updateSchedule = (scheduleData, shop) => ({
+    type: types.UPDATE_SCHEDULE,
+    shop,
+    schedules: scheduleData,
+});
+
+export const scheduleUpdated = (scheduleData, json, shop) => ({
+    type: types.SCHEDULE_UPDATED,
+    shop,
     schedules: json,
     receivedAt: Date.now(),
 });
@@ -218,20 +233,20 @@ const fetchGuests = (shop, state) => (dispatch) => {
  * @return {boolean}
  */
 const shouldFetchSchedules = (state, shopID) => {
-    const schedules = state.getSchedulesBySelectedShopID[shopID];
+    const schedules = state.scheduleReducer[shopID];
     const selectedDate = state.calendarConfig.current.format('YYYY-MM-DD');
     
     if (!schedules)
-    return true;
+        return true;
     
     if (schedules.isFetching)
-    return false;
+        return false;
     
     if (state.calendarConfig.current.isBetween(state.calendarConfig.start, state.calendarConfig.end))
-    return false;
+        return false;
     
     if (!schedules.schedules.data.find(schedule => schedule.reservation_dt === selectedDate))
-    return true;
+        return true;
     
     return schedules.didInvalidate;
 };
@@ -292,20 +307,24 @@ export const fetchGuestsIfNeeded = shop => (dispatch, getState) => {
         return dispatch(fetchGuests(shop, getState()));
 }
 
-export const createNewSchedule = scheduleData => (dispatch, getState) => {
-    dispatch(creatingSchedule(scheduleData));
+export const saveSchedule = scheduleData => (dispatch, getState) => {
+    const shopId = getState().selectedShopID;
+    
+    dispatch(createSchedule(scheduleData, shopId));
     dispatch(loading(true));
     
-    return new Shop({ shopId: getState().selectedShopID })
-    .schedules()
-    .create(scheduleData)
-    .then((json) => {
-        if (json.success) {
-            dispatch(loading(false));
-            return dispatch(scheduleCreated(scheduleData, json));
-        } 
-        return new ApiException(json).showError();
-    });
+    return new Shop({ shopId })
+        .schedules()
+        .create(scheduleData)
+        .then((json) => {
+            if (json.success) {
+                dispatch(loading(false));
+                dispatch(scheduleCreated(scheduleData, json, getState));
+
+                return getState().scheduleReducer[shopId];
+            }
+            return new ApiException(json).showError();
+        });
 };
 
 // FullCalendar RELATED ACTIONS
