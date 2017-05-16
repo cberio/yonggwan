@@ -1,4 +1,3 @@
-import moment from 'moment';
 import * as types from './actionType';
 import Shop from '../api/shop/shop';
 import ApiException from '../api/error';
@@ -87,7 +86,7 @@ export const createSchedule = (scheduleData, shop) => ({
     schedules: scheduleData,
 });
 
-export const scheduleCreated = (scheduleData, json, getState) => ({
+export const scheduleCreated = (json, getState) => ({
     type: types.SCHEDULE_CREATED,
     shop: getState().selectedShopID,
     createdSchedule: json,
@@ -159,7 +158,7 @@ export const invalidateShop = shop => ({
 const fetchSchedules = (shop, state) => (dispatch) => {
     dispatch(requestSchedules(shop));
     dispatch(loading(true));
-    
+
     return new Shop({ shopId: shop })
         .schedules()
         .withService()
@@ -175,7 +174,7 @@ const fetchSchedules = (shop, state) => (dispatch) => {
 
 const fetchStaffs = (shop, state) => (dispatch) => {
     dispatch(requestStaffs(shop));
-    
+
     return new Shop({ shopId: shop })
         .staffs()
         .get(state)
@@ -183,14 +182,14 @@ const fetchStaffs = (shop, state) => (dispatch) => {
             if (json.success) {
                 dispatch(loading(false));
                 return dispatch(receiveStaffs(shop, json));
-            } 
+            }
             return new ApiException(json).showError();
         });
 };
 
 const fetchServices = (shop, state) => (dispatch) => {
     dispatch(requestServices(shop));
-    
+
     return new Shop({ shopId: shop })
         .services()
         .get(state)
@@ -198,7 +197,7 @@ const fetchServices = (shop, state) => (dispatch) => {
             if (json.success) {
                 dispatch(loading(false));
                 return dispatch(receiveServices(shop, json));
-            } 
+            }
             return new ApiException(json).showError();
         });
 };
@@ -214,7 +213,7 @@ const fetchGuests = (shop, state) => (dispatch) => {
             if (json.success) {
                 dispatch(loading(false));
                 return dispatch(receiveGuests(shop, json));
-            } 
+            }
             return new ApiException(json).showError();
         });
 };
@@ -235,43 +234,43 @@ const fetchGuests = (shop, state) => (dispatch) => {
 const shouldFetchSchedules = (state, shopID) => {
     const schedules = state.scheduleReducer[shopID];
     const selectedDate = state.calendarConfig.current.format('YYYY-MM-DD');
-    
+
     if (!schedules)
         return true;
-    
+
     if (schedules.isFetching)
         return false;
-    
+
     if (state.calendarConfig.current.isBetween(state.calendarConfig.start, state.calendarConfig.end))
         return false;
-    
+
     if (!schedules.schedules.data.find(schedule => schedule.reservation_dt === selectedDate))
         return true;
-    
+
     return schedules.didInvalidate;
 };
 
 const shouldFetchStaffs = (state, shopID) => {
     const staffs = state.getStaffsBySelectedShopID[shopID];
-    
+
     if (!staffs)
         return true;
-    
+
     if (staffs.isFetching)
         return false;
-    
+
     return staffs.didInvalidate;
 };
 
 const shouldFetchServices = (state, shopID) => {
     const services = state.getServicesBySelectedShopID[shopID];
-    
+
     if (!services)
         return true;
-    
+
     if (services.isFetching)
         return false;
-    
+
     return services.didInvalidate;
 };
 
@@ -285,7 +284,7 @@ const shouldFetchGuets = (state, shopID) => {
         return false;
 
     return guests.didInvalidate;
-}
+};
 
 export const fetchSchedulesIfNeeded = shop => (dispatch, getState) => {
     if (shouldFetchSchedules(getState(), shop))
@@ -305,21 +304,21 @@ export const fetchServicesIfNeeded = shop => (dispatch, getState) => {
 export const fetchGuestsIfNeeded = shop => (dispatch, getState) => {
     if (shouldFetchGuets(getState(), shop))
         return dispatch(fetchGuests(shop, getState()));
-}
+};
 
 export const saveSchedule = scheduleData => (dispatch, getState) => {
     const shopId = getState().selectedShopID;
-    
+
     dispatch(createSchedule(scheduleData, shopId));
     dispatch(loading(true));
-    
+
     return new Shop({ shopId })
         .schedules()
         .create(scheduleData)
         .then((json) => {
             if (json.success) {
                 dispatch(loading(false));
-                dispatch(scheduleCreated(scheduleData, json, getState));
+                dispatch(scheduleCreated(json, getState));
 
                 return getState().scheduleReducer[shopId];
             }
