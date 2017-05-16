@@ -106,7 +106,7 @@ export default class Schedule {
         return fetch(`${this.apiUrl}/${scheduleId}`, {
             method: this.method,
             headers: ApiUtils.HTTP_HEADER(this.token),
-            body: data,
+            body: JSON.stringify(data),
         }).then(ApiUtils.parseJSON);
     }
 

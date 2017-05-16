@@ -3,6 +3,7 @@ import * as ApiUtils from '../common';
 import Staff from './staff';
 import Schedule from './schedule';
 import Service from './service';
+import Guest from './guest';
 
 export default class Shop {
     constructor({ shopId = '', token = ApiUtils.testToken } = { shopId, token }) {
@@ -77,7 +78,11 @@ export default class Shop {
         return new Schedule(this);
     }
 
-    services(param) {
+    services() {
         return new Service(this);
+    }
+
+    guests() {
+        return new Guest(this);
     }
 }

@@ -9,6 +9,7 @@ import selectedShopID from './shop';
 import { getSchedulesBySelectedShopID, createSchedule } from './schedule';
 import { getStaffsBySelectedShopID } from './staffs';
 import { getServicesBySelectedShopID } from './service';
+import { getGuestsBySelectedShopID } from './guest';
 
 
 const Reducers = combineReducers({
@@ -23,6 +24,7 @@ const Reducers = combineReducers({
     getStaffsBySelectedShopID,
     getServicesBySelectedShopID,
     createSchedule,
+    getGuestsBySelectedShopID,
 });
 
 export default Reducers;
