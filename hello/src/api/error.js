@@ -13,5 +13,7 @@ export default class ApiException {
         console.group(this.code);
         console.table(this);
         console.groupEnd();
+
+        return this;
     } 
 }
