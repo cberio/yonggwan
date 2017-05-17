@@ -555,11 +555,11 @@ class DailyCalendar extends Component {
 
     // offtime 생성 2/2
     renderNewOfftime() {
-        let component = this;
-        let {Calendar} = this.refs;
+        const component = this;
+        const { Calendar } = component.refs;
 
-        let defaultMinute = 20;
-        let offTimeObject = {
+        const defaultMinute = 20;
+        const scheduleObject = {
             reservation_dt: moment(this.state.selectedDate).format('YYYY-MM-DD'),
             start_time: moment(this.state.selectedDate).format('HH:mm'),
             end_time: moment(this.state.selectedDate).add(defaultMinute, 'minute').format('HH:mm'),
@@ -571,50 +571,35 @@ class DailyCalendar extends Component {
             resourceId: this.state.selectedStaff.id,
         }
 
-        // FullCalendar에 먼저 이벤트를 그립니다.
-        // let temporarySchedule = $(Calendar).fullCalendar('renderEvent', offTimeObject);
-        // $('#ID_' + temporarySchedule._id).addClass('new-event');
-
-        component.props.saveSchedule(offTimeObject).then((createdOffTimeResult) => {
-
-            //console.info(createdOffTimeResult);
+        component.props.saveSchedule(scheduleObject).then((response) => {
             // off-time 저장 후 반환된 데이터 (올바르게 생성되었는지 확인해야 함)
-            let createdSchedule = createdOffTimeResult.createdSchedule.data;
+            if (!response.createdSchedule.success)
+                return;
 
-            // render event
-            $(Calendar).fullCalendar('renderEvent', createdSchedule, true); //stick?  true
-            $('#ID_' + createdSchedule.id).addClass('new-event');
+            const createdSchedule = response.createdSchedule.data;
+            const createdScheduleDom = $(`#ID_${createdSchedule.id}`);
+
+            createdScheduleDom.addClass('new-event');
             $('.create-order-wrap.fixed').removeClass('hidden');
             component.props.guider('OFF TIME이 생성되었습니다!');
 
             // component.state.isAbleBindRemoveEvent 가 true일경우 ESC key등의 이벤트 발생시 삭제가 가능하도록 접근성 바인딩을 합니다
-            component.setState({
-                newScheduleId: createdSchedule.id,
-                isAbleBindRemoveEvent: true
-            }, () => {
-                // callback
-                // ESC key 입력시 신규생성한 event 삭제
-                $(document).bind('keydown', function(e) {
-                    if (e.which === 27 && !component.state.isModalConfirm) {
+            $(document).bind('keydown', (e) => {
+                if (e.which === 27 && !component.state.isModalConfirm) {
+                    // 생성버튼 캘린더 타임라인 노드에서 상위 노드로 삽입 (event remove 시 버튼의 부모 dom이 다시 그려지면서 버튼 dom도 사라지기떄문)
+                    $('.full-calendar > .fc').append($('.create-order-wrap.timeline').hide());
+                    $(Calendar).fullCalendar('removeEvents', [createdSchedule.id]);
+                    component.props.guider('OFF TIME이 삭제되었습니다!');
 
-                        if(component.state.isAbleBindRemoveEvent){
-                            /// 생성버튼 캘린더 타임라인 노드에서 상위 노드로 삽입 (event remove 시 버튼의 부모 dom이 다시 그려지면서 버튼 dom도 사라지기떄문)
-                            $('.full-calendar > .fc').append($('.create-order-wrap.timeline').hide());
-                            $(Calendar).fullCalendar('removeEvents', [component.state.newScheduleId]);
-                            component.setState({isAbleBindRemoveEvent: false, newScheduleId: undefined});
-                            component.props.guider('OFF TIME이 삭제되었습니다!');
+                    $(document).unbind('keydown');
+                }
+            });
 
-                            $(document).unbind('keydown');
-                        }
-                    }
-                });
-                // 타 영역 클릭시, 신규생성한 off-time slot의 new evnet 클래스 시각적 제거 (접근성 바인딩)
-                $('body').one('click', function(e) {
-                    if (createdSchedule.id === component.state.newScheduleId) {
-                        $('#ID_' + createdSchedule.id).removeClass('new-event');
-                        component.setState({isAbleBindRemoveEvent: false, newScheduleId: undefined});
-                    }
-                });
+            // 타 영역 클릭시, 신규생성한 off-time slot의 new evnet 클래스 시각적 제거 (접근성 바인딩)
+            $('body').one('click', () => {
+                createdScheduleDom.removeClass('new-event');
+
+                $(document).unbind('keydown');
             });
         });
     }
