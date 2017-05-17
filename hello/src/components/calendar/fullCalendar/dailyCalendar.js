@@ -575,10 +575,11 @@ class DailyCalendar extends Component {
         // let temporarySchedule = $(Calendar).fullCalendar('renderEvent', offTimeObject);
         // $('#ID_' + temporarySchedule._id).addClass('new-event');
 
-        component.props.createNewSchedule(offTimeObject).then((createdOffTimeResult) => {
+        component.props.saveSchedule(offTimeObject).then((createdOffTimeResult) => {
 
+            //console.info(createdOffTimeResult);
             // off-time 저장 후 반환된 데이터 (올바르게 생성되었는지 확인해야 함)
-            let createdSchedule = createdOffTimeResult.schedules.data;
+            let createdSchedule = createdOffTimeResult.createdSchedule.data;
 
             // render event
             $(Calendar).fullCalendar('renderEvent', createdSchedule, true); //stick?  true

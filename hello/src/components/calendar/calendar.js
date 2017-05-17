@@ -178,9 +178,9 @@ class Calendar extends Component {
   mouseenterSlotTime(isSetting, date) {
     const createButtonElem = $('.create-order-wrap.timeline');
     if (isSetting) {
-      $(createButtonElem).attr('data-date', date);
+      return $(createButtonElem).attr('data-date', date);
     } else {
-      $(createButtonElem).attr('data-date');
+      return $(createButtonElem).attr('data-date');
     }
   }
 
@@ -242,6 +242,7 @@ class Calendar extends Component {
     this.props.fetchSchedulesIfNeeded(selectedShopID);
     this.props.fetchStaffsIfNeeded(selectedShopID);
     this.props.fetchServicesIfNeeded(selectedShopID);
+    this.props.fetchGuestsIfNeeded(selectedShopID);
   }
 
   componentWillUnmount() {
@@ -438,6 +439,7 @@ class Calendar extends Component {
       schedules: this.props.schedules.data,
       staffs: this.props.staffs.data,
       services: this.props.services.data,
+      guests: this.props.guests.data,
       changeView: this.changeView,
       changeDate: this.changeDate,
       returnScheduleObj: this.returnScheduleObj,
@@ -446,7 +448,7 @@ class Calendar extends Component {
       getSlotTime: this.mouseenterSlotTime,
       // defaultStaff: function() { _.isEmpty(this.props.staffs) ? Staff[0] : this.props.staffs.data },
       defaultStaff: this.props.staffs[0],
-      createNewSchedule: (scheduleData) => this.props.createNewSchedule(scheduleData),
+      saveSchedule: (scheduleData) => this.props.saveSchedule(scheduleData),
       activeGnb: (view, condition) => this.activeGnb(view, condition),
       runUserCardSlide:             function(t, calSchedule, jsEvent, view) { this.runUserCardSlide(t, calSchedule, jsEvent, view) },
 
@@ -505,31 +507,52 @@ class Calendar extends Component {
   }
 }
 
-Calendar.PropTypes = {
+Calendar.propTypes = {
   fetchSchedulesIfNeeded: PropTypes.func.isRequired,
   fetchStaffsIfNeeded: PropTypes.func.isRequired,
-  fetchServicesIfNeeded: PropTypes.func,
-  staffs: PropTypes.object.isRequired,
-  schedules: PropTypes.object.isRequired,
-  services: PropTypes.object,
-  selectedShopID: PropTypes.number.isRequired,
+  fetchServicesIfNeeded: PropTypes.func.isRequired,
+  fetchGuestsIfNeeded: PropTypes.func.isRequired,
+  staffs: PropTypes.shape({
+      isFetching: PropTypes.bool,
+      didInvalidate: PropTypes.bool, 
+      staffs: PropTypes.object,
+  }).isRequired,
+  schedules: PropTypes.shape({
+      isFetching: PropTypes.bool,
+      didInvalidate: PropTypes.bool, 
+      schedules: PropTypes.object,
+  }).isRequired,
+  services: PropTypes.shape({
+      isFetching: PropTypes.bool,
+      didInvalidate: PropTypes.bool, 
+      services: PropTypes.object,
+  }).isRequired,
+  guests: PropTypes.shape({
+      isFetching: PropTypes.bool,
+      didInvalidate: PropTypes.bool, 
+      guests: PropTypes.object,
+  }).isRequired,
+  selectedShopID: PropTypes.string.isRequired,
 }
 
 const mapStateToProps = (state) => {
   const {
     calendarConfig,
     selectedShopID,
-    getSchedulesBySelectedShopID,
+    scheduleReducer,
     getStaffsBySelectedShopID,
     getServicesBySelectedShopID,
+    getGuestsBySelectedShopID,
   } = state;
 
-  const { schedules } = getSchedulesBySelectedShopID[selectedShopID] || { isFetching: false, schedules: { data: require('../../data/schedules').default } };
-  const { staffs } = getStaffsBySelectedShopID[selectedShopID] || { isFetching: false, staffs: { data: require('../../data/staffs').default } };
-  const { services } = getServicesBySelectedShopID[selectedShopID] || { isFetching: false, services: { data: require('../../data/services').default } };
+  const { schedules } = scheduleReducer[selectedShopID] || { isFetching: false, didInvalidate: false, schedules: { data: require('../../data/schedules').default } };
+  const { staffs } = getStaffsBySelectedShopID[selectedShopID] || { isFetching: false, didInvalidate: false, staffs: { data: require('../../data/staffs').default } };
+  const { services } = getServicesBySelectedShopID[selectedShopID] || { isFetching: false, didInvalidate: false, services: { data: require('../../data/services').default } };
+  const { guests } = getGuestsBySelectedShopID[selectedShopID] || { isFetching: false, didInvalidate: false, guests: {} };
   // const { schedules } = { isFetching: false, schedules: { data: require('../../data/schedules').default} };
   // const { staffs } = { isFetching: false, staffs: { data: require('../../data/staffs').default} };
   // const { services } = { isFetching: false, services: { data: require('../../data/services').default} };
+  // debugger;
 
   return {
     selectedShopID,
@@ -537,6 +560,7 @@ const mapStateToProps = (state) => {
     staffs,
     services,
     calendarConfig,
+    guests,
   }
 }
 
@@ -545,7 +569,8 @@ const mapDispatchToProps = (dispatch) => {
     fetchSchedulesIfNeeded: shopID => (dispatch(actions.fetchSchedulesIfNeeded(shopID))),
     fetchStaffsIfNeeded: shopID => (dispatch(actions.fetchStaffsIfNeeded(shopID))),
     fetchServicesIfNeeded: shopID => (dispatch(actions.fetchServicesIfNeeded(shopID))),
-    createNewSchedule: scheduleData => (dispatch(actions.createNewSchedule(scheduleData))),
+    saveSchedule: scheduleData => (dispatch(actions.saveSchedule(scheduleData))),
+    fetchGuestsIfNeeded: shopID => (dispatch(actions.fetchGuestsIfNeeded(shopID))),
 
     setCalendarViewType: viewType => (dispatch(actions.setCalendarViewType(viewType))),
     setCalendarStart: start => (dispatch(actions.setCalendarStart(start))),

@@ -6,9 +6,10 @@ import guider from './guider';
 import loading from './loading';
 import { calendarConfig } from './calendar';
 import selectedShopID from './shop';
-import { getSchedulesBySelectedShopID, createSchedule } from './schedule';
+import { scheduleReducer } from './schedule';
 import { getStaffsBySelectedShopID } from './staffs';
 import { getServicesBySelectedShopID } from './service';
+import { getGuestsBySelectedShopID } from './guest';
 
 
 const Reducers = combineReducers({
@@ -19,10 +20,13 @@ const Reducers = combineReducers({
     loading,
     calendarConfig,
     selectedShopID,
-    getSchedulesBySelectedShopID,
+    // getSchedulesBySelectedShopID,
     getStaffsBySelectedShopID,
     getServicesBySelectedShopID,
-    createSchedule,
+    // createSchedule,
+    getGuestsBySelectedShopID,
+
+    scheduleReducer,
 });
 
 export default Reducers;

@@ -1,3 +1,4 @@
+import merge from 'lodash/merge';
 import * as types from '../actions/actionType';
 
 const initialState = {
@@ -6,7 +7,7 @@ const initialState = {
     schedules: {},
 };
 
-const schedules = (state = initialState, action) => {
+export const schedules = (state = initialState, action) => {
     switch (action.type) {
         case types.INVALIDATE_SHOP:
             return {
@@ -27,18 +28,20 @@ const schedules = (state = initialState, action) => {
                 schedules: action.schedules,
                 receivedAt: action.receivedAt
             };
-        case types.CREATING_SCHEDULE:
+        case types.CREATE_SCHEDULE:
             return {
                 ...state,
                 isFetching: true,
                 didInvalidate: false,
             };
         case types.SCHEDULE_CREATED:
+            console.info(merge({}, Object.assign({}, action.createdSchedule), state.schedules));
             return {
                 ...state,
                 isFetching: false,
                 didInvalidate: false,
-                schedules: action.schedule,
+                schedules: merge({}, action.createdSchedule, state.schedules),
+                createdSchedule: action.createdSchedule,
                 receivedAt: action.receivedAt
             };
         default:
@@ -46,27 +49,16 @@ const schedules = (state = initialState, action) => {
     }
 };
 
-export const getSchedulesBySelectedShopID = (state = {}, action) => {
+export const scheduleReducer = (state = {}, action) => {
     switch (action.type) {
         case types.INVALIDATE_SHOP:
         case types.RECEIVE_SCHEDULE:
         case types.REQUEST_SCHEDULE:
+        case types.CREATE_SCHEDULE:
+        case types.SCHEDULE_CREATED:
             return {
                 ...state,
                 [action.shop]: schedules(state[action.shop], action)
-            };
-        default:
-            return state;
-    }
-};
-
-export const createSchedule = (state = {}, action) => {
-    switch (action.type) {
-        case types.SCHEDULE_CREATED:
-        case types.CREATING_SCHEDULE:
-            return {
-                ...state,
-                newSchedule: schedules(state[action.shop], action)
             };
         default:
             return state;
