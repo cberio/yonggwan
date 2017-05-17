@@ -25,9 +25,9 @@ const guests = (state = initialState, action) => {
         default:
             return state;
     }
-}
+};
 
-export const getGuestsBySelectedShopID = (state = {}, action) => {
+const guestReducer = (state = {}, action) => {
     switch (action.type) {
         case types.REQUEST_GUEST:
         case types.RECEIVE_GUEST:
@@ -38,4 +38,6 @@ export const getGuestsBySelectedShopID = (state = {}, action) => {
         default:
             return state;
     }
-}
+};
+
+export default guestReducer;

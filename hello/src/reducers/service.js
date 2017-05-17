@@ -1,13 +1,13 @@
 import * as types from '../actions/actionType';
 
 const initialState = {
-  isFetching: false,
-  didInvalidate: false,
-  services: {},
+    isFetching: false,
+    didInvalidate: false,
+    services: {},
 };
 
 const services = (state = initialState, action) => {
-    switch(action.type) {
+    switch (action.type) {
         case types.REQUEST_SERVICE:
             return {
                 ...state,
@@ -25,9 +25,9 @@ const services = (state = initialState, action) => {
         default:
             return state;
     }
-}
+};
 
-export const getServicesBySelectedShopID = (state = {}, action) => {
+const serviceReducer = (state = {}, action) => {
     switch (action.type) {
         case types.REQUEST_SERVICE:
         case types.RECEIVE_SERVICE:
@@ -38,4 +38,6 @@ export const getServicesBySelectedShopID = (state = {}, action) => {
         default:
             return state;
     }
-}
+};
+
+export default serviceReducer;

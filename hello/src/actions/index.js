@@ -164,10 +164,10 @@ const fetchSchedules = (shop, state) => (dispatch) => {
         .withService()
         .get(state)
         .then((json) => {
-            if (json.success) {
-                dispatch(loading(false));
+            dispatch(loading(false));
+
+            if (json.success)
                 return dispatch(receiveSchedules(shop, json));
-            }
             return new ApiException(json).showError();
         });
 };
@@ -179,10 +179,10 @@ const fetchStaffs = (shop, state) => (dispatch) => {
         .staffs()
         .get(state)
         .then((json) => {
-            if (json.success) {
-                dispatch(loading(false));
+            dispatch(loading(false));
+
+            if (json.success)
                 return dispatch(receiveStaffs(shop, json));
-            }
             return new ApiException(json).showError();
         });
 };
@@ -194,10 +194,10 @@ const fetchServices = (shop, state) => (dispatch) => {
         .services()
         .get(state)
         .then((json) => {
-            if (json.success) {
-                dispatch(loading(false));
+            dispatch(loading(false));
+
+            if (json.success)
                 return dispatch(receiveServices(shop, json));
-            }
             return new ApiException(json).showError();
         });
 };
@@ -210,10 +210,10 @@ const fetchGuests = (shop, state) => (dispatch) => {
         .guests()
         .get(state)
         .then((json) => {
-            if (json.success) {
-                dispatch(loading(false));
+            dispatch(loading(false));
+
+            if (json.success)
                 return dispatch(receiveGuests(shop, json));
-            }
             return new ApiException(json).showError();
         });
 };
@@ -251,7 +251,7 @@ const shouldFetchSchedules = (state, shopID) => {
 };
 
 const shouldFetchStaffs = (state, shopID) => {
-    const staffs = state.getStaffsBySelectedShopID[shopID];
+    const staffs = state.staffReducer[shopID];
 
     if (!staffs)
         return true;
@@ -263,7 +263,7 @@ const shouldFetchStaffs = (state, shopID) => {
 };
 
 const shouldFetchServices = (state, shopID) => {
-    const services = state.getServicesBySelectedShopID[shopID];
+    const services = state.serviceReducer[shopID];
 
     if (!services)
         return true;
@@ -275,7 +275,7 @@ const shouldFetchServices = (state, shopID) => {
 };
 
 const shouldFetchGuets = (state, shopID) => {
-    const guests = state.getGuestsBySelectedShopID[shopID];
+    const guests = state.guestReducer[shopID];
 
     if (!guests)
         return true;
@@ -318,9 +318,9 @@ export const saveSchedule = scheduleData => (dispatch, getState) => {
         .then((json) => {
             if (json.success) {
                 dispatch(loading(false));
-                dispatch(scheduleCreated(json, getState));
+                return dispatch(scheduleCreated(json, getState));
 
-                return getState().scheduleReducer[shopId];
+                // return getState().scheduleReducer[shopId];
             }
             return new ApiException(json).showError();
         });

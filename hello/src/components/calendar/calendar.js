@@ -540,19 +540,18 @@ const mapStateToProps = (state) => {
     calendarConfig,
     selectedShopID,
     scheduleReducer,
-    getStaffsBySelectedShopID,
-    getServicesBySelectedShopID,
-    getGuestsBySelectedShopID,
+    staffReducer,
+    serviceReducer,
+    guestReducer,
   } = state;
 
   const { schedules } = scheduleReducer[selectedShopID] || { isFetching: false, didInvalidate: false, schedules: { data: require('../../data/schedules').default } };
-  const { staffs } = getStaffsBySelectedShopID[selectedShopID] || { isFetching: false, didInvalidate: false, staffs: { data: require('../../data/staffs').default } };
-  const { services } = getServicesBySelectedShopID[selectedShopID] || { isFetching: false, didInvalidate: false, services: { data: require('../../data/services').default } };
-  const { guests } = getGuestsBySelectedShopID[selectedShopID] || { isFetching: false, didInvalidate: false, guests: {} };
+  const { staffs } = staffReducer[selectedShopID] || { isFetching: false, didInvalidate: false, staffs: { data: require('../../data/staffs').default } };
+  const { services } = serviceReducer[selectedShopID] || { isFetching: false, didInvalidate: false, services: { data: require('../../data/services').default } };
+  const { guests } = guestReducer[selectedShopID] || { isFetching: false, didInvalidate: false, guests: {} };
   // const { schedules } = { isFetching: false, schedules: { data: require('../../data/schedules').default} };
   // const { staffs } = { isFetching: false, staffs: { data: require('../../data/staffs').default} };
   // const { services } = { isFetching: false, services: { data: require('../../data/services').default} };
-  // debugger;
 
   return {
     selectedShopID,

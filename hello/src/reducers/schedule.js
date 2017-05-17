@@ -1,4 +1,4 @@
-import merge from 'lodash/merge';
+import update from 'immutability-helper';
 import * as types from '../actions/actionType';
 
 const initialState = {
@@ -7,7 +7,7 @@ const initialState = {
     schedules: {},
 };
 
-export const schedules = (state = initialState, action) => {
+const schedules = (state = initialState, action) => {
     switch (action.type) {
         case types.INVALIDATE_SHOP:
             return {
@@ -35,12 +35,17 @@ export const schedules = (state = initialState, action) => {
                 didInvalidate: false,
             };
         case types.SCHEDULE_CREATED:
-            console.info(merge({}, Object.assign({}, action.createdSchedule), state.schedules));
+            const data = update(state.schedules.data, 
+                { $push: [action.createdSchedule.data] }
+            );
             return {
                 ...state,
                 isFetching: false,
                 didInvalidate: false,
-                schedules: merge({}, action.createdSchedule, state.schedules),
+                schedules: {
+                    ...state.schedules,
+                    data,
+                },
                 createdSchedule: action.createdSchedule,
                 receivedAt: action.receivedAt
             };
@@ -49,7 +54,7 @@ export const schedules = (state = initialState, action) => {
     }
 };
 
-export const scheduleReducer = (state = {}, action) => {
+const scheduleReducer = (state = {}, action) => {
     switch (action.type) {
         case types.INVALIDATE_SHOP:
         case types.RECEIVE_SCHEDULE:
@@ -64,3 +69,5 @@ export const scheduleReducer = (state = {}, action) => {
             return state;
     }
 };
+
+export default scheduleReducer;
