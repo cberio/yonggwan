@@ -157,22 +157,6 @@ const fetchSchedules = (shop, state) => (dispatch) => {
             dispatch(loading(false));
 
             if (json.success)
-                dispatch(receiveSchedules(shop, json));
-            return new ApiException(json).showError();
-        });
-};
-
-export const createNewSchedule = scheduleData => (dispatch, getState) => {
-    dispatch(creatingSchedule(scheduleData));
-    dispatch(loading(true));
-
-    return new Shop({ shopId: getState().selectedShopID })
-        .schedules()
-        .create(scheduleData)
-        .then((json) => {
-            dispatch(loading(false));
-            
-            if (json.success)
                 return dispatch(receiveSchedules(shop, json));
             return new ApiException(json).showError();
         });
