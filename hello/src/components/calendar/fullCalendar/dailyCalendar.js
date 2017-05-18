@@ -1,13 +1,12 @@
 import React, {Component} from 'react';
 import ReactDOM from 'react-dom';
 import $ from 'jquery';
-import {connect} from 'react-redux';
-import * as actions from '../../../actions';
-import * as Functions from '../../../js/common';
+import { connect } from 'react-redux';
 import moment from 'moment';
-import update from 'react-addons-update';
 import 'fullcalendar-scheduler';
 import _ from 'lodash';
+import * as actions from '../../../actions';
+import * as Functions from '../../../js/common';
 
 class DailyCalendar extends Component {
     constructor(props) {
@@ -435,7 +434,7 @@ class DailyCalendar extends Component {
         }
     }
 
-    //예약카드 삭제 1단계
+    // 예약카드 삭제 1단계
     removeConfirm(schedule) {
         this.props.isModalConfirm('removeEvent');
         this.setState({
@@ -444,7 +443,7 @@ class DailyCalendar extends Component {
         });
     }
 
-    //예약카드 삭제 2단계 최종삭제
+    // 예약카드 삭제 2단계 최종삭제
     removeSchedule(schedule) {
         let component = this;
         let {Calendar} = this.refs;
