@@ -1,0 +1,146 @@
+@charset "utf-8";
+.new-order-wrap .new-order button{height: auto;}
+.new-order-wrap{
+    padding: 50px; background: #f0f0f0;
+    -webkit-transition: .15s all ease;
+       -moz-transition: .15s all ease;
+            transition: .15s all ease;
+}
+.new-order-wrap.fixed{
+    position: absolute;
+    left: 0; top: 0; right: 0; bottom: 0;
+    z-index: 3;
+    background-color: rgba(0,0,0, .6);
+}
+.new-order{
+    width: 394px;margin: 0 auto;border: 1px solid #bfbfbf; border-radius: 5px;
+    box-shadow: 0 3px 10px 2px rgba(0,0,0, .2); background: #fff;
+}
+.new-order-head{
+    height: 44px; line-height: 44px; position: relative;padding: 0 20px;border-bottom: 1px solid #e0e0e0;
+}
+.new-order-head h2{font-size: 16px; color: #808080; font-family: 'notokr-medium'; font-weight: normal;}
+.new-order-head .new-order-close{
+    width: 48px;height: 100% !important;display: inline-block;
+    background: url(../image/common/btn-close-5.png) center center no-repeat;
+    position: absolute;right: 0;top:0;
+}
+.new-order-body{padding: 19px 20px 5px;}
+/* 상품별 카드 색상*/
+.new-order-body .service-input-wrap{min-height: 30px;}
+.new-order-body .service-input-wrap h3{font-size: 14px; letter-spacing: -0.2px; color: #333; font-family: 'notokr-medium';height: 22px;}
+.new-order-body .service-input-wrap h3 button{opacity: .4;}
+.new-order-body .service-input-wrap h3.active button,
+.new-order-body .service-input-wrap h3.active .step-index {opacity: 1;}
+.new-order-body .service-input-wrap h3 .step-index{
+    border-radius: 50%; background-color: #333333;text-align: center; line-height: 22px;opacity: .4;
+    font-size: 11px; color: #fff;display: inline-block; width: 22px; height: 22px; margin-right: 8px;
+}
+.new-order-body .service-input-wrap h3 .step-index.has-values{
+    text-indent: -999px; background: #4d9854 url(../image/common/input-checked-white.png) center center no-repeat;opacity: 1 !important;
+}
+.new-order-body .service-input-wrap h3 button {padding: 0;}
+.new-order-body .service-input-wrap h3:not(.active):hover button,
+.new-order-body .service-input-wrap h3:not(.active) button:focus {
+    border-bottom: 1px dotted #333; padding-right: 13px;
+    background: url(../image/common/icon-edit-w11-h10.png) right 1px no-repeat;
+}
+.new-order-body .service-input-wrap button{font: inherit;color: inherit;}
+.new-order-body .service-input-inner{margin: 6px 0 6px 11px;padding-bottom: 15px;border-left: 1px solid #e5e5e5;}
+.new-order-body .service-input{padding-top: 5px; margin: 0 0 0 18px;}
+.new-order-body .service-input .radio-group{overflow: hidden;margin-bottom: 14px;float: left;}
+.new-order-body .service-input .radio-group:after{display: block;clear: both;content:'';}
+.new-order-body .service-input .radio-group input{position: absolute;left: -9999px;top: -9990px;font-size: 1px;opacity: 0;}
+.new-order-body .service-input .radio-group label{
+    font-family: 'notokr-bold';color: #999999;letter-spacing: -0.2px;width: 77px;height: 30px;display: block;
+    float: left;text-align: center;border: 1px solid #d9d9d9;line-height: 30px;cursor: pointer;position: relative;
+    -webkit-transition: .1s text-indent ease;
+    transition: .1s text-indent ease;
+    /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#ffffff+1,f2f2f2+100 */
+    background: rgb(255,255,255); /* Old browsers */
+    background: -moz-linear-gradient(top,  rgba(255,255,255,1) 0%, rgba(242,242,242,1) 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(242,242,242,1) 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(to bottom,  rgba(255,255,255,1) 0%,rgba(242,242,242,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#f2f2f2',GradientType=0 ); /* IE6-9 */
+}
+.new-order-body .service-input .radio-group label:first-of-type{-webkit-border-radius: 7px 0 0 7px;border-radius: 7px 0 0 7px;}
+.new-order-body .service-input .radio-group label:last-of-type {-webkit-border-radius: 0 7px 7px 0;border-radius: 0 7px 7px 0;border-left: 0;}
+.new-order-body .service-input .radio-group:hover label{border-color: #808080;border-right-color: #d9d9d9;}
+.new-order-body .service-input .radio-group:hover label:last-of-type{border-right-color: #808080;}
+.new-order-body .service-input .radio-group label:hover,
+.new-order-body .service-input .radio-group input:focus + label{color: #666666;}
+.new-order-body .service-input .radio-group label:hover,
+.new-order-body .service-input .radio-group input:checked + label{
+    /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#f2f2f2+0,ffffff+100 */
+    background: rgb(242,242,242); /* Old browsers */
+    background: -moz-linear-gradient(top,  rgba(242,242,242,1) 0%, rgba(255,255,255,1) 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(top,  rgba(242,242,242,1) 0%,rgba(255,255,255,1) 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(to bottom,  rgba(242,242,242,1) 0%,rgba(255,255,255,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f2f2f2', endColorstr='#ffffff',GradientType=0 ); /* IE6-9 */
+}
+.new-order-body .service-input .radio-group input:checked + label{text-indent: -7px;color: #000;}
+.new-order-body .service-input .radio-group input:checked + label:after{position: absolute;left: 0; top: 0;display: block;clear: both;content:'';width: 100%;height: 100%;text-indent: -6px;background-image: url(../image/common/input-checked.png); background-position: 50px center;background-repeat: no-repeat;}
+
+.new-order-body .service-input .customer-phone:after{display: block;clear: both;content:'';}
+.new-order-body .service-input .customer-phone input{background-color: #f7f7f7;border: 1px solid #d9d9d9;border-radius: 7px;width: 107px;height: 34px;line-height: 34px;vertical-align: middle;float: left;color: #000;font-family: 'notokr-bold';text-align: center;font-size: 16px;}
+.new-order-body .service-input .customer-phone input:nth-of-type(1){width: 76px;}
+.new-order-body .service-input .customer-phone input.null-value{color: #e0e0e0; }
+.new-order-body .service-input .customer-phone i{width: 8px;height: 2px;margin: 16px 4px 0;display: block;float: left;text-indent: -999px;overflow: hidden;background-color: #b3b3b3;}
+
+.render-confirm-inner {text-align: center;padding: 15px 0;position: absolute;left: 0; top: 100%; right: 0;width: 100%;}
+.render-confirm-inner button {
+    border-radius: 50%;overflow: hidden;background-color: #fff;overflow: hidden;
+    width: 42px;height: 42px;margin: 0 6px;display: inline-block;text-indent: -9999px;
+    -webkit-box-shadow: 0 5px 10px 0 rgba(0,0,0,0.25);
+            box-shadow: 0 5px 10px 0 rgba(0,0,0,0.25);
+
+}
+.render-confirm-inner button.complete {background: url(../image/common/input-checked-large.png) 0 0 no-repeat;}
+.render-confirm-inner button.cancel {background: url(../image/common/input-delete-large.png) 0 0 no-repeat;}
+
+.new-order-foot{background: #f2f2f2;border-top: 1px solid #d9d9d9;}
+.new-order-foot:after{display: block; clear: both; content: '';}
+.new-order-foot .new-order-btn{font-size: 13px;height: 100%; color: #333333; padding: 0 17px; line-height: 52px;}
+.new-order-foot .new-order-btn:hover:not(:disabled),
+.new-order-foot .new-order-btn:focus:not(:disabled){color: #000;}
+.new-order-foot .new-order-btn:disabled{opacity: .5;}
+.new-order-foot .new-order-btn.left{float: left;}
+.new-order-foot .new-order-btn.right{float: right;}
+
+/* CSS Transition animations */
+.new-order-appear {
+  opacity: 0.01;
+  transform: translateX(30px);
+}
+.new-order-appear.new-order-appear-active {
+  opacity: 1;
+  transform: translateX(0);
+  transition: all .1s ease-in;
+}
+
+.service-input-appear {
+    transform: translateY(-100%);
+}
+.service-input-appear.service-input-appear-active {
+    transform: translateY(0);
+    transition: all .05s ease;
+}
+
+
+/************* step 에따른 스타일 ***************/
+.step-3.new-order-wrap.hidden {
+    opacity: .5;
+}
+.step-2 .new-order-foot button.active:hover,
+.step-2 .new-order-foot button.active:focus{
+    color: red;
+}
+
+.step-2 .new-order-foot button{
+    background-color: #ddd;
+}
+
+.step-2 .new-order-foot button:hover,
+.step-2 .new-order-foot button:focus{
+    color: #4d9854;
+}

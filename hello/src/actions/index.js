@@ -3,69 +3,59 @@ import Shop from '../api/shop/shop';
 import ApiException from '../api/error';
 
 /**/
-export function userCardSchedule(options) {
-    return {
-        type: types.USER_CARD_SCHEDULE,
-        options
-    };
-}
-export function userCardStaff(options) {
-    return {
-        type: types.USER_CARD_STAFF,
-        options
-    };
-}
-export function userCardDate(options) {
-    return {
-        type: types.USER_CARD_DATE,
-        options
-    };
-}
+export const userCardSchedule = options => ({
+    type: types.USER_CARD_SCHEDULE,
+    options
+});
+
+export const userCardStaff = options => ({
+    type: types.USER_CARD_STAFF,
+    options
+});
+
+export const userCardDate = options => ({
+    type: types.USER_CARD_DATE,
+    options
+});
+
+/**/
+export const modalConfirm = optionComponent => ({
+    type: types.MODAL_CONFIRM,
+    optionComponent
+});
+
+/* NEW ORDER RELATED */
+export const newOrderSetCondition = options => ({
+    type: types.NEW_ORDER,
+    options
+});
 /**/
 
-export function modalConfirm(optionComponent) {
-    return {
-        type: types.MODAL_CONFIRM,
-        optionComponent
-    };
-}
-export function newOrder(options) {
-    return {
-        type: types.NEW_ORDER,
-        options
-    };
-}
-export function notifier(options) {
-    return {
-        type: types.NOTIFIER,
-        options
-    };
-}
-export function modalNotifier(options) {
-    return {
-        type: types.MODAL_NOTIFIER,
-        options
-    };
-}
-export function requestReservation(options) {
-    return {
-        type: types.REQUEST_RESERVATION,
-        options
-    };
-}
-export function guider(options) {
-    return {
-        type: types.GUIDER,
-        options
-    };
-}
+export const notifier = options => ({
+    type: types.NOTIFIER,
+    options
+});
 
-export function loading(condition) {
-    return {
-        type: types.LOADING,
-        condition
-    };
-}
+export const modalNotifier = options => ({
+    type: types.MODAL_NOTIFIER,
+    options
+});
+
+export const requestReservation = options => ({
+    type: types.REQUEST_RESERVATION,
+    options
+});
+
+export const guider = options => ({
+    type: types.GUIDER,
+    options
+});
+
+export const loading = condition => ({
+    type: types.LOADING,
+    condition
+});
+
 
 // SCHEDULE RELATED ACTIONS
 export const requestSchedules = shop => ({
@@ -166,6 +156,22 @@ const fetchSchedules = (shop, state) => (dispatch) => {
         .then((json) => {
             dispatch(loading(false));
 
+            if (json.success)
+                dispatch(receiveSchedules(shop, json));
+            return new ApiException(json).showError();
+        });
+};
+
+export const createNewSchedule = scheduleData => (dispatch, getState) => {
+    dispatch(creatingSchedule(scheduleData));
+    dispatch(loading(true));
+
+    return new Shop({ shopId: getState().selectedShopID })
+        .schedules()
+        .create(scheduleData)
+        .then((json) => {
+            dispatch(loading(false));
+            
             if (json.success)
                 return dispatch(receiveSchedules(shop, json));
             return new ApiException(json).showError();

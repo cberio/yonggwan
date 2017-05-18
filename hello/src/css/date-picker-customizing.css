@@ -18,7 +18,7 @@
 }
 .date-picker.user-card-event-datepicker {
 	position: absolute;
-	left: -15px; top: 133%;
+	left: 19px; top: 85px;
 }
 .date-picker.user-card-event-datepicker.Cal__Container__root:after {
 	left: 70px; margin-left: 0;

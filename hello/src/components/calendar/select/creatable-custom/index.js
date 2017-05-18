@@ -1,35 +1,37 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import $ from 'jquery';
+import * as Functions from '../../../../js/common';
 
 /* Creatable - custom component */
 class CreatableCustom extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-          inputValue: ''
+            inputValue: ''
         };
         this.handleChange = this.handleChange.bind(this);
         this.handleKeydown = this.handleKeydown.bind(this);
         this.setIncrement = this.setIncrement.bind(this);
         this.setDecrement = this.setDecrement.bind(this);
     }
-    handleChange (e) {
-      this.setState({
-        inputValue: e.target.value
-      });
+    handleChange(e) {
+      var amount = e.target.value.trim().replace(/(^0+)/, "").replace(/,/gi, ""); //: 12345000
+      var amountWithComma = Functions.numberWithCommas(amount); //: 12,345,000
+      if (!isNaN(amount)) {
+        this.setState({
+          inputValue: amountWithComma
+        });
+      }
     }
     handleKeydown (e) {
       if (e.which === 13)
         this.setIncrement();
     }
     setIncrement () {
-      var value = $(this.refs.priceValue).val();
-      this.props.handleIncrement(value);
+      this.props.handleIncrement(this.state.inputValue.replace(/,/gi, ''));
     }
     setDecrement () {
-      var value = $(this.refs.priceValue).val();
-      this.props.handleDecrement(value);
+      this.props.handleDecrement(this.state.inputValue.replace(/,/gi, ''));
     }
     render() {
         return (

@@ -26,30 +26,32 @@ export default class DatePicker extends Component {
         _this.props.onClose();
       }
     });
+    // insert element for shadow
     $('.Cal__Container__wrapper').append('<div class="Cal__Container__Shadow__Bottom"></div>');
-    $('.Cal__MonthList__root').niceScroll({
-        background: 'transparent',
-        railpadding: {
-            right: 1, left: 1, top: 1, bottom: 1
-        },
-        cursorcolor: '#545454',
-        cursorborder: false,
-        cursorwidth: '4px',
-        autohidemode: false,
-        touchbehavior: true,
-        cursordragontouch: true,
-        //mousescrollstep: 200,
-        enablekeyboard: false
-    });
+    // scroller init.
+    // $('.Cal__MonthList__root').niceScroll({
+    //     background: 'transparent',
+    //     railpadding: {
+    //         right: 1, left: 1, top: 1, bottom: 1
+    //     },
+    //     cursorcolor: '#545454',
+    //     cursorborder: false,
+    //     cursorwidth: '4px',
+    //     autohidemode: false,
+    //     touchbehavior: true,
+    //     cursordragontouch: true,
+    //     //mousescrollstep: 200,
+    //     enablekeyboard: false
+    // });
   }
   render () {
-    let date = new Date();
+    const today = new Date();
     return (
       <div>
         <InfiniteCalendar
           //Component={withRange(Calendar)}
           showHeader={false}
-          selected={this.props.selectedDate || date}
+          selected={this.props.selectedDate || today}
           locale={{
             locale: require('date-fns/locale/ko'),
             //headerFormat: 'dddd, D MMM',
