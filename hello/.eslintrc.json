@@ -14,11 +14,12 @@
         "indent": [1, 4, { "SwitchCase": 1 }],
         "comma-dangle": [0],
         "linebreak-style": "off",
-        "curly": [1, "multi"],
-        "max-len": [1, 120],
+        "curly": [1, "multi-or-nest"],
+        "max-len": [1, 140],
         "class-methods-use-this": "off",
         "no-trailing-spaces": [1, { "skipBlankLines": true }],
         "react/jsx-indent": [1, 4],
-        "react/jsx-indent-props": [1, 4]
+        "react/jsx-indent-props": [1, 4],
+        "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }]
     }
 }
