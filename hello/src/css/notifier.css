@@ -1,21 +1,21 @@
 /* 미리알림 스타일 */
-.notifier .viewview:before {
+.notifier .viewstate:before {
 	content:'미리알림';
 	color: #FFF;
 	font-size: 16px;
 }
-.notifier .viewview {
+.notifier .viewstate {
 	left: 0px;
 	top: auto;
 	bottom: 0;
 }
-.notifier .viewview dt{
+.notifier .viewstate dt{
 	display: block;
     padding: 0;
     font-size: 11px;
     color: #aba58f;
 }
-.notifier .viewview dd{
+.notifier .viewstate dd{
 	margin-bottom: 2px;
     padding: 0;
     font-family: 'notokr-bold';

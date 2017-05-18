@@ -79,7 +79,13 @@ class SelectableCustom extends React.Component {
     render() {
         const mapToComponent = (options) => {
             return options.map((option, i) => {
-                return (<OptionComponent key={i} value={option} onSelect={(value) => this.props.onChange(value.start, value.end)}/>)
+                return (
+                  <OptionComponent
+                    key={i}
+                    value={option}
+                    onSelect={(value) => this.props.onChange(moment(value.start), moment(value.end), this.props.type)}
+                  />
+                )
             })
         }
         const title = (

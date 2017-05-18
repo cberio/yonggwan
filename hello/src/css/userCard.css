@@ -80,6 +80,7 @@
 .customer-detail .product .res-info .time em{font-size: 13px;letter-spacing: -0.3px; margin-left: 3px;margin-top: -5px;display: inline-block;vertical-align: middle;}
 .customer-detail .product .res-info .time-date{margin-right: 10px;}
 .customer-detail .product .res-info .time-hour{}
+.customer-detail .product .type:after{ display: block;clear: both;content: ''; }
 .customer-detail .product .type .service-name{font-size: 20px;line-height: 25px;letter-spacing: -0.3px;color: #555555;display: block;float: left;position: relative;}
 .customer-detail .product .type .service-name .service-time{font-size: 13px;font-family: 'notokr-medium';color: #888;display: inline;margin-left: 5px;}
 .customer-detail .product .price{font-size: 20px;color: #555555;display: block;line-height: 28px;clear: both;position: relative;background: none !important;}
@@ -89,6 +90,8 @@
 .customer-detail .product .price .price-change{font-size: 11px;font-family: 'notokr-bold';color: #fff;line-height: 24px;height: 24px;padding: 0 10px;border-radius: 13px;background-color: #aaa;margin-left: 5px;border: 0 !important;}
 .customer-detail .product .price > span,
 .customer-detail .product .price .price-change {display: inline-block;vertical-align: middle;}
+.customer-detail .product .price .count {font-family: 'notokr-bold'; margin-right: 7px; font-size: 18px;}
+.customer-detail .product .price .count strong{font-style: 'normal';}
 .customer-detail .product .ui{position: absolute;top:33px;right: 20px;}
 .customer-detail .product .ui .ui-each{display: block;}
 .customer-detail .product .ui .ui-each:first-of-type{margin-bottom: 5px;}
@@ -149,16 +152,30 @@
 }
 .customer-detail .bottom .history .history-list .content .no-comment {opacity: .4;}
 
-.customer-detail .bottom .no-history{padding: 24px 0;text-align: center;color: #999;line-height: 1.45;}
+.customer-detail .bottom .no-history{
+    height: 230px; padding: 24px 0;text-align: center;color: #999;line-height: 206px;
+}
 
-.customer-detail .bottom .comments{padding: 0 20px;}
-.customer-detail .bottom .comments p{height: 200px;padding: 10px;margin: 24px 20px;line-height: 1.45;background-color: #eee;}
-.customer-detail .bottom .comments p.no-comment{color: #999;text-align: center;}
-
+.customer-detail .bottom .comments{
+    padding: 28px 24px 0; height: 276px;
+}
+.customer-detail .bottom .comments .textarea{
+    width: 100%; height: 202px; padding: 16px 20px 12px 20px; line-height: 1.45;
+    background-color: #fff; border: 1px solid #e5e5e5; border-radius: 3px; outline: 0;
+    font-family: 'notokr-regular'; color: #404040; letter-spacing: -0.3px; resize: none;
+}
+.customer-detail .bottom .comments .textarea:disabled {
+    background-color: #eee; color: #666;
+}
+.customer-detail .bottom .comments .textarea.no-comment{
+    color: #999;
+}
+.customer-detail .bottom .comments .ui{
+    height: 46px; border-top: 1px solid transparent;
+}
 .customer-detail .bottom .history-detail {
-    width: 100%; height: 249px; background-color: #fff;
+    width: 100%; height: 100%; background-color: #fff;
     position: absolute; left: 100%; top: 0;z-index: 1;
-    box-sizing: content-box; padding-bottom: 40px;
        -moz-transition: .5s left ease;
          -o-transition: .5s left ease;
     -webkit-transition: .5s left ease;
@@ -168,48 +185,78 @@
     left: 0;
 }
 .customer-detail .bottom .active .history-detail-info {
-    height: 67px; display: block; margin: 18px 24px 0 24px;position: relative;
+    height: 67px; display: block; padding-top: 18px; margin: 0 24px 0 24px;
 }
-.customer-detail .bottom .active .history-detail-info:before {
-    display: block;content: ''; position: absolute;left: 0; top: 50%; margin-top: -10px; 
-    width: 11px; height: 20px; z-index: -1;
+.customer-detail .bottom .active .history-detail-info button {
+    float: left; padding-left: 23px; font-size: 12px;font-family: 'notokr-medium'; position: relative;
+    color: #4c4c4c; letter-spacing: -0.3px;text-align: left; line-height: 1.2; height: auto;
+}
+.customer-detail .bottom .active .history-detail-info button:before {
+    opacity: .5; display: block;content: ''; position: absolute;left: 0; top: 50%;
+    width: 11px; height: 20px; z-index: -1; margin-top: -10px; 
     background: url(../image/common/bullet-arrow-controler-prev.png) 0 center no-repeat;
 
 }
-.customer-detail .bottom .active .history-detail-info button {
-    float: left; padding-left: 23px; font-size: 12px;font-family: 'notokr-medium';color: #4c4c4c; letter-spacing: -0.3px;text-align: left;
+.customer-detail .bottom .active .history-detail-info button div {
+    border-bottom: 1px solid transparent; float: left;clear: both;
 }
-.customer-detail .bottom .active .history-detail-info button:hover,
-.customer-detail .bottom .active .history-detail-info button:focus {text-decoration: underline;text-decoration-color: #b2b2b2;}
+.customer-detail .bottom .active .history-detail-info button div:after {
+    display: block;clear: both;content: '';
+}
+.customer-detail .bottom .active .history-detail-info button div:first-of-type {
+    margin-bottom: 5px;
+}
+.customer-detail .bottom .active .history-detail-info button:hover div,
+.customer-detail .bottom .active .history-detail-info button:focus div {
+    border-bottom-color: #b2b2b2;
+}
+.customer-detail .bottom .active .history-detail-info button div span {
+    vertical-align: text-bottom;
+}
 .customer-detail .bottom .active .history-detail-info button .product-name{
-    font-size: 14px;
+    font-size: 14px; margin-right: 10px;
 }
 .customer-detail .bottom .active .history-detail-info button .info-etc{
     color: #b2b2b2;
 }
 .customer-detail .bottom .active .history-detail-info .product-amount {
-    
+    margin-right: 6px;
+}
+.customer-detail .bottom .active .history-detail-info .prepayment-amount {
+    color: #b2b2b2;
 }
 .customer-detail .bottom .active .history-detail-info .date {
-    float: right;
+    font-family: 'notokr-medium';font-size: 12px;color: #999999;line-height: 20px;float: right;
+}
+.customer-detail .bottom .active .history-detail-info .date.today {
+    color: #e60b25;
 }
 .customer-detail .bottom .history-detail .history-comment {
-    margin: 0 24px 0 24px;
-    height: 182px; border: 1px solid #e6e6e6;
-    background-color: #f2f2f2;    
+    overflow: auto;
+    margin: 0 24px 0 24px;padding-bottom: 1px;
+    height: 163px; border: 1px solid #e6e6e6;
+    background-color: #f2f2f2; 
     -webkit-border-radius: 3px;
             border-radius: 3px;
 }
-.customer-detail .bottom .history-detail .history-comment .caption {
-    font-family: 'notokr-bold';float: left; margin-right: 5px; color: #666;
+/* 수정 상태가 아닌경우의 고객메모, 시술자메모 style */
+.customer-detail .bottom .history-detail .history-comment .comment {
+    font-size: 12px; letter-spacing: -0.3px; color: #666;
+    line-height: 21px;  padding: 16px 20px 0 16px;
 }
-.customer-detail .bottom .history-detail .history-comment p{
-    min-height: 100%;
+.customer-detail .bottom .history-detail .history-comment .comment .caption {
+    font-weight: normal; font-family: 'notokr-bold';float: left; margin-right: 5px; color: #666;
 }
-.customer-detail .bottom .history-detail .history-comment .comment-inner {
-    min-height: 100%;
-    padding: 16px 20px 10px 16px;
+.customer-detail .bottom .history-detail .history-comment .comment .memo{}
+/* 수정상태의 고객메모, 시술자메모 style */
+.customer-detail .bottom .history-detail .history-comment textarea{
+    font-size: 12px; letter-spacing: -0.3px; color: #404040;
+    line-height: 21px; outline: 0;
+    background-color: #fff; display: block;
+    resize: none; width: 100%; height: 100%;
+    padding: 16px 20px 10px 16px; 
 }
+/* // E */
 .customer-detail .bottom .history-detail .history-ui {
     position: absolute;
     left: 0; right: 0; bottom: 0; height: 40px;
@@ -222,9 +269,13 @@
 .customer-detail .bottom .history-detail .history-ui .ui-edit {
     float: right;
 }
-.customer-detail .indicator{
-    font-family: 'notokr-bold';height: 46px;line-height: 46px;padding: 0 28px;
-    background-color: #F2F2F2;position: relative;text-align: center;letter-spacing: -0.3px; border-top: 1px solid #d9d9d9;
+.customer-detail .indicator,
+.customer-detail .history-ui {
+    height: 46px;line-height: 46px; position: relative;border-top: 1px solid;
+}
+.customer-detail .indicator {
+    border-top-color: #d9d9d9;background-color: #F2F2F2;text-align: center;
+    font-family: 'notokr-bold';padding: 0 28px; letter-spacing: -0.3px; 
 }
 .customer-detail .indicator button{
     width: 36px;height: 36px;line-height: 36px;font-family: inherit;border-radius: 50%;line-height: 1;
@@ -241,17 +292,71 @@
 	-webkit-box-shadow: 0 1px 1px #B3B3B3 inset;
 			box-shadow: 0 1px 1px #B3B3B3 inset;
 }
-.customer-detail .request-approve{margin-top: 20px;}
-.customer-detail .request-approve button{
-    font-size: 17px;
-    width: 100%;height: 40px;line-height: 40px;display: block; overflow: hidden;
-    color: #fff;background-color: #111;text-align: center; border-radius: 5px;
+.customer-detail .ui.history-ui {
+    border-top-color: transparent; padding: 0 24px;
+}
+.customer-detail .ui button {
+    opacity: .5; padding: 0; min-width: 20px; height: 100%; display: inline-block;
+    background-repeat: no-repeat; background-image: url(../image/common/ui-split.png);
+}
+.customer-detail .ui button:hover,
+.customer-detail .ui button:focus {
+    opacity: 1;
+}
+.customer-detail .ui button.right {
+    float: right;
+}
+.customer-detail .ui button.text-hidden {
+    text-indent: -9999px; overflow: hidden; color: transparent;
 }
 
-/* 선결제 카드 스타일*/
-.customer-detail.pre-payment .product .price > span{border-bottom: 1px dashed #ccc5c2;}
-.customer-detail.pre-payment .product .price:hover > span,
-.customer-detail.pre-payment .product .price {border-bottom-color: #807570;}
+.customer-detail .ui button.complet { background-position: right 16px; padding-right: 16px;}
+.customer-detail .ui button.remove { background-position: 0 -44px; padding-left: 0;}
+.customer-detail .ui button.cancel { background-position: 0 -12px; padding-left: 16px;}
+.customer-detail .ui button.edit { background-position: right -74px; padding-right: 16px;}
+
+.customer-detail .request-approve{margin-top: 20px;}
+.customer-detail .request-approve button{
+    font-size: 15px; font-family: 'notokr-bold'; letter-spacing: -0.3px;
+    width: 100%;height: 50px;line-height: 50px;display: block;
+    color: #999;text-align: center; border-radius: 5px;
+    background: #1a1a1a; 
+    background: -webkit-linear-gradient(top, rgba(26, 26, 26, 1) 50%, rgba(0, 0, 0, 1) 100%);
+    background: linear-gradient(to bottom, rgba(26, 26, 26, 1) 50%, rgba(0, 0, 0, 1) 100%);
+}
+.customer-detail .request-approve button:hover,
+.customer-detail .request-approve button:focus {
+    background: #000; 
+    background: -webkit-linear-gradient(top, rgba(0, 0, 0, 1) 50%, rgba(26, 26, 26, 1) 100%);
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 1) 50%, rgba(26, 26, 26, 1) 100%);
+}
+
+/* 예약상태별 카드 스타일*/
+.done.customer-detail .product .info:not(:hover) {opacity: .5;}
+
+.request.customer-detail .product{border: 0 !important; margin-bottom: 0 !important;}
+.request.customer-detail .product .info .res-info .time,
+.request.customer-detail .product .info .type span,
+.request.customer-detail .product .info .type .service-name .service-time,
+.request.customer-detail .product .info .price .count strong,
+.request.customer-detail .product .ui .ui-each .title {color: #fff;}
+.request.customer-detail .product .tit{color: rgba(255,255,255, .6) !important;}
+.request.customer-detail .product .ui button:hover,
+.request.customer-detail .product .ui button:focus {background-color: rgba(0,0,0, .3);}
+.request.customer-detail .product .ui .ui-edit button{background-position: 0 0;}
+.request.customer-detail .product .ui .ui-delete button{background-position: 0 -44px;}
+
+.request.customer-detail .product .edit-ui:hover button, 
+.request.customer-detail .product .edit-ui button:focus {border-bottom-color: #fff;}
+.request.customer-detail.red .product {background-color: #d97557;}
+.request.customer-detail.blue .product {background-color: #6b7ec1;}
+.request.customer-detail.yellow .product {background-color: #c79f3c;}
+.request.customer-detail.purple .product {background-color: #9d78c1;}
+.request.customer-detail.green .product {background-color: #50b39d;}
+
+.pre-payment.customer-detail .product .price > span{border-bottom: 1px dashed #ccc5c2;}
+.pre-payment.customer-detail .product .price:hover > span,
+.pre-payment.customer-detail .product .price {border-bottom-color: #807570;}
 
 /* history 상품별 bullet bg color 정의 */
 .customer-detail .bottom .history .history-list.red .content .info:after{background-color: #E6BAAC;}
@@ -272,7 +377,9 @@
 .red.customer-detail .product .type .service-name .service-time{color: #B2988F;}
 .red.customer-detail .product .price .won{color: #B2988F;}
 .red.customer-detail .product{border-color: #E6BAAC;}
+.red.cu.customer-detail .product .price .count strong{color: #D96441;}
 .red.customer-detail .product .edit-ui:hover{background-position: right -90px;}
+.red.customer-detail .request-approve button{color: #ff764c;}
 
 /*.blue.customer-head{background-color: #6274B3;}*/
 .blue.customer-detail .product .res-info .time{color: #3550B3;}
@@ -285,7 +392,9 @@
 .blue.customer-detail .product .type .service-name .service-time{color: #A1A5B3;}
 .blue.customer-detail .product .price .won{color: #A1A5B3;}
 .blue.customer-detail .product{border-color: #ACB9E6;}
+.blue.c.customer-detail .product .price .count strong{color: #3550B3;}
 .blue.customer-detail .product .edit-ui:hover{background-position: right -30px;}
+.blue.customer-detail .request-approve button{color: #6687ff;}
 
 /*.yellow.customer-head{background-color: #D9A521;}*/
 .yellow.customer-detail .product .res-info .time{color: #CC8100;}
@@ -298,7 +407,9 @@
 .yellow.customer-detail .product .type .service-name .service-time{color: #B3B08F;}
 .yellow.customer-detail .product .price .won{color: #B3B08F;}
 .yellow.customer-detail .product{border-color: #CCBE99;}
+.yellow.customer-detail .product .price .count strong{color: #CC8100;}
 .yellow.customer-detail .product .edit-ui:hover{background-position: right 0;}
+.yellow.customer-detail .request-approve button{color: #c79f3c;}
 
 /*.purple.customer-head{background-color: #8F6BB3;}*/
 .purple.customer-detail .product .res-info .time{color: #7435B3;}
@@ -311,7 +422,9 @@
 .purple.customer-detail .product .type .service-name .service-time{color: #AAA1B3;}
 .purple.customer-detail .product .price .won{color: #AAA1B3;}
 .purple.customer-detail .product{border-color: #C9ACE6;}
+.purple.customer-detail .product .price .count strong{color: #7435B3;}
 .purple.customer-detail .product .edit-ui:hover{background-position: right -120px;}
+.purple.customer-detail .request-approve button{color: #bf80ff;}
 
 /*.green.customer-head{background-color: #56b39e;}*/
 .green.customer-detail .product .res-info .time{color: #1f997e;}
@@ -324,7 +437,9 @@
 .green.customer-detail .product .type .service-name .service-time{color: #a1b3af;}
 .green.customer-detail .product .price .won{color: #a1b3af;}
 .green.customer-detail .product{border-color: #99ccc0;}
+.green..customer-detail .product .price .count strong{color: #1f997e;}
 .green.customer-detail .product .edit-ui:hover{background-position: right -60px;}
+.green.customer-detail .request-approve button{color: #50b39d;}
 
 @media screen and (max-height: 1024px) {
     .slider{ margin-top: 50px; }

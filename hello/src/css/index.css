@@ -132,7 +132,7 @@ body {overflow: hidden;}
 .mask-transparent {position: fixed;left: 0;top: 0; right: 0; bottom: 0;display: block;z-index: 10;}
 
 /* 레이어팝업 */
-.modal-mask {background-color: rgba(0,0,0,0.7); position: fixed; right: 0;left: 80px; top: 92px; height: 100%;z-index: 3;}
+.modal-mask {background-color: rgba(0,0,0,0.7); position: fixed; right: 0;left: 80px; top: 92px; height: 100%;z-index: 3;overflow: auto;}
 .modal-mask.mask-full {top: 0;left: 80px;}
 .modal-mask.mask-white{background-color: rgba(255,255,255,0.7);}
 .modal-mask.mask-event {position: fixed; z-index: 3; }

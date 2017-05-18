@@ -1,72 +1,61 @@
 import * as types from './actionType';
 import Shop from '../api/shop/shop';
-import moment from 'moment';
 import ApiException from '../api/error';
 
 /**/
-export function userCardSchedule(options) {
-    return {
-        type: types.USER_CARD_SCHEDULE,
-        options
-    };
-}
-export function userCardStaff(options) {
-    return {
-        type: types.USER_CARD_STAFF,
-        options
-    };
-}
-export function userCardDate(options) {
-    return {
-        type: types.USER_CARD_DATE,
-        options
-    };
-}
+export const userCardSchedule = options => ({
+    type: types.USER_CARD_SCHEDULE,
+    options
+});
+
+export const userCardStaff = options => ({
+    type: types.USER_CARD_STAFF,
+    options
+});
+
+export const userCardDate = options => ({
+    type: types.USER_CARD_DATE,
+    options
+});
+
+/**/
+export const modalConfirm = optionComponent => ({
+    type: types.MODAL_CONFIRM,
+    optionComponent
+});
+
+/* NEW ORDER RELATED */
+export const newOrderSetCondition = options => ({
+    type: types.NEW_ORDER,
+    options
+});
 /**/
 
-export function modalConfirm(optionComponent) {
-    return {
-        type: types.MODAL_CONFIRM,
-        optionComponent
-    };
-}
-export function newOrder(options) {
-    return {
-        type: types.NEW_ORDER,
-        options
-    };
-}
-export function notifier(options) {
-    return {
-        type: types.NOTIFIER,
-        options
-    };
-}
-export function modalNotifier(options) {
-    return {
-        type: types.MODAL_NOTIFIER,
-        options
-    };
-}
-export function requestReservation(options) {
-    return {
-        type: types.REQUEST_RESERVATION,
-        options
-    };
-}
-export function guider(options) {
-    return {
-        type: types.GUIDER,
-        options
-    };
-}
+export const notifier = options => ({
+    type: types.NOTIFIER,
+    options
+});
 
-export function loading(condition) {
-    return {
-        type: types.LOADING,
-        condition
-    };
-}
+export const modalNotifier = options => ({
+    type: types.MODAL_NOTIFIER,
+    options
+});
+
+export const requestReservation = options => ({
+    type: types.REQUEST_RESERVATION,
+    options
+});
+
+export const guider = options => ({
+    type: types.GUIDER,
+    options
+});
+
+export const loading = condition => ({
+    type: types.LOADING,
+    condition
+});
+
 
 // SCHEDULE RELATED ACTIONS
 
@@ -120,7 +109,7 @@ export const receiveServices = (shop, json) => ({
 const fetchSchedules = (shop, state) => (dispatch) => {
     dispatch(requestSchedules(shop));
     dispatch(loading(true));
-    
+
     return new Shop({ shopId: shop })
     .schedules()
     .withService()
@@ -134,7 +123,7 @@ const fetchSchedules = (shop, state) => (dispatch) => {
 export const createNewSchedule = scheduleData => (dispatch, getState) => {
     dispatch(creatingSchedule(scheduleData));
     dispatch(loading(true));
-    
+
     return new Shop({ shopId: getState().selectedShopID })
     .schedules()
     .create(scheduleData)
@@ -149,7 +138,7 @@ export const createNewSchedule = scheduleData => (dispatch, getState) => {
 
 const fetchStaffs = (shop, state) => (dispatch) => {
     dispatch(requestStaffs(shop));
-    
+
     return new Shop({ shopId: shop })
     .staffs()
     .get(state)
@@ -158,7 +147,7 @@ const fetchStaffs = (shop, state) => (dispatch) => {
 
 const fetchServices = (shop, state) => (dispatch) => {
     dispatch(requestServices(shop));
-    
+
     return new Shop({ shopId: shop })
     .services()
     .get(state)
@@ -181,43 +170,43 @@ const fetchServices = (shop, state) => (dispatch) => {
 const shouldFetchSchedules = (state, shopID) => {
     const schedules = state.getSchedulesBySelectedShopID[shopID];
     const selectedDate = state.calendarConfig.current.format('YYYY-MM-DD');
-    
+
     if (!schedules)
         return true;
-    
+
     if (schedules.isFetching)
         return false;
-    
+
     if (state.calendarConfig.current.isBetween(state.calendarConfig.start, state.calendarConfig.end))
         return false;
-    
+
     if (!schedules.schedules.data.find(schedule => schedule.reservation_dt === selectedDate))
         return true;
-    
+
     return schedules.didInvalidate;
 };
 
 const shouldFetchStaffs = (state, shopID) => {
     const staffs = state.getStaffsBySelectedShopID[shopID];
-    
+
     if (!staffs)
         return true;
-    
+
     if (staffs.isFetching)
         return false;
-    
+
     return staffs.didInvalidate;
 };
 
 const shouldFetchServices = (state, shopID) => {
     const services = state.getServicesBySelectedShopID[shopID];
-    
+
     if (!services)
         return true;
-    
+
     if (services.isFetching)
         return false;
-    
+
     return services.didInvalidate;
 };
 
