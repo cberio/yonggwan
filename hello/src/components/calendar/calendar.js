@@ -5,10 +5,8 @@ import $ from 'jquery';
 import _ from 'lodash';
 import moment from 'moment';
 import * as actions from '../../actions';
-import DatePicker from './datePicker';
 import ModalConfirm from './modal/modalConfirm';
 import RenderEventConfirm from './modal/renderEventConfirm';
-import NewOrder from './newOrder';
 import UserCard from '../userCard';
 import DailyCalendar from './fullCalendar/dailyCalendar';
 import WeeklyCalendar from './fullCalendar/weeklyCalendar';
@@ -41,6 +39,12 @@ class Calendar extends Component {
         this.runUserCardSlide = this.runUserCardSlide.bind(this);
 
         this.fetchSchedule = this.fetchSchedule.bind(this);
+        this.test = this.test.bind(this);
+    }
+
+    test(e) {
+        this.props.newOrder(!this.props.newOrderConfig.condition);
+        this.props.toggleNotifier(!this.props.isModalNotifier);
     }
 
   // Daily Timeline 에서 예약생성 모듈로 접근시 실행하는 함수.
@@ -209,6 +213,11 @@ class Calendar extends Component {
         }
     }
 
+    fetchSchedule() {
+        const { selectedShopID } = this.props;
+        this.props.fetchSchedulesIfNeeded(selectedShopID);
+    }
+
     componentDidMount() {
         const { selectedShopID } = this.props;
         this.props.fetchSchedulesIfNeeded(selectedShopID);
@@ -220,119 +229,8 @@ class Calendar extends Component {
         this.activeGnb(null, false);
     }
 
-    fetchSchedule() {
-        const { selectedShopID } = this.props;
-        this.props.fetchSchedulesIfNeeded(selectedShopID);
-    }
-
     render() {
         this.sortExpert(this.props.staffs.data);
-
-        const CreateOrderButtonFixed = _this => (
-          <div className="create-order-wrap fixed">
-            <div className="create-order-slot">
-              <button className="create-button" onClick={this.toggleCreateOrderFixedUi}>
-                <span>+</span>
-              </button>
-            </div>
-            <div className="create-order-ui">
-              <button onClick={() => _this.newOrder('unknownStart')} className="ui-reservation">예약생성</button>
-              <button onClick={() => _this.bindNewOfftime('weekly')} className="ui-offtime">OFF TIME 생성</button>
-            </div>
-          </div>
-      );
-
-        const CreateOrderButtonTimeline = (_this, view) => (
-          <div
-            data-date="" className={`create-order-wrap timeline${_this.state.isCreateOfftime
-              ? ' off-time'
-              : _this.state.unknownStart
-                  ? ' has-card'
-                  : _this.state.isEditEvent
-                      ? ' edit'
-                      : ''}`}
-          >
-            <div className="create-order-inner">
-              <div className="create-order-slot">
-                {_this.state.isCreateOfftime && view === 'agendaWeekly'
-                          ? (
-                            <button className="create-button" onClick={() => _this.bindNewOfftime('render', 'offtime')}>
-                              <i className="time" />
-                              <span>+</span>
-                            </button>
-                          )
-                          : (_this.state.unknownStart || _this.state.isEditEvent) && view === 'agendaWeekly'
-                              ? (
-                                <button className="create-button create-event">
-                                  <i className="time" />
-                                  <span>+</span>
-                                </button>
-                              )
-                              : (
-                                <button
-                                  className="create-button" onClick={(e) => {
-                                      _this.toggleCreateOrderUi(e);
-                                  }}
-                                >
-                                  <i className="time" />
-                                  <span>+</span>
-                                </button>
-                              )
-                          }
-                <div className="create-order-ui-wrap">
-                  <div className="create-order-ui-inner">
-                    <div className="create-order-ui">
-                      <button onClick={() => _this.newOrder(null)} className="ui-reservation">예약생성</button>
-                      <button onClick={() => _this.bindNewOfftime('timeline')} className="ui-offtime">OFF TIME 생성</button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        );
-
-        const NewOrderComponent = (_this, view) => {
-            if (this.state.isNewOrder)
-              return (
-                <NewOrder
-                  ref="NewOrder"
-                  beforeInitConfirmRenderNewSchedule={(bool, newSchedule) => _this.beforeInitConfirmRenderNewSchedule(bool, newSchedule)}
-                  setCalendarHeight={step => _this.setCalendarHeight(step)}
-                  newOrderCancel={_this.newOrderCancel}
-                  changeView={type => _this.changeView(type)}
-                  backToOrder={_this.backToOrder}
-                  renderNewScheduleUnknownStart={_this.renderNewScheduleUnknownStart}
-                  unknownStart={_this.state.unknownStart}
-                  isEditEvent={_this.state.isEditEvent}
-                  isRequestReservation={_this.state.isRequestReservation}
-                  willEditEventObject={_this.state.selectedSchedule}
-                  isModalConfirm={_this.state.isModalConfirm}
-                  isRenderConfirm={_this.state.isRenderConfirm}
-                  selectedDate={_this.state.selectedDate}
-                  selectedStaff={_this.state.renderedStaff}
-                />
-              );
-        };
-
-        const TodayTimelineButton = (_this) => {
-            if (moment(_this.state.timelineDate).isSame(moment(new Date()), 'day'))
-                return (
-                  <div className="fc-today-timeline-button-wrap today">
-                    <button className="fc-today-timeline-button today" disabled>
-                      {moment(new Date()).format('DD')}
-                    </button>
-                  </div>
-                );
-
-            return (
-              <div className="fc-today-timeline-button-wrap">
-                <button className="fc-today-timeline-button" onClick={() => _this.changeDate(moment(new Date()))}>
-                  {moment(new Date()).format('DD')}
-                </button>
-              </div>
-            );
-        };
 
         const UserCardComponent = (_this) => {
             if (!_this.state.isUserCard) return '';
@@ -349,17 +247,6 @@ class Calendar extends Component {
             );
         };
 
-        const DatePickerComponent = (_this) => {
-            if (!_this.state.isChangeDate) return '';
-            return (
-              <DatePicker
-                selectedDate={_this.state.timelineDate}
-                onChange={_this.changeDate}
-                onClose={() => _this.isChangeDate(false)}
-                className="timeline-date-picker"
-              />
-            );
-        };
 
         const ModalConfirmComponent = (_this) => {
             if (!_this.state.isModalConfirm) return '';
@@ -390,7 +277,7 @@ class Calendar extends Component {
         };
 
     // Daily, Weekly FullCalendar 공통 옵션
-        const fc_options = {
+        const fcOptions = {
             schedulerLicenseKey: `${process.env.REACT_APP_FULLCALENDAR_LISENCE ? process.env.REACT_APP_FULLCALENDAR_LISENCE : 'GPL-My-Project-Is-Open-Source'}`,
             scheduleStatus: actions.ScheduleStatus,
             guestClass: actions.GuestClass,
@@ -427,10 +314,9 @@ class Calendar extends Component {
         };
 
         const commonViewProps = {
-            fcOptions: fc_options,
+            fcOptions,
       // schedule: _.isEmpty(this.props.schedules) ? Schedule : this.props.schedules.data,
       // staffs: _.isEmpty(this.props.staffs) ? Staff : this.props.staffs.data,
-            isNewOrder: this.state.isNewOrder,
             schedules: this.props.schedules.data,
             staffs: this.props.staffs.data,
             services: this.props.services.data,
@@ -442,30 +328,31 @@ class Calendar extends Component {
             getSlotTime: this.mouseenterSlotTime,
       // defaultStaff: function() { _.isEmpty(this.props.staffs) ? Staff[0] : this.props.staffs.data },
             defaultStaff: this.props.staffs[0],
+
             createNewSchedule: scheduleData => this.props.createNewSchedule(scheduleData),
             activeGnb: (view, condition) => this.activeGnb(view, condition),
             runUserCardSlide(t, calSchedule, jsEvent, view) { this.runUserCardSlide(t, calSchedule, jsEvent, view); },
 
-            newOrder: condition => this.props.newOrder(condition),
-            getNewOrderComponent(t, view) { return NewOrderComponent(t, view); },
-            getTodayTimelineButton(t) { return TodayTimelineButton(t); },
-            getCreateOrderButtonFixed(t) { return CreateOrderButtonFixed(t); },
-            getCreateOrderButtonTimeline(t, view) { return CreateOrderButtonTimeline(t, view); },
-            getDatePickerComponent(t) { return DatePickerComponent(t); },
+            newOrderDirect: condition => this.props.newOrder(condition),
+            newOrderQuick: condition => this.props.newOrder(condition),
+            newOrderCancel: () => this.props.newOrder(false),
+
             getUserCardComponent(t) { return UserCardComponent(t); },
             getModalConfirmComponent(t) { return ModalConfirmComponent(t); },
             getRenderConfirmComponent(t, view) { return RenderConfirmComponent(t, view); }
+
         };
 
         const viewstate = (
           <div className="viewstate viewContainer">
+            <h3>calendar container states</h3>
             <dl>
               <dt>viewType : </dt> <dd>{this.state.viewType}</dd>
               <dt>viewDate : </dt> <dd>{this.state.viewDate.format('YYYY-MM-DD')}</dd>
-              <dt>isNewOrder : </dt> <dd>{this.state.isNewOrder ? 'true': 'false'}</dd>
+              <dt>isNewOrder : </dt> <dd>{this.props.newOrderConfig.condition ? 'true': 'false'}</dd>
             </dl>
           </div>
-    );
+        );
 
         const DailyTimeline = (
           <DailyCalendar
@@ -475,7 +362,7 @@ class Calendar extends Component {
             setTimelineDate={date => this.setTimelineDate(date)}
             newOrder={options => this.newOrderByDailyTimeline(options)}
           />
-    );
+        );
 
         const WeeklyTimeline = (
           <WeeklyCalendar
@@ -486,17 +373,31 @@ class Calendar extends Component {
             isBindedNewOrder={this.state.isNewOrder}
             getNewOrderStates={() => this.returnNewOrderStates()}
           />
-    );
+        );
+
+        const test = (
+          <button
+            style={{
+                position: 'fixed',
+                left: '80px',
+                top: '0px',
+                zIndex: '10',
+                background: '#ec0'
+            }} onClick={() => this.test()}
+          > CLICK ME!
+          </button>
+        )
 
         return (
           <div className="calendar">
+            {test}
             {viewstate}
             <div className="full-calendar">
               {
-            this.state.viewType === 'agendaWeekly'
-            ? WeeklyTimeline
-            : DailyTimeline
-          }
+                this.state.viewType === 'agendaWeekly'
+                ? WeeklyTimeline
+                : DailyTimeline
+              }
             </div>
           </div>
         );
@@ -533,6 +434,7 @@ const mapStateToProps = (state) => {
     const { guests } = { isFetching: false, guests: { data: require('../../data/guests').default } };
 
     return {
+        isModalNotifier: state.notifier.isModalNotifier,
         selectedShopID,
         schedules,
         staffs,
@@ -554,7 +456,8 @@ const mapDispatchToProps = dispatch => ({
     setCalendarEnd: end => (dispatch(actions.setCalendarEnd(end))),
     setCalendarCurrent: current => (dispatch(actions.setCalendarCurrent(current))),
 
-    newOrder: condition => dispatch(actions.newOrderSetCondition(condition)),
+    newOrder: condition => (dispatch(actions.newOrderSetCondition(condition))),
+    toggleNotifier: condition => dispatch(actions.modalNotifier({ isModalNotifier: condition })),
     // or simply do...
     // actions: bindActionCreators(acations, dispatch)
     // this will dispatch all action

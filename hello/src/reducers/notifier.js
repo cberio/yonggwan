@@ -1,6 +1,15 @@
 import * as types from '../actions/actionType';
 
-export default function notifier(state, action) {
+const initialState = {
+    isNotifier: false,
+    isModalNotifier: false,
+    requestReservation: {
+        condition: false,
+        requestEvent: undefined
+    }
+};
+
+export default function notifier(state = initialState, action) {
     switch (action.type) {
         case types.NOTIFIER :
             return {

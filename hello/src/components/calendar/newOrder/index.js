@@ -19,16 +19,17 @@ class NewOrder extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            newOrderStep: this.props.Step, // int 1-3
-            newOrderGuestName: this.props.GuestName, // str
-            newOrderSex: this.props.Sex, // int 0-2
-            newOrderPhone: this.props.Phone, // array
-            newOrderService: this.props.Service, // object (service object)
-            newOrderStaff: this.props.Staff, // object
-            newOrderGuest: this.props.Guest,  // object
-            newOrderStart: this.props.Start, // moment format
-            newOrderEnd: this.props.End, // moment format
-            newOrderTime: this.props.Time // HH:mm
+            type: this.props.newOrderConfig.type, // str
+            newOrderStep: 1, // int 1-3
+            newOrderGuestName: this.props.newOrderSchedule.guestName, // str
+            newOrderSex: this.props.newOrderSchedule.sex, // int 0-2
+            newOrderPhone: this.props.newOrderSchedule.phone, // array
+            newOrderService: this.props.newOrderSchedule.service, // object (service object)
+            newOrderStaff: this.props.newOrderSchedule.staff, // object
+            newOrderGuest: this.props.newOrderSchedule.guest,  // object
+            newOrderStart: this.props.newOrderSchedule.start, // moment format
+            newOrderEnd: this.props.newOrderSchedule.end, // moment format
+            newOrderTime: this.props.newOrderSchedule.time // HH:mm
         };
         this.documentBinding = this.documentBinding.bind(this);
         this.initEditEvent = this.initEditEvent.bind(this);
@@ -45,7 +46,7 @@ class NewOrder extends Component {
         this.inputChangeOrderEnd = this.inputChangeOrderEnd.bind(this);
     }
 
-    printWarring(msg) {
+    createWarning(msg) {
         console.warn(`${msg} prop is undefined`);
     }
 
@@ -82,8 +83,15 @@ class NewOrder extends Component {
             newOrderEnd: moment(e.end).format(),
             newOrderTime: Functions.millisecondsToMinute(moment(e.end).diff(moment(e.start))),
         });
-    // step-3 으로 바로 이동하기때문에 캘린더 Height를 조절합니다
-        this.props.setCalendarHeight(3);
+    }
+
+    toggleInterfaces(isMount) {
+        return;
+        if (isMount) {
+            $('.create-order-wrap.fixed').addClass('hidden');
+        } else {
+            $('.create-order-wrap.fixed').removeClass('hidden');
+        }
     }
 
     insertComponent(unknownStart) {
@@ -124,9 +132,6 @@ class NewOrder extends Component {
             default:
                 break;
         }
-        setTimeout(() => {
-            // component.props.setCalendarHeight(component.state.newOrderStep);
-        }, 0);
     }
 
     changeStep(step) {
@@ -186,10 +191,6 @@ class NewOrder extends Component {
     inputChangeOrderStart(e) { this.setState({ newOrderStart: e.target.value }); }
     inputChangeOrderEnd(e) { this.setState({ newOrderEnd: e.target.value }); }
 
-    componentWillUnmount() {
-        this.props.setCalendarHeight(true);
-    }
-
     componentDidMount() {
     // Window event binding
         this.documentBinding();
@@ -198,6 +199,12 @@ class NewOrder extends Component {
     // 예약수정, 예약요청확인 인경우
         if (this.props.isEditEvent)
             this.initEditEvent(this.props.willEditEventObject);
+    // 스타일 적용
+        this.toggleInterfaces(true);
+    }
+
+    componentWillUnmount() {
+        this.toggleInterfaces(false);
     }
 
     render() {
@@ -363,6 +370,7 @@ class NewOrder extends Component {
             <div className="viewstate order" style={{display: 'block'}}>
               <button onClick={() => { $('.viewstate.order').hide(); }}>X</button>
               <span>isModalConfirm</span> : {this.props.isModalConfirm ? 'true' : ''} <br />
+              <span>type</span> : {this.state.type} <br />
               <span>newOrderStep</span> : {this.state.newOrderStep !== undefined ? this.state.newOrderStep : ''} <br />
               <span>newOrderStaff</span> : {this.state.newOrderStaff ? this.state.newOrderStaff.label : ''} <br />
               <span>newOrderService</span> : {this.state.newOrderService ? this.state.newOrderService.name : ''} <br />
@@ -447,7 +455,6 @@ class NewOrder extends Component {
 
 NewOrder.propTypes = {
     beforeInitConfirmRenderNewSchedule: PropTypes.func,
-    setCalendarHeight: PropTypes.func,
     newOrderCancel: PropTypes.func,
     changeView: PropTypes.func,
     backToOrder: PropTypes.func,
@@ -459,16 +466,17 @@ NewOrder.propTypes = {
     isModalConfirm: PropTypes.bool,
     isRenderConfirm: PropTypes.bool,
     selectedDate: PropTypes.string,
-    selectedStaff: PropTypes.object
+    selectedStaff: PropTypes.object,
+    newOrderConfig: PropTypes.object,
+    newOrderSchedule: PropTypes.object,
 };
 
 NewOrder.defaultProps = {
-    beforeInitConfirmRenderNewSchedule() { Functions.printWarring('beforeInitConfirmRenderNewSchedule'); },
-    setCalendarHeight() { Functions.printWarring('setCalendarHeight'); },
-    newOrderCancel() { Functions.printWarring('newOrderCancel'); },
-    changeView() { Functions.printWarring('changeView'); },
-    backToOrder() { Functions.printWarring('backToOrder'); },
-    renderNewScheduleUnknownStart() { Functions.printWarring('renderNewScheduleUnknownStart'); },
+    beforeInitConfirmRenderNewSchedule() { Functions.createWarning('beforeInitConfirmRenderNewSchedule'); },
+    newOrderCancel() { Functions.createWarning('newOrderCancel'); },
+    changeView() { Functions.createWarning('changeView'); },
+    backToOrder() { Functions.createWarning('backToOrder'); },
+    renderNewScheduleUnknownStart() { Functions.createWarning('renderNewScheduleUnknownStart'); },
     unknownStart: false,
     isEditEvent: false,
     isRequestReservation: false,
@@ -478,16 +486,8 @@ NewOrder.defaultProps = {
 };
 
 const mapStateToProps = state => ({
-    Step: state.newOrderConfig.step,
-    GuestName: state.newOrderConfig.guestName,
-    Sex: state.newOrderConfig.sex,
-    Phone: state.newOrderConfig.phone,
-    Service: state.newOrderConfig.service,
-    Staff: state.newOrderConfig.staff,
-    Guest: state.newOrderConfig.guest,
-    Start: state.newOrderConfig.start,
-    End: state.newOrderConfig.end,
-    Time: state.newOrderConfig.time
+    newOrderConfig: state.newOrderConfig,
+    newOrderSchedule: state.newOrderSchedule
 })
 
 const mapDispatchToProps = () => ({

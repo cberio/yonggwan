@@ -6,7 +6,8 @@
        -moz-transition: .15s all ease;
             transition: .15s all ease;
 }
-.new-order-wrap.fixed{
+/*.new-order-wrap.fixed{*/
+.new-order-wrap{
     position: absolute;
     left: 0; top: 0; right: 0; bottom: 0;
     z-index: 3;

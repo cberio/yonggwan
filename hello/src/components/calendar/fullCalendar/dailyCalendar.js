@@ -4,6 +4,9 @@ import $ from 'jquery';
 import _ from 'lodash';
 import moment from 'moment';
 import 'fullcalendar-scheduler';
+import NewOrder from '../newOrder';
+import DatePicker from '../datePicker';
+import { CreateOrderButtonDirect, CreateOrderButtonQuick, TodayTimelineButton, StaffsInterfaceDaily } from '../interface';
 import * as actions from '../../../actions';
 import * as Functions from '../../../js/common';
 
@@ -12,6 +15,7 @@ class DailyCalendar extends Component {
         super(props);
         this.state = {
             // Calendar view type states
+            isNewOrder: this.props.newOrderConfig.condition,
             alreadyRendered: false,
             viewTypeOrder: undefined,
             // conditions
@@ -27,8 +31,6 @@ class DailyCalendar extends Component {
             // Expert states
             defaultStaff: undefined, // 관리자가 설정한 1순위 expert
             priorityStaff: undefined, // 타임라인 렌더링시 0순위로 기준이 되는 expert (일부 이벤트 등록시 해당된다)
-            // prevStaff: this.props.defaultStaff,  // 이전에 렌더링 된 expert (현재 해당 state 는 사용하지않음)
-            // prevStaffAll: undefined,              // 이전에 렌더링 된 experts (현재 해당 state 는 사용하지않음)
             renderedStaff: [], // 현재 타임라인에 렌더링 된 expert
             lastStaff: undefined, // 타임라인을 재 렌더링 할때 기준이되는 expert (해당 expert로 렌더링됨)
             selectedStaff: undefined, // 타임라인에 마우스 오버시 해당 타임라인의 expert
@@ -50,6 +52,7 @@ class DailyCalendar extends Component {
         this.newOrderCancel = this.newOrderCancel.bind(this);
         this.backToOrder = this.backToOrder.bind(this);
         this.modalConfirmHide = this.modalConfirmHide.bind(this);
+        this.checkBindedSlot = this.checkBindedSlot.bind(this);
         /* OFFT TIME 관련 */
         this.bindNewOfftime = this.bindNewOfftime.bind(this);
         this.renderNewOfftime = this.renderNewOfftime.bind(this);
@@ -70,6 +73,7 @@ class DailyCalendar extends Component {
         this.scrollTimeline = this.scrollTimeline.bind(this);
         this.autoScrollTimeline = this.autoScrollTimeline.bind(this);
         this.autoFlowTimeline = this.autoFlowTimeline.bind(this);
+        this.wasMount = this.wasMount.bind(this);
         /* 예약카드 슬라이더 관련 */
         this.isUserCard = this.isUserCard.bind(this);
         /* STAFF 관련 */
@@ -89,8 +93,8 @@ class DailyCalendar extends Component {
         const component = this;
         // this.props.changeView('agendaWeekly');
         // ReactDOM.unmountComponentAtNode(document.getElementById('root'));
-        // 상태코드 변경
-        $(Calendar).fullCalendar('getEventSources')[0].events[1].status = '00';
+        // 상태코드 변경 테스트
+        $(Calendar).fullCalendar('getEventSources')[0].events[2].status = actions.ScheduleStatus.REQUESTED;
         $(Calendar).fullCalendar('rerenderEvents');
     }
 
@@ -114,6 +118,7 @@ class DailyCalendar extends Component {
 
         this.props.setTimelineDate(timelineDate);
     }
+
 
     // 이벤트 element를 타임라인 바깥영역으로 드래그 시 타임라인 스크롤링 이벤트
     autoFlowTimeline(x, y, jsEvent) {
@@ -530,8 +535,7 @@ class DailyCalendar extends Component {
 
         $('.create-order-wrap.fixed').removeClass('hidden');
         $('#render-confirm').hide();
-
-        this.props.newOrder(false);
+        this.props.newOrderCancel();
     }
 
 
@@ -547,6 +551,11 @@ class DailyCalendar extends Component {
         $('.create-order-wrap.timeline button.create-event').unbind('click');
         $('.fc-fake-event').remove();
         this.setState({ isRenderConfirm: false, newScheduleServiceTime: undefined });
+    }
+
+    // 타임라인 내 슬롯 예약생성 관련 버튼 클릭이벤트
+    checkBindedSlot(e) {
+        this.toggleCreateOrderUi(e);
     }
 
     // Offtime 스케쥴 생성 1/2 (바인딩단계)
@@ -663,8 +672,8 @@ class DailyCalendar extends Component {
                 fakeEventElem = null;
                 $(Calendar).fullCalendar('removeEvents', [editEvent.id]);
                 // 수정된 이벤트 객체 정보
-                const getEventObj = component.refs.NewOrder.getEventObj();
-                const editEventObj = component.props.returnEventObj(getEventObj);
+                const getEventObj = component.refs.NewOrder.getScheduleObj();
+                const editEventObj = component.props.returnScheduleObj(getEventObj);
                 const editedStart = moment(component.state.selectedDate);
                 const editedEnd = moment(component.state.selectedDate).add(component.state.newScheduleServiceTime, 'minutes');
                 const insertEvent = $.extend(editEventObj, {
@@ -759,19 +768,20 @@ class DailyCalendar extends Component {
         const { Calendar } = this.refs;
 
         let selectedStaff;
-        if (type === 'unknownStart')
+        if (type === 'unknownStart') {
             selectedStaff = this.state.renderedStaff.length > 1 ?
               this.state.defaultStaff :
               this.state.renderedStaff[0];
-        else
+            this.props.newOrderQuick({
+                type,
+                staff: selectedStaff,
+                start: this.state.selectedDate,
+                schedule: null
+            });
+        } else {
           selectedStaff = this.state.selectedStaff;
-
-        this.props.newOrder({
-            type,
-            staff: selectedStaff,
-            start: this.state.selectedDate,
-            schedule: null
-        });
+          this.props.newOrderDirect(true);
+        }
     }
 
 
@@ -857,8 +867,6 @@ class DailyCalendar extends Component {
                     $('input#expert_all').prop('checked', true);
 
                 this.setState({
-                    prevStaff: this.state.lastStaff || this.state.defaultStaff,
-                    prevStaffAll: this.state.renderedStaff,
                     lastStaff: staff
                 });
             }
@@ -891,13 +899,11 @@ class DailyCalendar extends Component {
 
                 if (this.state.renderedStaff.length <= 2)
                     this.setState({
-                        lastStaff: Functions.getStaff($('.expert-each.checkbox').find('input:checked').val(), component.props.staffs),
-                        prevStaff: undefined
+                        lastStaff: Functions.getStaff($('.expert-each.checkbox').find('input:checked').val(), component.props.staffs)
                     });
                 else
                     this.setState({
-                        lastStaff: this.state.prevStaff || this.state.defaultStaff,
-                        prevStaff: undefined
+                        lastStaff: this.state.defaultStaff
                     });
 
                 element.parent('.expert-each').attr('data-active', false);
@@ -907,8 +913,13 @@ class DailyCalendar extends Component {
         }
     }
 
+    wasMount() {
+        this.insertStaffInterface();
+        this.props.wasMount();
+    }
+
     shouldComponentUpdate(nextProps, nextState) {
-        console.log('shouldComponentUpdate');
+        // console.log('shouldComponentUpdate');
         // return false; 성능최적화 (props, state를 비교하여 불필요한 리렌더링을 방지함)
         return true;
     }
@@ -964,12 +975,6 @@ class DailyCalendar extends Component {
                     text: 'WEEKLY',
                     click() {
                         component.props.changeView('agendaWeekly');
-                    }
-                },
-                todayTimeline: {
-                    text: 'TODAY',
-                    click() {
-                        component.changeDate(moment(date));
                     }
                 }
             },
@@ -1093,7 +1098,6 @@ class DailyCalendar extends Component {
                 component.bindTimelineScroller();
                 component.setTodayButton(view.start);
                 component.setCalendarStates();
-                component.insertStaffInterface();
 
                 // 타임라인 내 신규예약생성 버튼 클릭시 추가되었던 클래스가 남아있으면 다시 제거
                 $('.create-order-overlap').removeClass('create-order-overlap');
@@ -1130,8 +1134,7 @@ class DailyCalendar extends Component {
                 /** ***************************/
             }
         }));
-
-        this.props.wasMount();
+        this.wasMount();
     } // ////// ComponentDidMount //END
 
     componentWillMount() {
@@ -1237,66 +1240,13 @@ class DailyCalendar extends Component {
           </div>
         );
 
-        let StaffsInterfaceComponent = null;
-        const StaffsInputAll = (
-          <div className="expert-each checkbox all">
-            <input
-              disabled={this.state.isRenderConfirm}
-              className="expert-input"
-              type="checkbox"
-              name="expert"
-              id="expert_all"
-              value="all"
-              onChange={input => this.renderStaff('all', input.target)}
-            />
-            <label className="expert-label" htmlFor="expert_all"><span>ALL</span></label>
-          </div>
-        );
 
-        const StaffsInputEach = !_.isEmpty(Staffs) ? Staffs.map((staff, i) => (
-          <div
-            className="expert-each checkbox"
-            data-id={`expert_${staff.id}`}
-            data-active="false"
-            data-priority={staff.priority}
-            key={i}
-          >
-            <input
-              disabled={this.state.isRenderConfirm}
-              className="expert-input"
-              type="checkbox"
-              name="expert" id={`expert_${staff.id}`}
-              value={staff.id}
-              onChange={input => this.renderStaff(staff, input.target)}
-            />
-            <label
-              className="expert-label"
-              htmlFor={`expert_${staff.id}`}
-            >
-              <span>{staff.nickname || staff.staff_name}</span>
-              <i className="today-count">{9}</i>
-            </label>
-          </div>
-            )) : () => (<div />);
-
-        StaffsInterfaceComponent = (
-          <div className="expert-wrap">
-            <div className="expert-ui expert-daily">
-              <div className="expert-inner">
-                {Staffs && Staffs.length >= 2 && StaffsInputAll}
-                <div className="expert-each-wrap">
-                  {StaffsInputEach}
-                </div>
-              </div>
-            </div>
-          </div>
-        );
 
         const viewstate = (
           <dl className="viewstate fc">
             <button onClick={() => { $('.viewstate.fc').hide(); }}>X</button>
             <dt>isNewOrder :</dt>
-            <dd>{this.props.isNewOrder ? 'true' : ''}</dd>
+            <dd>{this.state.isNewOrder ? 'true' : 'false'}</dd>
             <dt>viewTypeOrder :</dt>
             <dd>{this.state.viewTypeOrder}</dd>
             <dt>isRenderConfirm :</dt>
@@ -1375,10 +1325,6 @@ class DailyCalendar extends Component {
             <dd>{this.state.selectedStaff
                         ? this.state.selectedStaff.label
                         : ''}</dd>
-            <dt>prevStaff</dt>
-            <dd>{this.state.prevStaff
-                        ? this.state.prevStaff.label
-                        : ''}</dd>
             <dt>lastStaff</dt>
             <dd>{this.state.lastStaff
                         ? this.state.lastStaff.label
@@ -1412,15 +1358,72 @@ class DailyCalendar extends Component {
             </button>
         );
 
+        const NewOrderComponent = (
+          <NewOrder
+            ref="NewOrder"
+            beforeInitConfirmRenderNewSchedule={(bool, newSchedule) => this.beforeInitConfirmRenderNewSchedule(bool, newSchedule)}
+            newOrderCancel={this.newOrderCancel}
+            changeView={type => this.changeView(type)}
+            backToOrder={this.backToOrder}
+            renderNewScheduleUnknownStart={this.renderNewScheduleUnknownStart}
+            unknownStart={this.state.unknownStart}
+            isEditEvent={this.state.isEditEvent}
+            isRequestReservation={this.state.isRequestReservation}
+            willEditEventObject={this.state.selectedSchedule}
+            isModalConfirm={this.state.isModalConfirm}
+            isRenderConfirm={this.state.isRenderConfirm}
+            selectedDate={this.state.selectedDate}
+            selectedStaff={this.state.renderedStaff}
+          />
+        );
+
+        const DatePickerComponent = (
+          <DatePicker
+            className="timeline-date-picker"
+            selectedDate={this.state.timelineDate}
+            onChange={this.changeDate}
+            onClose={() => this.isChangeDate(false)}
+          />
+        )
+
+        const CreateOrderButtonDirectProps = {
+            handleClickSlot: this.checkBindedSlot,
+            handleClickReservation: this.newOrder,
+            handleClickOfftime: this.bindNewOfftime,
+            classes: this.state.isCreateOfftime ? 'off-time' :
+                    this.state.unknownStart ? 'has-card' :
+                      this.state.isEditEvent ? 'edit' : '',
+            buttonClasses: undefined,
+
+        };
+
+        const CreateOrderButtonQuickProps = {
+            newOrder: this.newOrder,
+            bindNewOfftime: this.bindNewOfftime,
+            toggleCreateOrderFixedUi: this.toggleCreateOrderFixedUi
+        };
+
+        const TodayTimelineButtonProps = {
+            isToday: moment(this.state.timelineDate).isSame(moment(new Date()), 'day'),
+            dateText: moment(new Date()).format('DD'),
+            handleClick: () => this.changeDate(moment(new Date()))
+        }
+
+        const StaffsInterfaceProps = {
+            staffs: this.props.staffs,
+            isRenderConfirm: this.state.isRenderConfirm,
+            handleChange: (staff, input) => this.renderStaff(staff, input)
+        }
+
         return (
           <div ref="Calendar" id="daily">
             {TimelineControlerComponent}
-            {StaffsInterfaceComponent}
-            {this.props.getNewOrderComponent(this, 'agendaDay')}
-            {this.props.getTodayTimelineButton(this)}
-            {this.props.getCreateOrderButtonFixed(this)}
-            {this.props.getCreateOrderButtonTimeline(this)}
-            {this.props.getDatePickerComponent(this)}
+            <StaffsInterfaceDaily {...StaffsInterfaceProps} />
+            {this.props.newOrderConfig.condition && NewOrderComponent}
+            <TodayTimelineButton {...TodayTimelineButtonProps} />
+            <CreateOrderButtonDirect {...CreateOrderButtonDirectProps} />
+            <CreateOrderButtonQuick {...CreateOrderButtonQuickProps} />
+            {this.state.isChangeDate && DatePickerComponent}
             {this.props.getUserCardComponent(this)}
             {this.props.getModalConfirmComponent(this)}
             {this.props.getRenderConfirmComponent(this, 'agendaDay')}
@@ -1441,7 +1444,8 @@ DailyCalendar.defaultProps = {
 
 const mapStateToProps = state => ({
     modalConfirmOptionComponent: state.modalConfirm.optionComponent,
-    requestReservation: state.notifier.requestReservation
+    requestReservation: state.notifier.requestReservation,
+    newOrderConfig: state.newOrderConfig,
 });
 
 const mapDispatchToProps = dispatch => ({

@@ -27,8 +27,8 @@ export const calendarConfig = (state = initialState, action) => {
             }
         case types.FULLCALENDAR_VIEWTYPE:
             return {
-                ...state,                
-                viewType: action.viewType,                
+                ...state,
+                viewType: action.viewType,
             }
         default:
             return state;
