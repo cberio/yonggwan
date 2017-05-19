@@ -3,23 +3,23 @@ import * as types from '../actions/actionType';
 const initialState = {
     isFetching: false,
     didInvalidate: false,
-    services: {},
+    guests: {},
 };
 
-const services = (state = initialState, action) => {
+const guests = (state = initialState, action) => {
     switch (action.type) {
-        case types.REQUEST_SERVICE:
+        case types.REQUEST_GUEST:
             return {
                 ...state,
                 isFetching: true,
-                didInvalidate: false,
-            }
-        case types.RECEIVE_SERVICE:
+                didInvalidate: false
+            };
+        case types.RECEIVE_GUEST:
             return {
                 ...state,
                 isFetching: false,
                 didInvalidate: false,
-                services: action.services,
+                guetss: action.guests,
                 receivedAt: action.receivedAt,
             }
         default:
@@ -27,17 +27,17 @@ const services = (state = initialState, action) => {
     }
 };
 
-const serviceReducer = (state = {}, action) => {
+const guestReducer = (state = {}, action) => {
     switch (action.type) {
-        case types.REQUEST_SERVICE:
-        case types.RECEIVE_SERVICE:
+        case types.REQUEST_GUEST:
+        case types.RECEIVE_GUEST:
             return {
                 ...state,
-                [action.shop]: services(state[action.shop], action),
-            }
+                [action.shop]: guests(state[action.shop], action),
+            };
         default:
             return state;
     }
 };
 
-export default serviceReducer;
+export default guestReducer;

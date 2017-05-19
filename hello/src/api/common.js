@@ -18,11 +18,11 @@ export const BASE_URL = (http = true) => {
         return `${protocol}${url}${suffix}`;
 
     return `${process.env.PUBLIC_URL}/data/`;
-}
+};
 
-export const parseJSON = response => {
+export const parseJSON = (response) => {
     return response.json();
-}
+};
 
 export const testToken = process.env.REACT_APP_SECRET_TOKEN;
 

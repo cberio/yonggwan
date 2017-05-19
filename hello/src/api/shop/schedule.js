@@ -1,6 +1,6 @@
+import moment from 'moment';
 import { DataFieldsSet } from '../mock';
 import * as ApiUtils from '../common';
-import moment from 'moment';
 
 export default class Schedule {
     constructor({ shopId = '', token = ApiUtils.testToken } = { shopId, token }) {
@@ -29,12 +29,12 @@ export default class Schedule {
         const calendarConfig = params.calendarConfig;
 
         switch (calendarConfig.viewType) {
-        default:
-        case 'agendaDay':
-            this.params.set('start', (calendarConfig.start).format('YYYY-MM-DD'));
-        case 'agendaWeekly':
-            this.params.set('end', (calendarConfig.end).format('YYYY-MM-DD'));
-            break;
+            case 'agendaDay':
+                this.params.set('start', (calendarConfig.start).format('YYYY-MM-DD'));
+            case 'agendaWeekly':
+                this.params.set('end', (calendarConfig.end).format('YYYY-MM-DD'));
+                break;
+            default:
         }
         // this.params.set('include', 'service');
     }
@@ -45,19 +45,18 @@ export default class Schedule {
      */
     withService() {
         // 1. URLSearchParam에 'include' key로 첫 번째 value 확인
-        let relations = this.params.get('include');
+        const relations = this.params.get('include');
 
         // 2. value에 service가 있으면 return;
-        if(relations && relations.includes('service'))
+        if (relations && relations.includes('service'))
             return this;
         // 3. value에 service가 없거나 'include' key 가 없음
         
-            // value에 'service' 가 없음 > 'service' 추가
-            if(relations)
-                this.params.set('include', relations+',service');
-            else
-                this.params.set('include', 'service');
-        
+        // value에 'service' 가 없음 > 'service' 추가
+        if (relations)
+            this.params.set('include', `${relations},service`);
+        else
+            this.params.set('include', 'service');
 
         return this;
     }
@@ -71,8 +70,10 @@ export default class Schedule {
      * @return {Promise}
      */
     only(scheduleId, params) {
+        this.method = 'PUT';
+
         return fetch(`${this.apiUrl}/${this.shopId}/schedules/${scheduleId}?${this.params}`, {
-            method: this.method = 'PUT',
+            method: this.method,
             headers: ApiUtils.HTTP_HEADER(this.token),
         }).then(ApiUtils.parseJSON);
     }
@@ -84,9 +85,10 @@ export default class Schedule {
      */
     get(params) {
         this.paramHandler(params);
+        this.method = 'GET';
 
         return fetch(`${this.apiUrl}?${this.params}`, {
-            method: 'GET',
+            method: this.method,
             headers: ApiUtils.HTTP_HEADER(this.token),
         }).then(ApiUtils.parseJSON);
     }
@@ -99,10 +101,12 @@ export default class Schedule {
      * @param {object} data
      */
     update(scheduleId, data) {
+        this.method = 'PATCH';
+
         return fetch(`${this.apiUrl}/${scheduleId}`, {
-            method: this.method = 'PATCH',
+            method: this.method,
             headers: ApiUtils.HTTP_HEADER(this.token),
-            body: data,
+            body: JSON.stringify(data),
         }).then(ApiUtils.parseJSON);
     }
 
@@ -112,8 +116,10 @@ export default class Schedule {
      * @param {object} data
      */
     create(data) {
+        this.method = 'POST';
+
         return fetch(`${this.apiUrl}`, {
-            method: this.method = 'POST',
+            method: this.method,
             headers: ApiUtils.HTTP_HEADER(this.token, ApiUtils.ContentType.json),
             body: JSON.stringify(data),
         }).then(ApiUtils.parseJSON);
