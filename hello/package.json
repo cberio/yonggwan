@@ -21,6 +21,7 @@
     "webpack-dev-server": "^1.16.2"
   },
   "dependencies": {
+    "create-react-class": "^15.5.3",
     "fullcalendar": "file:src/lib/fullcalendar",
     "fullcalendar-scheduler": "1.5.0",
     "immutability-helper": "^2.2.0",

@@ -7,7 +7,11 @@ import 'fullcalendar-scheduler';
 import 'jquery.nicescroll';
 import NewOrder from '../newOrder';
 import DatePicker from '../datePicker';
-import { CreateOrderButtonDirect, CreateOrderButtonQuick, TodayTimelineButton } from '../interface';
+import {
+  CreateOrderButtonDirect,
+  CreateOrderButtonQuick,
+  TodayTimelineButton,
+  StaffsInterfaceWeekly } from '../interface';
 import * as actions from '../../../actions';
 import * as Functions from '../../../js/common';
 
@@ -1166,7 +1170,6 @@ class WeeklyCalendar extends Component {
     }
 
     componentDidMount() {
-        console.info(this.props.newOrderConfig);
         const component = this;
         const { Calendar } = this.refs;
         const Staffs = this.props.staffs;
@@ -1454,35 +1457,6 @@ class WeeklyCalendar extends Component {
 
     render() {
         const Staffs = this.props.staffs;
-        let StaffsInterfaceComponent = null;
-
-        StaffsInterfaceComponent = (
-          <div className="expert-wrap">
-            <div className="expert-ui expert-weekly">
-              <div className="expert-inner">
-                { !_.isEmpty(Staffs) ? Staffs.map((staff, i) => (
-                  <div className="expert-each" key={i}>
-                    <input
-                      disabled={this.state.isRenderConfirm}
-                      className="expert-input"
-                      type="radio"
-                      name="expert_w"
-                      id={`expert_w_${staff.id}`}
-                      value={staff.id}
-                      onChange={input => this.changeStaff(staff, input)}
-                    />
-                    <label className="expert-label" htmlFor={`expert_w_${staff.id}`}>
-                      <span>{staff.nickname || staff.staff_name}</span>
-                      <i className="today-count">{9}</i>
-                    </label>
-                  </div>
-                            ))
-                        : ''
-                      }
-              </div>
-            </div>
-          </div>
-        );
 
         const viewstate = (
           <dl className="viewstate fc">
@@ -1646,10 +1620,15 @@ class WeeklyCalendar extends Component {
             handleClick: () => this.changeDate(moment(new Date()))
         }
 
+        const StaffsInterfaceProps = {
+            staffs: this.props.staffs,
+            isRenderConfirm: this.state.isRenderConfirm,
+            handleChange: this.changeStaff
+        }
 
         return (
           <div ref="Calendar" id="weekly">
-            {StaffsInterfaceComponent}
+            <StaffsInterfaceWeekly {...StaffsInterfaceProps} />
             {this.props.newOrderConfig.condition && NewOrderComponent}
             <TodayTimelineButton {...TodayTimelineButtonProps} />
             <CreateOrderButtonDirect {...CreateOrderButtonDirectProps} />

@@ -1,7 +1,7 @@
 const schedule = [
     {
         id: 112233, // integer|예약고유 id
-        reservation_dt: '2017-05-18', // max 10|예약일자|YYYY-MM-DD
+        reservation_dt: '2017-05-20', // max 10|예약일자|YYYY-MM-DD
         shop_id: 1, // integer|shop 고유 id
         staff_id: 1, // integer|시술자 고유 id(staff)
         start_time: '09:00', // max 5|예약 시작 시간|hh:mm
@@ -21,13 +21,13 @@ const schedule = [
         is_delete: 0, // boolean|삭제여부
         created_user_id: 1, // 예약 생성자 user id
         updated_user_id: 1, // 예약 수정자 user id
-        start: '2017-05-18T09:00+09:00', // datetime(ISO8601)|서비스시작일시|fullcalendar
-        end: '2017-05-18T11:00+09:00', // datetime(ISO8601)|서비스종료일시|fullcalendar
+        start: '2017-05-20T09:00+09:00', // datetime(ISO8601)|서비스시작일시|fullcalendar
+        end: '2017-05-20T11:00+09:00', // datetime(ISO8601)|서비스종료일시|fullcalendar
         resourceId: 1, //integer|시술자 고유 id(staff)|fullcalendar
     },
     {
         id: 444222, // integer|예약고유 id
-        reservation_dt: '2017-05-18', // max 10|예약일자|YYYY-MM-DD
+        reservation_dt: '2017-05-20', // max 10|예약일자|YYYY-MM-DD
         shop_id: 1, // integer|shop 고유 id
         staff_id: 1, // integer|시술자 고유 id(staff)
         start_time: '13:00', // max 5|예약 시작 시간|hh:mm
@@ -47,14 +47,14 @@ const schedule = [
         is_delete: 0, // boolean|삭제여부
         created_user_id: 1, // 예약 생성자 user id
         updated_user_id: 1, // 예약 수정자 user id
-        start: '2017-05-18T13:00+09:00', // datetime(ISO8601)|서비스시작일시|fullcalendar
-        end: '2017-05-18T15:00+09:00', // datetime(ISO8601)|서비스종료일시|fullcalendar
+        start: '2017-05-20T13:00+09:00', // datetime(ISO8601)|서비스시작일시|fullcalendar
+        end: '2017-05-20T15:00+09:00', // datetime(ISO8601)|서비스종료일시|fullcalendar
         resourceId: 2, // integer|시술자 고유 id(staff)|fullcalendar
         payments: []
     },
     {
         id: 999990, // integer|예약고유 id
-        reservation_dt: '2017-05-18', // max 10|예약일자|YYYY-MM-DD
+        reservation_dt: '2017-05-20', // max 10|예약일자|YYYY-MM-DD
         shop_id: 1, // integer|shop 고유 id
         staff_id: 1, // integer|시술자 고유 id(staff)
         start_time: '17:00', // max 5|예약 시작 시간|hh:mm
@@ -74,8 +74,8 @@ const schedule = [
         is_delete: 0, // boolean|삭제여부
         created_user_id: 1, // 예약 생성자 user id
         updated_user_id: 1, // 예약 수정자 user id
-        start: '2017-05-18T17:00+09:00', // datetime(ISO8601)|서비스시작일시|fullcalendar
-        end: '2017-05-18T19:00+09:00', // datetime(ISO8601)|서비스종료일시|fullcalendar
+        start: '2017-05-20T17:00+09:00', // datetime(ISO8601)|서비스시작일시|fullcalendar
+        end: '2017-05-20T19:00+09:00', // datetime(ISO8601)|서비스종료일시|fullcalendar
         resourceId: 1, // integer|시술자 고유 id(staff)|fullcalendar
         payments: [
             {
@@ -93,7 +93,7 @@ const schedule = [
     },
     {
         id: 272727, // integer|예약고유 id
-        reservation_dt: '2017-05-18', // max 10|예약일자|YYYY-MM-DD
+        reservation_dt: '2017-05-20', // max 10|예약일자|YYYY-MM-DD
         shop_id: 1, // integer|shop 고유 id
         staff_id: 1, // integer|시술자 고유 id(staff)
         start_time: '15:10', // max 5|예약 시작 시간|hh:mm
@@ -113,8 +113,8 @@ const schedule = [
         is_delete: 0, // boolean|삭제여부
         created_user_id: 1, // 예약 생성자 user id
         updated_user_id: 1, // 예약 수정자 user id
-        start: '2017-05-18T15:10+09:00', // datetime(ISO8601)|서비스시작일시|fullcalendar
-        end: '2017-05-18T15:30+09:00', // datetime(ISO8601)|서비스종료일시|fullcalendar
+        start: '2017-05-20T15:10+09:00', // datetime(ISO8601)|서비스시작일시|fullcalendar
+        end: '2017-05-20T15:30+09:00', // datetime(ISO8601)|서비스종료일시|fullcalendar
         resourceId: 1, // integer|시술자 고유 id(staff)|fullcalendar
         payments: [
             {
