@@ -1,12 +1,12 @@
-import * as types from '../actions/actionType';
 import moment from 'moment';
+import * as types from '../actions/actionType';
 
 const initialState = {
     viewType: 'agendaDay',
     start: moment().add('-7', 'days'),
     end: moment().add('7', 'days'),
     current: moment(),
-}
+};
 
 export const calendarConfig = (state = initialState, action) => {
     switch (action.type) {

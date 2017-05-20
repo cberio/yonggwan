@@ -31,8 +31,7 @@ const staffs = (state = initialState, action) => {
             return state;
     }
 };
-
-export const getStaffsBySelectedShopID = (state = {}, action) => {
+const staffReducer = (state = {}, action) =>{
     switch (action.type) {
         case types.INVALIDATE_SHOP:
         case types.RECEIVE_STAFF:
@@ -45,3 +44,5 @@ export const getStaffsBySelectedShopID = (state = {}, action) => {
             return state;
     }
 };
+
+export default staffReducer;

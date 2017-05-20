@@ -7,9 +7,10 @@ import loading from './loading';
 import { newOrderConfig, newOrderSchedule } from './newOrder';
 import { calendarConfig } from './calendar';
 import selectedShopID from './shop';
-import { getSchedulesBySelectedShopID, createSchedule } from './schedule';
-import { getStaffsBySelectedShopID } from './staffs';
-import { getServicesBySelectedShopID } from './service';
+import scheduleReducer from './schedule';
+import staffReducer from './staffs';
+import serviceReducer from './service';
+import guestReducer from './guest';
 
 
 const Reducers = combineReducers({
@@ -22,10 +23,16 @@ const Reducers = combineReducers({
     newOrderSchedule,
     calendarConfig,
     selectedShopID,
-    getSchedulesBySelectedShopID,
-    getStaffsBySelectedShopID,
-    getServicesBySelectedShopID,
-    createSchedule,
+    // getSchedulesBySelectedShopID,
+    // getStaffsBySelectedShopID,
+    // getServicesBySelectedShopID,
+    // createSchedule,
+    // getGuestsBySelectedShopID,
+
+    scheduleReducer,
+    staffReducer,
+    serviceReducer,
+    guestReducer,
 });
 
 export default Reducers;
