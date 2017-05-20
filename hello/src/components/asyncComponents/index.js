@@ -10,17 +10,17 @@ const scheduleTemporary = require('../../data/schedules').default[1];
 class AsyncComponents extends Component {
     render() {
         const CardModalComponent = (
-          <CardModal
-            cardType=""
-            schedule={scheduleTemporary}
-          />
+            <CardModal
+                cardType=""
+                schedule={scheduleTemporary}
+            />
     );
         return (
-          <div>
-            {this.props.isModalNotifier && CardModalComponent}
-            {this.props.isGuider && <Guider />}
-            {/* this.props.isLoading && <Loading />*/}
-          </div>
+            <div>
+                {this.props.isModalNotifier && CardModalComponent}
+                {this.props.isGuider && <Guider />}
+                {/* this.props.isLoading && <Loading />*/}
+            </div>
         );
     }
 }

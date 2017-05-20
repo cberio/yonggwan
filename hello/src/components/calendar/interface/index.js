@@ -3,8 +3,8 @@ import { TodayTimelineButton } from './todayTimelineButton';
 import { StaffsInterfaceDaily } from './staffInterfaces';
 
 module.exports = {
-  CreateOrderButtonDirect,
-  CreateOrderButtonQuick,
-  TodayTimelineButton,
-  StaffsInterfaceDaily
-}
+    CreateOrderButtonDirect,
+    CreateOrderButtonQuick,
+    TodayTimelineButton,
+    StaffsInterfaceDaily
+};

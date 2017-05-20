@@ -8,28 +8,26 @@ export const CreateOrderButtonDirect = ({
     handleClickOffTime,
     classes,
     buttonClasses
-}) => {
-  return (
-      <div data-date="" className={`create-order-wrap timeline ${classes ? classes : ''}`}>
+}) => (
+    <div data-date="" className={`create-order-wrap timeline ${classes || ''}`}>
         <div className="create-order-inner">
-          <div className="create-order-slot">
-          <button className={`create-button ${buttonClasses ? buttonClasses : ''}`} onClick={handleClickSlot}>
-            <i className="time" />
-            <span>+</span>
-          </button>
-            <div className="create-order-ui-wrap">
-              <div className="create-order-ui-inner">
-                <div className="create-order-ui">
-                  <button onClick={() => handleClickReservation(null)} className="ui-reservation">예약생성</button>
-                  <button onClick={() => handleClickOffTime('timeline')} className="ui-offtime">OFF TIME 생성</button>
+            <div className="create-order-slot">
+                <button className={`create-button ${buttonClasses || ''}`} onClick={handleClickSlot}>
+                    <i className="time" />
+                    <span>+</span>
+                </button>
+                <div className="create-order-ui-wrap">
+                    <div className="create-order-ui-inner">
+                        <div className="create-order-ui">
+                            <button onClick={() => handleClickReservation(null)} className="ui-reservation">예약생성</button>
+                            <button onClick={() => handleClickOffTime('timeline')} className="ui-offtime">OFF TIME 생성</button>
+                        </div>
+                    </div>
                 </div>
-              </div>
             </div>
-          </div>
         </div>
-      </div>
+    </div>
     );
-};
 
 CreateOrderButtonDirect.propTypes = {
     handleClickSlot: PropTypes.func.isRequired,
@@ -49,17 +47,17 @@ CreateOrderButtonDirect.defaultProps = {
 
 
 export const CreateOrderButtonQuick = ({ newOrder, bindNewOfftime, toggleCreateOrderFixedUi }) => (
-  <div className="create-order-wrap fixed">
-    <div className="create-order-slot">
-      <button className="create-button" onClick={toggleCreateOrderFixedUi}>
-        <span>+</span>
-      </button>
+    <div className="create-order-wrap fixed">
+        <div className="create-order-slot">
+            <button className="create-button" onClick={toggleCreateOrderFixedUi}>
+                <span>+</span>
+            </button>
+        </div>
+        <div className="create-order-ui">
+            <button onClick={() => newOrder('unknownStart')} className="ui-reservation">예약생성</button>
+            <button onClick={bindNewOfftime} className="ui-offtime">OFF TIME 생성</button>
+        </div>
     </div>
-    <div className="create-order-ui">
-      <button onClick={() => newOrder('unknownStart')} className="ui-reservation">예약생성</button>
-      <button onClick={bindNewOfftime} className="ui-offtime">OFF TIME 생성</button>
-    </div>
-  </div>
 );
 
 CreateOrderButtonQuick.propTypes = {

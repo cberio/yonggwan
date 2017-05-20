@@ -38,40 +38,40 @@ class Card extends React.Component {
             line
           } = this.props.schedule;
         const content = (
-          <div className="card-content">
-            <div className="service clearfix">
-              <div className="lt">
-                <span className={`product ${Functions.getService(shop_service_id, Services).color}`}>{Functions.getService(shop_service_id, Services).name}</span>
-                {this.props.cardType === '변경' ? <span className="time last">00.00(목)00:00~00:00</span> : null}
-                <span className="time">
-                  <span>{`${moment(start).locale('ko').format('MM.DD(ddd)hh:mm')}~${moment(end).format('hh:mm')}`}</span>
-                  <span className="expert">{this.getExpertName(resourceId)}</span>
-                </span>
-              </div>
-              <div className="rt">
-                <span className="posted">00:00</span>
-              </div>
-            </div>
-            <div className="customer">
-              <div className="user">
-                <div className="thumbnail">
-                  <div className="picture">
-                    {picture && <img src={picture} alt={name} width="32" height="32" />}
-                  </div>
-                  {guest_class && <i className={`rating-bullet ${guest_class}`}>{guest_class}</i>}
+            <div className="card-content">
+                <div className="service clearfix">
+                    <div className="lt">
+                        <span className={`product ${Functions.getService(shop_service_id, Services).color}`}>{Functions.getService(shop_service_id, Services).name}</span>
+                        {this.props.cardType === '변경' ? <span className="time last">00.00(목)00:00~00:00</span> : null}
+                        <span className="time">
+                            <span>{`${moment(start).locale('ko').format('MM.DD(ddd)hh:mm')}~${moment(end).format('hh:mm')}`}</span>
+                            <span className="expert">{this.getExpertName(resourceId)}</span>
+                        </span>
+                    </div>
+                    <div className="rt">
+                        <span className="posted">00:00</span>
+                    </div>
                 </div>
-                <span className="name">{name}</span>
-                {guest_class && <span className={`rating ${guest_class}`}>{guest_class}</span>}
-              </div>
-              <p className="comment">
-                {guest_memo}
-              </p>
+                <div className="customer">
+                    <div className="user">
+                        <div className="thumbnail">
+                            <div className="picture">
+                                {picture && <img src={picture} alt={name} width="32" height="32" />}
+                            </div>
+                            {guest_class && <i className={`rating-bullet ${guest_class}`}>{guest_class}</i>}
+                        </div>
+                        <span className="name">{name}</span>
+                        {guest_class && <span className={`rating ${guest_class}`}>{guest_class}</span>}
+                    </div>
+                    <p className="comment">
+                        {guest_memo}
+                    </p>
+                </div>
             </div>
-          </div>
     );
         return (
       this.props.cardType === '요청' ? (
-        <button onClick={() => this.requestReservation(this.props.schedule)} className="link">{content}</button>
+          <button onClick={() => this.requestReservation(this.props.schedule)} className="link">{content}</button>
       ) : content
         );
     }

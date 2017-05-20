@@ -28,37 +28,37 @@ class OptionComponent extends React.Component {
     }
     render() {
         return (
-          <div
-            className={this.props.className}
-            onMouseDown={this.handleMouseDown}
-            onMouseEnter={this.handleMouseEnter}
-            onMouseMove={this.handleMouseMove}
-            title={this.props.option.title}
-          >
-            <div title={this.props.children}>
-              <span className="label">{this.props.children}</span>
-              {this.props.option.guest_class ?
-                <span className={`rating ${this.props.option.guest_class}`}>{this.props.option.guest_class}</span>
+            <div
+                className={this.props.className}
+                onMouseDown={this.handleMouseDown}
+                onMouseEnter={this.handleMouseEnter}
+                onMouseMove={this.handleMouseMove}
+                title={this.props.option.title}
+            >
+                <div title={this.props.children}>
+                    <span className="label">{this.props.children}</span>
+                    {this.props.option.guest_class ?
+                        <span className={`rating ${this.props.option.guest_class}`}>{this.props.option.guest_class}</span>
 							: '' }
-              {this.props.option.guest_mobile ?
-                <span className={`phone ${this.props.option.guest_mobile}`}>
-                  {!_.isEmpty(this.props.option.guest_mobile) && Functions.getPhoneStr(this.props.option.guest_mobile)}
-                </span>
+                    {this.props.option.guest_mobile ?
+                        <span className={`phone ${this.props.option.guest_mobile}`}>
+                            {!_.isEmpty(this.props.option.guest_mobile) && Functions.getPhoneStr(this.props.option.guest_mobile)}
+                        </span>
 							: '' }
+                </div>
             </div>
-          </div>
         );
     }
 }
 
 const ValueComponent = ({ children, value }) => (
     <div className="Select-value">
-      <span className="Select-value-label">
-        <span className="label">{ children ? children : ''}</span>
-        <span className={`rating ${value.guest_class}`}>{value.guest_class}</span>
-        <span className="phone">{!_.isEmpty(value.guest_mobile) && Functions.getPhoneStr(value.guest_mobile)}</span>
-        <i className="checked"><img src={Images.IMG_input_checked} alt="선택됨" /></i>
-      </span>
+        <span className="Select-value-label">
+            <span className="label">{ children || ''}</span>
+            <span className={`rating ${value.guest_class}`}>{value.guest_class}</span>
+            <span className="phone">{!_.isEmpty(value.guest_mobile) && Functions.getPhoneStr(value.guest_mobile)}</span>
+            <i className="checked"><img src={Images.IMG_input_checked} alt="선택됨" /></i>
+        </span>
     </div>
 );
 
@@ -66,7 +66,7 @@ class SearchGuest extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-          value: this.props.value
+            value: this.props.value
         };
         this.setValue = this.setValue.bind(this);
     }
@@ -78,27 +78,27 @@ class SearchGuest extends React.Component {
 
     arrowRenderer() {
   	return (
-    <span>+</span>
+      <span>+</span>
   	);
     }
 
     render() {
         return (
-          <div className={`Select-wrap searchable ${this.props.className} ${_.isEmpty(this.state.value) ? 'null-value' : ''}`}>
-            <Select.Creatable
-              searchable
-              options={this.props.options}
-              autoFocus
-              value={this.state.value}
-              name={this.props.name}
-              onChange={this.setValue}
-              optionComponent={OptionComponent}
-              valueComponent={ValueComponent}
-              placeholder={this.props.placeholder}
-              arrowRenderer={this.arrowRenderer}
-              clearable={this.props.clearable}
-            />
-          </div>
+            <div className={`Select-wrap searchable ${this.props.className} ${_.isEmpty(this.state.value) ? 'null-value' : ''}`}>
+                <Select.Creatable
+                    searchable
+                    options={this.props.options}
+                    autoFocus
+                    value={this.state.value}
+                    name={this.props.name}
+                    onChange={this.setValue}
+                    optionComponent={OptionComponent}
+                    valueComponent={ValueComponent}
+                    placeholder={this.props.placeholder}
+                    arrowRenderer={this.arrowRenderer}
+                    clearable={this.props.clearable}
+                />
+            </div>
         );
     }
 }

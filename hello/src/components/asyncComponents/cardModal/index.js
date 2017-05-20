@@ -1,8 +1,6 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
-import $ from 'jquery';
-import Card from '../../notifier/card';
 import { connect } from 'react-redux';
+import Card from '../../notifier/card';
 import * as actions from '../../../actions';
 import '../../../css/notifier.css';
 
@@ -28,15 +26,15 @@ class CardModal extends React.Component {
 
     render() {
         return (
-          <div className="notifier-modal-wrap">
-            <div className="notifier bounceInRight">
-              <div className="head-by-menu">
-                <p>{this.getTitleText(this.props.cardType)}</p>
-                <button ref="button" onClick={() => this.props.toggleNotifier(false)}>닫기</button>
-              </div>
-              <Card cardType={this.props.cardType} schedule={this.props.schedule} />
+            <div className="notifier-modal-wrap">
+                <div className="notifier bounceInRight">
+                    <div className="head-by-menu">
+                        <p>{this.getTitleText(this.props.cardType)}</p>
+                        <button ref="button" onClick={() => this.props.toggleNotifier(false)}>닫기</button>
+                    </div>
+                    <Card cardType={this.props.cardType} schedule={this.props.schedule} />
+                </div>
             </div>
-          </div>
         );
     }
 }
