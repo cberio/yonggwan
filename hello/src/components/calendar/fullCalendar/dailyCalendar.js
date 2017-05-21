@@ -582,14 +582,18 @@ class DailyCalendar extends Component {
             $('.create-order-wrap.fixed').removeClass('hidden');
             component.props.guider('OFF TIME이 생성되었습니다!');
 
+            // Todo: 함수 분리 필요
             // component.state.isAbleBindRemoveEvent 가 true일경우 ESC key등의 이벤트 발생시 삭제가 가능하도록 접근성 바인딩을 합니다
             $(document).bind('keydown', (e) => {
                 if (e.which === 27 && !component.state.isModalConfirm) {
-                    // 생성버튼 캘린더 타임라인 노드에서 상위 노드로 삽입 (event remove 시 버튼의 부모 dom이 다시 그려지면서 버튼 dom도 사라지기떄문)
-                    $('.full-calendar > .fc').append($('.create-order-wrap.timeline').hide());
-                    $(Calendar).fullCalendar('removeEvents', [createdSchedule.id]);
-                    component.props.guider('OFF TIME이 삭제되었습니다!');
-
+                    component.props.patchSchedule(createdSchedule).then((responses) => {
+                        if (!responses.updatedSchedule.success)
+                            return;
+                        // 생성버튼 캘린더 타임라인 노드에서 상위 노드로 삽입 (event remove 시 버튼의 부모 dom이 다시 그려지면서 버튼 dom도 사라지기떄문)
+                        $('.full-calendar > .fc').append($('.create-order-wrap.timeline').hide());
+                        $(Calendar).fullCalendar('removeEvents', [createdSchedule.id]);
+                        component.props.guider('OFF TIME이 삭제되었습니다!');
+                    });
                     $(document).unbind('keydown');
                 }
             });
@@ -1422,6 +1426,8 @@ const mapDispatchToProps = (dispatch) => {
         guider: (message) => dispatch(actions.guider({isGuider: true, message: message})),
         loading: (condition) => dispatch(actions.loading(condition)),
         finishRequestReservation: () => dispatch(actions.requestReservation({condition: false, requestEvent: undefined}))
+        , saveSchedule: scheduleData => (dispatch(actions.saveSchedule(scheduleData))),
+        patchSchedule: scheduleData => (dispatch(actions.patchSchedule(scheduleData))),
     }
 }
 
