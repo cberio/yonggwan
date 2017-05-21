@@ -1407,6 +1407,28 @@ DailyCalendar.defaultProps = {
     }
 }
 
+DailyCalendar.propTypes = {
+    staffs: PropTypes.shape({
+        isFetching: PropTypes.bool,
+        didInvalidate: PropTypes.bool,
+        staffs: PropTypes.object,
+    }).isRequired,
+    schedules: PropTypes.shape({
+        isFetching: PropTypes.bool,
+        didInvalidate: PropTypes.bool,
+        schedules: PropTypes.object,
+    }).isRequired,
+    services: PropTypes.shape({
+        isFetching: PropTypes.bool,
+        didInvalidate: PropTypes.bool,
+        services: PropTypes.object,
+    }).isRequired,
+    guests: PropTypes.shape({
+        isFetching: PropTypes.bool,
+        didInvalidate: PropTypes.bool,
+        guests: PropTypes.object,
+    }).isRequired,
+}
 const mapStateToProps = (state) => {
     return {
       modalConfirmOptionComponent: state.modalConfirm.optionComponent,
