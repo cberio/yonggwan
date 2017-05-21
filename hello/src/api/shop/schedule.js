@@ -96,14 +96,12 @@ export default class Schedule {
     /**
      * update schedule with given data
      *
-     * @param {int} shopId
-     * @param {int} scheduleId
      * @param {object} data
      */
-    update(scheduleId, data) {
+    update(data) {
         this.method = 'PATCH';
 
-        return fetch(`${this.apiUrl}/${scheduleId}`, {
+        return fetch(`${this.apiUrl}/${data.id}`, {
             method: this.method,
             headers: ApiUtils.HTTP_HEADER(this.token),
             body: JSON.stringify(data),
