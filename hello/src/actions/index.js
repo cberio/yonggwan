@@ -96,10 +96,10 @@ export const updateSchedule = (scheduleData, shop) => ({
     schedules: scheduleData,
 });
 
-export const scheduleUpdated = (scheduleData, json, shop) => ({
+export const scheduleUpdated = (json, getState) => ({
     type: types.SCHEDULE_UPDATED,
-    shop,
-    schedules: json,
+    shop: getState().selectedShopID,
+    updatedSchedule: json,
     receivedAt: Date.now(),
 });
 
@@ -313,12 +313,28 @@ export const saveSchedule = scheduleData => (dispatch, getState) => {
         .schedules()
         .create(scheduleData)
         .then((json) => {
-            if (json.success) {
-                dispatch(loading(false));
-                return dispatch(scheduleCreated(json, getState));
+            dispatch(loading(false));
 
-                // return getState().scheduleReducer[shopId];
-            }
+            if (json.success) 
+                return dispatch(scheduleCreated(json, getState));
+            return new ApiException(json).showError();
+        });
+};
+
+export const patchSchedule = scheduleData => (dispatch, getState) => {
+    const shopId = getState().selectedShopID;
+
+    dispatch(updateSchedule(scheduleData, shopId));
+    dispatch(loading(true));
+
+    return new Shop({ shopId })
+        .schedules()
+        .update(scheduleData)
+        .then((json) => {
+            dispatch(loading(false));
+
+            if (json.success) 
+                return dispatch(scheduleUpdated(json, getState));
             return new ApiException(json).showError();
         });
 };

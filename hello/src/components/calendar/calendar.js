@@ -350,7 +350,6 @@ class Calendar extends Component {
             returnNewID: this.returnNewID,
             getSlotTime: this.mouseenterSlotTime,
 
-            saveSchedule: scheduleData => this.props.saveSchedule(scheduleData),
             activeGnb: (view, condition) => this.activeGnb(view, condition),
             runUserCardSlide(t, calSchedule, jsEvent, view) { this.runUserCardSlide(t, calSchedule, jsEvent, view); },
 
@@ -426,7 +425,6 @@ Calendar.propTypes = {
     fetchStaffsIfNeeded: PropTypes.func.isRequired,
     fetchServicesIfNeeded: PropTypes.func.isRequired,
     fetchGuestsIfNeeded: PropTypes.func.isRequired,
-    saveSchedule: PropTypes.func.isRequired,
     staffs: PropTypes.shape({
         isFetching: PropTypes.bool,
         didInvalidate: PropTypes.bool,
@@ -502,7 +500,6 @@ const mapDispatchToProps = dispatch => ({
     fetchSchedulesIfNeeded: shopID => (dispatch(actions.fetchSchedulesIfNeeded(shopID))),
     fetchStaffsIfNeeded: shopID => (dispatch(actions.fetchStaffsIfNeeded(shopID))),
     fetchServicesIfNeeded: shopID => (dispatch(actions.fetchServicesIfNeeded(shopID))),
-    saveSchedule: scheduleData => (dispatch(actions.saveSchedule(scheduleData))),
     fetchGuestsIfNeeded: shopID => (dispatch(actions.fetchGuestsIfNeeded(shopID))),
 
     setCalendarViewType: viewType => (dispatch(actions.setCalendarViewType(viewType))),
