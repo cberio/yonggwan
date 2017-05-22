@@ -88,13 +88,15 @@ class Selectable extends React.Component {
         return (
             <div className={`Select-wrap selectable ${this.props.className}`} id={this.props.id ? this.props.id : ''}>
                 <Select
-                    ref="select"
+                    ref={(c) => { this.select = c; }}
                     searchable={this.props.searchable}
                     clearable={this.props.clearable}
                     options={this.props.options}
                     value={this.state.value}
                     name={this.props.name}
                     onChange={this.setValue}
+                    labelKey={this.props.labelKey}
+                    autofocus={this.props.autofocus}
                     optionComponent={OptionComponent}
                     valueComponent={this.props.type === 'user-card' ? ValueComponentSlide : ValueComponentNewOrder}
                     placeholder={this.props.placeholder}

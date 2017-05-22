@@ -54,13 +54,13 @@ class OptionComponent extends React.Component {
 const ValueComponent = ({ children, value }) => (
     <div className="Select-value">
         <span className="Select-value-label">
-            <span className="label">{ children || ''}</span>
-            <span className={`rating ${value.guest_class}`}>{value.guest_class}</span>
+            <span className={`label${value.id ? ' is-guest' : ''}`}>{ children || ''}</span>
+            <span className={`rating ${value.guest_class ? value.guest_class : ''}`}>{value.guest_class ? value.guest_class : ''}</span>
             <span className="phone">{!_.isEmpty(value.guest_mobile) && Functions.getPhoneStr(value.guest_mobile)}</span>
             <i className="checked"><img src={Images.IMG_input_checked} alt="선택됨" /></i>
         </span>
     </div>
-);
+)
 
 class SearchGuest extends React.Component {
     constructor(props) {
@@ -87,8 +87,10 @@ class SearchGuest extends React.Component {
             <div className={`Select-wrap searchable ${this.props.className} ${_.isEmpty(this.state.value) ? 'null-value' : ''}`}>
                 <Select.Creatable
                     searchable
+                    labelKey={this.props.labelKey}
+                    openOnFocus={this.props.openOnFocus}
                     options={this.props.options}
-                    autoFocus
+                    autofocus={this.props.autofocus}
                     value={this.state.value}
                     name={this.props.name}
                     onChange={this.setValue}

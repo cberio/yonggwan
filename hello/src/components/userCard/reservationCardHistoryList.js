@@ -32,7 +32,7 @@ class ReservationCardHistoryList extends Component {
           return (
             <div className="history-detail">
                 <div className="history-detail-info">
-                  <button ref="inputDetail" onClick={() => this.props.toggleHistories(historyActiveIndex)}>
+                  <button ref={(c) => { this.inputDetail = c; }} onClick={() => this.props.toggleHistories(historyActiveIndex)}>
                       <div>
                         <span className="product-name">
                           {history.shop_service_id

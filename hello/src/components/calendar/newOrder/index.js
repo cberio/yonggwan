@@ -25,9 +25,9 @@ class NewOrder extends Component {
             newOrderSex: this.props.newOrderSchedule.sex, // int 0-2
             newOrderPhone: this.props.newOrderSchedule.phone, // array
             newOrderService: this.props.newOrderSchedule.service, // object (service object)
-            newOrderStaff: this.props.newOrderSchedule.staff, // object
-            newOrderGuest: this.props.newOrderSchedule.guest,  // object
-            newOrderStart: this.props.newOrderSchedule.start, // moment format
+            newOrderStaff: !_.isEmpty(this.props.newOrderSchedule.staff) ? this.props.newOrderSchedule.staff : this.props.newOrderConfig.staff, // object
+            newOrderGuest: !_.isEmpty(this.props.newOrderSchedule.guest) ? this.props.newOrderSchedule.guest : this.props.newOrderConfig.guest,  // object
+            newOrderStart: !_.isEmpty(this.props.newOrderSchedule.start) ? this.props.newOrderSchedule.start : this.props.newOrderConfig.start, // moment format
             newOrderEnd: this.props.newOrderSchedule.end, // moment format
             newOrderTime: this.props.newOrderSchedule.time // HH:mm
         };
@@ -56,7 +56,7 @@ class NewOrder extends Component {
         $(document).bind('keydown', (e) => {
             if (e.which === 27 && !component.props.isModalConfirm && !component.props.isRenderConfirm) {
                 if (component.state.newOrderStep < 3)
-                    component.props.newOrderCancel();
+                    component.props.newOrderFinish();
                 else {
                     component.backToStep(2);
                     component.props.backToOrder();
@@ -118,11 +118,11 @@ class NewOrder extends Component {
                 this.changeStep(2);
                 break;
             case 2 :
-                if (this.props.unknownStart)
+                if (this.props.newOrderConfig.status === actions.NewOrderStatus.QUICK)
                     this.props.renderNewScheduleUnknownStart(true, this.state);
                 else
-          this.props.beforeInitConfirmRenderNewSchedule(true, this.state);
-
+                    this.props.beforeInitConfirmRenderNewSchedule(true, this.state);
+                    
                 this.setState({ newOrderStep: 3 });
                 break;
             case 3 :
@@ -142,9 +142,16 @@ class NewOrder extends Component {
     // }
     }
 
-    autoFocus(e) {
+    autoFocus(e, idx) {
         const phone = this.state.newOrderPhone;
-        if (phone[0].length >= 3 && phone[1].length >= 4 && e.target.value.length >= 4) this.refs.next.focus();
+        if (!_.isEmpty(phone), phone.length === 3) {
+            if (idx === 2) {
+                if (phone[0].length >= 3 &&
+                    phone[1].length >= 4 &&
+                    phone[2].length >= 4
+                ) this.next.focus();
+            }
+        }
     }
 
     inputChangeService(e) {
@@ -162,10 +169,13 @@ class NewOrder extends Component {
         });
     }
     inputChangeUserPhone(e, idx) {
+        const component = this;
         this.setState({
             newOrderPhone: update(this.state.newOrderPhone, {
                 [idx]: { $set: e.target.value }
             })
+        }, () => {
+            component.autoFocus(e, idx);
         });
     }
     inputChangeGuest(option) {
@@ -173,8 +183,8 @@ class NewOrder extends Component {
         // 등록된 고객중에 선택한 경우
         if (!_.isEmpty(JSON.stringify(option.id))) {
             // clear states
-            this.setState({ newOrderGuest: option, newOrderGuestName: undefined }, () => {
-                component.refs.next.focus();
+            this.setState({ newOrderGuest: option, newOrderGuestName: '' }, () => {
+                component.next.focus();
             });
         }
         // 등록된 고객중에 선택하지 않은경우
@@ -182,7 +192,7 @@ class NewOrder extends Component {
             // set states
             this.setState({ newOrderGuest: undefined, newOrderGuestName: option.value }, () => {
                 if (!_.isEmpty(option))
-                    component.refs.phone.focus();
+                    component.phone1.focus();
             });
         }
     }
@@ -191,6 +201,9 @@ class NewOrder extends Component {
     inputChangeOrderEnd(e) { this.setState({ newOrderEnd: e.target.value }); }
 
     componentDidMount() {
+      setTimeout(function(){
+        //debugger;
+      },2000)
     // Window event binding
         this.documentBinding();
     // init insert NewOrder component
@@ -222,11 +235,13 @@ class NewOrder extends Component {
                 <div className="service-input">
                     <SearchGuest
                         name="customer"
-                        autoFocus
+                        autofocus
+                        openOnFocus
+                        labelKey="guest_name"
                         className="search-customer"
                         placeholder="고객님의 이름을 입력해주세요"
                         options={Guests}
-                        value={this.state.newOrderGuest}
+                        value={!_.isEmpty(this.state.newOrderGuest) ? this.state.newOrderGuest : undefined}
                         onChange={this.inputChangeGuest}
                         clearable={false}
                     />
@@ -236,27 +251,30 @@ class NewOrder extends Component {
                                 <input
                                     type="text"
                                     maxLength="3"
-                                    className={this.state.newOrderPhone[0] ? 'has-value' : 'null-value'}
-                                    value={this.state.newOrderPhone[0]}
-                                    onChange={e => this.inputChangeUserPhone(e, 0)} ref="phone"
+                                    className={!_.isEmpty(this.state.newOrderPhone[0]) ? 'has-value' : 'null-value'}
+                                    value={!_.isEmpty(this.state.newOrderPhone[0]) ? this.state.newOrderPhone[0] : ''}
+                                    onChange={e => this.inputChangeUserPhone(e, 0)}
+                                    ref={(c) => { this.phone1 = c; }}
                                     placeholder="010"
                                 />
                                 <i>-</i>
                                 <input
                                     type="text"
                                     maxLength="4"
-                                    className={this.state.newOrderPhone[1] ? 'has-value' : 'null-value'}
-                                    value={this.state.newOrderPhone[1]}
+                                    className={!_.isEmpty(this.state.newOrderPhone[1]) ? 'has-value' : 'null-value'}
+                                    value={!_.isEmpty(this.state.newOrderPhone[1]) ? this.state.newOrderPhone[1] : ''}
                                     onChange={e => this.inputChangeUserPhone(e, 1)}
+                                    ref={(c) => { this.phone2 = c; }}
                                     placeholder="0000"
                                 />
                                 <i>-</i>
                                 <input
                                     type="text"
                                     maxLength="4"
-                                    className={this.state.newOrderPhone[2] ? 'has-value' : 'null-value'}
-                                    value={this.state.newOrderPhone[2]}
-                                    onChange={e => this.inputChangeUserPhone(e, 2)} onKeyUp={this.autoFocus}
+                                    className={!_.isEmpty(this.state.newOrderPhone[2]) ? 'has-value' : 'null-value'}
+                                    value={!_.isEmpty(this.state.newOrderPhone[2]) ? this.state.newOrderPhone[2] : ''}
+                                    onChange={e => this.inputChangeUserPhone(e, 2)}
+                                    ref={(c) => { this.phone3 = c; }}
                                     placeholder="0000"
                                 />
                             </div>
@@ -283,6 +301,7 @@ class NewOrder extends Component {
                             id="user-mail"
                             name="user-sex"
                             value={1}
+                            autoFocus
                             onChange={this.inputChangeUserSex}
                             defaultChecked={state.newOrderSex == 1}
                         />
@@ -302,17 +321,22 @@ class NewOrder extends Component {
                         name="products"
                         className="search-product"
                         placeholder="상품명 검색"
+                        noResultsText="일치하는 결과가 없습니다"
+                        labelKey="name"
                         options={Services}
-                        value={this.state.newOrderService}
+                        autofocus={false}
+                        openOnFocus
+                        value={!_.isEmpty(this.state.newOrderService) ? this.state.newOrderService : undefined}
                         onChange={this.inputChangeService}
                     />
                     <br />
                     <Selectable
-                        value={this.state.newOrderStaff}
+                        value={!_.isEmpty(this.state.newOrderStaff) ? this.state.newOrderStaff : undefined}
                         selectType="selectable"
                         name="epxerts"
                         className="select-expert"
                         placeholder="선택"
+                        labelKey="nickname"
                         options={Staffs}
                         onChange={this.inputChangeStaff}
                         searchable={false}
@@ -325,12 +349,12 @@ class NewOrder extends Component {
             <div>
                 <button
                     className="new-order-btn new-order-cancel left"
-                    onClick={this.props.newOrderCancel}
+                    onClick={this.props.newOrderFinish}
                 >
               CANCEL
             </button>
                 <button
-                    ref="next"
+                    ref={(c) => { this.next = c; }}
                     className={`
                   new-order-btn new-order-submit right
                   ${
@@ -366,15 +390,17 @@ class NewOrder extends Component {
 
         return (
             <div className={`new-order-wrap step-${this.state.newOrderStep} ${this.props.unknownStart || this.props.isEditEvent ? 'fixed' : 'hidden'}`}>
-                <div className="viewstate order" style={{ display: 'block' }}>
+                <div className="viewstate order" style={{ display: 'block', top: '400px' }}>
                     <button onClick={() => { $('.viewstate.order').hide(); }}>X</button>
+                    <div>{JSON.stringify(this.props.newOrderConfig)}</div>
+                    <div>{JSON.stringify(this.props.newOrderSchedule)}</div>
                     <span>isModalConfirm</span> : {this.props.isModalConfirm ? 'true' : ''} <br />
                     <span>type</span> : {this.state.type} <br />
                     <span>newOrderStep</span> : {this.state.newOrderStep !== undefined ? this.state.newOrderStep : ''} <br />
-                    <span>newOrderStaff</span> : {this.state.newOrderStaff ? this.state.newOrderStaff.label : ''} <br />
-                    <span>newOrderService</span> : {this.state.newOrderService ? this.state.newOrderService.name : ''} <br />
+                    <span>newOrderStaff</span> : {!_.isEmpty(this.state.newOrderStaff) ? this.state.newOrderStaff.label : ''} <br />
+                    <span>newOrderService</span> : {!_.isEmpty(this.state.newOrderService) ? this.state.newOrderService.name : ''} <br />
                     <span>newOrderGuestName</span> : {this.state.newOrderGuestName ? this.state.newOrderGuestName : ''} <br />
-                    <span>newOrderPhone</span> : {this.state.newOrderPhone.length ? this.state.newOrderPhone : ''} <br />
+                    <span>newOrderPhone</span> : {!_.isEmpty(this.state.newOrderPhone) ? this.state.newOrderPhone : ''} <br />
                     <span>newOrderSex</span> : {this.state.newOrderSex} <br />
                     <span>newOrderStart</span> : {this.state.newOrderStart ? this.state.newOrderStart : ''} <br />
                     <span>newOrderEnd</span> : {this.state.newOrderEnd ? this.state.newOrderEnd : ''} <br />
@@ -400,7 +426,7 @@ class NewOrder extends Component {
                     <div className="new-order">
                         <div className="new-order-head">
                             <h2>{title}</h2>
-                            <button className="new-order-close ir" onClick={this.props.newOrderCancel}>닫기</button>
+                            <button className="new-order-close ir" onClick={this.props.newOrderFinish}>닫기</button>
                         </div>
                         <div className="new-order-body">
                             <div className="service-input-wrap">
@@ -454,7 +480,7 @@ class NewOrder extends Component {
 
 NewOrder.propTypes = {
     beforeInitConfirmRenderNewSchedule: PropTypes.func,
-    newOrderCancel: PropTypes.func,
+    newOrderFinish: PropTypes.func,
     changeView: PropTypes.func,
     backToOrder: PropTypes.func,
     renderNewScheduleUnknownStart: PropTypes.func,
@@ -472,7 +498,7 @@ NewOrder.propTypes = {
 
 NewOrder.defaultProps = {
     beforeInitConfirmRenderNewSchedule() { Functions.createWarning('beforeInitConfirmRenderNewSchedule'); },
-    newOrderCancel() { Functions.createWarning('newOrderCancel'); },
+    newOrderFinish() { Functions.createWarning('newOrderFinish'); },
     changeView() { Functions.createWarning('changeView'); },
     backToOrder() { Functions.createWarning('backToOrder'); },
     renderNewScheduleUnknownStart() { Functions.createWarning('renderNewScheduleUnknownStart'); },

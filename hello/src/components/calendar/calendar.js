@@ -90,7 +90,7 @@ class Calendar extends Component {
         // 더블클릭으로 선택된 이벤트객체를 가져옵니다
         const selectedCard = calSchedule;
         // 선택된 이벤트객체의 리소스ID에 맞는 expert id를 찾아 가져옵니다
-        const selectedStaff = $(t.refs.Calendar).fullCalendar('getResourceById', selectedCard.resourceId);
+        const selectedStaff = $(t.Calendar).fullCalendar('getResourceById', selectedCard.resourceId);
 
         // userCard 컴포넌트의 초기값을 전달한다
         t.isUserCard(true, {
@@ -141,7 +141,7 @@ class Calendar extends Component {
             end_time: moment(newSchedule.newOrderEnd).format('HH:mm'),
             user_id: null,
             guest_id: null,
-            status: '01',
+            status: actions.ScheduleStatus.CREATED,
             guest_name: (newSchedule.newOrderGuest.guest_name || newSchedule.newOrderGuestName),
             guest_mobile: newSchedule.newOrderGuest.guest_mobile,
             guest_class: newSchedule.newOrderGuest.geust_class,
@@ -199,7 +199,7 @@ class Calendar extends Component {
     }
 
     newOrderCancel() {
-        const { Calendar } = this.refs;
+        const { Calendar } = this;
         // 생성버튼 캘린더 타임라인 노드에서 상위 노드로 삽입
         $('.full-calendar > .fc').append($('.create-order-wrap.timeline').hide());
         // 시작시간을 미리 선택하지않고 이벤트를 생성중에 취소할 경우
@@ -221,19 +221,18 @@ class Calendar extends Component {
         });
     }
 
-    // Expert를 Priority기준으로 재배열 한다
-    sortExpert(allOfStaff) {
-        if (_.isEmpty(allOfStaff))
-            return 0;
-        // let staffNewArray = [];
-        const staffNewArray = allOfStaff.sort((a, b) => {
-            if (a.priority < b.priority)
-                return -1;
-            if (a.priority > b.priority)
-                return 1;
-            return 0;
-        });
-        return staffNewArray;
+    // STAFFS data를 Priority기준으로 재배열 한다
+    sortStaff(staffs) {
+        if (!_.isEmpty(staffs)) {
+            const sortStaffs = staffs.sort((a, b) => {
+                if (a.priority < b.priority)
+                    return -1;
+                if (a.priority > b.priority)
+                    return 1;
+                return 0;
+            });
+            return sortStaffs;
+        } return null;
     }
 
     // GNB 예약 활성/비활성화
@@ -256,18 +255,19 @@ class Calendar extends Component {
     }
 
     render() {
-        this.sortExpert(this.props.staffs.data);
+        this.sortStaff(this.props.staffs.data);
 
         const UserCardComponent = (_this) => {
             if (!_this.state.isUserCard) return '';
-            return (<UserCard
-                schedules={this.props.schedules.data}
-                services={this.props.services.data}
-                staffs={this.props.staffs.data}
-                isUserCard={bool => _this.isUserCard(bool)}
-                onRemoveEvent={schedule => _this.removeConfirm(schedule)}
-                onEditEvent={schedule => _this.editEvent(schedule)}
-            />
+            return (
+                <UserCard
+                    schedules={_this.props.schedules}
+                    services={_this.props.services}
+                    staffs={_this.props.staffs}
+                    isUserCard={bool => _this.isUserCard(bool)}
+                    onRemoveEvent={schedule => _this.removeConfirm(schedule)}
+                    onEditEvent={schedule => _this.editEvent(schedule)}
+                />
             );
         };
 
@@ -337,28 +337,22 @@ class Calendar extends Component {
 
         const commonViewProps = {
             fcOptions,
-            // schedule: _.isEmpty(this.props.schedules) ? Schedule : this.props.schedules.data,
-            // staffs: _.isEmpty(this.props.staffs) ? Staff : this.props.staffs.data,
             schedules: this.props.schedules.data,
             staffs: this.props.staffs.data,
             services: this.props.services.data,
             guests: this.props.guests.data,
+
+            defaultStaff: this.props.staffs[0],
+            // defaultStaff: function() { _.isEmpty(this.props.staffs) ? Staff[0] : this.props.staffs.data },
             changeView: this.changeView,
             changeDate: this.changeDate,
             returnScheduleObj: this.returnScheduleObj,
             returnNewID: this.returnNewID,
-
             getSlotTime: this.mouseenterSlotTime,
-            // defaultStaff: function() { _.isEmpty(this.props.staffs) ? Staff[0] : this.props.staffs.data },
-            defaultStaff: this.props.staffs[0],
 
             saveSchedule: scheduleData => this.props.saveSchedule(scheduleData),
             activeGnb: (view, condition) => this.activeGnb(view, condition),
             runUserCardSlide(t, calSchedule, jsEvent, view) { this.runUserCardSlide(t, calSchedule, jsEvent, view); },
-
-            newOrderDirect: condition => this.props.newOrder(condition),
-            newOrderQuick: condition => this.props.newOrder(condition),
-            newOrderCancel: () => this.props.newOrder(false),
 
             getUserCardComponent(t) { return UserCardComponent(t); },
             getModalConfirmComponent(t) { return ModalConfirmComponent(t); },
@@ -380,7 +374,7 @@ class Calendar extends Component {
         const DailyTimeline = (
             <DailyCalendar
                 {...commonViewProps}
-                ref="daily"
+                ref={(c) => { this.daily = c; }}
                 wasMount={() => this.timelineWasMount('agendaDay')}
                 setTimelineDate={date => this.setTimelineDate(date)}
                 newOrder={options => this.newOrderByDailyTimeline(options)}
@@ -390,7 +384,7 @@ class Calendar extends Component {
         const WeeklyTimeline = (
             <WeeklyCalendar
                 {...commonViewProps}
-                ref="weekly"
+                ref={(c) => { this.weekly = c; }}
                 wasMount={() => this.timelineWasMount('agendaWeekly')}
                 setTimelineDate={date => this.setTimelineDate(date)}
                 isBindedNewOrder={this.state.isNewOrder}
@@ -414,13 +408,12 @@ class Calendar extends Component {
         return (
             <div className="calendar">
                 {test}
-                {viewstate}
+                {/* viewstate */}
                 <div className="full-calendar">
-                    {
-                this.state.viewType === 'agendaWeekly'
-                ? WeeklyTimeline
-                : DailyTimeline
-              }
+                {this.state.viewType === 'agendaWeekly'
+                  ? WeeklyTimeline
+                  : DailyTimeline
+                }
                 </div>
             </div>
         );
@@ -464,7 +457,13 @@ Calendar.propTypes = {
         start: PropTypes.object,
         end: PropTypes.object,
         current: PropTypes.object,
-    }).isRequired
+    }).isRequired,
+
+    newOrder: PropTypes.func.isRequired,
+    newOrderConfig: PropTypes.shape({
+        condition: PropTypes.bool
+    }).isRequired,
+    toggleNotifier: PropTypes.func.isRequired
 };
 
 const mapStateToProps = (state) => {
@@ -478,13 +477,14 @@ const mapStateToProps = (state) => {
         newOrderConfig,
     } = state;
 
-    const { schedules } = scheduleReducer[selectedShopID] || { isFetching: false, didInvalidate: false, schedules: { data: require('../../data/schedules').default } };
-    const { staffs } = staffReducer[selectedShopID] || { isFetching: false, didInvalidate: false, staffs: { data: require('../../data/staffs').default } };
-    const { services } = serviceReducer[selectedShopID] || { isFetching: false, didInvalidate: false, services: { data: require('../../data/services').default } };
-    const { guests } = guestReducer[selectedShopID] || { isFetching: false, didInvalidate: false, guests: {} };
-    // const { schedules } = { isFetching: false, schedules: { data: require('../../data/schedules').default} };
-    // const { staffs } = { isFetching: false, staffs: { data: require('../../data/staffs').default} };
-    // const { services } = { isFetching: false, services: { data: require('../../data/services').default} };
+    // const { schedules } = scheduleReducer[selectedShopID] || { isFetching: false, didInvalidate: false, schedules: { data: require('../../data/schedules').default } };
+    // const { staffs } = staffReducer[selectedShopID] || { isFetching: false, didInvalidate: false, staffs: { data: require('../../data/staffs').default } };
+    // const { services } = serviceReducer[selectedShopID] || { isFetching: false, didInvalidate: false, services: { data: require('../../data/services').default } };
+    // const { guests } = guestReducer[selectedShopID] || { isFetching: false, didInvalidate: false, guests: { data: require('../../data/guests').default } };
+    const { schedules } = { isFetching: false, schedules: { data: require('../../data/schedules').default } };
+    const { staffs } = { isFetching: false, staffs: { data: require('../../data/staffs').default } };
+    const { services } = { isFetching: false, services: { data: require('../../data/services').default } };
+    const { guests } = { isFetching: false, guests: { data: require('../../data/guests').default } };
 
     return {
         isModalNotifier: state.notifier.isModalNotifier,
@@ -510,10 +510,10 @@ const mapDispatchToProps = dispatch => ({
     setCalendarEnd: end => (dispatch(actions.setCalendarEnd(end))),
     setCalendarCurrent: current => (dispatch(actions.setCalendarCurrent(current))),
 
-    newOrder: condition => (dispatch(actions.newOrderSetCondition(condition))),
+    newOrder: params => (dispatch(actions.newOrderInit(params))),
     toggleNotifier: condition => dispatch(actions.modalNotifier({ isModalNotifier: condition })),
     // or simply do...
-    // actions: bindActionCreators(acations, dispatch)
+    // actions: bindActionCreators(actions, dispatch)
     // this will dispatch all action
 });
 

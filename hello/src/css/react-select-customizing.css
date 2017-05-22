@@ -68,13 +68,14 @@
   white-space: nowrap;text-overflow: ellipsis;vertical-align: middle;height: 40px;
 }
 .Select-input{
+  width: 100%;
   max-width: 90%;
   overflow: hidden;
   position: relative;
   z-index: 2;
 }
 .Select-input > input {
-  display: block;
+  display: block; width: 100% !important;
   background: none transparent;margin: 0;cursor: text; color: #000;
   font-size: 16px; font-family: inherit; display: inline-block;letter-spacing: -0.2px;
   border: 0 none;box-shadow: none;display: inline-block;outline: none;
@@ -114,7 +115,6 @@
 }
 .Select-arrow-zone {
   cursor: pointer;
-  display: table-cell;
   position: relative;
   text-align: center;
   vertical-align: middle;
@@ -208,6 +208,7 @@
 .selectable .Select-clear-zone {
   display: none;
 }
+.selectable .Select-clear-zone {}
 
 
 /* Searchable 기능의 셀렉트 스타일 */
@@ -277,7 +278,7 @@
 
 /* 예약생성 서비스입력 인풋 검색영역 스타일 */
 .search-product .Select-value-label .label {
-  font-size: 16px;  
+  font-size: 16px;
   margin-right: 5px;
   max-width: 70%;
   float: left;
@@ -301,7 +302,7 @@
 }
 .search-product .Select-option .bullet{
   margin-right: 4px;width: 6px;height: 6px;
-  display: inline-block;border-radius: 50%;  
+  display: inline-block;border-radius: 50%;
   -webkit-transform: translateY(-2px);
           transform: translateY(-2px);
 }
@@ -343,10 +344,10 @@
 
 
 /* CUSTOM COMPONENT (검색 옵션)*/
-.Select-filter-wrap {    
+.Select-filter-wrap {
   background: #333333;
   position: absolute;
-  left: 0; right: 0; top: 55px;  
+  left: 0; right: 0; top: 55px;
 }
 .Select-filter-container {
   margin: 0 16px;
@@ -358,7 +359,7 @@
   overflow: hidden;
   height: 100%;
 }
-.Select-filter-option input {  
+.Select-filter-option input {
   font-size: 0;
   opacity: 0;
   position: absolute;
@@ -403,7 +404,7 @@
   -webkit-box-shadow: 0 45px 8px 5px rgba(0,0,0, .2);
           box-shadow: 0 45px 8px 5px rgba(0,0,0, .2);
 }
-#change-product.arrow-border-dark:after, 
+#change-product.arrow-border-dark:after,
 #change-product.arrow-border-dark:before {
   left: 18%;
 }
@@ -453,7 +454,7 @@
 }
 #change-product .Select-filter-option label{
   font-size: 11px;
-  color: #808080;  
+  color: #808080;
   font-family: 'notokr-bold';
 }
 #change-product .Select-filter-option input:checked ~ label{
@@ -476,7 +477,7 @@
           box-shadow: none;
 }
 
-#change-product .Select-menu-outer:after {   
+#change-product .Select-menu-outer:after {
   position: absolute;
   z-index: 1;
   left: 0;
@@ -561,7 +562,10 @@
 }
 .search-customer .Select-value-label .label{
   margin-right: 6px; font-size: 14px;font-family: 'notokr-medium';letter-spacing: -0.2px;color: #000;
-  float: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 45%;
+  float: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.search-customer .Select-value-label .label.is-guest {
+  max-width: 45%;
 }
 .search-customer .Select-value-label .phone{
   font-size: 14px; color: #333; font-family: 'notokr-regular';
@@ -611,7 +615,7 @@
   white-space: pre-wrap;
 }
 #select-slide .Select-control .Select-value-label{
-  font-size: 13px;  
+  font-size: 13px;
   color: #fff;
   opacity: .7;
   height: auto;
@@ -658,7 +662,7 @@
 
 
 
-/* 
+/*
   CUSTOM SELECTABLE COMPONENT STYLES
 */
 .selectable-wrap {
@@ -730,11 +734,11 @@
 /* selectable custom theme : light-gray */
 
 .selectable-wrap.light-gray {
-  background-color: #474747;  
+  background-color: #474747;
   border-bottom: 1px solid #222;
 }
 .selectable-wrap.light-gray .select-option .select-option-anchor {
-  font-size: 16px;  
+  font-size: 16px;
 }
 
 /* selectable custom theme : double */
@@ -746,7 +750,7 @@
   box-shadow: 0 10px 25px 10px rgba(0,0,0, 0.18);
 }
 /* arrow css */
-.arrow-border-dark:after, 
+.arrow-border-dark:after,
 .arrow-border-dark:before {
   bottom: 100%;
   left: 35%;
@@ -791,7 +795,7 @@
   left: 0; right: 0; bottom: 0; height: 0;
   content: '';
   display: block;
-  box-shadow: 0 0 30px 50px rgba(50,50,50, 1); 
+  box-shadow: 0 0 30px 50px rgba(50,50,50, 1);
   opacity: .6;
 }
 
@@ -853,13 +857,13 @@
   vertical-align: middle;
   border-bottom: 1px solid #717171;
 }
-.creatable-wrap .creatable-field-input input {  
+.creatable-wrap .creatable-field-input input {
   font-size: 24px;
   color: #fff;
   width: 100%;
   display: block;
   height: 35px;
-  line-height: 35px;  
+  line-height: 35px;
   background-color: transparent;
   border: 0;outline: 0;
 }
@@ -884,11 +888,11 @@
   background-color: #212121;
 }
 .creatable-wrap .creatable-ui button{
-  font-family: 'notokr-bold'; 
-  font-size: 13px !important; 
+  font-family: 'notokr-bold';
+  font-size: 13px !important;
   color: rgba(255,255,255, 1) !important;
   line-height: 1;
-  display: block; text-indent: 18px; 
+  display: block; text-indent: 18px;
   width: 100%; height: 50% !important; opacity: .3;
 }
 .creatable-wrap .creatable-ui button:hover,

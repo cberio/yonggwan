@@ -16,7 +16,7 @@ class Head extends Component {
         const menus = this.props.menus;
         for (let i = 0; i < this.props.menus.length; i++)
             if (menus[i].new) total += menus[i].new;
-    
+
         return (
             <div className="notifier-head">
                 <div className="title">

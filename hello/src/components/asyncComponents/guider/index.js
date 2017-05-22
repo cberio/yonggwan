@@ -13,13 +13,13 @@ class Guider extends React.Component {
                      ($('.notifier-wrap').length && $('.notifier-wrap').outerWidth() * 1)}px`;
         $('.guider-wrap').css('padding-left', offsetLeft);
     // auto focusing
-        this.refs.button.focus();
+        this.button.focus();
     // 컴포넌트 렌더링 한 뒤 5초후에 자동 사라짐
         $(document).ready(() => {
             setGuiderStart = setTimeout(() => {
                 $('.guider-wrap').removeClass('slideInUp').addClass('slideOutDown');
                 setTimeout(() => {
-                    $(_component.refs.button).click();
+                    $(_component.button).click();
                 }, 600);
             }, 3000);
         });
@@ -31,7 +31,7 @@ class Guider extends React.Component {
         return (
             <div className="guider-wrap slideInUp">
                 <p className="message">{this.props.message}</p>
-                <button ref="button" className="close" onClick={() => this.props.toggleGuider(false)}>닫기</button>
+                <button ref={(c) => { this.button = c; }} className="close" onClick={() => this.props.toggleGuider(false)}>닫기</button>
             </div>
         );
     }

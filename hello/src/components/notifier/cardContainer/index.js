@@ -14,7 +14,7 @@ class CardContainer extends React.Component {
         this.setState({
             isModal: condition
         }, () => {
-            if (condition) this.refs.button.focus();
+            if (condition) this.button.focus();
         });
     }
     getButtonText(cardType) {
@@ -61,7 +61,7 @@ class CardContainer extends React.Component {
                         <p>{this.getModalText(this.props.cardType)}</p>
                     </div>
                     <div className="modal-ui">
-                        <button onClick={() => this.props.cardDistroy(this.props.index)} ref="button">확인</button>
+                        <button onClick={() => this.props.cardDistroy(this.props.index)} ref={(c) => { this.button = c; }}>확인</button>
                         <button onClick={() => this.toggleModal(false)}>취소</button>
                     </div>
                 </div>

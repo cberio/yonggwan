@@ -11,7 +11,7 @@ class CardModal extends React.Component {
     }
 
     componentDidMount() {
-        this.refs.button.focus();
+        this.button.focus();
     }
 
     getTitleText(cardType) {
@@ -30,7 +30,7 @@ class CardModal extends React.Component {
                 <div className="notifier bounceInRight">
                     <div className="head-by-menu">
                         <p>{this.getTitleText(this.props.cardType)}</p>
-                        <button ref="button" onClick={() => this.props.toggleNotifier(false)}>닫기</button>
+                        <button ref={(c) => { this.button = c; }} onClick={() => this.props.toggleNotifier(false)}>닫기</button>
                     </div>
                     <Card cardType={this.props.cardType} schedule={this.props.schedule} />
                 </div>

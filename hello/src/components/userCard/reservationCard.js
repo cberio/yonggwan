@@ -113,7 +113,7 @@ class ReservationCard extends Component {
                 historyActiveIndex: i,
                 isActiveHistoryDetail: true
             }, () => {
-              // this.refs.inputDetail.focus();
+              // this.inputDetail.focus();
             });
     }
     handleEditStaffMemo() {
@@ -130,20 +130,20 @@ class ReservationCard extends Component {
     slideChange(e) {
         if (isNaN(e.target.value))
             e.target.value = '';
-        this.refs.slider.slickGoTo(e.target.value - 1);
+        this.slider.slickGoTo(e.target.value - 1);
     }
     // <Slider /> 가 슬라이딩 된후 Value를 세팅함
     slideAfter(idx) {
         this.setState({
             historySlideIndex: idx
         });
-        this.refs.slideValue.value = idx + 1; // set vlaue to input element
+        this.slideValue.value = idx + 1; // set vlaue to input element
     }
     slidePrev() {
-        this.refs.slider.slickPrev();
+        this.slider.slickPrev();
     }
     slideNext() {
-        this.refs.slider.slickNext();
+        this.slider.slickNext();
     }
 
     render() {
@@ -428,7 +428,7 @@ class ReservationCard extends Component {
                       ? (
                         <div className="history">
                           <Slider
-                            ref="slider"
+                            ref={(c) => { this.slider = c; }}
                             initialSlide={this.state.historySlideIndex}
                             arrows={false}
                             draggable={false}
@@ -465,7 +465,7 @@ class ReservationCard extends Component {
                                       ? <div>
                                         <input
                                           type="text"
-                                          ref="slideValue"
+                                          ref={(c) => { this.slideValue = c; }}
                                           defaultValue={this.state.historySlideIndex + 1}
                                           maxLength={2}
                                           onChange={this.slideChange}

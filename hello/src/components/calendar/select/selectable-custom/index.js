@@ -68,7 +68,7 @@ class SelectableCustom extends React.Component {
                 alert();
         });
         if (this.props.type !== 'RecommendedReservationTime') {
-            $(this.refs.container).customScrollbar({
+            $(this.container).customScrollbar({
                 // animationSpeed: number,
                 // updateOnWindowResize: true,
                 skin: 'dark-skin',
@@ -91,7 +91,7 @@ class SelectableCustom extends React.Component {
         return (
             <div className={`selectable-wrap ${this.props.themeClass}`}>
                 <div
-                    className="selectable-container" ref="container" style={{
+                    className="selectable-container" ref={(c) => { this.container = c; }} style={{
                         width: `${this.props.width}px`,
                         height: this.props.height
                         ? this.props.height

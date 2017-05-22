@@ -6,9 +6,6 @@ import * as actions from '../../actions';
 import { connect } from 'react-redux';
 
 class Home extends Component {
-    componentDidMount() {
-        console.log(this.props.isNotifier);
-    }
     render() {
         return (
             <div id="wrapper">

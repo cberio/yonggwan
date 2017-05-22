@@ -148,7 +148,7 @@ class SearchService extends React.Component {
     }
 	// react-select 모듈의 옵션에 초기 자동 드롭다운 옵션이 없으므로 트리거하여 드롭다운 하도록 함수
     dropDownSelectOptions() {
-        this.refs.select.handleMouseDown({
+        this.select.handleMouseDown({
             target: {},
             preventDefault() {},
             stopPropagation() {}
@@ -158,21 +158,23 @@ class SearchService extends React.Component {
         return (
             <div className={`Select-wrap searchable ${this.props.className}`} id={this.props.id ? this.props.id : ''}>
                 <div className="viewstate">
-					필터링된 서비스: {this.state.options.length}개
-				</div>
+					         필터링된 서비스: {this.state.options.length}개
+                </div>
                 <Select
-                    ref="select"
+                    ref={(c) => { this.select = c; }}
                     noResultsText={this.props.noResultsText}
                     matchProp="any"
                     matchPos="any"
                     ignoreCase={false}
                     searchable
+                    labelKey={this.props.labelKey}
                     clearable={false}
                     options={this.state.options}
                     value={this.state.value}
                     name={this.props.name}
                     onChange={this.setValue}
-                    autofocus
+                    autofocus={this.props.autofocus}
+                    openOnFocus={this.props.openOnFocus}
                     optionComponent={OptionComponent}
                     valueComponent={ValueComponent}
                     placeholder={this.props.placeholder}

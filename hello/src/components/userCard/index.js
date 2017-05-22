@@ -121,7 +121,7 @@ class ReservationCardContainer extends Component {
             if (e.which === 27)
                 component.props.isUserCard(false);
         });
-        $(this.refs.mask).bind('click', function (e) {
+        $(this.mask).bind('click', function (e) {
             if (e.target.className.indexOf('modal-mask') !== -1) {
                 e.stopPropagation();
                 component.props.isUserCard(false);
@@ -183,7 +183,7 @@ class ReservationCardContainer extends Component {
     );
 
         return (
-          <div className="customer-detail-wrap modal-mask mask-full" ref="mask">
+          <div className="customer-detail-wrap modal-mask mask-full" ref={(c) => { this.mask = c; }}>
             {test}
             <dl className="viewstate">
               <dt>slideIndex: </dt><dd>{this.state.slideIndex ? this.state.slideIndex : ''}</dd>
@@ -221,7 +221,7 @@ class ReservationCardContainer extends Component {
                 {this.state.currentSlide.isBefore ? <span className="state">완료</span> : ''}
                 <button className="btn-close ir" onClick={() => this.props.isUserCard(false)}>닫기</button>
               </div>
-              <Slider {...slideSettings} ref="slider">
+              <Slider {...slideSettings} ref={(c) => { this.slide = c; }}>
                 { mapToSlide(this.initUserCards()) }
               </Slider>
             </div>

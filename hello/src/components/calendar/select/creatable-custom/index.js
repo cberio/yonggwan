@@ -44,7 +44,7 @@ class CreatableCustom extends React.Component {
                                     className={this.state.inputValue ? '' : 'placeholder'}
                                     id="priceValue"
                                     name="priceValue"
-                                    ref="priceValue"
+                                    ref={(c) => { this.priceValue = c; }}
                                     type="text"
                                     placeholder="금액을 입력하세요"
                                     maxLength="8"

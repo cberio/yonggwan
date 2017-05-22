@@ -25,9 +25,16 @@ export const modalConfirm = optionComponent => ({
 });
 
 /* NEW ORDER RELATED */
-export const newOrderSetCondition = condition => ({
-    type: types.NEW_ORDER,
-    condition
+export const newOrderInit = options => ({
+    type: types.NEW_ORDER_INIT,
+    options
+});
+export const newOrderSetScheduleInfo = schedule => ({
+    type: types.NEW_ORDER_SET_SCHEDULE_INFO,
+    schedule
+});
+export const newOrderFinish = () => ({
+    type: types.NEW_ORDER_FINISH
 });
 /**/
 
@@ -368,6 +375,6 @@ export const GuestClass = {
 };
 
 export const NewOrderStatus = {
-    DIRECT: '01', // 01: 다이렉트 예약생성  (시작시간이 선택된)
-    QUICK: '02',  // 02: 퀵 예약생성      (시작시간이 선택되지않은)
+    DIRECT: 'DIRECT', // 다이렉트 예약생성  (시작시간이 선택된)
+    QUICK: 'QUICK',  //  퀵 예약생성      (시작시간이 선택되지않은)
 };

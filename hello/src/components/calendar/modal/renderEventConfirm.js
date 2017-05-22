@@ -26,7 +26,7 @@ export default class RenderEventConfirm extends React.Component {
         let timeline = $('.fc-scroller.fc-time-grid-container'),
             scrollX = $(timeline).scrollLeft(),
             scrollY = $(timeline).scrollTop();
-        this.refs.input.focus();
+        this.input.focus();
         $(timeline).scrollLeft(scrollX);
         $(timeline).scrollTop(scrollY);
 
@@ -58,7 +58,7 @@ export default class RenderEventConfirm extends React.Component {
         return (
             <div>
                 <div className="render-confirm-inner">
-                    <button className="complete" ref="input">확인</button>
+                    <button className="complete" ref={(c) => { this.input = c; }}>확인</button>
                     <button className="cancel">취소</button>
                 </div>
             </div>
