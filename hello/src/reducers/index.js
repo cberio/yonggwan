@@ -4,7 +4,7 @@ import modalConfirm from './modalConfirm';
 import notifier from './notifier';
 import guider from './guider';
 import loading from './loading';
-import { newOrderConfig } from './newOrder';
+import { newOrderConfig, newOrderSchedule } from './newOrder';
 import { calendarConfig } from './calendar';
 import selectedShopID from './shop';
 import scheduleReducer from './schedule';
@@ -20,6 +20,7 @@ const Reducers = combineReducers({
     guider,
     loading,
     newOrderConfig,
+    newOrderSchedule,
     calendarConfig,
     selectedShopID,
     // getSchedulesBySelectedShopID,

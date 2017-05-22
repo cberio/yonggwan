@@ -6,28 +6,24 @@ import * as actions from '../../actions';
 import { connect } from 'react-redux';
 
 class Home extends Component {
-  componentDidMount() {
-    console.log(this.props.isNotifier);
-  }
-  render () {
-    return (
-      <div id="wrapper">
-        {this.props.isNotifier && <Notifier toggleNotifier={this.props.toggleNotifier} />}
-        <Header />
-        <Container />
-      </div>
-    );
-  }
+    componentDidMount() {
+        console.log(this.props.isNotifier);
+    }
+    render() {
+        return (
+            <div id="wrapper">
+                {this.props.isNotifier && <Notifier toggleNotifier={this.props.toggleNotifier} />}
+                <Header />
+                <Container />
+            </div>
+        );
+    }
 }
-const mapStateToPops = (state) => {
-  return {
-    isNotifier : state.notifier.isNotifier
-  }
-}
-const mapDispatchToProps = (dispatch) => {
-   return {
-     toggleNotifier: (condition) => dispatch(actions.notifier({ isNotifier: condition }))
-   }
-}
+const mapStateToPops = state => ({
+    isNotifier: state.notifier.isNotifier
+});
+const mapDispatchToProps = dispatch => ({
+    toggleNotifier: condition => dispatch(actions.notifier({ isNotifier: condition }))
+});
 
-export default connect (mapStateToPops, mapDispatchToProps)(Home);
+export default connect(mapStateToPops, mapDispatchToProps)(Home);

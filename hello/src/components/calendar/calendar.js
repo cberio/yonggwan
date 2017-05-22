@@ -6,7 +6,6 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 import 'fullcalendar/dist/fullcalendar.min.css';
 import * as actions from '../../actions';
-import DatePicker from './datePicker';
 import ModalConfirm from './modal/modalConfirm';
 import RenderEventConfirm from './modal/renderEventConfirm';
 import UserCard from '../userCard';
@@ -42,6 +41,12 @@ class Calendar extends Component {
         this.runUserCardSlide = this.runUserCardSlide.bind(this);
 
         this.fetchSchedule = this.fetchSchedule.bind(this);
+        this.test = this.test.bind(this);
+    }
+
+    test(e) {
+        this.props.newOrder(!this.props.newOrderConfig.condition);
+        this.props.toggleNotifier(!this.props.isModalNotifier);
     }
 
     componentDidMount() {
@@ -188,21 +193,21 @@ class Calendar extends Component {
     // 타임라인 예약생성 버튼의 data-date 값을 set/return
     mouseenterSlotTime(isSetting, date) {
         const createButtonElem = $('.create-order-wrap.timeline');
-        if (isSetting) 
+        if (isSetting)
             return $(createButtonElem).attr('data-date', date);
         return $(createButtonElem).attr('data-date');
     }
 
     newOrderCancel() {
-        let { Calendar } = this.refs;
+        const { Calendar } = this.refs;
         // 생성버튼 캘린더 타임라인 노드에서 상위 노드로 삽입
         $('.full-calendar > .fc').append($('.create-order-wrap.timeline').hide());
         // 시작시간을 미리 선택하지않고 이벤트를 생성중에 취소할 경우
-        if (this.state.unknownStart || this.state.isEditEvent) {
+        if (this.state.unknownStart || this.state.isEditEvent)
             this.resetOrder();
-        } else if (this.state.newScheduleID) {
+        else if (this.state.newScheduleID) {
             // enable editable
-            let evt = $(Calendar).fullCalendar('clientSchedule', this.state.newScheduleID);
+            const evt = $(Calendar).fullCalendar('clientSchedule', this.state.newScheduleID);
             evt.editable = true;
             $(Calendar).fullCalendar('updateEvent', evt);
             // $(Calendar).fullCalendar('option', 'editable', true);
@@ -233,12 +238,12 @@ class Calendar extends Component {
 
     // GNB 예약 활성/비활성화
     activeGnb(view, condition) {
-        if (!condition) 
+        if (!condition)
             $('.nav-reservation a').removeClass('active');
         else {
             $('.nav-reservation > a').addClass('active');
             $('.nav-reservation .header-nav-sub a').removeClass('active');
-            if (view === 'agendaDay') 
+            if (view === 'agendaDay')
                 $('.nav-daily > a').addClass('active');
             else
                 $('.nav-overview > a').addClass('active');
@@ -253,121 +258,16 @@ class Calendar extends Component {
     render() {
         this.sortExpert(this.props.staffs.data);
 
-        const CreateOrderButtonFixed = (_this) => {
-            return (
-                <div className="create-order-wrap fixed">
-                    <div className="create-order-slot">
-                        <button className="create-button" onClick={this.toggleCreateOrderFixedUi}>
-                            <span>+</span>
-                        </button>
-                    </div>
-                    <div className="create-order-ui">
-                        <button onClick={() => _this.newOrder('unknownStart')} className="ui-reservation">예약생성</button>
-                        <button onClick={() => _this.bindNewOfftime('weekly')} className="ui-offtime">OFF TIME 생성</button>
-                    </div>
-                </div>
-            );
-        };
-
-        const CreateOrderButtonTimeline = (_this, view) => {
-            let wrapClassName = 'create-order-wrap timeline';
-
-            if (_this.state.isCreateOfftime)
-                wrapClassName += ' off-time';
-            else {
-                if (_this.state.unknownStart)
-                    wrapClassName += ' has-card';
-                else if (_this.state.isEditEvent)
-                    wrapClassName += ' edit';
-
-                wrapClassName += '';
-            }
-
-            const renderButton = (btnClassName, func) => {
-                return (
-                    <button className={`create-button ${btnClassName}`} onClick={func}>
-                        <i className="time"></i>
-                        <span>+</span>
-                    </button>
-                );
-            };
-
-            const btnUiResolver = () => {
-                if (view === 'agendaWeekly') {
-                    if (_this.state.isCreateOfftime)
-                        return renderButton('', _this.bindNewOfftime('render', 'offtime'));
-
-                    if (_this.state.unknownStart || _this.state.isEditEvent)
-                        return renderButton('create-event');
-                }
-
-                return renderButton('', e => _this.toggleCreateOrderUi(e));
-            };
-
-            return (
-                <div
-                    data-date=""
-                    className={`${wrapClassName}`}
-                >
-                    <div className="create-order-inner">
-                        <div className="create-order-slot">
-                            {btnUiResolver()}
-                            <div className="create-order-ui-wrap">
-                                <div className="create-order-ui-inner">
-                                    <div className="create-order-ui">
-                                        <button onClick={() => _this.newOrder(null)} className="ui-reservation">예약생성</button>
-                                        <button onClick={() => _this.bindNewOfftime('timeline')} className="ui-offtime">OFF TIME 생성</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            );
-        };
-
-        const TodayTimelineButton = (_this) => {
-            if (moment(_this.state.timelineDate).isSame(moment(new Date), 'day')) {
-                return (
-                    <div className="fc-today-timeline-button-wrap today">
-                        <button className="fc-today-timeline-button today" disabled={true}>
-                            {moment(new Date()).format('DD')}
-                        </button>
-                    </div>
-                )
-            } else {
-                return (
-                    <div className="fc-today-timeline-button-wrap">
-                        <button className="fc-today-timeline-button" onClick={() => _this.changeDate(moment(new Date))}>
-                            {moment(new Date()).format('DD')}
-                        </button>
-                    </div>
-                )
-            }
-        };
-
         const UserCardComponent = (_this) => {
             if (!_this.state.isUserCard) return '';
             return (<UserCard
                 schedules={this.props.schedules.data}
                 services={this.props.services.data}
                 staffs={this.props.staffs.data}
-                isUserCard={(bool) => _this.isUserCard(bool)}
-                onRemoveEvent={(schedule) => _this.removeConfirm(schedule)}
-                onEditEvent={(schedule) => _this.editEvent(schedule)}
+                isUserCard={bool => _this.isUserCard(bool)}
+                onRemoveEvent={schedule => _this.removeConfirm(schedule)}
+                onEditEvent={schedule => _this.editEvent(schedule)}
             />
-            );
-        };
-
-        const DatePickerComponent = (_this) => {
-            if (!_this.state.isChangeDate) return '';
-            return (
-                <DatePicker
-                    selectedDate={_this.state.timelineDate}
-                    onChange={_this.changeDate}
-                    onClose={() => _this.isChangeDate(false)}
-                    className="timeline-date-picker"
-                />
             );
         };
 
@@ -399,8 +299,7 @@ class Calendar extends Component {
             );
         };
 
-        // Daily, Weekly FullCalendar 공통 옵션
-        const fc_options = {
+        const fcOptions = {
             schedulerLicenseKey: `${process.env.REACT_APP_FULLCALENDAR_LISENCE ? process.env.REACT_APP_FULLCALENDAR_LISENCE : 'GPL-My-Project-Is-Open-Source'}`,
             scheduleStatus: actions.ScheduleStatus,
             guestClass: actions.GuestClass,
@@ -437,7 +336,7 @@ class Calendar extends Component {
         };
 
         const commonViewProps = {
-            fcOptions: fc_options,
+            fcOptions,
             // schedule: _.isEmpty(this.props.schedules) ? Schedule : this.props.schedules.data,
             // staffs: _.isEmpty(this.props.staffs) ? Staff : this.props.staffs.data,
             schedules: this.props.schedules.data,
@@ -452,27 +351,30 @@ class Calendar extends Component {
             getSlotTime: this.mouseenterSlotTime,
             // defaultStaff: function() { _.isEmpty(this.props.staffs) ? Staff[0] : this.props.staffs.data },
             defaultStaff: this.props.staffs[0],
+
             activeGnb: (view, condition) => this.activeGnb(view, condition),
-            runUserCardSlide: (t, calSchedule, jsEvent, view) => { this.runUserCardSlide(t, calSchedule, jsEvent, view) },
+            runUserCardSlide(t, calSchedule, jsEvent, view) { this.runUserCardSlide(t, calSchedule, jsEvent, view); },
 
-            getTodayTimelineButton: (t) => { return TodayTimelineButton(t) },
-            getCreateOrderButtonFixed: (t) => { return CreateOrderButtonFixed(t) },
-            getCreateOrderButtonTimeline: (t, view) => { return CreateOrderButtonTimeline(t, view) },
-            getDatePickerComponent: (t) => { return DatePickerComponent(t) },
-            getUserCardComponent: (t) => { return UserCardComponent(t) },
-            getModalConfirmComponent: (t) => { return ModalConfirmComponent(t) },
-            getRenderConfirmComponent: (t, view) => { return RenderConfirmComponent(t, view) }
-        }
+            newOrderDirect: condition => this.props.newOrder(condition),
+            newOrderQuick: condition => this.props.newOrder(condition),
+            newOrderCancel: () => this.props.newOrder(false),
 
-        const viewview = (
-            <div className="viewview viewContainer">
+            getUserCardComponent(t) { return UserCardComponent(t); },
+            getModalConfirmComponent(t) { return ModalConfirmComponent(t); },
+            getRenderConfirmComponent(t, view) { return RenderConfirmComponent(t, view); }
+
+        };
+
+        const viewstate = (
+            <div className="viewstate viewContainer">
+                <h3>calendar container states</h3>
                 <dl>
                     <dt>viewType : </dt> <dd>{this.state.viewType}</dd>
                     <dt>viewDate : </dt> <dd>{this.state.viewDate.format('YYYY-MM-DD')}</dd>
-                    <dt>isNewOrder : </dt> <dd>{this.state.isNewOrder}</dd>
+                    <dt>isNewOrder : </dt> <dd>{this.props.newOrderConfig.condition ? 'true' : 'false'}</dd>
                 </dl>
             </div>
-        )
+        );
 
         const DailyTimeline = (
             <DailyCalendar
@@ -495,15 +397,29 @@ class Calendar extends Component {
             />
         );
 
+        const test = (
+            <button
+                style={{
+                    position: 'fixed',
+                    left: '80px',
+                    top: '0px',
+                    zIndex: '10',
+                    background: '#ec0'
+                }} onClick={() => this.test()}
+            > CLICK ME!
+          </button>
+        );
+
         return (
             <div className="calendar">
-                {/* viewview */}
+                {test}
+                {viewstate}
                 <div className="full-calendar">
                     {
-                        this.state.viewType === 'agendaWeekly'
-                            ? WeeklyTimeline
-                            : DailyTimeline
-                    }
+                this.state.viewType === 'agendaWeekly'
+                ? WeeklyTimeline
+                : DailyTimeline
+              }
                 </div>
             </div>
         );
@@ -557,6 +473,7 @@ const mapStateToProps = (state) => {
         staffReducer,
         serviceReducer,
         guestReducer,
+        newOrderConfig,
     } = state;
 
     const { schedules } = scheduleReducer[selectedShopID] || { isFetching: false, didInvalidate: false, schedules: { data: require('../../data/schedules').default } };
@@ -568,30 +485,33 @@ const mapStateToProps = (state) => {
     // const { services } = { isFetching: false, services: { data: require('../../data/services').default} };
 
     return {
+        isModalNotifier: state.notifier.isModalNotifier,
         selectedShopID,
         schedules,
         staffs,
         services,
         calendarConfig,
         guests,
+        newOrderConfig,
     };
 };
 
-const mapDispatchToProps = (dispatch) => {
-    return {
-        fetchSchedulesIfNeeded: shopID => (dispatch(actions.fetchSchedulesIfNeeded(shopID))),
-        fetchStaffsIfNeeded: shopID => (dispatch(actions.fetchStaffsIfNeeded(shopID))),
-        fetchServicesIfNeeded: shopID => (dispatch(actions.fetchServicesIfNeeded(shopID))),
-        fetchGuestsIfNeeded: shopID => (dispatch(actions.fetchGuestsIfNeeded(shopID))),
+const mapDispatchToProps = dispatch => ({
+    fetchSchedulesIfNeeded: shopID => (dispatch(actions.fetchSchedulesIfNeeded(shopID))),
+    fetchStaffsIfNeeded: shopID => (dispatch(actions.fetchStaffsIfNeeded(shopID))),
+    fetchServicesIfNeeded: shopID => (dispatch(actions.fetchServicesIfNeeded(shopID))),
+    fetchGuestsIfNeeded: shopID => (dispatch(actions.fetchGuestsIfNeeded(shopID))),
 
-        setCalendarViewType: viewType => (dispatch(actions.setCalendarViewType(viewType))),
-        setCalendarStart: start => (dispatch(actions.setCalendarStart(start))),
-        setCalendarEnd: end => (dispatch(actions.setCalendarEnd(end))),
-        setCalendarCurrent: current => (dispatch(actions.setCalendarCurrent(current))),
-        // or simply do...
-        // actions: bindActionCreators(acations, dispatch)
-        // this will dispatch all action
-    };
-};
+    setCalendarViewType: viewType => (dispatch(actions.setCalendarViewType(viewType))),
+    setCalendarStart: start => (dispatch(actions.setCalendarStart(start))),
+    setCalendarEnd: end => (dispatch(actions.setCalendarEnd(end))),
+    setCalendarCurrent: current => (dispatch(actions.setCalendarCurrent(current))),
+
+    newOrder: condition => (dispatch(actions.newOrderSetCondition(condition))),
+    toggleNotifier: condition => dispatch(actions.modalNotifier({ isModalNotifier: condition })),
+    // or simply do...
+    // actions: bindActionCreators(acations, dispatch)
+    // this will dispatch all action
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(Calendar);

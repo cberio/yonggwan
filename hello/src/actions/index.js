@@ -25,9 +25,9 @@ export const modalConfirm = optionComponent => ({
 });
 
 /* NEW ORDER RELATED */
-export const newOrderSetCondition = options => ({
+export const newOrderSetCondition = condition => ({
     type: types.NEW_ORDER,
-    options
+    condition
 });
 /**/
 
@@ -381,4 +381,9 @@ export const GuestClass = {
     NEW: 'NEW',
     VIP: 'VIP',
     BAD: 'BAD'
+};
+
+export const NewOrderStatus = {
+    DIRECT: '01', // 01: 다이렉트 예약생성  (시작시간이 선택된)
+    QUICK: '02',  // 02: 퀵 예약생성      (시작시간이 선택되지않은)
 };

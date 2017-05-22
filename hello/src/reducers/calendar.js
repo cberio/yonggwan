@@ -33,4 +33,4 @@ export const calendarConfig = (state = initialState, action) => {
         default:
             return state;
     }
-};
+}

@@ -19,16 +19,17 @@ class NewOrder extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            newOrderStep: this.props.Step, // int 1-3
-            newOrderGuestName: this.props.GuestName, // str
-            newOrderSex: this.props.Sex, // int 0-2
-            newOrderPhone: this.props.Phone, // array
-            newOrderService: this.props.Service, // object (service object)
-            newOrderStaff: this.props.Staff, // object
-            newOrderGuest: this.props.Guest,  // object
-            newOrderStart: this.props.Start, // moment format
-            newOrderEnd: this.props.End, // moment format
-            newOrderTime: this.props.Time // HH:mm
+            type: this.props.newOrderConfig.type, // str
+            newOrderStep: 1, // int 1-3
+            newOrderGuestName: this.props.newOrderSchedule.guestName, // str
+            newOrderSex: this.props.newOrderSchedule.sex, // int 0-2
+            newOrderPhone: this.props.newOrderSchedule.phone, // array
+            newOrderService: this.props.newOrderSchedule.service, // object (service object)
+            newOrderStaff: this.props.newOrderSchedule.staff, // object
+            newOrderGuest: this.props.newOrderSchedule.guest,  // object
+            newOrderStart: this.props.newOrderSchedule.start, // moment format
+            newOrderEnd: this.props.newOrderSchedule.end, // moment format
+            newOrderTime: this.props.newOrderSchedule.time // HH:mm
         };
         this.documentBinding = this.documentBinding.bind(this);
         this.initEditEvent = this.initEditEvent.bind(this);
@@ -45,7 +46,7 @@ class NewOrder extends Component {
         this.inputChangeOrderEnd = this.inputChangeOrderEnd.bind(this);
     }
 
-    printWarring(msg) {
+    createWarning(msg) {
         console.warn(`${msg} prop is undefined`);
     }
 
@@ -82,8 +83,14 @@ class NewOrder extends Component {
             newOrderEnd: moment(e.end).format(),
             newOrderTime: Functions.millisecondsToMinute(moment(e.end).diff(moment(e.start))),
         });
-    // step-3 으로 바로 이동하기때문에 캘린더 Height를 조절합니다
-        this.props.setCalendarHeight(3);
+    }
+
+    toggleInterfaces(isMount) {
+        return;
+        if (isMount)
+            $('.create-order-wrap.fixed').addClass('hidden');
+        else
+            $('.create-order-wrap.fixed').removeClass('hidden');
     }
 
     insertComponent(unknownStart) {
@@ -124,9 +131,6 @@ class NewOrder extends Component {
             default:
                 break;
         }
-        setTimeout(() => {
-            // component.props.setCalendarHeight(component.state.newOrderStep);
-        }, 0);
     }
 
     changeStep(step) {
@@ -170,25 +174,21 @@ class NewOrder extends Component {
         if (!_.isEmpty(JSON.stringify(option.id))) {
             // clear states
             this.setState({ newOrderGuest: option, newOrderGuestName: undefined }, () => {
-              component.refs.next.focus();
+                component.refs.next.focus();
             });
         }
         // 등록된 고객중에 선택하지 않은경우
         else {
             // set states
             this.setState({ newOrderGuest: undefined, newOrderGuestName: option.value }, () => {
-              if (!_.isEmpty(option))
-                  component.refs.phone.focus();
+                if (!_.isEmpty(option))
+                    component.refs.phone.focus();
             });
         }
     }
     inputChangeUserSex(e) { this.setState({ newOrderSex: e.target.value }); }
     inputChangeOrderStart(e) { this.setState({ newOrderStart: e.target.value }); }
     inputChangeOrderEnd(e) { this.setState({ newOrderEnd: e.target.value }); }
-
-    componentWillUnmount() {
-        this.props.setCalendarHeight(true);
-    }
 
     componentDidMount() {
     // Window event binding
@@ -198,6 +198,12 @@ class NewOrder extends Component {
     // 예약수정, 예약요청확인 인경우
         if (this.props.isEditEvent)
             this.initEditEvent(this.props.willEditEventObject);
+    // 스타일 적용
+        this.toggleInterfaces(true);
+    }
+
+    componentWillUnmount() {
+        this.toggleInterfaces(false);
     }
 
     render() {
@@ -206,126 +212,126 @@ class NewOrder extends Component {
         const title = this.props.isRequestReservation ? '예약요청 확인' : this.props.isEditEvent ? '예약변경' : '예약생성';
 
         const newOrderStep1 = (
-          <CSSTransitionGroup
-            transitionName="service-input"
-            transitionAppear
-            transitionLeave={false}
-            transitionEnter={false}
-            transitionAppearTimeout={0}
-          >
-            <div className="service-input">
-              <SearchGuest
-                name="customer"
-                autoFocus
-                className="search-customer"
-                placeholder="고객님의 이름을 입력해주세요"
-                options={Guests}
-                value={this.state.newOrderGuest}
-                onChange={this.inputChangeGuest}
-                clearable={false}
-              />
-              {_.isEmpty(this.state.newOrderGuest) ? (
-                <div className="customer-phone">
-                  <div>
-                    <input
-                      type="text"
-                      maxLength="3"
-                      className={this.state.newOrderPhone[0] ? 'has-value' : 'null-value'}
-                      value={this.state.newOrderPhone[0]}
-                      onChange={e => this.inputChangeUserPhone(e, 0)} ref="phone"
-                      placeholder="010"
+            <CSSTransitionGroup
+                transitionName="service-input"
+                transitionAppear
+                transitionLeave={false}
+                transitionEnter={false}
+                transitionAppearTimeout={0}
+            >
+                <div className="service-input">
+                    <SearchGuest
+                        name="customer"
+                        autoFocus
+                        className="search-customer"
+                        placeholder="고객님의 이름을 입력해주세요"
+                        options={Guests}
+                        value={this.state.newOrderGuest}
+                        onChange={this.inputChangeGuest}
+                        clearable={false}
                     />
-                    <i>-</i>
-                    <input
-                      type="text"
-                      maxLength="4"
-                      className={this.state.newOrderPhone[1] ? 'has-value' : 'null-value'}
-                      value={this.state.newOrderPhone[1]}
-                      onChange={e => this.inputChangeUserPhone(e, 1)}
-                      placeholder="0000"
-                    />
-                    <i>-</i>
-                    <input
-                      type="text"
-                      maxLength="4"
-                      className={this.state.newOrderPhone[2] ? 'has-value' : 'null-value'}
-                      value={this.state.newOrderPhone[2]}
-                      onChange={e => this.inputChangeUserPhone(e, 2)} onKeyUp={this.autoFocus}
-                      placeholder="0000"
-                    />
-                  </div>
-                </div>
+                    {_.isEmpty(this.state.newOrderGuest) ? (
+                        <div className="customer-phone">
+                            <div>
+                                <input
+                                    type="text"
+                                    maxLength="3"
+                                    className={this.state.newOrderPhone[0] ? 'has-value' : 'null-value'}
+                                    value={this.state.newOrderPhone[0]}
+                                    onChange={e => this.inputChangeUserPhone(e, 0)} ref="phone"
+                                    placeholder="010"
+                                />
+                                <i>-</i>
+                                <input
+                                    type="text"
+                                    maxLength="4"
+                                    className={this.state.newOrderPhone[1] ? 'has-value' : 'null-value'}
+                                    value={this.state.newOrderPhone[1]}
+                                    onChange={e => this.inputChangeUserPhone(e, 1)}
+                                    placeholder="0000"
+                                />
+                                <i>-</i>
+                                <input
+                                    type="text"
+                                    maxLength="4"
+                                    className={this.state.newOrderPhone[2] ? 'has-value' : 'null-value'}
+                                    value={this.state.newOrderPhone[2]}
+                                    onChange={e => this.inputChangeUserPhone(e, 2)} onKeyUp={this.autoFocus}
+                                    placeholder="0000"
+                                />
+                            </div>
+                        </div>
                 )
                 : ''
               }
-            </div>
-          </CSSTransitionGroup>
+                </div>
+            </CSSTransitionGroup>
         );
 
         const newOrderStep2 = (
-          <CSSTransitionGroup
-            transitionName="service-input"
-            transitionAppear
-            transitionLeave={false}
-            transitionEnter={false}
-            transitionAppearTimeout={0}
-          >
-            <div className="service-input">
-              <div className="radio-group">
-                <input
-                  type="radio"
-                  id="user-mail"
-                  name="user-sex"
-                  value={1}
-                  onChange={this.inputChangeUserSex}
-                  defaultChecked={state.newOrderSex == 1}
-                />
-                <label htmlFor="user-mail">남성</label>
-                <input
-                  type="radio"
-                  id="user-femail"
-                  name="user-sex"
-                  value={2}
-                  onChange={this.inputChangeUserSex}
-                  defaultChecked={state.newOrderSex == 2}
-                />
-                <label htmlFor="user-femail">여성</label>
-              </div>
-              <SearchService
-                selectType="searchable"
-                name="products"
-                className="search-product"
-                placeholder="상품명 검색"
-                options={Services}
-                value={this.state.newOrderService}
-                onChange={this.inputChangeService}
-              />
-              <br />
-              <Selectable
-                value={this.state.newOrderStaff}
-                selectType="selectable"
-                name="epxerts"
-                className="select-expert"
-                placeholder="선택"
-                options={Staffs}
-                onChange={this.inputChangeStaff}
-                searchable={false}
-              />
-            </div>
-          </CSSTransitionGroup>
+            <CSSTransitionGroup
+                transitionName="service-input"
+                transitionAppear
+                transitionLeave={false}
+                transitionEnter={false}
+                transitionAppearTimeout={0}
+            >
+                <div className="service-input">
+                    <div className="radio-group">
+                        <input
+                            type="radio"
+                            id="user-mail"
+                            name="user-sex"
+                            value={1}
+                            onChange={this.inputChangeUserSex}
+                            defaultChecked={state.newOrderSex == 1}
+                        />
+                        <label htmlFor="user-mail">남성</label>
+                        <input
+                            type="radio"
+                            id="user-femail"
+                            name="user-sex"
+                            value={2}
+                            onChange={this.inputChangeUserSex}
+                            defaultChecked={state.newOrderSex == 2}
+                        />
+                        <label htmlFor="user-femail">여성</label>
+                    </div>
+                    <SearchService
+                        selectType="searchable"
+                        name="products"
+                        className="search-product"
+                        placeholder="상품명 검색"
+                        options={Services}
+                        value={this.state.newOrderService}
+                        onChange={this.inputChangeService}
+                    />
+                    <br />
+                    <Selectable
+                        value={this.state.newOrderStaff}
+                        selectType="selectable"
+                        name="epxerts"
+                        className="select-expert"
+                        placeholder="선택"
+                        options={Staffs}
+                        onChange={this.inputChangeStaff}
+                        searchable={false}
+                    />
+                </div>
+            </CSSTransitionGroup>
         );
 
         const ButtonElements = (
-          <div>
-            <button
-              className="new-order-btn new-order-cancel left"
-              onClick={this.props.newOrderCancel}
-            >
+            <div>
+                <button
+                    className="new-order-btn new-order-cancel left"
+                    onClick={this.props.newOrderCancel}
+                >
               CANCEL
             </button>
-            <button
-              ref="next"
-              className={`
+                <button
+                    ref="next"
+                    className={`
                   new-order-btn new-order-submit right
                   ${
                     !_.isEmpty(state.newOrderGuest) ?
@@ -336,118 +342,118 @@ class NewOrder extends Component {
                       : ''
                     : ''}
                 `}
-              disabled={ /* NEXT 버튼의 활성화 비활성화 여부를 결정합니다 */
+                    disabled={ /* NEXT 버튼의 활성화 비활성화 여부를 결정합니다 */
                 step === 1 ? (
                   (_.isEmpty(state.newOrderGuest) && _.isEmpty(state.newOrderGuestName))
                 ) : step === 2 ? (
                   (_.isEmpty(state.newOrderService) || _.isEmpty(state.newOrderStaff))
                 ) : true
               }
-              onClick={this.nextStep}
-            >
-              <span>
-                {step === 2 ? (
+                    onClick={this.nextStep}
+                >
+                    <span>
+                        {step === 2 ? (
                     state.newOrderGuestName || (!_.isEmpty(state.newOrderGuest) && state.newOrderGuest.guest_name) ?
                       'NEXT'
                     : 'SKIP'
                   )
                   : 'NEXT'}
-              </span>
-              <i className="bullet" />
-            </button>
-          </div>
-        )
+                    </span>
+                    <i className="bullet" />
+                </button>
+            </div>
+        );
 
         return (
-          <div className={`new-order-wrap step-${this.state.newOrderStep} ${this.props.unknownStart || this.props.isEditEvent ? 'fixed' : 'hidden'}`}>
-            <div className="viewstate order" style={{display: 'block'}}>
-              <button onClick={() => { $('.viewstate.order').hide(); }}>X</button>
-              <span>isModalConfirm</span> : {this.props.isModalConfirm ? 'true' : ''} <br />
-              <span>newOrderStep</span> : {this.state.newOrderStep !== undefined ? this.state.newOrderStep : ''} <br />
-              <span>newOrderStaff</span> : {this.state.newOrderStaff ? this.state.newOrderStaff.label : ''} <br />
-              <span>newOrderService</span> : {this.state.newOrderService ? this.state.newOrderService.name : ''} <br />
-              <span>newOrderGuestName</span> : {this.state.newOrderGuestName ? this.state.newOrderGuestName : ''} <br />
-              <span>newOrderPhone</span> : {this.state.newOrderPhone.length ? this.state.newOrderPhone : ''} <br />
-              <span>newOrderSex</span> : {this.state.newOrderSex} <br />
-              <span>newOrderStart</span> : {this.state.newOrderStart ? this.state.newOrderStart : ''} <br />
-              <span>newOrderEnd</span> : {this.state.newOrderEnd ? this.state.newOrderEnd : ''} <br />
-              <span>newOrderTime</span> : {this.state.newOrderTime ? this.state.newOrderTime : ''} <br /><br />
-              <span>고객유형: </span> {!_.isEmpty(this.state.newOrderGuest) ? '등록되어있는 고객' : '입력하지 않았거나 신규입력 고객'}<br />
-              <span>newOrderGuest</span> :
+            <div className={`new-order-wrap step-${this.state.newOrderStep} ${this.props.unknownStart || this.props.isEditEvent ? 'fixed' : 'hidden'}`}>
+                <div className="viewstate order" style={{ display: 'block' }}>
+                    <button onClick={() => { $('.viewstate.order').hide(); }}>X</button>
+                    <span>isModalConfirm</span> : {this.props.isModalConfirm ? 'true' : ''} <br />
+                    <span>type</span> : {this.state.type} <br />
+                    <span>newOrderStep</span> : {this.state.newOrderStep !== undefined ? this.state.newOrderStep : ''} <br />
+                    <span>newOrderStaff</span> : {this.state.newOrderStaff ? this.state.newOrderStaff.label : ''} <br />
+                    <span>newOrderService</span> : {this.state.newOrderService ? this.state.newOrderService.name : ''} <br />
+                    <span>newOrderGuestName</span> : {this.state.newOrderGuestName ? this.state.newOrderGuestName : ''} <br />
+                    <span>newOrderPhone</span> : {this.state.newOrderPhone.length ? this.state.newOrderPhone : ''} <br />
+                    <span>newOrderSex</span> : {this.state.newOrderSex} <br />
+                    <span>newOrderStart</span> : {this.state.newOrderStart ? this.state.newOrderStart : ''} <br />
+                    <span>newOrderEnd</span> : {this.state.newOrderEnd ? this.state.newOrderEnd : ''} <br />
+                    <span>newOrderTime</span> : {this.state.newOrderTime ? this.state.newOrderTime : ''} <br /><br />
+                    <span>고객유형: </span> {!_.isEmpty(this.state.newOrderGuest) ? '등록되어있는 고객' : '입력하지 않았거나 신규입력 고객'}<br />
+                    <span>newOrderGuest</span> :
                 {!_.isEmpty(this.state.newOrderGuest) ? (
-                  <div>
-                    <i style={{ paddingRight: '7px' }}>id:</i><p>{this.state.newOrderGuest.id}</p>
-                    <i style={{ paddingRight: '7px' }}>name:</i><p>{this.state.newOrderGuest.guest_name}</p>
-                    <i style={{ paddingRight: '7px' }}>phone:</i><p>{this.state.newOrderGuest.guest_mobile}</p>
-                    <i style={{ paddingRight: '7px' }}>class:</i><p>{this.state.newOrderGuest.guest_class}</p>
-                  </div>
+                    <div>
+                        <i style={{ paddingRight: '7px' }}>id:</i><p>{this.state.newOrderGuest.id}</p>
+                        <i style={{ paddingRight: '7px' }}>name:</i><p>{this.state.newOrderGuest.guest_name}</p>
+                        <i style={{ paddingRight: '7px' }}>phone:</i><p>{this.state.newOrderGuest.guest_mobile}</p>
+                        <i style={{ paddingRight: '7px' }}>class:</i><p>{this.state.newOrderGuest.guest_class}</p>
+                    </div>
               ) : ''}
-            </div>
-            <CSSTransitionGroup
-              transitionName="new-order"
-              transitionAppear
-              transitionEnter={false}
-              transitionLeave={false}
-              transitionAppearTimeout={200}
-            >
-              <div className="new-order">
-                <div className="new-order-head">
-                  <h2>{title}</h2>
-                  <button className="new-order-close ir" onClick={this.props.newOrderCancel}>닫기</button>
                 </div>
-                <div className="new-order-body">
-                  <div className="service-input-wrap">
-                    <h3 className={step === 1 ? 'active' : ''}>
-                      {step !== 1 && !_.isEmpty(this.state.newOrderGuest) ? (
-                          <span className="step-index has-values">1</span>
+                <CSSTransitionGroup
+                    transitionName="new-order"
+                    transitionAppear
+                    transitionEnter={false}
+                    transitionLeave={false}
+                    transitionAppearTimeout={200}
+                >
+                    <div className="new-order">
+                        <div className="new-order-head">
+                            <h2>{title}</h2>
+                            <button className="new-order-close ir" onClick={this.props.newOrderCancel}>닫기</button>
+                        </div>
+                        <div className="new-order-body">
+                            <div className="service-input-wrap">
+                                <h3 className={step === 1 ? 'active' : ''}>
+                                    {step !== 1 && !_.isEmpty(this.state.newOrderGuest) ? (
+                                        <span className="step-index has-values">1</span>
                         ) : (
-                          <span className="step-index">1</span>
+                            <span className="step-index">1</span>
                         )
                       }
-                      <button
-                        onClick={() => { this.changeStep(1); }}
-                        disabled={false}
-                      >
+                                    <button
+                                        onClick={() => { this.changeStep(1); }}
+                                        disabled={false}
+                                    >
                         고객정보 입력
                       </button>
-                    </h3>
-                    <div className="service-input-inner">
-                      { step === 1 ? newOrderStep1 : '' }
-                    </div>
-                  </div>
-                  <div className="service-input-wrap">
-                    <h3 className={step === 2 ? 'active' : ''}>
-                      {step !== 2 && !_.isEmpty(this.state.newOrderService) && !_.isEmpty(this.state.newOrderStaff) ? (
-                          <span className="step-index has-values">2</span>
+                                </h3>
+                                <div className="service-input-inner">
+                                    { step === 1 ? newOrderStep1 : '' }
+                                </div>
+                            </div>
+                            <div className="service-input-wrap">
+                                <h3 className={step === 2 ? 'active' : ''}>
+                                    {step !== 2 && !_.isEmpty(this.state.newOrderService) && !_.isEmpty(this.state.newOrderStaff) ? (
+                                        <span className="step-index has-values">2</span>
                         ) : (
-                          <span className="step-index">2</span>
+                            <span className="step-index">2</span>
                         )
                       }
-                      <button
-                        onClick={() => { this.changeStep(2); }}
-                        disabled={false}
-                      >
+                                    <button
+                                        onClick={() => { this.changeStep(2); }}
+                                        disabled={false}
+                                    >
                         서비스 선택
                       </button>
-                    </h3>
-                    <div className="service-input-inner">
-                      { step === 2 ? newOrderStep2 : '' }
+                                </h3>
+                                <div className="service-input-inner">
+                                    { step === 2 ? newOrderStep2 : '' }
+                                </div>
+                            </div>
+                        </div>
+                        <div className="new-order-foot">
+                            {ButtonElements}
+                        </div>
                     </div>
-                  </div>
-                </div>
-                <div className="new-order-foot">
-                  {ButtonElements}
-                </div>
-              </div>
-            </CSSTransitionGroup>
-          </div>
+                </CSSTransitionGroup>
+            </div>
         );
     }
 }
 
 NewOrder.propTypes = {
     beforeInitConfirmRenderNewSchedule: PropTypes.func,
-    setCalendarHeight: PropTypes.func,
     newOrderCancel: PropTypes.func,
     changeView: PropTypes.func,
     backToOrder: PropTypes.func,
@@ -459,16 +465,17 @@ NewOrder.propTypes = {
     isModalConfirm: PropTypes.bool,
     isRenderConfirm: PropTypes.bool,
     selectedDate: PropTypes.string,
-    selectedStaff: PropTypes.object
+    selectedStaff: PropTypes.object,
+    newOrderConfig: PropTypes.object,
+    newOrderSchedule: PropTypes.object,
 };
 
 NewOrder.defaultProps = {
-    beforeInitConfirmRenderNewSchedule() { Functions.printWarring('beforeInitConfirmRenderNewSchedule'); },
-    setCalendarHeight() { Functions.printWarring('setCalendarHeight'); },
-    newOrderCancel() { Functions.printWarring('newOrderCancel'); },
-    changeView() { Functions.printWarring('changeView'); },
-    backToOrder() { Functions.printWarring('backToOrder'); },
-    renderNewScheduleUnknownStart() { Functions.printWarring('renderNewScheduleUnknownStart'); },
+    beforeInitConfirmRenderNewSchedule() { Functions.createWarning('beforeInitConfirmRenderNewSchedule'); },
+    newOrderCancel() { Functions.createWarning('newOrderCancel'); },
+    changeView() { Functions.createWarning('changeView'); },
+    backToOrder() { Functions.createWarning('backToOrder'); },
+    renderNewScheduleUnknownStart() { Functions.createWarning('renderNewScheduleUnknownStart'); },
     unknownStart: false,
     isEditEvent: false,
     isRequestReservation: false,
@@ -478,19 +485,11 @@ NewOrder.defaultProps = {
 };
 
 const mapStateToProps = state => ({
-    Step: state.newOrderConfig.step,
-    GuestName: state.newOrderConfig.guestName,
-    Sex: state.newOrderConfig.sex,
-    Phone: state.newOrderConfig.phone,
-    Service: state.newOrderConfig.service,
-    Staff: state.newOrderConfig.staff,
-    Guest: state.newOrderConfig.guest,
-    Start: state.newOrderConfig.start,
-    End: state.newOrderConfig.end,
-    Time: state.newOrderConfig.time
-})
+    newOrderConfig: state.newOrderConfig,
+    newOrderSchedule: state.newOrderSchedule
+});
 
 const mapDispatchToProps = () => ({
-})
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(NewOrder);

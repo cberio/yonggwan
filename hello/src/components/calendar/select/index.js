@@ -6,9 +6,9 @@ import CreatableCustom from './creatable-custom/index';
 import '../../../css/react-select-customizing.css';
 
 module.exports = {
-  SearchService,
-  SearchGuest,
-  Selectable,
-  SelectableCustom,
-  CreatableCustom
+    SearchService,
+    SearchGuest,
+    Selectable,
+    SelectableCustom,
+    CreatableCustom
 };

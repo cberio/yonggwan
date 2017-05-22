@@ -1,8 +1,8 @@
 @charset "utf-8";
 /* RESET.CSS */
-*{margin:0; padding:0; box-sizing: border-box; -webkit-box-sizing: border-box; -moz-box-sizing: border-box; -webkit-text-size-adjust:100%;}
+*{margin:0; padding:0; box-sizing: border-box; -webkit-box-sizing: border-box; -moz-box-sizing: border-box; -webkit-text-size-adjust:100%;font-weight: normal;}
 html {height: 100%;margin:0; padding:0; -webkit-text-size-adjust: none; -moz-text-size-adjust: none; -ms-text-size-adjust: none;}
-body {font-family: 'notokr-regular', 'noto-sans','NanumBarunGothic', NanumBarunGothic, Arial; font-size: 13px; height:100%; line-height:1; *zoom:1; }
+body {font-family: 'notokr-regular', 'noto-sans','NanumBarunGothic', NanumBarunGothic, Arial; font-size: 13px; height:100%; line-height:1; *zoom:1;}
 label {vertical-align: middle;}
 address,em {font-style:normal}
 strong,b,th {font-weight:bold}

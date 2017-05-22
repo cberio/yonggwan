@@ -1,10 +1,17 @@
 import React, { Component } from 'react';
-import $ from 'jquery';
 import { connect } from 'react-redux';
-import moment from 'moment';
+import $ from 'jquery';
 import _ from 'lodash';
+import moment from 'moment';
 import 'fullcalendar-scheduler';
 import 'jquery.nicescroll';
+import NewOrder from '../newOrder';
+import DatePicker from '../datePicker';
+import {
+  CreateOrderButtonDirect,
+  CreateOrderButtonQuick,
+  TodayTimelineButton,
+  StaffsInterfaceWeekly } from '../interface';
 import * as actions from '../../../actions';
 import * as Functions from '../../../js/common';
 
@@ -16,7 +23,7 @@ class WeeklyCalendar extends Component {
             alreadyRendered: false,
             viewTypeOrder: undefined,
             // conditions
-            isNewOrder: this.props.isNewOrder,
+            isNewOrder: this.props.newOrderConfig.condition,
             isModalConfirm: false,
             isRenderConfirm: false,
             isUserCard: false,
@@ -30,8 +37,6 @@ class WeeklyCalendar extends Component {
             // Staff states
             defaultStaff: undefined, // 관리자가 설정한 1순위 expert
             priorityStaff: undefined, // 타임라인 렌더링시 0순위로 기준이 되는 expert (일부 이벤트 등록시 해당된다)
-            // prevStaff: this.props.defaultStaff,  // 이전에 렌더링 된 expert (현재 해당 state 는 사용하지않음)
-            // prevStaffAll: undefined,              // 이전에 렌더링 된 experts (현재 해당 state 는 사용하지않음)
             renderedStaff: undefined, // 현재 타임라인에 렌더링 된 expert
             lastStaff: undefined, // 타임라인을 재 렌더링 할때 기준이되는 expert (해당 expert로 렌더링됨)
             // ... etc
@@ -56,6 +61,7 @@ class WeeklyCalendar extends Component {
         this.beforeInitConfirmRenderNewSchedule = this.beforeInitConfirmRenderNewSchedule.bind(this);
         this.modalConfirmHide = this.modalConfirmHide.bind(this);
         this.checkBindedStates = this.checkBindedStates.bind(this);
+        this.checkBindedSlot = this.checkBindedSlot.bind(this);
         /* OFFT TIME 관련 */
         this.bindNewOfftime = this.bindNewOfftime.bind(this);
         this.renderNewOfftime = this.renderNewOfftime.bind(this);
@@ -68,7 +74,6 @@ class WeeklyCalendar extends Component {
         this.changeView = this.changeView.bind(this);
         this.bindTimelineScroller = this.bindTimelineScroller.bind(this);
         this.toggleCreateOrderUi = this.toggleCreateOrderUi.bind(this);
-        this.setCalendarHeight = this.setCalendarHeight.bind(this);
         this.changeDateBasic = this.changeDateBasic.bind(this);
         this.changeDate = this.changeDate.bind(this);
         this.isChangeDate = this.isChangeDate.bind(this);
@@ -91,7 +96,6 @@ class WeeklyCalendar extends Component {
 
         // console.log($(Calendar).fullCalendar('getView').end.format('YYYY-MM-DD HH:mm:ss'));
         // console.log($(Calendar).fullCalendar('getView').intervalEnd.format());
-
     }
 
     initRender() {
@@ -288,7 +292,7 @@ class WeeklyCalendar extends Component {
         if (this.state.isCreateOfftime)
             // 시간을 지정하지 않고 예약생성 혹은 offtime생성을 하는 단계에서 도중에 날짜이동을 한 경우 bg highlight 이벤트를 재실행
             this.eventSlotHighlight(true, 'off-time');
-        else if (this.props.isNewOrder) {
+        else if (this.state.isNewOrder) {
             // this.eventSlotHighlight(true, 'event');
             // $('#render-confirm').show();
             if (this.state.newScheduleID) {
@@ -366,18 +370,6 @@ class WeeklyCalendar extends Component {
             }
             );
         }, timeout);
-    }
-
-    // 예약생성모듈 활성화시 Calendar Height 사이즈를 조절합니다
-    setCalendarHeight(isDestroy) {
-        const { Calendar } = this.refs;
-        const staffsUiHeight = 38 - 17; // 17 = window scrollbar height
-        const moduleHeight = 590;
-
-        if (isDestroy)
-            $(Calendar).fullCalendar('option', 'height', window.innerHeight - staffsUiHeight);
-        else
-            $(Calendar).fullCalendar('option', 'height', (window.innerHeight - moduleHeight) - staffsUiHeight);
     }
 
     // 타임라인 내 예약생성 (+) 버튼 클릭시 ui toggling
@@ -634,6 +626,16 @@ class WeeklyCalendar extends Component {
         $('.fc-fake-event').remove();
         this.eventSlotHighlight(false, 'event');
         this.setState({ isRenderConfirm: false, newScheduleServiceTime: undefined });
+    }
+
+    // 타임라인 내 슬롯 예약생성 관련 버튼 클릭이벤트
+    checkBindedSlot(e) {
+        if (this.state.isCreateOfftime)
+            this.bindNewOfftime('render', 'offtime');
+        else if (this.state.unknownStart || this.state.isEditEvent) {
+          // ...
+        } else
+          this.toggleCreateOrderUi(e);
     }
 
     // Offtime 스케쥴 생성 1/2 (바인딩단계)
@@ -1025,7 +1027,7 @@ class WeeklyCalendar extends Component {
         }
         $('.create-order-wrap.fixed').removeClass('hidden');
         $('#render-confirm').hide();
-        this.setState({ isNewOrder: false });
+        this.props.newOrderCancel();
     }
 
     isRenderEventConfirm(bool) {
@@ -1147,7 +1149,7 @@ class WeeklyCalendar extends Component {
     changeStaff(staff, input, callback) {
         // $('.fc-view-container .fc-body').addClass('fade-loading');
         const { Calendar } = this.refs;
-        if (this.props.isNewOrder)
+        if (this.state.isNewOrder)
             this.refs.NewOrder.setNewOrderStaff(staff);
         this.setState({
             priorityStaff: staff,
@@ -1455,35 +1457,6 @@ class WeeklyCalendar extends Component {
 
     render() {
         const Staffs = this.props.staffs;
-        let StaffsInterfaceComponent = null;
-
-        StaffsInterfaceComponent = (
-          <div className="expert-wrap">
-            <div className="expert-ui expert-weekly">
-              <div className="expert-inner">
-                { !_.isEmpty(Staffs) ? Staffs.map((staff, i) => (
-                  <div className="expert-each" key={i}>
-                    <input
-                      disabled={this.state.isRenderConfirm}
-                      className="expert-input"
-                      type="radio"
-                      name="expert_w"
-                      id={`expert_w_${staff.id}`}
-                      value={staff.id}
-                      onChange={input => this.changeStaff(staff, input)}
-                    />
-                    <label className="expert-label" htmlFor={`expert_w_${staff.id}`}>
-                      <span>{staff.nickname || staff.staff_name}</span>
-                      <i className="today-count">{9}</i>
-                    </label>
-                  </div>
-                            ))
-                        : ''
-                      }
-              </div>
-            </div>
-          </div>
-        );
 
         const viewstate = (
           <dl className="viewstate fc">
@@ -1503,7 +1476,7 @@ class WeeklyCalendar extends Component {
                         ? 'true'
                         : ''}</dd>
             <dt>isNewOrder :</dt>
-            <dd>{this.props.isNewOrder
+            <dd>{this.state.isNewOrder
                         ? 'true'
                         : ''}</dd>
             <dt>isRequestReservation:
@@ -1570,13 +1543,6 @@ class WeeklyCalendar extends Component {
             <dd>{this.state.priorityStaff
                         ? this.state.priorityStaff.label
                         : ''}</dd>
-            {/*
-                  <dt>prevStaff</dt>
-                  <dd>{this.state.prevStaff
-                          ? this.state.prevStaff.label
-                          : ""}</dd>
-                          */}
-            {/* <dt>prevStaffAll</dt><dd>{this.state.prevStaffAll ? this.state.prevStaffAll.map((expert,i)=>{return expert.title+","}): ""}</dd>*/}
             <dt>lastStaff</dt>
             <dd>{this.state.lastStaff
                         ? this.state.lastStaff.label
@@ -1596,6 +1562,25 @@ class WeeklyCalendar extends Component {
           </dl>
         );
 
+        const NewOrderComponent = (
+          <NewOrder
+            ref="NewOrder"
+            beforeInitConfirmRenderNewSchedule={(bool, newSchedule) => this.beforeInitConfirmRenderNewSchedule(bool, newSchedule)}
+            newOrderCancel={this.newOrderCancel}
+            changeView={type => this.changeView(type)}
+            backToOrder={this.backToOrder}
+            renderNewScheduleUnknownStart={this.renderNewScheduleUnknownStart}
+            unknownStart={this.state.unknownStart}
+            isEditEvent={this.state.isEditEvent}
+            isRequestReservation={this.state.isRequestReservation}
+            willEditEventObject={this.state.selectedSchedule}
+            isModalConfirm={this.state.isModalConfirm}
+            isRenderConfirm={this.state.isRenderConfirm}
+            selectedDate={this.state.selectedDate}
+            selectedStaff={this.state.renderedStaff}
+          />
+        );
+
         const test = (
           <button
             style={{
@@ -1610,14 +1595,45 @@ class WeeklyCalendar extends Component {
             </button>
         );
 
+        const DatePickerComponent = (
+          <DatePicker
+            className="timeline-date-picker"
+            selectedDate={this.state.timelineDate}
+            onChange={this.changeDate}
+            onClose={() => this.isChangeDate(false)}
+          />
+        )
+
+        const CreateOrderButtonDirectProps = {
+            handleClickSlot: this.checkBindedSlot,
+            handleClickReservation: this.newOrder,
+            handleClickOfftime: this.bindNewOfftime,
+            classes: this.state.isCreateOfftime ? 'off-time' :
+                    this.state.unknownStart ? 'has-card' :
+                      this.state.isEditEvent ? 'edit' : '',
+            buttonClasses: this.state.unknownStart || this.state.isEditEvent ? 'create-evnet' : '',
+        };
+
+        const TodayTimelineButtonProps = {
+            isToday: moment(this.state.timelineDate).isSame(moment(new Date()), 'day'),
+            dateText: moment(new Date()).format('DD'),
+            handleClick: () => this.changeDate(moment(new Date()))
+        }
+
+        const StaffsInterfaceProps = {
+            staffs: this.props.staffs,
+            isRenderConfirm: this.state.isRenderConfirm,
+            handleChange: this.changeStaff
+        }
+
         return (
           <div ref="Calendar" id="weekly">
-            {this.props.getNewOrderComponent(this, 'agendaWeekly')}
-            {StaffsInterfaceComponent}
-            {this.props.getTodayTimelineButton(this)}
-            {this.props.getCreateOrderButtonFixed(this)}
-            {this.props.getCreateOrderButtonTimeline(this, 'agendaWeekly')}
-            {this.props.getDatePickerComponent(this)}
+            <StaffsInterfaceWeekly {...StaffsInterfaceProps} />
+            {this.props.newOrderConfig.condition && NewOrderComponent}
+            <TodayTimelineButton {...TodayTimelineButtonProps} />
+            <CreateOrderButtonDirect {...CreateOrderButtonDirectProps} />
+            <CreateOrderButtonQuick />
+            {this.state.isChangeDate && DatePickerComponent}
             {this.props.getUserCardComponent(this)}
             {this.props.getModalConfirmComponent(this)}
             {this.props.getRenderConfirmComponent(this, 'agendaWeekly')}
@@ -1638,7 +1654,8 @@ WeeklyCalendar.defaultProps = {
 
 const mapStateToProps = state => ({
     modalConfirmOptionComponent: state.modalConfirm.optionComponent,
-    requestReservation: state.notifier.requestReservation
+    requestReservation: state.notifier.requestReservation,
+    newOrderConfig: state.newOrderConfig,
 });
 const mapDispatchToProps = dispatch => ({
     initUserCard: (options) => {

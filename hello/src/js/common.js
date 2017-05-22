@@ -1,8 +1,8 @@
 import moment from 'moment';
 
 // print warring message
-export function printWarring(msg) {
-    console.warn(`${msg} is undefined`);
+export function createWarning(method) {
+    console.warn(`@@ ${method} is not defined !`);
 }
 
 // return client browser info (IE)
