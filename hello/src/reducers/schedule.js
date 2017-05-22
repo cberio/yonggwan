@@ -8,6 +8,10 @@ const initialState = {
 };
 
 const schedules = (state = initialState, action) => {
+    // 등록/수정/삭제 등 기존 state의 변경에 따른
+    // schedules.data의 값을 대체하기 위한 변수
+    let data;
+
     switch (action.type) {
         case types.INVALIDATE_SHOP:
             return {
@@ -35,7 +39,7 @@ const schedules = (state = initialState, action) => {
                 didInvalidate: false,
             };
         case types.SCHEDULE_CREATED:
-            const data = update(state.schedules.data, 
+            data = update(state.schedules.data, 
                 { $push: [action.createdSchedule.data] }
             );
             return {
@@ -47,6 +51,27 @@ const schedules = (state = initialState, action) => {
                     data,
                 },
                 createdSchedule: action.createdSchedule,
+                receivedAt: action.receivedAt
+            };
+        case types.UPDATE_SCHEDULE:
+            return {
+                ...state,
+                isFetching: true,
+                didInvalidate: false,
+            };
+        case types.SCHEDULE_UPDATED:
+            data = update(state.schedules.data, 
+                { $push: [action.updatedSchedule.data] }
+            );
+            return {
+                ...state,
+                isFetching: false,
+                didInvalidate: false,
+                schedules: {
+                    ...state.schedules,
+                    data,
+                },
+                updatedSchedule: action.updatedSchedule,
                 receivedAt: action.receivedAt
             };
         default:

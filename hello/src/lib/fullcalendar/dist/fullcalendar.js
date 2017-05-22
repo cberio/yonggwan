@@ -7905,9 +7905,9 @@ TimeGrid.mixin({
 							(event.shop_service_id ?
 								'<div class="fc-product">' +
 								// 20분이하의 상품인경우 글자수 자름?
-								(fromMinutes <= 20 && htmlEscape(thisService.name).length > 15?
-									htmlEscape(thisService.name).slice(0, 15) + '...' :
-									htmlEscape(thisService.name)
+								(fromMinutes <= 20 && htmlEscape(thisService ? thisService.name : '').length > 15?
+									htmlEscape(thisService ? thisService.name : '').slice(0, 15) + '...' :
+									htmlEscape(thisService ? thisService.name : '')
 								) +
 								'</div>' :
 								''
