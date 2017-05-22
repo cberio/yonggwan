@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import PropTypes from 'prop-types';
 import ReactDOM from 'react-dom';
 import $ from 'jquery';
 import { connect } from 'react-redux';
@@ -979,53 +980,64 @@ class DailyCalendar extends Component {
             eventDragStop: function(schedule, jsEvent, ui, view) {
                 // 신규 생성한 이벤트가 esc keydown 삭제 바인딩 되있을경우
                 component.setState({isDragging: false});
-                if (component.state.isAbleBindRemoveEvent) {
-                    component.setState({newScheduleId: undefined, isAbleBindRemoveEvent: false});
-                }
+
                 $(document).unbind('mousemove');
             },
+            eventDrop: function(event, delta, revertFunc, jsEvent, ui, view ) {
+                const start_time = moment(event.start).format('HH:mm');
+                const end_time = moment(event.end).format('HH:mm');
+                const staff_id = parseInt(event.resourceId);
+                // console.info(staff_id);
+                // prevent (Converting circular structure to JSON) error
+                const scheduleData = {
+                    ...event,
+                    start_time,
+                    end_time,
+                    staff_id,
+                    source: {}
+                };
+
+                component.props.patchSchedule(scheduleData).then((response) => {
+                    if (!response.updatedSchedule.success)
+                        revertFunc();
+                });
+            },
+            // 변경된 시간이 다를경우 실행
             eventResize: function(schedule, delta, revertFunc, jsEvent, ui, view) {
-                /// 생성버튼 캘린더 타임라인 노드에서 상위 노드로 삽입
-                $('.full-calendar > .fc').append($('.create-order-wrap.timeline').hide());
-                // 신규 생성한 이벤트가 esc keydown 삭제 바인딩 되있을경우
-                if (component.state.isAbleBindRemoveEvent) {
-                    component.setState({newScheduleId: undefined, isAbleBindRemoveEvent: false});
-                }
-                // 30분 이하의 이벤트의 element에 클래스 추가
-                if (Functions.millisecondsToMinute(
-                  moment(schedule.reservation_dt + 'T'+ schedule.end_time)
-                    .diff(schedule.reservation_dt +'T'+ schedule.start_time)
-                ) <= 30) {
-                    setTimeout(function() {
-                        // 20분 이하의 이벤트인경우
-                        if (Functions.millisecondsToMinute(
-                          moment(schedule.reservation_dt + 'T'+ schedule.end_time)
-                            .diff(schedule.reservation_dt +'T'+ schedule.start_time)
-                          ) <= 20) {
-                            $('.fc-event#ID_' + schedule.id).addClass('fc-short');
-                        } else {
-                            $('.fc-event#ID_' + schedule.id).addClass('fc-short no-expand');
-                        }
-                    }, 0);
-                }
+                const { start, end } = schedule;
+                const serviceTime = end.diff(start, 'minutes');
+                const start_time = start.format('HH:mm');
+                const end_time = end.format('HH:mm');
+
                 // 20분 미만으로 이벤트 시간을 수정할 경우 수정을 되돌린다.
-                if (Functions.millisecondsToMinute(
-                  moment(schedule.reservation_dt + 'T'+ schedule.end_time)
-                  .diff(schedule.reservation_dt +'T'+ schedule.start_time)
-                ) < 20) {
+                if (serviceTime < 20) {
                     revertFunc();
                     alert('변경할 수 없습니다');
+
+                    return;
                 }
+
+                // 생성버튼 캘린더 타임라인 노드에서 상위 노드로 삽입
+                $('.full-calendar > .fc').append($('.create-order-wrap.timeline').hide());
+
+                // 30분 이하의 이벤트의 element에 클래스 추가
+                if (serviceTime <= 30) {
+                    // 20분 이하의 이벤트인경우
+                    if (serviceTime <= 20)
+                        $('.fc-event#ID_' + schedule.id).addClass('fc-short');
+                    else
+                        $('.fc-event#ID_' + schedule.id).addClass('fc-short no-expand');
+                }
+
                 if (schedule.id === component.state.newScheduleId) {
                     // off-time slot의 new evnet 클래스 시각적 제거
-                    setTimeout(function() {
-                        $('#ID_' + schedule.id).removeClass('new-event');
-                    }, 1);
+                    $('#ID_' + schedule.id).removeClass('new-event');
                 }
             },
             eventResizeStart: function(schedule, jsEvent, ui, view) {
                 component.setState({isDragging: true});
             },
+            // 변경된 시간이 같더라도 항상 실행
             eventResizeStop: function(schedule, jsEvent, ui, view) {
                 component.setState({isDragging: false});
             },
@@ -1037,6 +1049,7 @@ class DailyCalendar extends Component {
                 // ...
             },
             eventRender: function(schedule, element, view) {
+
             },
             // 캘린더 이벤트 day 렌더링시
             dayRender: function(d, cell) {
@@ -1429,6 +1442,7 @@ DailyCalendar.propTypes = {
         guests: PropTypes.object,
     }).isRequired,
 }
+
 const mapStateToProps = (state) => {
     return {
       modalConfirmOptionComponent: state.modalConfirm.optionComponent,
@@ -1447,9 +1461,9 @@ const mapDispatchToProps = (dispatch) => {
         },
         guider: (message) => dispatch(actions.guider({isGuider: true, message: message})),
         loading: (condition) => dispatch(actions.loading(condition)),
-        finishRequestReservation: () => dispatch(actions.requestReservation({condition: false, requestEvent: undefined}))
-        , saveSchedule: scheduleData => (dispatch(actions.saveSchedule(scheduleData))),
-        patchSchedule: scheduleData => (dispatch(actions.patchSchedule(scheduleData))),
+        finishRequestReservation: () => dispatch(actions.requestReservation({condition: false, requestEvent: undefined})),
+        saveSchedule: scheduleData => dispatch(actions.saveSchedule(scheduleData)),
+        patchSchedule: scheduleData => dispatch(actions.patchSchedule(scheduleData)),
     }
 }
 
