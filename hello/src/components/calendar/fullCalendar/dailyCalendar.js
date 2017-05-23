@@ -1492,35 +1492,22 @@ class DailyCalendar extends Component {
     }
 }
 
-
 DailyCalendar.defaultProps = {
     requestReservation: {
         condition: false,
         requestEvent: {}
-    }
+    },
+    staffs: [],
+    schedules: [],
+    services: [],
+    guests: [],
 };
 
 DailyCalendar.propTypes = {
-    staffs: PropTypes.shape({
-        isFetching: PropTypes.bool,
-        didInvalidate: PropTypes.bool,
-        staffs: PropTypes.object,
-    }).isRequired,
-    schedules: PropTypes.shape({
-        isFetching: PropTypes.bool,
-        didInvalidate: PropTypes.bool,
-        schedules: PropTypes.object,
-    }).isRequired,
-    services: PropTypes.shape({
-        isFetching: PropTypes.bool,
-        didInvalidate: PropTypes.bool,
-        services: PropTypes.object,
-    }).isRequired,
-    guests: PropTypes.shape({
-        isFetching: PropTypes.bool,
-        didInvalidate: PropTypes.bool,
-        guests: PropTypes.object,
-    }).isRequired,
+    staffs: PropTypes.arrayOf(PropTypes.object),
+    schedules: PropTypes.arrayOf(PropTypes.object),
+    services: PropTypes.arrayOf(PropTypes.object),
+    guests: PropTypes.arrayOf(PropTypes.object),
 };
 
 const mapStateToProps = state => ({
