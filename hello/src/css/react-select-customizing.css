@@ -54,7 +54,7 @@
 .Select--single > .Select-control .Select-value {
   cursor: pointer;font-size: 0; letter-spacing: -0.2px; color: #b2b2b2;
   max-width: 90%;vertical-align: middle;height: 40px;bottom: 0;left: 0;
-  line-height: 40px;padding: 0 20px; position: absolute;right: 0;top: 0;
+  line-height: 40px;padding: 0 3px 0 20px; position: absolute;right: 0;top: 0;
   overflow: hidden;-ms-text-overflow: ellipsis;text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -65,7 +65,7 @@
 .has-value.is-pseudo-focused.Select--single > .Select-control .Select-value .Select-value-label {
   font-size: 14px; display: inline-block;letter-spacing: -0.2px; color: #000;
   max-width: 100%;overflow: hidden;-ms-text-overflow: ellipsis;vertical-align: middle;
-  white-space: nowrap;text-overflow: ellipsis;vertical-align: middle;height: 40px;
+  white-space: nowrap;text-overflow: ellipsis;vertical-align: middle;height: 40px;padding-right: 17px;
 }
 .Select-input{
   width: 100%;
@@ -312,7 +312,7 @@
 .search-product .Select-option .label {
   font-size: 15px;
   color: #666666;
-  max-width: 55%;
+  max-width: 50%;
   float: left;
   white-space: nowrap;
   text-overflow: ellipsis;

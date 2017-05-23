@@ -1392,6 +1392,8 @@
 .expert-ui.expert-daily {
 	display: table;
 	width: 100%;
+	position: relative;
+	z-index: 2;
 }
 .expert-ui.expert-daily .expert-inner {
 	display: table-row;

@@ -5,7 +5,8 @@ const configInitialState = {
     condition: false, // boolean
     status: actions.NewOrderStatus.DIRECT,
     staff: {}, // object
-    guest: {}  // object
+    guest: {},  // object
+    savedSchedule: {} // object
 };
 const scheduleInitialState = {
     id: -1,

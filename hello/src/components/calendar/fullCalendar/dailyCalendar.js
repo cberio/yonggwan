@@ -652,14 +652,19 @@ class DailyCalendar extends Component {
             // component.state.isAbleBindRemoveEvent 가 true일경우 ESC key등의 이벤트 발생시 삭제가 가능하도록 접근성 바인딩을 합니다
             $(document).bind('keydown', (e) => {
                 if (e.which === 27 && !component.state.isModalConfirm) {
-                    component.props.patchSchedule(createdSchedule).then((responses) => {
+                    const editSchedule = {
+                        ...createdSchedule,
+                        status: actions.ScheduleStatus.CANCEL,
+                    };
+
+                    component.props.patchSchedule(editSchedule).then((responses) => {
                         if (!responses.updatedSchedule.success)
                             return;
                         // 생성버튼 캘린더 타임라인 노드에서 상위 노드로 삽입 (event remove 시 버튼의 부모 dom이 다시 그려지면서 버튼 dom도 사라지기떄문)
                         $('.full-calendar > .fc').append($('.create-order-wrap.timeline').hide());
                         $(Calendar).fullCalendar('removeEvents', [createdSchedule.id]);
                         component.props.guider('OFF TIME이 삭제되었습니다!');
-                    });
+                      });
                     $(document).unbind('keydown');
                 }
             });
@@ -807,6 +812,7 @@ class DailyCalendar extends Component {
         // selectedDate={this.state.selectedDate}
         // selectedStaff={this.state.renderedStaff}
       */
+        const saveSchedule = '';
         const initStates = {
             status
         }
@@ -817,12 +823,14 @@ class DailyCalendar extends Component {
                 staff: state.renderedStaff.length > 1 ? state.defaultStaff : state.renderedStaff[0],
                 start: this.state.selectedDate
             });
+
         } else {
             // INIT NEWORDER
             this.props.newOrderInit({
                 ...initStates,
                 staff: this.state.selectedStaff,
                 start: this.state.selectedDate,
+                savedSchedule: this.props.schedules[1] //임시
             });
         }
     }
@@ -1418,15 +1426,15 @@ class DailyCalendar extends Component {
 
         const NewOrderComponent = (
             <NewOrder
-                ref={(c) => { this.NewOrder = c; }}
+                ref={(c) => { this.NewOrderComponent = c; }}
                 newOrderFinish={this.newOrderFinish}
                 changeView={type => this.changeView(type)}
                 backToOrder={this.backToOrder}
                 isEditEvent={this.state.isEditEvent}
                 isModalConfirm={this.state.isModalConfirm}
                 isRenderConfirm={this.state.isRenderConfirm}
+                saveNewSchedule={this.saveNewSchedule}
                 /* beforeInitConfirmRenderNewSchedule={(bool, newSchedule) => this.beforeInitConfirmRenderNewSchedule(bool, newSchedule)}
-                unknownStart={this.state.unknownStart}
                 renderNewScheduleUnknownStart={this.renderNewScheduleUnknownStart}
                 isRequestReservation={this.state.isRequestReservation}
                 willEditEventObject={this.state.selectedSchedule}

@@ -9,6 +9,7 @@ import { SearchGuest, SearchService, Selectable } from '../select';
 import Staffs from '../../../data/staffs';
 import Services from '../../../data/services';
 import Guests from '../../../data/guests';
+import Draggable from 'react-draggable';
 import CSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 import * as actions from '../../../actions';
 import * as Functions from '../../../js/common';
@@ -44,16 +45,32 @@ class NewOrder extends Component {
         this.inputChangeUserSex = this.inputChangeUserSex.bind(this);
         this.inputChangeOrderStart = this.inputChangeOrderStart.bind(this);
         this.inputChangeOrderEnd = this.inputChangeOrderEnd.bind(this);
+        this.getTitle = this.getTitle.bind(this);
+    }
+
+    test (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      console.info(e)
     }
 
     createWarning(msg) {
         console.warn(`${msg} prop is undefined`);
     }
 
+    getTitle(status) {
+        switch (status) {
+            case actions.NewOrderStatus.DIRECT :
+                return '예약생성';
+            default:
+                return '예약';
+        }
+    }
+
     documentBinding() {
         const component = this;
     // ESC key 입력시 닫기
-        $(document).bind('keydown', (e) => {
+        $(window).bind('keydown', (e) => {
             if (e.which === 27 && !component.props.isModalConfirm && !component.props.isRenderConfirm) {
                 if (component.state.newOrderStep < 3)
                     component.props.newOrderFinish();
@@ -93,10 +110,25 @@ class NewOrder extends Component {
             $('.create-order-wrap.fixed').removeClass('hidden');
     }
 
-    insertComponent(unknownStart) {
-        if (!unknownStart) {
+    insertComponent(savedScheduleObject) {
+        const scrollerX = $('#daily .fc-view-container');
+        const scrollerY = $('.fc-scroller.fc-time-grid-container');
 
-        }
+        const insert = (scheduleObject) => {
+            if (!_.isEmpty(scheduleObject)) {
+                const savedDomElement = $(`#ID_${scheduleObject.id}`);
+                if (savedDomElement.length) {
+                    const left = savedDomElement.offset().left + savedDomElement.width()/2;
+                    const top = savedDomElement.offset().top;
+                    $(this.Container).find('.new-order').css({ left, top });
+                }
+            }
+        };
+        // $(scrollerX).scroll((e) => { insert(this.props.newOrderConfig.savedSchedule); });
+        // $(scrollerY).scroll((e) => { insert(this.props.newOrderConfig.savedSchedule); });
+
+        // 초기 한번 실행
+        insert(savedScheduleObject);
     }
 
     setNewOrderStaff(staff) {
@@ -118,11 +150,16 @@ class NewOrder extends Component {
                 this.changeStep(2);
                 break;
             case 2 :
-                if (this.props.newOrderConfig.status === actions.NewOrderStatus.QUICK)
-                    this.props.renderNewScheduleUnknownStart(true, this.state);
-                else
-                    this.props.beforeInitConfirmRenderNewSchedule(true, this.state);
-                    
+                switch (this.props.newOrderConfig.status) {
+                    case actions.NewOrderStatus.QUICK :
+                        this.props.renderNewScheduleUnknownStart(true, this.state);
+                        break;
+                    case actions.NewOrderStatus.DIRECT :
+                        this.props.beforeInitConfirmRenderNewSchedule(true, this.state);
+                        break;
+                    default:
+                        break;
+                }
                 this.setState({ newOrderStep: 3 });
                 break;
             case 3 :
@@ -201,15 +238,14 @@ class NewOrder extends Component {
     inputChangeOrderEnd(e) { this.setState({ newOrderEnd: e.target.value }); }
 
     componentDidMount() {
-      setTimeout(function(){
-        //debugger;
-      },2000)
     // Window event binding
         this.documentBinding();
     // init insert NewOrder component
-        this.insertComponent(this.props.unknownStart);
+        if (this.props.newOrderConfig.status === actions.NewOrderStatus.DIRECT)
+            this.insertComponent(this.props.newOrderConfig.savedSchedule);
+
     // 예약수정, 예약요청확인 인경우
-        if (this.props.isEditEvent)
+        if (this.props.newOrderConfig.status === actions.NewOrderStatus.REQUESTED)
             this.initEditEvent(this.props.willEditEventObject);
     // 스타일 적용
         this.toggleInterfaces(true);
@@ -222,7 +258,7 @@ class NewOrder extends Component {
     render() {
         const state = this.state;
         const step = this.state.newOrderStep;
-        const title = this.props.isRequestReservation ? '예약요청 확인' : this.props.isEditEvent ? '예약변경' : '예약생성';
+        const title = this.getTitle(this.props.newOrderConfig.status);
 
         const newOrderStep1 = (
             <CSSTransitionGroup
@@ -388,9 +424,23 @@ class NewOrder extends Component {
             </div>
         );
 
+        const classes = ['new-order-wrap'];
+        classes.push(`step-${this.state.newOrderStep}`);
+        if (!_.isEmpty(this.props.newOrderConfig.savedSchedule))
+            classes.push('inner-event');
+        else
+            classes.push('overlay');
+        if (this.props.unknownStart || this.props.isEditEvent)
+            classes.push('fixed');
+        else
+            classes.push('hidden');
+
         return (
-            <div className={`new-order-wrap step-${this.state.newOrderStep} ${this.props.unknownStart || this.props.isEditEvent ? 'fixed' : 'hidden'}`}>
-                <div className="viewstate order" style={{ display: 'block', top: '400px' }}>
+            <div
+                ref={(c) => { this.Container = c; }}
+                className={classes.join(' ')}
+            >
+                <div className="viewstate order" style={{ display: 'none', top: '400px' }}>
                     <button onClick={() => { $('.viewstate.order').hide(); }}>X</button>
                     <div>{JSON.stringify(this.props.newOrderConfig)}</div>
                     <div>{JSON.stringify(this.props.newOrderSchedule)}</div>
@@ -407,14 +457,14 @@ class NewOrder extends Component {
                     <span>newOrderTime</span> : {this.state.newOrderTime ? this.state.newOrderTime : ''} <br /><br />
                     <span>고객유형: </span> {!_.isEmpty(this.state.newOrderGuest) ? '등록되어있는 고객' : '입력하지 않았거나 신규입력 고객'}<br />
                     <span>newOrderGuest</span> :
-                {!_.isEmpty(this.state.newOrderGuest) ? (
-                    <div>
-                        <i style={{ paddingRight: '7px' }}>id:</i><p>{this.state.newOrderGuest.id}</p>
-                        <i style={{ paddingRight: '7px' }}>name:</i><p>{this.state.newOrderGuest.guest_name}</p>
-                        <i style={{ paddingRight: '7px' }}>phone:</i><p>{this.state.newOrderGuest.guest_mobile}</p>
-                        <i style={{ paddingRight: '7px' }}>class:</i><p>{this.state.newOrderGuest.guest_class}</p>
-                    </div>
-              ) : ''}
+                      {!_.isEmpty(this.state.newOrderGuest) ? (
+                          <div>
+                              <i style={{ paddingRight: '7px' }}>id:</i><p>{this.state.newOrderGuest.id}</p>
+                              <i style={{ paddingRight: '7px' }}>name:</i><p>{this.state.newOrderGuest.guest_name}</p>
+                              <i style={{ paddingRight: '7px' }}>phone:</i><p>{this.state.newOrderGuest.guest_mobile}</p>
+                              <i style={{ paddingRight: '7px' }}>class:</i><p>{this.state.newOrderGuest.guest_class}</p>
+                          </div>
+                    ) : ''}
                 </div>
                 <CSSTransitionGroup
                     transitionName="new-order"
@@ -423,55 +473,51 @@ class NewOrder extends Component {
                     transitionLeave={false}
                     transitionAppearTimeout={200}
                 >
-                    <div className="new-order">
-                        <div className="new-order-head">
-                            <h2>{title}</h2>
-                            <button className="new-order-close ir" onClick={this.props.newOrderFinish}>닫기</button>
-                        </div>
-                        <div className="new-order-body">
-                            <div className="service-input-wrap">
-                                <h3 className={step === 1 ? 'active' : ''}>
-                                    {step !== 1 && !_.isEmpty(this.state.newOrderGuest) ? (
-                                        <span className="step-index has-values">1</span>
-                        ) : (
-                            <span className="step-index">1</span>
-                        )
-                      }
-                                    <button
-                                        onClick={() => { this.changeStep(1); }}
-                                        disabled={false}
-                                    >
-                        고객정보 입력
-                      </button>
-                                </h3>
-                                <div className="service-input-inner">
-                                    { step === 1 ? newOrderStep1 : '' }
+                    <Draggable>
+                        <div className="new-order">
+                            <div className="new-order-head">
+                                <h2>{title}</h2>
+                                <button className="new-order-close ir" onClick={this.props.newOrderFinish}>닫기</button>
+                            </div>
+                            <div className="new-order-body">
+                                <div className="service-input-wrap">
+                                    <h3 className={step === 1 ? 'active' : ''}>
+                                        {step !== 1 && !_.isEmpty(this.state.newOrderGuest) ? (
+                                            <span className="step-index has-values">1</span>
+                                          ) : (
+                                              <span className="step-index">1</span>
+                                          )
+                                        }
+                                        <button onClick={() => { this.changeStep(1); }} disabled={false}>
+                                          고객정보 입력
+                                        </button>
+                                    </h3>
+                                    <div className="service-input-inner">
+                                        { step === 1 ? newOrderStep1 : '' }
+                                    </div>
+                                </div>
+                                <div className="service-input-wrap">
+                                    <h3 className={step === 2 ? 'active' : ''}>
+                                        {step !== 2 && !_.isEmpty(this.state.newOrderService) && !_.isEmpty(this.state.newOrderStaff) ? (
+                                            <span className="step-index has-values">2</span>
+                                          ) : (
+                                              <span className="step-index">2</span>
+                                          )
+                                        }
+                                        <button onClick={() => { this.changeStep(2); }} disabled={false}>
+                                          서비스 선택
+                                        </button>
+                                    </h3>
+                                    <div className="service-input-inner">
+                                        { step === 2 ? newOrderStep2 : '' }
+                                    </div>
                                 </div>
                             </div>
-                            <div className="service-input-wrap">
-                                <h3 className={step === 2 ? 'active' : ''}>
-                                    {step !== 2 && !_.isEmpty(this.state.newOrderService) && !_.isEmpty(this.state.newOrderStaff) ? (
-                                        <span className="step-index has-values">2</span>
-                        ) : (
-                            <span className="step-index">2</span>
-                        )
-                      }
-                                    <button
-                                        onClick={() => { this.changeStep(2); }}
-                                        disabled={false}
-                                    >
-                        서비스 선택
-                      </button>
-                                </h3>
-                                <div className="service-input-inner">
-                                    { step === 2 ? newOrderStep2 : '' }
-                                </div>
+                            <div className="new-order-foot">
+                                {ButtonElements}
                             </div>
                         </div>
-                        <div className="new-order-foot">
-                            {ButtonElements}
-                        </div>
-                    </div>
+                    </Draggable>
                 </CSSTransitionGroup>
             </div>
         );
