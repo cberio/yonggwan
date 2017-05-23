@@ -1067,14 +1067,14 @@ class DailyCalendar extends Component {
 
                 $(document).unbind('mousemove');
             },
-            eventDrop(event, delta, revertFunc, jsEvent, ui, view) {
-                const start_time = moment(event.start).format('HH:mm');
-                const end_time = moment(event.end).format('HH:mm');
-                const staff_id = parseInt(event.resourceId);
-                // console.info(staff_id);
+            eventDrop(schedule, delta, revertFunc, jsEvent, ui, view) {
+                const start_time = moment(schedule.start).format('HH:mm');
+                const end_time = moment(schedule.end).format('HH:mm');
+                const staff_id = parseInt(schedule.resourceId);
+
                 // prevent (Converting circular structure to JSON) error
                 const scheduleData = {
-                    ...event,
+                    ...schedule,
                     start_time,
                     end_time,
                     staff_id,
@@ -1093,6 +1093,14 @@ class DailyCalendar extends Component {
                 const start_time = start.format('HH:mm');
                 const end_time = end.format('HH:mm');
 
+                // prevent (Converting circular structure to JSON) error
+                const scheduleData = {
+                    ...schedule,
+                    start_time,
+                    end_time,
+                    source: {}
+                };
+
                 // 20분 미만으로 이벤트 시간을 수정할 경우 수정을 되돌린다.
                 if (serviceTime < 20) {
                     revertFunc();
@@ -1108,16 +1116,20 @@ class DailyCalendar extends Component {
                 if (serviceTime <= 30) {
                     // 20분 이하의 이벤트인경우
                     if (serviceTime <= 20)
-                        $('.fc-event#ID_' + schedule.id).addClass('fc-short');
+                        $(`.fc-event#ID_${schedule.id}`).addClass('fc-short');
                     else
-                        $('.fc-event#ID_' + schedule.id).addClass('fc-short no-expand');
+                        $(`.fc-event#ID_${schedule.id}`).addClass('fc-short no-expand');
                 }
 
                 if (schedule.id === component.state.newScheduleId) {
                     // off-time slot의 new evnet 클래스 시각적 제거
-                    $('#ID_' + schedule.id).removeClass('new-event');
-
+                    $(`#ID_${schedule.id}`).removeClass('new-event');
                 }
+
+                component.props.patchSchedule(scheduleData).then((response) => {
+                    if (!response.updatedSchedule.success)
+                        revertFunc();
+                });
             },
             eventResizeStart(schedule, jsEvent, ui, view) {
                 component.setState({ isDragging: true });
