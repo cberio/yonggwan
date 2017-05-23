@@ -978,9 +978,9 @@ class DailyCalendar extends Component {
         const { Calendar } = this;
         const Staffs = this.props.staffs;
         const date = this.props.fcOptions.defaultDate;
-        const time = date.get('hour');
-        const day = date.get('date');
-        const month = date.get('month');
+        // const time = date.get('hour');
+        // const day = date.get('date');
+        // const month = date.get('month');
         const firstDay = date.format('d');
         const defaultScrollTime = date.subtract(1, 'hour').format('HH:mm'); // 현재시간으로부터 1시간 이전의 시간
         const staffsUiHeight = $('.expert-ui.expert-daily').height();
@@ -1144,7 +1144,6 @@ class DailyCalendar extends Component {
             // 캘린더 이벤트 view 렌더링시
             viewRender(view, elem) {
                 console.info('VIEW Render');
-                const { Calendar } = component;
 
                 // [1] Daily 타임라인이 다시 렌더링 된 경우
                 if (component.state.alreadyRendered)
@@ -1178,10 +1177,10 @@ class DailyCalendar extends Component {
             eventDoubleClick(calSchedule, jsEvent, view) {
                 // 신규예약 생성중에는 더블클릭 이벤트 실행않함
                 if (component.state.isNewOrder)
-                    return false;
+                    return;
                 // OFF TIME 인경우
                 if (calSchedule.status === actions.ScheduleStatus.OFFTIME)
-                    return false;
+                    return;
 
                 // *****고객카드 슬라이더를 호출함******
                 const selectedDate = moment(calSchedule.reservation_dt);
