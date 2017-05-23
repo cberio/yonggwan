@@ -653,7 +653,12 @@ class DailyCalendar extends Component {
             // component.state.isAbleBindRemoveEvent 가 true일경우 ESC key등의 이벤트 발생시 삭제가 가능하도록 접근성 바인딩을 합니다
             $(document).bind('keydown', (e) => {
                 if (e.which === 27 && !component.state.isModalConfirm) {
-                    component.props.patchSchedule(createdSchedule).then((responses) => {
+                    const cancelSchedule = {
+                        ...createdSchedule,
+                        status: actions.ScheduleStatus.CANCELED
+                    };
+
+                    component.props.patchSchedule(cancelSchedule).then((responses) => {
                         if (!responses.updatedSchedule.success)
                             return;
                         // 생성버튼 캘린더 타임라인 노드에서 상위 노드로 삽입 (event remove 시 버튼의 부모 dom이 다시 그려지면서 버튼 dom도 사라지기떄문)
