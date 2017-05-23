@@ -3,9 +3,9 @@ export const ContentType = {
     json: 'application/json',
 }
 
-export const HTTP_HEADER = (token, contentType = ContentType.formData) => ({
-    'Authorization': token,
-    'Accept': 'application/json',
+export const HTTP_HEADER = (token, contentType = ContentType.json) => ({
+    Authorization: token,
+    Accept: 'application/json',
     'Content-Type': contentType,
 });
 
