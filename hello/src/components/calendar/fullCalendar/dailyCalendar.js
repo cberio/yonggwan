@@ -1067,7 +1067,7 @@ class DailyCalendar extends Component {
 
                 $(document).unbind('mousemove');
             },
-            eventDrop: function (event, delta, revertFunc, jsEvent, ui, view) {
+            eventDrop(event, delta, revertFunc, jsEvent, ui, view) {
                 const start_time = moment(event.start).format('HH:mm');
                 const end_time = moment(event.end).format('HH:mm');
                 const staff_id = parseInt(event.resourceId);
@@ -1087,7 +1087,7 @@ class DailyCalendar extends Component {
                 });
             },
             // 변경된 시간이 다를경우 실행
-            eventResize: function (schedule, delta, revertFunc, jsEvent, ui, view) {
+            eventResize(schedule, delta, revertFunc, jsEvent, ui, view) {
                 const { start, end } = schedule;
                 const serviceTime = end.diff(start, 'minutes');
                 const start_time = start.format('HH:mm');
@@ -1123,7 +1123,7 @@ class DailyCalendar extends Component {
                 component.setState({ isDragging: true });
             },
             // 변경된 시간이 같더라도 항상 실행
-            eventResizeStop: function (schedule, jsEvent, ui, view) {
+            eventResizeStop(schedule, jsEvent, ui, view) {
                 component.setState({ isDragging: false });
             },
             windowResize(view) {
@@ -1133,7 +1133,7 @@ class DailyCalendar extends Component {
             resourceRender(resourceObj, labelTds, bodyTds) {
                 // ...
             },
-            eventRender: function (schedule, element, view) {
+            eventRender(schedule, element, view) {
 
             },
             // 캘린더 이벤트 day 렌더링시
