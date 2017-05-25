@@ -419,6 +419,29 @@ class Calendar extends Component {
     }
 }
 
+Calendar.defaultProps = {
+    staffs: {
+        isFetching: false, 
+        didInvalidate: false, 
+        staffs: []
+    },
+    schedules: {
+        isFetching: false, 
+        didInvalidate: false, 
+        schedules: []
+    },
+    services: {
+        isFetching: false, 
+        didInvalidate: false, 
+        services: []
+    },
+    guests: {
+        isFetching: false, 
+        didInvalidate: false, 
+        guests: []
+    }
+};
+
 Calendar.propTypes = {
     defaultView: PropTypes.string.isRequired,
     fetchSchedulesIfNeeded: PropTypes.func.isRequired,
@@ -429,22 +452,22 @@ Calendar.propTypes = {
         isFetching: PropTypes.bool,
         didInvalidate: PropTypes.bool,
         staffs: PropTypes.object,
-    }).isRequired,
+    }),
     schedules: PropTypes.shape({
         isFetching: PropTypes.bool,
         didInvalidate: PropTypes.bool,
         schedules: PropTypes.object,
-    }).isRequired,
+    }),
     services: PropTypes.shape({
         isFetching: PropTypes.bool,
         didInvalidate: PropTypes.bool,
         services: PropTypes.object,
-    }).isRequired,
+    }),
     guests: PropTypes.shape({
         isFetching: PropTypes.bool,
         didInvalidate: PropTypes.bool,
         guests: PropTypes.object,
-    }).isRequired,
+    }),
     selectedShopID: PropTypes.string.isRequired,
     setCalendarViewType: PropTypes.func.isRequired,
     setCalendarCurrent: PropTypes.func.isRequired,

@@ -1,6 +1,5 @@
 import * as types from './actionType';
 import Shop from '../api/shop/shop';
-import ApiException from '../api/error';
 
 /**/
 export const userCardSchedule = options => ({
@@ -163,9 +162,7 @@ const fetchSchedules = (shop, state) => (dispatch) => {
         .then((json) => {
             dispatch(loading(false));
 
-            if (json.success)
-                return dispatch(receiveSchedules(shop, json));
-            return new ApiException(json).showError();
+            return dispatch(receiveSchedules(shop, json));
         });
 };
 
@@ -178,9 +175,7 @@ const fetchStaffs = (shop, state) => (dispatch) => {
         .then((json) => {
             dispatch(loading(false));
 
-            if (json.success)
-                return dispatch(receiveStaffs(shop, json));
-            return new ApiException(json).showError();
+            return dispatch(receiveStaffs(shop, json));
         });
 };
 
@@ -193,9 +188,7 @@ const fetchServices = (shop, state) => (dispatch) => {
         .then((json) => {
             dispatch(loading(false));
 
-            if (json.success)
-                return dispatch(receiveServices(shop, json));
-            return new ApiException(json).showError();
+            return dispatch(receiveServices(shop, json));
         });
 };
 
@@ -209,9 +202,7 @@ const fetchGuests = (shop, state) => (dispatch) => {
         .then((json) => {
             dispatch(loading(false));
 
-            if (json.success)
-                return dispatch(receiveGuests(shop, json));
-            return new ApiException(json).showError();
+            return dispatch(receiveGuests(shop, json));
         });
 };
 
@@ -315,9 +306,7 @@ export const saveSchedule = scheduleData => (dispatch, getState) => {
         .then((json) => {
             dispatch(loading(false));
 
-            if (json.success)
-                return dispatch(scheduleCreated(json, getState));
-            return new ApiException(json).showError();
+            return dispatch(scheduleCreated(json, getState));
         });
 };
 
@@ -333,9 +322,7 @@ export const patchSchedule = scheduleData => (dispatch, getState) => {
         .then((json) => {
             dispatch(loading(false));
 
-            if (json.success)
-                return dispatch(scheduleUpdated(json, getState));
-            return new ApiException(json).showError();
+            return dispatch(scheduleUpdated(json, getState));
         });
 };
 
