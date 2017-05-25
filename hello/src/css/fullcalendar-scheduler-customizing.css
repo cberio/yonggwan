@@ -1,5 +1,6 @@
 			/* fullcalendar-scheduler.css 에서 수정될 부분만 적용합니다 */
 /*-------------------------------------------------------------------------------------------------*/
+
 .full-calendar {
 	position: relative;
 }
@@ -424,7 +425,7 @@
     font-weight: normal;
     background-color: #333;
     -webkit-box-sizing: border-box;
-	   -moz-box-sizing: border-box;
+	  -moz-box-sizing: border-box;
 	    	box-sizing: border-box;
 	-webkit-transition: 0.2s box-shadow ease;
 	transition: 0.2s box-shadow ease;
@@ -623,9 +624,15 @@
 	font-family: 'notokr-medium';
 	background-color: rgba(229,229,229,0.5);
 }
-.fc-event.off-time:hover {border-color: #c4c3c3;}
+.fc-event.off-time:hover {
+	border-color: #c4c3c3;
+}
 
 /* 신규 생성중인 이벤트 */
+.fc-event.fc-overlay {
+	z-index: 3 !important;
+}
+/* 신규 생성된 이벤트 */
 .fc-event.new-event {
 	z-index: 4 !important;
 	border: 0 !important;
@@ -638,6 +645,7 @@
 .fc-event.new-event:not(.off-time) {
 	cursor: default;
 }
+
 .fc-event.new-event .fc-product,
 .fc-event.new-event .fc-time,
 .fc-event.new-event .fc-name{color: #fff;}
@@ -1153,8 +1161,6 @@
 	display: none;
 }
 
-
-
 .fc-agendaWeekly-view .fc-create-helper {
 	top: -1px;
 }
@@ -1392,6 +1398,8 @@
 .expert-ui.expert-daily {
 	display: table;
 	width: 100%;
+	position: relative;
+	z-index: 2;
 }
 .expert-ui.expert-daily .expert-inner {
 	display: table-row;
@@ -1424,7 +1432,8 @@
 }
 
 #daily .fc-view-container {
-	overflow: auto;
+	overflow-x: auto;
+	overflow-y: hidden;
 }
 #daily .fc-view .fc-head,
 #daily .fc-head-container {
@@ -1940,13 +1949,13 @@
 /* // Media END */
 
 
-/*  주단위 예약카드 생성 시 활성화 슬롯 하이라이트 스타일 */
-.fc-agendaWeekly-view .fc-bg tr.slot-highlight td {
+/*  예약카드 생성 시 활성화 슬롯 하이라이트 스타일 */
+.fc .fc-bg tr.slot-highlight td {
 	position: relative;
 	background: none;
 	box-sizing: content-box;
 }
-.fc-agendaWeekly-view .fc-bg tr.slot-highlight td .bg-cell {
+.fc .fc-bg tr.slot-highlight td .bg-cell {
 	content: '';
 	display: block;;
 	height: 100%;
@@ -1955,84 +1964,83 @@
 	border-left: 1px solid #777;
 	border-right: 1px solid #777;
 }
-.fc-agendaWeekly-view .fc-bg tr.slot-highlight.start td .bg-cell {
+.fc .fc-bg tr.slot-highlight.start td .bg-cell {
 	box-shadow: 0 1px 0 0 #777 inset;
 }
-.fc-agendaWeekly-view .fc-bg tr.slot-highlight.end td .bg-cell {
+.fc .fc-bg tr.slot-highlight.end td .bg-cell {
 	box-shadow: 0 1px 0 0 #777;
 }
 
 /* 하이라이팅 셀-1 상품별 색상 */
-.fc-agendaWeekly-view .create-order-wrap.blue,
-.fc-agendaWeekly-view .fc-bg tr.shc.shc-blue td:after { background-color: rgba(98,116,179, .7); }
-.fc-agendaWeekly-view .create-order-wrap.red,
-.fc-agendaWeekly-view .fc-bg tr.shc.shc-red td:after { background-color: rgba(239,121,84, .7); }
-.fc-agendaWeekly-view .create-order-wrap.yellow,
-.fc-agendaWeekly-view .fc-bg tr.shc.shc-yellow td:after { background-color: rgba(240,183,36, .7); }
-.fc-agendaWeekly-view .create-order-wrap.green,
-.fc-agendaWeekly-view .fc-bg tr.shc.shc-green td:after { background-color: rgba(92,191,168, .7); }
-.fc-agendaWeekly-view .create-order-wrap.purple,
-.fc-agendaWeekly-view .fc-bg tr.shc.shc-purple td:after { background-color: rgba(163,122,204, .7); }
+.fc .create-order-wrap.blue,
+.fc .fc-bg tr.shc.shc-blue td:after { background-color: rgba(98,116,179, .7); }
+.fc .create-order-wrap.red,
+.fc .fc-bg tr.shc.shc-red td:after { background-color: rgba(239,121,84, .7); }
+.fc .create-order-wrap.yellow,
+.fc .fc-bg tr.shc.shc-yellow td:after { background-color: rgba(240,183,36, .7); }
+.fc .create-order-wrap.green,
+.fc .fc-bg tr.shc.shc-green td:after { background-color: rgba(92,191,168, .7); }
+.fc .create-order-wrap.purple,
+.fc .fc-bg tr.shc.shc-purple td:after { background-color: rgba(163,122,204, .7); }
 
-.fc-agendaWeekly-view .create-order-wrap.blue .create-order-slot .create-button .time{ background-color: #6f82ca; }
-.fc-agendaWeekly-view .create-order-wrap.red .create-order-slot .create-button .time{ background-color: #ef7954; }
-.fc-agendaWeekly-view .create-order-wrap.yellow .create-order-slot .create-button .time{ background-color: #eeb524; }
-.fc-agendaWeekly-view .create-order-wrap.green .create-order-slot .create-button .time{ background-color: #5cbfa8; }
-.fc-agendaWeekly-view .create-order-wrap.purple .create-order-slot .create-button .time{ background-color: #a37acc; }
+.fc .create-order-wrap.blue .create-order-slot .create-button .time{ background-color: #6f82ca; }
+.fc .create-order-wrap.red .create-order-slot .create-button .time{ background-color: #ef7954; }
+.fc .create-order-wrap.yellow .create-order-slot .create-button .time{ background-color: #eeb524; }
+.fc .create-order-wrap.green .create-order-slot .create-button .time{ background-color: #5cbfa8; }
+.fc .create-order-wrap.purple .create-order-slot .create-button .time{ background-color: #a37acc; }
 
-.fc-agendaWeekly-view .create-order-wrap.edit .create-order-slot .create-button .time{}
+.fc .create-order-wrap.edit .create-order-slot .create-button .time{}
 
 /* 바인딩된 타임라인내 예약생성버튼 상품별 색상 */
 
-.fc-agendaWeekly-view .fc-bg tr.slot-highlight.blue td .bg-cell { background-color: #c2e2f2; border-color: #6b7bb3;}
-.fc-agendaWeekly-view .fc-bg tr.slot-highlight.blue.start td .bg-cell { box-shadow: 0 1px 0 0 #6b7bb3 inset; }
-.fc-agendaWeekly-view .fc-bg tr.slot-highlight.blue.end td .bg-cell { box-shadow: 0 1px 0 0 #6b7bb3; }
+.fc .fc-bg tr.slot-highlight.blue td .bg-cell { background-color: #c2e2f2; border-color: #6b7bb3;}
+.fc .fc-bg tr.slot-highlight.blue.start td .bg-cell { box-shadow: 0 1px 0 0 #6b7bb3 inset; }
+.fc .fc-bg tr.slot-highlight.blue.end td .bg-cell { box-shadow: 0 1px 0 0 #6b7bb3; }
 
-.fc-agendaWeekly-view .fc-bg tr.slot-highlight.red td .bg-cell { background-color: #fac8d6; border-color: #d97759;}
-.fc-agendaWeekly-view .fc-bg tr.slot-highlight.red.start td .bg-cell { box-shadow: 0 1px 0 0 #d97759 inset; }
-.fc-agendaWeekly-view .fc-bg tr.slot-highlight.red.end td .bg-cell { box-shadow: 0 1px 0 0 #d97759; }
+.fc .fc-bg tr.slot-highlight.red td .bg-cell { background-color: #fac8d6; border-color: #d97759;}
+.fc .fc-bg tr.slot-highlight.red.start td .bg-cell { box-shadow: 0 1px 0 0 #d97759 inset; }
+.fc .fc-bg tr.slot-highlight.red.end td .bg-cell { box-shadow: 0 1px 0 0 #d97759; }
 
-.fc-agendaWeekly-view .fc-bg tr.slot-highlight.yellow td .bg-cell { background-color: #fae0bb; border-color: #d9a521;}
-.fc-agendaWeekly-view .fc-bg tr.slot-highlight.yellow.start td .bg-cell { box-shadow: 0 1px 0 0 #d9a521 inset; }
-.fc-agendaWeekly-view .fc-bg tr.slot-highlight.yellow.end td .bg-cell { box-shadow: 0 1px 0 0 #d9a521; }
+.fc .fc-bg tr.slot-highlight.yellow td .bg-cell { background-color: #fae0bb; border-color: #d9a521;}
+.fc .fc-bg tr.slot-highlight.yellow.start td .bg-cell { box-shadow: 0 1px 0 0 #d9a521 inset; }
+.fc .fc-bg tr.slot-highlight.yellow.end td .bg-cell { box-shadow: 0 1px 0 0 #d9a521; }
 
-.fc-agendaWeekly-view .fc-bg tr.slot-highlight.green td .bg-cell { background-color: #c7f2ea; border-color: #50a692;}
-.fc-agendaWeekly-view .fc-bg tr.slot-highlight.green.start td .bg-cell { box-shadow: 0 1px 0 0 #50a692 inset; }
-.fc-agendaWeekly-view .fc-bg tr.slot-highlight.green.end td .bg-cell { box-shadow: 0 1px 0 0 #50a692; }
+.fc .fc-bg tr.slot-highlight.green td .bg-cell { background-color: #c7f2ea; border-color: #50a692;}
+.fc .fc-bg tr.slot-highlight.green.start td .bg-cell { box-shadow: 0 1px 0 0 #50a692 inset; }
+.fc .fc-bg tr.slot-highlight.green.end td .bg-cell { box-shadow: 0 1px 0 0 #50a692; }
 
-.fc-agendaWeekly-view .fc-bg tr.slot-highlight.purple td .bg-cell { background-color: #f3d4fa; border-color: #8f6bb3;}
-.fc-agendaWeekly-view .fc-bg tr.slot-highlight.purple.start td .bg-cell { box-shadow: 0 1px 0 0 #8f6bb3 inset; }
-.fc-agendaWeekly-view .fc-bg tr.slot-highlight.purple.end td .bg-cell { box-shadow: 0 1px 0 0 #8f6bb3; }
+.fc .fc-bg tr.slot-highlight.purple td .bg-cell { background-color: #f3d4fa; border-color: #8f6bb3;}
+.fc .fc-bg tr.slot-highlight.purple.start td .bg-cell { box-shadow: 0 1px 0 0 #8f6bb3 inset; }
+.fc .fc-bg tr.slot-highlight.purple.end td .bg-cell { box-shadow: 0 1px 0 0 #8f6bb3; }
 
-
-.fc-agendaWeekly-view .create-order-wrap.has-card .create-order-slot {}
-.fc-agendaWeekly-view .create-order-wrap.edit .create-order-slot {}
+.fc .create-order-wrap.has-card .create-order-slot {}
+.fc .create-order-wrap.edit .create-order-slot {}
 
 
 /* OFF 타임의 별도 색상 */
-.fc-agendaWeekly-view .fc-bg tr.slot-highlight.off-time td .bg-cell{
+.fc .fc-bg tr.slot-highlight.off-time td .bg-cell{
 	background-color: #e5e5e5;
 	border-color: #858585 !important;
 	border-left-color: #858585 !important;
 	border-right-color: #858585 !important;
 }
-.fc-agendaWeekly-view .fc-bg tr.slot-highlight.off-time.start td .bg-cell{
+.fc .fc-bg tr.slot-highlight.off-time.start td .bg-cell{
 	box-shadow: 0 1px 0 0 #858585 inset !important;
 }
-.fc-agendaWeekly-view .fc-bg tr.slot-highlight.off-time.end td .bg-cell{
+.fc .fc-bg tr.slot-highlight.off-time.end td .bg-cell{
 	box-shadow: 0 1px 0 0 #858585 !important;
 }
 /* 예약수정 별도 색상 */
 
-.fc-agendaWeekly-view .fc-bg tr.slot-highlight.edit.start td .bg-cell{
+.fc .fc-bg tr.slot-highlight.edit.start td .bg-cell{
 	box-shadow: 0 1px 0 0 #62b7a5 inset !important;
 }
-.fc-agendaWeekly-view .fc-bg tr.slot-highlight.edit.end td .bg-cell{
+.fc .fc-bg tr.slot-highlight.edit.end td .bg-cell{
 	box-shadow: 0 1px 0 0 #62b7a5 !important;
 }
 
 /* 주단위 예약카드 생성 시 마우스오버 영역 하이라이트 슬롯 스타일 */
-.fc-agendaWeekly-view .fc-bg tr.shc td:after{
+.fc .fc-bg tr.shc td:after{
 	margin: 0 11px;height: 100%;
 	background-color: #c9c9c9;
 	display: block;content:'';
@@ -2040,10 +2048,23 @@
 	top: 0; right: 0; left: 0; bottom: 0;
 	z-index: 2;
 }
-.fc-agendaWeekly-view .fc-bg tr.shc-end td:after{
+.fc .fc-bg tr.shc-end td:after{
 	box-shadow: 0 15px 20px 0 rgba(0,0,0, 0.2);
 }
-.fc-agendaWeekly-view .fc-bg tr.shc-edit td:after{}
-.fc-agendaWeekly-view .fc-bg tr.shc-off-time td:after{
+.fc .fc-bg tr.shc-edit td:after{}
+.fc .fc-bg tr.shc-off-time td:after{
 	background-color: rgba(128,128,128,0.7);
+}
+
+/* 예약생성 도중의 timeline 오버레이 레이어  */
+.fc .fc-event-container .fc-bgoverlay {
+	z-index: 2;
+	margin: -35px -30px 0;
+	border-radius: 10px;
+	overflow: hidden;
+	position:absolute;
+	left: 0; right: 0; top: 0;
+	background-color: #e5e5e5;
+	opacity: .8;
+	bottom: -3800px;
 }

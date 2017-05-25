@@ -1,21 +1,27 @@
 @charset "utf-8";
-.new-order-wrap .new-order button{height: auto;}
-.new-order-wrap{
-    padding: 50px; background: #f0f0f0;
-    -webkit-transition: .15s all ease;
-       -moz-transition: .15s all ease;
-            transition: .15s all ease;
+.new-order-wrap .new-order button{
+    height: auto;
 }
-/*.new-order-wrap.fixed{*/
 .new-order-wrap{
-    position: absolute;
+    position: fixed;
+}
+.new-order-wrap.overlay{
+    z-index: 3;background: #f0f0f0;
     left: 0; top: 0; right: 0; bottom: 0;
-    z-index: 3;
-    background-color: rgba(0,0,0, .6);
+    padding: 50px; background-color: rgba(0,0,0, .6);
+}
+.new-order-wrap.inner-event{
+    z-index: 1;left: 0; top: 0; right: 67px;
+    background: rgba(51,71,211, 0.2);
 }
 .new-order{
+    position: absolute;
     width: 394px;margin: 0 auto;border: 1px solid #bfbfbf; border-radius: 5px;
     box-shadow: 0 3px 10px 2px rgba(0,0,0, .2); background: #fff;
+}
+.new-order-wrap.overlay .new-order{
+    left: 50%; top: 10%;
+    transform: translateX(-50%) !important;
 }
 .new-order-head{
     height: 44px; line-height: 44px; position: relative;padding: 0 20px;border-bottom: 1px solid #e0e0e0;
@@ -35,7 +41,7 @@
 .new-order-body .service-input-wrap h3.active .step-index {opacity: 1;}
 .new-order-body .service-input-wrap h3 .step-index{
     border-radius: 50%; background-color: #333333;text-align: center; line-height: 22px;opacity: .4;
-    font-size: 11px; color: #fff;display: inline-block; width: 22px; height: 22px; margin-right: 8px;
+    font-size: 11px; color: #fff; float: left; display: block; width: 22px; height: 22px; margin-right: 8px; overflow: hidden;
 }
 .new-order-body .service-input-wrap h3 .step-index.has-values{
     text-indent: -999px; background: #4d9854 url(../image/common/input-checked-white.png) center center no-repeat;opacity: 1 !important;
@@ -46,7 +52,7 @@
     border-bottom: 1px dotted #333; padding-right: 13px;
     background: url(../image/common/icon-edit-w11-h10.png) right 1px no-repeat;
 }
-.new-order-body .service-input-wrap button{font: inherit;color: inherit;}
+.new-order-body .service-input-wrap button{font: inherit;color: inherit;line-height: 22px;}
 .new-order-body .service-input-inner{margin: 6px 0 6px 11px;padding-bottom: 15px;border-left: 1px solid #e5e5e5;}
 .new-order-body .service-input{padding-top: 5px; margin: 0 0 0 18px;}
 .new-order-body .service-input .radio-group{overflow: hidden;margin-bottom: 14px;float: left;}
@@ -101,12 +107,15 @@
 
 .new-order-foot{background: #f2f2f2;border-top: 1px solid #d9d9d9;}
 .new-order-foot:after{display: block; clear: both; content: '';}
-.new-order-foot .new-order-btn{font-size: 13px;height: 100%; color: #333333; padding: 0 17px; line-height: 52px;}
-.new-order-foot .new-order-btn:hover:not(:disabled),
-.new-order-foot .new-order-btn:focus:not(:disabled){color: #000;}
-.new-order-foot .new-order-btn:disabled{opacity: .5;}
+.new-order-foot .new-order-btn{font-size: 13px;height: 100%; color: #333333; padding: 0 17px; line-height: 52px; opacity: .5;}
 .new-order-foot .new-order-btn.left{float: left;}
 .new-order-foot .new-order-btn.right{float: right;}
+.new-order-foot .new-order-btn:disabled{opacity: .3; cursor: default;}
+.new-order-foot .new-order-btn:hover:not(:disabled),
+.new-order-foot .new-order-btn:focus:not(:disabled){opacity: 1;}
+.new-order-foot .new-order-btn.new-order-submit{margin-right: 12px;;font-family: 'notokr-bold'; color: #666666; background: url('../image/common/bullet-next-dark.png') right center no-repeat;}
+.new-order-foot .new-order-btn.active{color: #4d9854; background-image: url('../image/common/bullet-next-green.png'); opacity: 1;}
+
 
 /* CSS Transition animations */
 .new-order-appear {
@@ -125,23 +134,4 @@
 .service-input-appear.service-input-appear-active {
     transform: translateY(0);
     transition: all .05s ease;
-}
-
-
-/************* step 에따른 스타일 ***************/
-.step-3.new-order-wrap.hidden {
-    opacity: .5;
-}
-.step-2 .new-order-foot button.active:hover,
-.step-2 .new-order-foot button.active:focus{
-    color: red;
-}
-
-.step-2 .new-order-foot button{
-    background-color: #ddd;
-}
-
-.step-2 .new-order-foot button:hover,
-.step-2 .new-order-foot button:focus{
-    color: #4d9854;
 }

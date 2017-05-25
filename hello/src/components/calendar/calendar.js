@@ -8,7 +8,7 @@ import 'fullcalendar/dist/fullcalendar.min.css';
 import * as actions from '../../actions';
 import ModalConfirm from './modal/modalConfirm';
 import RenderEventConfirm from './modal/renderEventConfirm';
-import UserCard from '../userCard';
+import ReservationCardContainer from '../userCard';
 // import Notifier from '../../components/notifier';
 import DailyCalendar from './fullCalendar/dailyCalendar';
 import WeeklyCalendar from './fullCalendar/weeklyCalendar';
@@ -260,7 +260,7 @@ class Calendar extends Component {
         const UserCardComponent = (_this) => {
             if (!_this.state.isUserCard) return '';
             return (
-                <UserCard
+                <ReservationCardContainer
                     schedules={_this.props.schedules}
                     services={_this.props.services}
                     staffs={_this.props.staffs}

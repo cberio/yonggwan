@@ -5,7 +5,8 @@ const configInitialState = {
     condition: false, // boolean
     status: actions.NewOrderStatus.DIRECT,
     staff: {}, // object
-    guest: {}  // object
+    guest: {},  // object
+    savedSchedule: {} // object
 };
 const scheduleInitialState = {
     id: -1,
@@ -17,7 +18,7 @@ const scheduleInitialState = {
     guest: {},  // object
     start: '', // moment format
     end: '', // moment format
-    time: '' // HH:mm
+    time: '00:20' // HH:mm
 };
 
 export const newOrderConfig = (state = configInitialState, action) => {
