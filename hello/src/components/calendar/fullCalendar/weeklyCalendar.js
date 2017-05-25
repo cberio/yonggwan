@@ -291,9 +291,9 @@ class WeeklyCalendar extends Component {
         const component = this;
         if (this.state.isCreateOfftime)
             // 시간을 지정하지 않고 예약생성 혹은 offtime생성을 하는 단계에서 도중에 날짜이동을 한 경우 bg highlight 이벤트를 재실행
-            this.eventSlotHighlight(true, 'off-time');
+            this.showRecommendedTime(true, 'off-time');
         else if (this.state.isNewOrder) {
-            // this.eventSlotHighlight(true, 'event');
+            // this.showRecommendedTime(true, 'event');
             // $('#render-confirm').show();
             if (this.state.newScheduleID) {
                 // $(Calendar).fullCalendar('removeEvents', [this.state.newScheduleID]);
@@ -420,7 +420,7 @@ class WeeklyCalendar extends Component {
             $(`.expert-each input#expert_w_${newSchedule.resourceId}`).prop('checked', true);
             this.changeStaff(newSchedule.newOrderStaff, undefined, () => {
                 component.staffInputCheck('direct');
-                component.eventSlotHighlight(true, 'event', newSchedule.newOrderService);
+                component.showRecommendedTime(true, 'event', newSchedule.newOrderService);
             });
 
             const newScheduleID = this.props.returnNewID();
@@ -456,7 +456,7 @@ class WeeklyCalendar extends Component {
         // '이벤트 수정' 중에 이벤트 다시 렌더링한 경우: 배경마스크 및 이벤트 초기화
         if (this.state.isEditEvent) {
             const id = this.state.newScheduleID || this.state.selectedSchedule.id;
-            // this.eventSlotHighlight(false, 'edit');
+            // this.showRecommendedTime(false, 'edit');
             $('.create-order-wrap.timeline').removeClass('edit');
             $('.create-order-wrap.timeline button.create-event').unbind('click');
             $('.fc-agendaWeekly-view .fc-content-skeleton').attr('style', '');
@@ -553,7 +553,7 @@ class WeeklyCalendar extends Component {
             $(Calendar).fullCalendar('removeEvents', [id]);
 
         // 공통
-        this.eventSlotHighlight(false);
+        this.showRecommendedTime(false);
         this.resetOrder();
     }
 
@@ -625,7 +625,7 @@ class WeeklyCalendar extends Component {
         $('.fc-scroller.fc-time-grid-container').scrollTop(0);
         $('.create-order-wrap.timeline button.create-event').unbind('click');
         $('.fc-fake-event').remove();
-        this.eventSlotHighlight(false, 'event');
+        this.showRecommendedTime(false, 'event');
         this.setState({ isRenderConfirm: false, newScheduleServiceTime: undefined });
     }
 
@@ -673,7 +673,7 @@ class WeeklyCalendar extends Component {
                     newScheduleServiceTime: 20
                 }, () => {
                     offTime();
-                    this.eventSlotHighlight(true, 'off-time');
+                    this.showRecommendedTime(true, 'off-time');
                 });
                 // call back
                 function offTime() {
@@ -686,7 +686,7 @@ class WeeklyCalendar extends Component {
                                 newScheduleID: undefined,
                                 isAbleBindRemoveEvent: false
                             });
-                            component.eventSlotHighlight(false);
+                            component.showRecommendedTime(false);
                             $('#render-confirm').hide();
                             // show create order ui
                             $('.create-order-wrap.fixed').removeClass('hidden');
@@ -720,7 +720,7 @@ class WeeklyCalendar extends Component {
 
         // A _ 상시 예약생성 버튼을 통해 offtime을 생성한 경우
         if (component.state.isCreateOfftime) {
-            this.eventSlotHighlight(false);
+            this.showRecommendedTime(false);
 
             $('.fc-agendaWeekly-view .fc-content-skeleton').attr('style', '');
             // 타임라인 예약생성 버튼 상위로 노드로 삽입
@@ -983,7 +983,7 @@ class WeeklyCalendar extends Component {
             this.changeView('agendaWeekly', () => {
                 component.autoScrollTimeline($(`#ID_${schedule.id}`));
             });
-            this.eventSlotHighlight(true, type, schedule.service);
+            this.showRecommendedTime(true, type, schedule.service);
             this.fakeRenderEditEvent(schedule);
         });
         this.setState({ isEditEvent: true, isNewOrder: true });
@@ -1044,7 +1044,7 @@ class WeeklyCalendar extends Component {
     }
 
     // overview timeline 에서 선택가능한 slot을 활성화 or 활성화 해제 시킨다
-    eventSlotHighlight(bool, type, service) {
+    showRecommendedTime(bool, type, service) {
         // console.log('실행', bool, type);
         const component = this;
         const bgCell = '<span class="bg-cell"></span>';
@@ -1455,7 +1455,7 @@ class WeeklyCalendar extends Component {
             this.setState({ isNewOrder: true });
             this.changeDate(moment(requestEvent.start));
             this.autoScrollTimeline($(`#ID_${requestEvent.id}`));
-            this.eventSlotHighlight(true, 'edit', requestEvent.service);
+            this.showRecommendedTime(true, 'edit', requestEvent.service);
             this.fakeRenderEditEvent(requestEvent);
         });
     }

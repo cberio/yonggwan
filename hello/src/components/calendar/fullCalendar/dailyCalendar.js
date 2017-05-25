@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import $ from 'jquery';
 import _ from 'lodash';
@@ -99,46 +99,291 @@ class DailyCalendar extends Component {
     test(e) {
         const { Calendar } = this;
         const component = this;
-        // this.props.changeView('agendaWeekly');
-        // ReactDOM.unmountComponentAtNode(document.getElementById('root'));
-        // 상태코드 변경 테스트
-        $(Calendar).fullCalendar('getEventSources')[0].events[2].status = actions.ScheduleStatus.REQUESTED;
-        $(Calendar).fullCalendar('rerenderEvents');
-        if (this.condition) {
-          this.condition = false;
-          this.schedule = $(Calendar).fullCalendar('renderEvent', {
-              id: 123456, // integer|예약고유 id
-              reservation_dt: '2017-05-22', // max 10|예약일자|YYYY-MM-DD
-              shop_id: 1, // integer|shop 고유 id
-              staff_id: 1, // integer|시술자 고유 id(staff)
-              start_time: '20:00', // max 5|예약 시작 시간|hh:mm
-              end_time: '22:00',  // max 5|예약 종료 시간|hh:mm
-              service_time: '02:00', // max 50|소요시간|hh:mm
-              guest_id: 1, // integer|예약자 고유 id
-              user_id: 123, // integer|예약자 user id
-              guest_name: '홍고객', // max 100|고객이름
-              guest_class: 'VIP', // max 10|고객등급
-              guest_mobile: '01012345678', // 고객휴대번호
-              service_code: 'B', // max 10|상품코드
-              shop_service_id: 2, // integer|서비스 고유 id
-              status: '02', // max 2|예약상태|00:시술완료,01:예약생성,02:예약요청,03:예약완료,04:변경,05:오프타임,99:취소
-              bigo: '잘해야 함', // max 500,nullable|비고
-              guest_memo: '반갑습니다 머리가 엉망이에요 ㅜㅜ', // max 500,nullable|고객메모
-              staff_memo: '', // max 500,nullable|직원메모
-              is_delete: 0, // boolean|삭제여부
-              created_user_id: 1, // 예약 생성자 user id
-              updated_user_id: 1, // 예약 수정자 user id
-              start: '2017-05-22T20:00+09:00', // datetime(ISO8601)|서비스시작일시|fullcalendar
-              end: '2017-05-22T22:00+09:00', // datetime(ISO8601)|서비스종료일시|fullcalendar
-              resourceId: 1, // integer|시술자 고유 id(staff)|fullcalendar
-              payments: []
 
-        }, true); // stick? = true
-        } else {
-          this.schedule[0].guest_name = "ㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇ";
-          $(Calendar).fullCalendar('rerenderEvents');
+        // const color = 'bg-overlay';
+        // const bgCell = '<span class="highlight"></span>';
+        // const daySlot = $(`.fc-bg .fc-day[data-date="${moment(new Date()).format('YYYY-MM-DD')}"]`);
+        // $(daySlot).find('tr[data-time="15:00:00"]').addClass(`slot-highlight start ${color}`).find('td').append(bgCell);
+        // $(daySlot).find('tr[data-time="15:00:00"]').nextUntil('tr[data-time="20:00:00"]').addClass(`slot-highlight ${color}`).find('td').append(bgCell);
+        // $(daySlot).find('tr[data-time="20:00:00"]').prev('tr').addClass(`slot-highlight end ${color}`);
+
+        // $('.fc-event-container.fc-helper-container').append('<div class="overlay"></div>');
+        // $('.fc-event-container').not('.fc-helper-container').append('<div class="fc-bgoverlay"></div>');
+
+        // 상태코드 변경 테스트
+        // $(Calendar).fullCalendar('getEventSources')[0].events[2].status = actions.ScheduleStatus.REQUESTED;
+        // $(Calendar).fullCalendar('rerenderEvents');
+    }
+
+    componentWillMount() {
+        // show Loading bar
+        // this.props.loading(true);
+    }
+
+    componentDidMount() {
+        const component = this;
+        const { Calendar } = this;
+        const Staffs = this.props.staffs;
+        const date = this.props.fcOptions.defaultDate;
+        const time = date.get('hour');
+        const day = date.get('date');
+        const month = date.get('month');
+        const firstDay = date.format('d');
+        const defaultScrollTime = date.subtract(1, 'hour').format('HH:mm'); // 현재시간으로부터 1시간 이전의 시간
+        const staffsUiHeight = $('.expert-ui.expert-daily').height();
+        this.setState({ defaultStaff: _.isEmpty(Staffs) ? undefined : Staffs[0] });
+
+        // 스케쥴러 init 실행
+        $(Calendar).fullCalendar($.extend(component.props.fcOptions, {
+            resources: [Staffs[0]],
+            events: component.props.schedules, // 스케쥴 이벤트*
+            shopServices: component.props.services,
+            defaultView: 'agendaDay', // init view type set
+            header: {
+                left: '',
+                center: 'prev title next, changeDate',
+                right: 'agendaViewSwitch'
+            },
+            titleFormat: 'YYYY. M. DD',
+            firstDay,
+            scrollTime: defaultScrollTime, // 초기 렌더링시 스크롤 될 시간을 표시합니다
+            customButtons: {
+                prev: {
+                    text: '이전',
+                    click: () => {
+                        component.changeDate($(Calendar).fullCalendar('getDate').subtract(1, 'days'));
+                    }
+                },
+                next: {
+                    text: '이전',
+                    click: () => {
+                        component.changeDate($(Calendar).fullCalendar('getDate').add(1, 'days'));
+                    }
+                },
+                changeDate: {
+                    text: '날짜선택',
+                    click(e) {
+                        e.stopPropagation();
+                        component.isChangeDate(true);
+                    }
+                },
+                agendaViewSwitch: {
+                    text: 'WEEKLY',
+                    click() {
+                        component.props.changeView('agendaWeekly');
+                    }
+                }
+            },
+            height: window.innerHeight - staffsUiHeight,
+
+            // 예약마감
+            reserveDeadline() {
+                console.info('예약마감을 하시겠습니까?');
+            },
+
+            eventClick(schedule, jsEvent, view) {
+                console.info(schedule);
+                component.setState({
+                    selectedSchedule: schedule
+                });
+                // 이벤트 슬롯 삭제 및 수정버튼 바인딩
+                if (!component.state.isEditSchedule) {
+                    // *** 1_수정 ***
+                    if (jsEvent.target.className === 'fc-ui-edit')
+                        component.editSchedule(schedule);
+                    // *** 2_삭제 ***
+                    else if (jsEvent.target.className === 'fc-ui-delete') {
+                        component.props.isModalConfirm('removeEvent');
+                        component.setState({
+                            isModalConfirm: true
+                        });
+                    }
+                }
+            },
+            eventDragStart(schedule, jsEvent, ui, view) {
+                component.setState({ isDragging: true });
+
+                // daily 이벤트 드래그관련 타임라인 스크롤
+                $(document).bind('mousemove', (e) => {
+                    component.autoFlowTimeline(e.pageX, e.pageY, jsEvent);
+                });
+            },
+            eventDragStop(schedule, jsEvent, ui, view) {
+                // 신규 생성한 이벤트가 esc keydown 삭제 바인딩 되있을경우
+                component.setState({ isDragging: false });
+
+                $(document).unbind('mousemove');
+            },
+            eventDrop(event, delta, revertFunc, jsEvent, ui, view) {
+                const start_time = moment(event.start).format('HH:mm');
+                const end_time = moment(event.end).format('HH:mm');
+                const staff_id = parseInt(event.resourceId);
+                // console.info(staff_id);
+                // prevent (Converting circular structure to JSON) error
+                const scheduleData = {
+                    ...event,
+                    start_time,
+                    end_time,
+                    staff_id,
+                    source: {}
+                };
+
+                component.props.patchSchedule(scheduleData).then((response) => {
+                    if (!response.updatedSchedule.success)
+                        revertFunc();
+                });
+            },
+            // 변경된 시간이 다를경우 실행
+            eventResize(schedule, delta, revertFunc, jsEvent, ui, view) {
+                const { start, end } = schedule;
+                const serviceTime = end.diff(start, 'minutes');
+                const start_time = start.format('HH:mm');
+                const end_time = end.format('HH:mm');
+
+                // 20분 미만으로 이벤트 시간을 수정할 경우 수정을 되돌린다.
+                if (serviceTime < 20) {
+                    revertFunc();
+                    alert('변경할 수 없습니다');
+
+                    return;
+                }
+
+                // 생성버튼 캘린더 타임라인 노드에서 상위 노드로 삽입
+                $('.full-calendar > .fc').append($('.create-order-wrap.timeline').hide());
+
+                // 30분 이하의 이벤트의 element에 클래스 추가
+                if (serviceTime <= 30) {
+                    // 20분 이하의 이벤트인경우
+                    if (serviceTime <= 20)
+                        $(`.fc-event#ID_${schedule.id}`).addClass('fc-short');
+                    else
+                        $(`.fc-event#ID_${schedule.id}`).addClass('fc-short no-expand');
+                }
+
+                if (schedule.id === component.state.newScheduleId) {
+                    // off-time slot의 new evnet 클래스 시각적 제거
+                    $(`#ID_${schedule.id}`).removeClass('new-event');
+                }
+            },
+            eventResizeStart(schedule, jsEvent, ui, view) {
+                component.setState({ isDragging: true });
+            },
+            // 변경된 시간이 같더라도 항상 실행
+            eventResizeStop(schedule, jsEvent, ui, view) {
+                component.setState({ isDragging: false });
+            },
+            windowResize(view) {
+                $(Calendar).fullCalendar('option', 'height', window.innerHeight - staffsUiHeight);
+                component.setCalendarColumn('resize');
+            },
+            resourceRender(resourceObj, labelTds, bodyTds) {
+                // ...
+            },
+            eventRender(schedule, element, view) {
+                //
+            },
+            // 캘린더 이벤트 day 렌더링시
+            dayRender(d, cell) {
+                // 필요없는 node dom 삭제(all day slot 관련한 dom)
+                $('.fc-day-grid.fc-unselectable').remove();
+            },
+            // 캘린더 이벤트 view 렌더링시
+            viewRender(view, elem) {
+                console.info('VIEW Render');
+                const { Calendar } = component;
+
+                // [1] Daily 타임라인이 다시 렌더링 된 경우
+                if (component.state.alreadyRendered)
+                    component.setCalendarColumn('again');
+
+                // [2] Daily 타임라인이 처음 렌더링 된 경우
+                else {
+                    component.staffInputCheck();
+                    component.setCalendarColumn('init');
+                    component.setState({
+                        alreadyRendered: true
+                    });
+                }
+                // [3] Daily 타임라인이 그려질 때 마다 실행
+                component.bindTimelineAccess();
+                component.bindTimelineScroller();
+                component.setTodayButton(view.start);
+                component.setCalendarStates();
+
+                // 타임라인 내 신규예약생성 버튼 클릭시 추가되었던 클래스가 남아있으면 다시 제거
+                $('.create-order-overlap').removeClass('create-order-overlap');
+                // $('.fade-loading').removeClass('fade-loading');
+                // loading bar hide
+                // component.props.loading(false);
+            }, // end viewRender
+            viewDestroy(view, elem) {
+                // Expert input element 제거되는것을 방지함
+                component.setCalendarColumn('destroy');
+            },
+            // open customer card
+            eventDoubleClick(calSchedule, jsEvent, view) {
+                // 신규예약 생성중에는 더블클릭 이벤트 실행않함
+                if (component.state.isNewOrder)
+                    return false;
+                // OFF TIME 인경우
+                if (calSchedule.status === actions.ScheduleStatus.OFFTIME)
+                    return false;
+
+                // *****고객카드 슬라이더를 호출함******
+                const selectedDate = moment(calSchedule.reservation_dt);
+                // 더블클릭으로 선택된 이벤트객체를 가져옵니다
+                const selectedCard = calSchedule;
+                // 선택된 이벤트객체의 리소스ID에 맞는 expert id를 찾아 가져옵니다
+                const selectedStaff = $(Calendar).fullCalendar('getResourceById', selectedCard.resourceId);
+
+                // userCard 컴포넌트의 초기값을 전달한다
+                component.isUserCard(true, {
+                    selectedDate,
+                    selectedCard,
+                    selectedStaff
+                });
+                /** ***************************/
+            }
+        }));
+
+        this.wasMount();
+    } // ////// ComponentDidMount //END
+
+    componentWillReceiveProps(nextProps) {
+        // 예약요청확인 이벤트 클릭시
+        if (nextProps.requestReservation.condition) {
+            // 함수 실행과 동시에 중복실행을 막기위해 store state 초기화
+            this.props.finishRequestReservation();
+            // 예약생성(예약요청확인)으로 넘어감
+            this.goToRequestReservation(nextProps.requestReservation);
         }
-        debugger;
+
+        if (this.props.staffs !== nextProps.staffs)
+            this.bindResourcesToTimeLine(nextProps.staffs);
+
+        if (this.props.schedules !== nextProps.schedules)
+            this.bindEventsToTimeLine(nextProps.schedules);
+    }
+
+    shouldComponentUpdate(nextProps, nextState) {
+        // console.log('shouldComponentUpdate');
+        // return false; 성능최적화 (props, state를 비교하여 불필요한 리렌더링을 방지함)
+        return true;
+    }
+
+    componentWillUnmount() {
+        const { Calendar } = this;
+
+        // 예약생성 단계에서 un mount시 임시로 렌더링한 이벤트를 삭제.
+        if (this.state.isRenderConfirm)
+            $(Calendar).fullCalendar('removeEvents', [this.state.newScheduleId]);
+
+        $(Calendar).fullCalendar('destroy');
+    }
+
+    wasMount() {
+        this.insertStaffInterface();
+        this.props.wasMount();
     }
 
     setTodayButton(date) {
@@ -161,7 +406,6 @@ class DailyCalendar extends Component {
 
         this.props.setTimelineDate(timelineDate);
     }
-
 
     // 이벤트 element를 타임라인 바깥영역으로 드래그 시 타임라인 스크롤링 이벤트
     autoFlowTimeline(x, y, jsEvent) {
@@ -206,8 +450,8 @@ class DailyCalendar extends Component {
         }, timeout);
     }
 
-    // 다수의 Staffs 를 렌더링했을 때, 각 Expert timeline의 최소 width를 적용함,
-    // 각 Expert timeline의 th에 expert input 을 삽입함.
+    /* 다수의 Staffs 를 렌더링했을 때, 각 Expert timeline의 최소 width를 적용함
+       각 Expert timeline의 th에 expert input 을 삽입함. */
     setCalendarColumn(type, staffs) {
         const { Calendar } = this;
         const component = this;
@@ -309,7 +553,6 @@ class DailyCalendar extends Component {
         }
     }
 
-
     // 타임라인 좌우 스크롤시 타임라인 시간 그리드 스크롤 바인딩
     bindTimelineScroller() {
         const scroller = $('#daily .fc-view-container');
@@ -340,7 +583,7 @@ class DailyCalendar extends Component {
         }
     }
 
-    // / 타임라인 빈 슬롯에 마우스오버시 신규생성 버튼 활성화 관련 바인딩 ///
+    // 타임라인 빈 슬롯에 마우스오버시 신규생성 버튼 활성화 관련 바인딩
     bindTimelineAccess() {
         const { Calendar } = this;
         const component = this;
@@ -460,8 +703,9 @@ class DailyCalendar extends Component {
         return this.state.renderedStaff[0];
     }
 
-    // 타임라인 내 예약생성 (+) 버튼 클릭시 ui toggling
+    // [타임라인] 슬롯의 예약 버튼 클릭이벤트
     toggleCreateOrderUi(e) {
+        // 클릭한 슬롯의 시간및 staff 정보를 기억함.
         this.setState({
             selectedStaff: this.getSlotStaff(),
             selectedDate: this.props.getSlotTime()
@@ -474,127 +718,20 @@ class DailyCalendar extends Component {
             $('.fc-agendaDay-view .fc-time-grid .fc-slats').not($('.fc-slats-clone')).addClass('create-order-overlap');
     }
 
-    // 예약카드 삭제 1단계
-    removeConfirm(schedule) {
-        this.props.isModalConfirm('removeEvent');
-        this.setState({
-            isModalConfirm: true,
-            selectedSchedule: schedule
-        });
-    }
-
-    // 예약카드 삭제 2단계 최종삭제
-    removeSchedule(schedule) {
-        const component = this;
-        const { Calendar } = this;
-        const scheduleId = schedule
-            ? schedule.id
-            : component.state.selectedSchedule.id;
-        $(Calendar).fullCalendar('removeEvents', [scheduleId]);
-        this.modalConfirmHide();
-        this.setState({
-            selectedSchedule: undefined
-        });
+    // [타임라인] 타임라인 내 슬롯 예약생성 관련 버튼 클릭이벤트
+    checkBindedSlot(e) {
+        this.toggleCreateOrderUi(e);
     }
 
     modalConfirmHide() {
         this.setState({ isModalConfirm: false });
     }
 
-    // reset states and styles ( off-time 이벤트는 해당하지않음 )
-    resetOrder() {
-        const { Calendar } = this;
-        // 생성된 이벤트 스타일 제거
-        $('.fc-event.new-event').removeClass('new-event');
-        // 시각적 복제 생성된 이벤트 삭제
-        $('.fc-fake-event').remove();
-        // 배경 마스크 제거
-        $('#render-confirm').hide();
-        $('.mask-event').hide();
-        // 스크롤링 방지 클래스 삭제
-        $('.fc-scroller.fc-time-grid-container').removeClass('overflow-hidden');
-        $('.create-order-wrap.timeline').removeClass('red blue yellow green purple');
-        // show create order ui
-        $('.create-order-wrap.fixed').removeClass('hidden');
-        // remove z-index inline style
-        $('.fc-agendaWeekly-view .fc-time-grid > .fc-bg').attr('style', '');
-        // unbind create event button
-        $('.create-order-wrap.timeline button.create-event').unbind('click');
-        // 타임라인 내 신규예약생성 버튼 클릭시 추가되었던 클래스가 남아있으면 다시 제거
-        if ($('.create-order-overlap').length)
-            $('.create-order-overlap').removeClass('create-order-overlap');
-
-        // store isModalConfirm init
-        this.props.isModalConfirm('');
-
-        // enable editable
-        if (this.state.newScheduleId) {
-            const evt = $(Calendar).fullCalendar('clientEvents', this.state.newScheduleId)[0];
-            evt.editable = true;
-            setTimeout(() => {
-                $(Calendar).fullCalendar('updateEvent', evt);
-            }, 0);
-        }
-
-        // reset states
-        this.setState({
-            viewTypeOrder: undefined,
-            newSchedule: undefined,
-            selectedStaff: undefined,
-            selectedDate: undefined,
-            selectedSchedule: undefined,
-            renderedEvent: undefined,
-            newScheduleId: undefined,
-            newScheduleService: undefined,
-            newScheduleServiceTime: undefined,
-            unknownStart: false,
-            isEditSchedule: false,
-            isRequestReservation: false,
-            isModalConfirm: false,
-            isRenderConfirm: false
-        });
+    isRenderEventConfirm(bool) {
+        this.setState({ isModalConfirm: bool });
     }
 
-    newOrderFinish() {
-        const { Calendar } = this;
-      // / 생성버튼 캘린더 타임라인 노드에서 상위 노드로 삽입
-        $('.full-calendar > .fc').append($('.create-order-wrap.timeline').hide());
-      // 시작시간을 미리 선택하지않고 이벤트를 생성중에 취소할 경우
-        if (this.props.newOrderConfig.status === actions.NewOrderStatus.QUICK || this.state.isEditEvent)
-            this.resetOrder();
-        else if (this.state.newScheduleID) {
-          // enable editable
-            const evt = $(Calendar).fullCalendar('clientSchedule', this.state.newScheduleID);
-            evt.editable = true;
-            $(Calendar).fullCalendar('updateEvent', evt);
-          // $(Calendar).fullCalendar('option', 'editable', true);
-        }
-
-        $('.create-order-wrap.fixed').removeClass('hidden');
-        $('#render-confirm').hide();
-        this.props.newOrderFinish();
-    }
-
-    backToOrder(id) {
-        const { Calendar } = this;
-        const eventId = id || this.state.newScheduleId;
-
-        if (eventId)
-            $(Calendar).fullCalendar('removeEvents', [eventId]);
-
-        //  reset styles and states
-        $('.fc-scroller.fc-time-grid-container').scrollTop(0);
-        $('.create-order-wrap.timeline button.create-event').unbind('click');
-        $('.fc-fake-event').remove();
-        this.setState({ isRenderConfirm: false, newScheduleServiceTime: undefined });
-    }
-
-    // 타임라인 내 슬롯 예약생성 관련 버튼 클릭이벤트
-    checkBindedSlot(e) {
-        this.toggleCreateOrderUi(e);
-    }
-
-    // Offtime 스케쥴 생성 1/2 (바인딩단계)
+    // [오프타임생성] Offtime 스케쥴 생성 1/2 (바인딩단계)
     bindNewOfftime(order, type) {
         switch (order) {
             // 타임라인 테이블 안에서 시작시간을 지정하여 생성하는 경우
@@ -617,7 +754,7 @@ class DailyCalendar extends Component {
             $('.create-order-overlap').removeClass('create-order-overlap');
     }
 
-    // offtime 생성 2/2
+    // [오프타임생성] offtime 생성 2/2
     renderNewOfftime() {
         const { Calendar } = this;
         const component = this;
@@ -664,7 +801,7 @@ class DailyCalendar extends Component {
                         $('.full-calendar > .fc').append($('.create-order-wrap.timeline').hide());
                         $(Calendar).fullCalendar('removeEvents', [createdSchedule.id]);
                         component.props.guider('OFF TIME이 삭제되었습니다!');
-                      });
+                    });
                     $(document).unbind('keydown');
                 }
             });
@@ -797,8 +934,9 @@ class DailyCalendar extends Component {
         this.setState({ isEditSchedule: true });
     }
 
-    // 신규예약 생성단계로 컴포넌트 마운팅
+    // [예약생성] 신규예약 생성단계로 컴포넌트 마운팅
     newOrder(status) {
+        console.info(status);
         const { Calendar } = this;
         const { state } = this;
       /*
@@ -813,9 +951,10 @@ class DailyCalendar extends Component {
         // selectedStaff={this.state.renderedStaff}
       */
         const saveSchedule = '';
+        const recommendTimes = require('../../../data/recommendTimes').default;
         const initStates = {
             status
-        }
+        };
         if (status === actions.NewOrderStatus.QUICK) {
             // INIT NEWORDER
             this.props.newOrderInit({
@@ -823,22 +962,203 @@ class DailyCalendar extends Component {
                 staff: state.renderedStaff.length > 1 ? state.defaultStaff : state.renderedStaff[0],
                 start: this.state.selectedDate
             });
-
-        } else {
+        } else if (status === actions.NewOrderStatus.DIRECT) {
             // INIT NEWORDER
+            this.stylingToNewOrder();
+            this.showRecommendedTime(status, null, recommendTimes);
             this.props.newOrderInit({
                 ...initStates,
                 staff: this.state.selectedStaff,
                 start: this.state.selectedDate,
-                savedSchedule: this.props.schedules[1] //임시
+                savedSchedule: this.props.schedules.find(schedule => schedule.status === actions.ScheduleStatus.CREATING) // 임시
             });
         }
     }
 
-    isRenderEventConfirm(bool) {
-        this.setState({ isModalConfirm: bool });
+    // [예약생성] 타임라인 스타일적용
+    stylingToNewOrder() {
+        // 타임라인 오버레이 마스크를 삽입함.
+        $('.fc-event-container').not('.fc-helper-container').append('<div class="fc-bgoverlay"></div>');
     }
 
+    // [예약생성] 타임라인 스타일 적용해제
+    unstylingToNewOrder() {
+        // 타임라인 오버레이 마스크를 제거함.
+        $('.fc-event-container').find('.fc-bgoverlay').remove();
+    }
+
+    // [예약생성] 예약생성 취소시 styles, states reset ( off-time 이벤트는 해당하지않음 )
+    resetOrder() {
+        const { Calendar } = this;
+        // 생성된 이벤트 스타일 제거
+        $('.fc-event.new-event').removeClass('new-event');
+        // 시각적 복제 생성된 이벤트 삭제
+        $('.fc-fake-event').remove();
+        // 배경 마스크 제거
+        $('#render-confirm').hide();
+        $('.mask-event').hide();
+        // 스크롤링 방지 클래스 삭제
+        $('.fc-scroller.fc-time-grid-container').removeClass('overflow-hidden');
+        $('.create-order-wrap.timeline').removeClass('red blue yellow green purple');
+        // show create order ui
+        $('.create-order-wrap.fixed').removeClass('hidden');
+        // remove z-index inline style
+        $('.fc-agendaWeekly-view .fc-time-grid > .fc-bg').attr('style', '');
+        // unbind create event button
+        $('.create-order-wrap.timeline button.create-event').unbind('click');
+        // 타임라인 내 신규예약생성 버튼 클릭시 추가되었던 클래스가 남아있으면 다시 제거
+        if ($('.create-order-overlap').length)
+            $('.create-order-overlap').removeClass('create-order-overlap');
+
+        // store isModalConfirm init
+        this.props.isModalConfirm('');
+
+        // enable editable
+        if (this.state.newScheduleId) {
+            const evt = $(Calendar).fullCalendar('clientEvents', this.state.newScheduleId)[0];
+            evt.editable = true;
+            setTimeout(() => {
+                $(Calendar).fullCalendar('updateEvent', evt);
+            }, 0);
+        }
+
+        // reset states
+        this.setState({
+            viewTypeOrder: undefined,
+            newSchedule: undefined,
+            selectedStaff: undefined,
+            selectedDate: undefined,
+            selectedSchedule: undefined,
+            renderedEvent: undefined,
+            newScheduleId: undefined,
+            newScheduleService: undefined,
+            newScheduleServiceTime: undefined,
+            unknownStart: false,
+            isEditSchedule: false,
+            isRequestReservation: false,
+            isModalConfirm: false,
+            isRenderConfirm: false
+        });
+    }
+
+    // [예약생성] 예약생성 종료
+    newOrderFinish() {
+        const { Calendar } = this;
+      // / 생성버튼 캘린더 타임라인 노드에서 상위 노드로 삽입
+        $('.full-calendar > .fc').append($('.create-order-wrap.timeline').hide());
+      // 시작시간을 미리 선택하지않고 이벤트를 생성중에 취소할 경우
+        if (this.props.newOrderConfig.status === actions.NewOrderStatus.QUICK || this.state.isEditEvent)
+            this.resetOrder();
+        else if (this.state.newScheduleID) {
+          // enable editable
+            const evt = $(Calendar).fullCalendar('clientSchedule', this.state.newScheduleID);
+            evt.editable = true;
+            $(Calendar).fullCalendar('updateEvent', evt);
+          // $(Calendar).fullCalendar('option', 'editable', true);
+        }
+
+        this.unstylingToNewOrder();
+        $('.create-order-wrap.fixed').removeClass('hidden');
+        $('#render-confirm').hide();
+        this.props.newOrderFinish();
+    }
+
+    // [예약생성] 현재의 예약생성 이전 단계으로
+    backToOrder(id) {
+        const { Calendar } = this;
+        const eventId = id || this.state.newScheduleId;
+
+        if (eventId)
+            $(Calendar).fullCalendar('removeEvents', [eventId]);
+
+        //  reset styles and states
+        $('.fc-scroller.fc-time-grid-container').scrollTop(0);
+        $('.create-order-wrap.timeline button.create-event').unbind('click');
+        $('.fc-fake-event').remove();
+        this.setState({ isRenderConfirm: false, newScheduleServiceTime: undefined });
+    }
+
+    // [예약생성] 추천예약시간 표시
+    showRecommendedTime(type, service, recommendTimes) {
+        const component = this;
+        const classes = ['slot-highlight']; // ['off-time', 'edit', 'start', 'end', 'edit', service.color]
+
+        if (!_.isEmpty(service)) {
+            classes.push(service.color);
+            this.setState({ newScheduleService: service });
+        }
+
+        // background mask 삽입 및 스타일 지정
+        $('.fc-content-skeleton').css('z-index', '2');
+        $('#render-confirm').show().css('z-index', '2').addClass('mask-white mask-overview');
+        $('.create-order-wrap.fixed').addClass('hidden');
+        $('.create-order-wrap.timeline').removeClass(actions.ServiceColorNames.join(' '));
+        if (!_.isEmpty(service)) {
+            setTimeout(() => {
+                $('.create-order-wrap.timeline').addClass(service.color);
+            }, 0);
+        }
+
+        switch (type) {
+            case 'off-time':
+                classes.push('off-time');
+                break;
+            case 'edit':
+                classes.push('edit');
+                break;
+            default:
+                break;
+        }
+        this.HighlightRecommendedTime(recommendTimes)
+    }
+
+    HighlightRecommendedTime(recommendTimes) {
+        const recommendCellBg = '<span class="bg-cell"></span>';
+        for (let i = 0; i < recommendTimes.length; i++) {
+            const date = moment(recommendTimes[i].start).format('YYYY-MM-DD');
+            const start = moment(recommendTimes[i].start).format('hh:mm:ss');
+            const end = moment(recommendTimes[i].end).format('hh:mm:ss');
+            $(`.fc-view .fc-bg .fc-day[data-date="${date}"]`).find(`tr[data-time="${start}"]`).addClass('start');
+            $(`.fc-view .fc-bg .fc-day[data-date="${date}"]`).find(`tr[data-time="${end}"]`).addClass('end');
+        }
+        // $(dayContainer).find(`tr[data-time="${end.format('hh:mm:ss')}"]`).prev('tr').addClass(`slot-highlight end ${color}`);
+    }
+
+    // [예약생성] 추천예약시간 표시해제
+    hideRecommendedTime() {
+        setTimeout(() => {
+            $('.fc-agendaWeekly-view .fc-bg .fc-day tr').removeClass('slot-highlight off-time start end red blue yellow green purple').find('.bg-cell').remove();
+            $('.fc-agendaWeekly-view .fc-content-skeleton').attr('style', '');
+            $('.fc-agendaWeekly-view .fc-time-grid > .fc-bg').attr('style', '');
+            $('#render-confirm').hide();
+            $('.create-order-wrap.timeline').removeClass(actions.ServiceColorNames.join(' '));
+        }, 0);
+    }
+
+    // [예약삭제] 예약카드 삭제 1단계
+    removeConfirm(schedule) {
+        this.props.isModalConfirm('removeEvent');
+        this.setState({
+            isModalConfirm: true,
+            selectedSchedule: schedule
+        });
+    }
+
+    // [예약삭제] 예약카드 삭제 2단계 최종삭제
+    removeSchedule(schedule) {
+        const component = this;
+        const { Calendar } = this;
+        const scheduleId = schedule
+            ? schedule.id
+            : component.state.selectedSchedule.id;
+        $(Calendar).fullCalendar('removeEvents', [scheduleId]);
+        this.modalConfirmHide();
+        this.setState({
+            selectedSchedule: undefined
+        });
+    }
+
+    // [예약카드상세] 예약카드상세 슬라이더 마운트/언마운트
     isUserCard(bool, options) {
         if (bool)
             this.props.initUserCard(options);
@@ -876,7 +1196,6 @@ class DailyCalendar extends Component {
               .prop('checked', true);
         }
     }
-
 
     changeView(type, callback) {
         this.props.changeView(type);
@@ -962,278 +1281,6 @@ class DailyCalendar extends Component {
             }
             // $('.fc-view-container').addClass('fade-loading');
         }
-    }
-
-    wasMount() {
-        this.insertStaffInterface();
-        this.props.wasMount();
-    }
-
-    shouldComponentUpdate(nextProps, nextState) {
-        // console.log('shouldComponentUpdate');
-        // return false; 성능최적화 (props, state를 비교하여 불필요한 리렌더링을 방지함)
-        return true;
-    }
-
-    componentDidMount() {
-        const component = this;
-        const { Calendar } = this;
-        const Staffs = this.props.staffs;
-        const date = this.props.fcOptions.defaultDate;
-        const time = date.get('hour');
-        const day = date.get('date');
-        const month = date.get('month');
-        const firstDay = date.format('d');
-        const defaultScrollTime = date.subtract(1, 'hour').format('HH:mm'); // 현재시간으로부터 1시간 이전의 시간
-        const staffsUiHeight = $('.expert-ui.expert-daily').height();
-        this.setState({ defaultStaff: _.isEmpty(Staffs) ? undefined : Staffs[0] });
-
-        // 스케쥴러 init 실행
-        $(Calendar).fullCalendar($.extend(component.props.fcOptions, {
-            resources: [Staffs[0]],
-            events: component.props.schedules, // 스케쥴 이벤트*
-            shopServices: component.props.services,
-            defaultView: 'agendaDay', // init view type set
-            header: {
-                left: '',
-                center: 'prev title next, changeDate',
-                right: 'agendaViewSwitch'
-            },
-            titleFormat: 'YYYY. M. DD',
-            firstDay,
-            scrollTime: defaultScrollTime, // 초기 렌더링시 스크롤 될 시간을 표시합니다
-            customButtons: {
-                prev: {
-                    text: '이전',
-                    click: () => {
-                        component.changeDate($(Calendar).fullCalendar('getDate').subtract(1, 'days'));
-                    }
-                },
-                next: {
-                    text: '이전',
-                    click: () => {
-                        component.changeDate($(Calendar).fullCalendar('getDate').add(1, 'days'));
-                    }
-                },
-                changeDate: {
-                    text: '날짜선택',
-                    click(e) {
-                        e.stopPropagation();
-                        component.isChangeDate(true);
-                    }
-                },
-                agendaViewSwitch: {
-                    text: 'WEEKLY',
-                    click() {
-                        component.props.changeView('agendaWeekly');
-                    }
-                }
-            },
-            height: window.innerHeight - staffsUiHeight,
-
-            // 예약마감
-            reserveDeadline() {
-                console.info('예약마감을 하시겠습니까?');
-            },
-
-            eventClick(schedule, jsEvent, view) {
-                console.info(schedule);
-                component.setState({
-                    selectedSchedule: schedule
-                });
-                // 이벤트 슬롯 삭제 및 수정버튼 바인딩
-                if (!component.state.isEditSchedule) {
-                    // *** 1_수정 ***
-                    if (jsEvent.target.className === 'fc-ui-edit')
-                        component.editSchedule(schedule);
-                    // *** 2_삭제 ***
-                    else if (jsEvent.target.className === 'fc-ui-delete') {
-                        component.props.isModalConfirm('removeEvent');
-                        component.setState({
-                            isModalConfirm: true
-                        });
-                    }
-                }
-            },
-            eventDragStart(schedule, jsEvent, ui, view) {
-                component.setState({ isDragging: true });
-
-                // daily 이벤트 드래그관련 타임라인 스크롤
-                $(document).bind('mousemove', (e) => {
-                    component.autoFlowTimeline(e.pageX, e.pageY, jsEvent);
-                });
-            },
-            eventDragStop(schedule, jsEvent, ui, view) {
-                // 신규 생성한 이벤트가 esc keydown 삭제 바인딩 되있을경우
-                component.setState({isDragging: false});
-
-                $(document).unbind('mousemove');
-            },
-            eventDrop: function(event, delta, revertFunc, jsEvent, ui, view ) {
-                const start_time = moment(event.start).format('HH:mm');
-                const end_time = moment(event.end).format('HH:mm');
-                const staff_id = parseInt(event.resourceId);
-                // console.info(staff_id);
-                // prevent (Converting circular structure to JSON) error
-                const scheduleData = {
-                    ...event,
-                    start_time,
-                    end_time,
-                    staff_id,
-                    source: {}
-                };
-
-                component.props.patchSchedule(scheduleData).then((response) => {
-                    if (!response.updatedSchedule.success)
-                        revertFunc();
-                });
-            },
-            // 변경된 시간이 다를경우 실행
-            eventResize: function(schedule, delta, revertFunc, jsEvent, ui, view) {
-                const { start, end } = schedule;
-                const serviceTime = end.diff(start, 'minutes');
-                const start_time = start.format('HH:mm');
-                const end_time = end.format('HH:mm');
-
-                // 20분 미만으로 이벤트 시간을 수정할 경우 수정을 되돌린다.
-                if (serviceTime < 20) {
-                    revertFunc();
-                    alert('변경할 수 없습니다');
-
-                    return;
-                }
-
-                // 생성버튼 캘린더 타임라인 노드에서 상위 노드로 삽입
-                $('.full-calendar > .fc').append($('.create-order-wrap.timeline').hide());
-
-                // 30분 이하의 이벤트의 element에 클래스 추가
-                if (serviceTime <= 30) {
-                    // 20분 이하의 이벤트인경우
-                    if (serviceTime <= 20)
-                        $('.fc-event#ID_' + schedule.id).addClass('fc-short');
-                    else
-                        $('.fc-event#ID_' + schedule.id).addClass('fc-short no-expand');
-                }
-
-                if (schedule.id === component.state.newScheduleId) {
-                    // off-time slot의 new evnet 클래스 시각적 제거
-                    $('#ID_' + schedule.id).removeClass('new-event');
-
-                }
-            },
-            eventResizeStart(schedule, jsEvent, ui, view) {
-                component.setState({ isDragging: true });
-            },
-            // 변경된 시간이 같더라도 항상 실행
-            eventResizeStop: function(schedule, jsEvent, ui, view) {
-                component.setState({isDragging: false});
-            },
-            windowResize(view) {
-                $(Calendar).fullCalendar('option', 'height', window.innerHeight - staffsUiHeight);
-                component.setCalendarColumn('resize');
-            },
-            resourceRender(resourceObj, labelTds, bodyTds) {
-                // ...
-            },
-            eventRender: function(schedule, element, view) {
-
-            },
-            // 캘린더 이벤트 day 렌더링시
-            dayRender(d, cell) {
-                // 필요없는 node dom 삭제(all day slot 관련한 dom)
-                $('.fc-day-grid.fc-unselectable').remove();
-            },
-            // 캘린더 이벤트 view 렌더링시
-            viewRender(view, elem) {
-                console.info('VIEW Render');
-                const { Calendar } = component;
-
-                // [1] Daily 타임라인이 다시 렌더링 된 경우
-                if (component.state.alreadyRendered)
-                    component.setCalendarColumn('again');
-
-                // [2] Daily 타임라인이 처음 렌더링 된 경우
-                else {
-                    component.staffInputCheck();
-                    component.setCalendarColumn('init');
-                    component.setState({
-                        alreadyRendered: true
-                    });
-                }
-                // [3] Daily 타임라인이 그려질 때 마다 실행
-                component.bindTimelineAccess();
-                component.bindTimelineScroller();
-                component.setTodayButton(view.start);
-                component.setCalendarStates();
-
-                // 타임라인 내 신규예약생성 버튼 클릭시 추가되었던 클래스가 남아있으면 다시 제거
-                $('.create-order-overlap').removeClass('create-order-overlap');
-                // $('.fade-loading').removeClass('fade-loading');
-                // loading bar hide
-                // component.props.loading(false);
-            }, // end viewRender
-            viewDestroy(view, elem) {
-                // Expert input element 제거되는것을 방지함
-                component.setCalendarColumn('destroy');
-            },
-            // open customer card
-            eventDoubleClick(calSchedule, jsEvent, view) {
-                // 신규예약 생성중에는 더블클릭 이벤트 실행않함
-                if (component.state.isNewOrder)
-                    return false;
-                // OFF TIME 인경우
-                if (calSchedule.status === actions.ScheduleStatus.OFFTIME)
-                    return false;
-
-                // *****고객카드 슬라이더를 호출함******
-                const selectedDate = moment(calSchedule.reservation_dt);
-                // 더블클릭으로 선택된 이벤트객체를 가져옵니다
-                const selectedCard = calSchedule;
-                // 선택된 이벤트객체의 리소스ID에 맞는 expert id를 찾아 가져옵니다
-                const selectedStaff = $(Calendar).fullCalendar('getResourceById', selectedCard.resourceId);
-
-                // userCard 컴포넌트의 초기값을 전달한다
-                component.isUserCard(true, {
-                    selectedDate,
-                    selectedCard,
-                    selectedStaff
-                });
-                /** ***************************/
-            }
-        }));
-
-        this.wasMount();
-    } // ////// ComponentDidMount //END
-
-    componentWillMount() {
-        // show Loading bar
-        // this.props.loading(true);
-    }
-
-    componentWillUnmount() {
-        const { Calendar } = this;
-
-        // 예약생성 단계에서 un mount시 임시로 렌더링한 이벤트를 삭제.
-        if (this.state.isRenderConfirm)
-            $(Calendar).fullCalendar('removeEvents', [this.state.newScheduleId]);
-
-        $(Calendar).fullCalendar('destroy');
-    }
-
-    componentWillReceiveProps(nextProps) {
-        // 예약요청확인 이벤트 클릭시
-        if (nextProps.requestReservation.condition) {
-            // 함수 실행과 동시에 중복실행을 막기위해 store state 초기화
-            this.props.finishRequestReservation();
-            // 예약생성(예약요청확인)으로 넘어감
-            this.goToRequestReservation(nextProps.requestReservation);
-        }
-
-        if (this.props.staffs !== nextProps.staffs)
-            this.bindResourcesToTimeLine(nextProps.staffs);
-
-        if (this.props.schedules !== nextProps.schedules)
-            this.bindEventsToTimeLine(nextProps.schedules);
     }
 
     /**
@@ -1427,6 +1474,9 @@ class DailyCalendar extends Component {
         const NewOrderComponent = (
             <NewOrder
                 ref={(c) => { this.NewOrderComponent = c; }}
+                guests={this.props.guests}
+                staffs={this.props.staffs}
+                services={this.props.services}
                 newOrderFinish={this.newOrderFinish}
                 changeView={type => this.changeView(type)}
                 backToOrder={this.backToOrder}
@@ -1486,7 +1536,7 @@ class DailyCalendar extends Component {
                 <StaffsInterfaceDaily {...StaffsInterfaceProps} />
                 {this.props.newOrderConfig.condition && NewOrderComponent}
                 <TodayTimelineButton {...TodayTimelineButtonProps} />
-                <CreateOrderButtonDirect {...CreateOrderButtonDirectProps}/>
+                <CreateOrderButtonDirect {...CreateOrderButtonDirectProps} />
                 <CreateOrderButtonQuick {...CreateOrderButtonQuickProps} />
                 {this.state.isChangeDate && DatePickerComponent}
                 {this.props.getUserCardComponent(this)}

@@ -18,7 +18,7 @@ const scheduleInitialState = {
     guest: {},  // object
     start: '', // moment format
     end: '', // moment format
-    time: '' // HH:mm
+    time: '00:20' // HH:mm
 };
 
 export const newOrderConfig = (state = configInitialState, action) => {

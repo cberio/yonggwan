@@ -315,7 +315,7 @@ export const saveSchedule = scheduleData => (dispatch, getState) => {
         .then((json) => {
             dispatch(loading(false));
 
-            if (json.success) 
+            if (json.success)
                 return dispatch(scheduleCreated(json, getState));
             return new ApiException(json).showError();
         });
@@ -333,7 +333,7 @@ export const patchSchedule = scheduleData => (dispatch, getState) => {
         .then((json) => {
             dispatch(loading(false));
 
-            if (json.success) 
+            if (json.success)
                 return dispatch(scheduleUpdated(json, getState));
             return new ApiException(json).showError();
         });
@@ -380,8 +380,9 @@ export const ScheduleStatus = {
     REQUESTED: '02', // 예약요청건
     CONFIRMED: '03', // 예약요청건 확인
     CHANGED: '04', // 예약수정건
-    OFFTIME: '05', // 오프타임
+    OFFTIME: '05', // 오프타임 (OFFTIME은 status가 변하지않음)
     CANCELED: '99', //예약취소건
+    CREATING: '100', //임시(예약생성중)
 };
 
 export const GuestClass = {
@@ -394,3 +395,6 @@ export const NewOrderStatus = {
     DIRECT: 'DIRECT', // 다이렉트 예약생성  (시작시간이 선택된)
     QUICK: 'QUICK',  //  퀵 예약생성      (시작시간이 선택되지않은)
 };
+
+// Shop service color names
+export const ServiceColorNames = ['red', 'blue', 'yellow', 'green', 'purple'];

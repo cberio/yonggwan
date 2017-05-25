@@ -8,7 +8,7 @@ import 'fullcalendar/dist/fullcalendar.min.css';
 import * as actions from '../../actions';
 import ModalConfirm from './modal/modalConfirm';
 import RenderEventConfirm from './modal/renderEventConfirm';
-import UserCard from '../userCard';
+import ReservationCardContainer from '../userCard';
 // import Notifier from '../../components/notifier';
 import DailyCalendar from './fullCalendar/dailyCalendar';
 import WeeklyCalendar from './fullCalendar/weeklyCalendar';
@@ -260,7 +260,7 @@ class Calendar extends Component {
         const UserCardComponent = (_this) => {
             if (!_this.state.isUserCard) return '';
             return (
-                <UserCard
+                <ReservationCardContainer
                     schedules={_this.props.schedules}
                     services={_this.props.services}
                     staffs={_this.props.staffs}
@@ -475,14 +475,14 @@ const mapStateToProps = (state) => {
         newOrderConfig,
     } = state;
 
-    // const { schedules } = scheduleReducer[selectedShopID] || { isFetching: false, didInvalidate: false, schedules: { data: require('../../data/schedules').default } };
-    // const { staffs } = staffReducer[selectedShopID] || { isFetching: false, didInvalidate: false, staffs: { data: require('../../data/staffs').default } };
-    // const { services } = serviceReducer[selectedShopID] || { isFetching: false, didInvalidate: false, services: { data: require('../../data/services').default } };
-    // const { guests } = guestReducer[selectedShopID] || { isFetching: false, didInvalidate: false, guests: { data: require('../../data/guests').default } };
-    const { schedules } = { isFetching: false, schedules: { data: require('../../data/schedules').default } };
-    const { staffs } = { isFetching: false, staffs: { data: require('../../data/staffs').default } };
-    const { services } = { isFetching: false, services: { data: require('../../data/services').default } };
-    const { guests } = { isFetching: false, guests: { data: require('../../data/guests').default } };
+    const { schedules } = scheduleReducer[selectedShopID] || { isFetching: false, didInvalidate: false, schedules: { data: require('../../data/schedules').default } };
+    const { staffs } = staffReducer[selectedShopID] || { isFetching: false, didInvalidate: false, staffs: { data: require('../../data/staffs').default } };
+    const { services } = serviceReducer[selectedShopID] || { isFetching: false, didInvalidate: false, services: { data: require('../../data/services').default } };
+    const { guests } = guestReducer[selectedShopID] || { isFetching: false, didInvalidate: false, guests: { data: require('../../data/guests').default } };
+    // const { schedules } = { isFetching: false, schedules: { data: require('../../data/schedules').default } };
+    // const { staffs } = { isFetching: false, staffs: { data: require('../../data/staffs').default } };
+    // const { services } = { isFetching: false, services: { data: require('../../data/services').default } };
+    // const { guests } = { isFetching: false, guests: { data: require('../../data/guests').default } };
 
     return {
         isModalNotifier: state.notifier.isModalNotifier,
