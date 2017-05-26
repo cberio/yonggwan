@@ -32,9 +32,9 @@ export default class RenderEventConfirm extends React.Component {
 
         $('.render-confirm-inner button').on('click', (e) => {
             if (e.target.className === 'complete')
-                _component.props.modalConfirm(true, _component.props.newScheduleID);
+                _component.props.modal(true, _component.props.newScheduleID);
             else
-        _component.props.modalConfirm(false, _component.props.newScheduleID);
+        _component.props.modal(false, _component.props.newScheduleID);
         });
     // 'a tag autofocusing prevent   /// E'
 
@@ -42,7 +42,7 @@ export default class RenderEventConfirm extends React.Component {
         $(document).bind('keydown', (e) => {
             if (e.which === 27 && !_component.props.isModalConfirm) {
                 console.log('happend RenderEventConfirm');
-                _component.props.modalConfirm(false, _component.props.newScheduleID);
+                _component.props.modal(false, _component.props.newScheduleID);
                 $(document).unbind('keydown');
             }
         });

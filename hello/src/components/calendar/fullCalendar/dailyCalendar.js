@@ -64,9 +64,10 @@ class DailyCalendar extends Component {
         this.bindNewOfftime = this.bindNewOfftime.bind(this);
         this.renderNewOfftime = this.renderNewOfftime.bind(this);
         /* 예약 수정/삭제/요청 관련 */
+        this.patchSchedule = this.patchSchedule.bind(this);
         this.editSchedule = this.editSchedule.bind(this);
         this.removeSchedule = this.removeSchedule.bind(this);
-        this.removeConfirm = this.removeConfirm.bind(this); 1;
+        this.removeConfirm = this.removeConfirm.bind(this);
         this.goToRequestReservation = this.goToRequestReservation.bind(this);
         /* 캘린더 DOM 관련 */
         this.changeView = this.changeView.bind(this);
@@ -99,47 +100,7 @@ class DailyCalendar extends Component {
 
     test(e) {
         const { Calendar } = this;
-        const component = this;
-        // this.props.changeView('agendaWeekly');
-        // ReactDOM.unmountComponentAtNode(document.getElementById('root'));
-        // 상태코드 변경 테스트
-        $(Calendar).fullCalendar('getEventSources')[0].events[2].status = actions.ScheduleStatus.REQUESTED;
-        $(Calendar).fullCalendar('rerenderEvents');
-        if (this.condition) {
-            this.condition = false;
-            this.schedule = $(Calendar).fullCalendar('renderEvent', {
-                id: 123456, // integer|예약고유 id
-                reservation_dt: '2017-05-22', // max 10|예약일자|YYYY-MM-DD
-                shop_id: 1, // integer|shop 고유 id
-                staff_id: 1, // integer|시술자 고유 id(staff)
-                start_time: '20:00', // max 5|예약 시작 시간|hh:mm
-                end_time: '22:00',  // max 5|예약 종료 시간|hh:mm
-                service_time: '02:00', // max 50|소요시간|hh:mm
-                guest_id: 1, // integer|예약자 고유 id
-                user_id: 123, // integer|예약자 user id
-                guest_name: '홍고객', // max 100|고객이름
-                guest_class: 'VIP', // max 10|고객등급
-                guest_mobile: '01012345678', // 고객휴대번호
-                service_code: 'B', // max 10|상품코드
-                shop_service_id: 2, // integer|서비스 고유 id
-                status: '02', // max 2|예약상태|00:시술완료,01:예약생성,02:예약요청,03:예약완료,04:변경,05:오프타임,99:취소
-                bigo: '잘해야 함', // max 500,nullable|비고
-                guest_memo: '반갑습니다 머리가 엉망이에요 ㅜㅜ', // max 500,nullable|고객메모
-                staff_memo: '', // max 500,nullable|직원메모
-                is_delete: 0, // boolean|삭제여부
-                created_user_id: 1, // 예약 생성자 user id
-                updated_user_id: 1, // 예약 수정자 user id
-                start: '2017-05-22T20:00+09:00', // datetime(ISO8601)|서비스시작일시|fullcalendar
-                end: '2017-05-22T22:00+09:00', // datetime(ISO8601)|서비스종료일시|fullcalendar
-                resourceId: 1, // integer|시술자 고유 id(staff)|fullcalendar
-                payments: []
 
-            }, true); // stick? = true
-        } else {
-            this.schedule[0].guest_name = "ㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇ";
-            $(Calendar).fullCalendar('rerenderEvents');
-        }
-        debugger;
     }
 
     setTodayButton(date) {
@@ -358,14 +319,14 @@ class DailyCalendar extends Component {
         if (getStaffs.length === 1) {
             createHelperSlot = $('.fc-agendaDay-view .fc-time-grid-container .fc-slats').not($('.fc-slats-clone')).find('tr');
             // style aplly
-            $('.fc-agendaDay-view .fc-time-grid .fc-bg').css('z-index', '0');
             $('.fc').removeClass('multi-experts');
-            // case 1__2: expert 2명 이상의 타임라인을 보고있는 경우
+        // case 1__2: expert 2명 이상의 타임라인을 보고있는 경우
         } else {
             createHelperSlot = $('.fc-agendaDay-view .fc-time-grid .fc-bg .fc-day .fc-create-helper tr');
             $('.fc-day-grid .fc-create-helper').remove();
             $('.fc').addClass(`expert-${getStaffs.length}`);
             $('.fc').addClass('multi-experts');
+            $('.fc-agendaDay-view .fc-time-grid .fc-bg').css('z-index', '1');
         }
         for (let i = 2; i <= 10; i++)
             $('.fc').removeClass(`expert-${i}`);
@@ -477,7 +438,12 @@ class DailyCalendar extends Component {
 
     // 예약카드 삭제 1단계
     removeConfirm(schedule) {
-        this.props.isModalConfirm('removeEvent');
+        this.props.isModalConfirm({
+            condition: true,
+            options: {
+                optionComponent: 'removeEvent'
+            }
+        });
         this.setState({
             isModalConfirm: true,
             selectedSchedule: schedule
@@ -653,19 +619,7 @@ class DailyCalendar extends Component {
             // component.state.isAbleBindRemoveEvent 가 true일경우 ESC key등의 이벤트 발생시 삭제가 가능하도록 접근성 바인딩을 합니다
             $(document).bind('keydown', (e) => {
                 if (e.which === 27 && !component.state.isModalConfirm) {
-                    const cancelSchedule = {
-                        ...createdSchedule,
-                        status: actions.ScheduleStatus.CANCELED
-                    };
-
-                    component.props.patchSchedule(cancelSchedule).then((responses) => {
-                        if (!responses.updatedSchedule.success)
-                            return;
-                        // 생성버튼 캘린더 타임라인 노드에서 상위 노드로 삽입 (event remove 시 버튼의 부모 dom이 다시 그려지면서 버튼 dom도 사라지기떄문)
-                        $('.full-calendar > .fc').append($('.create-order-wrap.timeline').hide());
-                        $(Calendar).fullCalendar('removeEvents', [createdSchedule.id]);
-                        component.props.guider('OFF TIME이 삭제되었습니다!');
-                    });
+                    component.patchSchedule(createdSchedule, actions.ScheduleStatus.CANCELED);
                     $(document).unbind('keydown');
                 }
             });
@@ -673,7 +627,6 @@ class DailyCalendar extends Component {
             // 타 영역 클릭시, 신규생성한 off-time slot의 new evnet 클래스 시각적 제거 (접근성 바인딩)
             $('body').one('click', () => {
                 createdScheduleDom.removeClass('new-event');
-
                 $(document).unbind('keydown');
             });
         });
@@ -763,6 +716,29 @@ class DailyCalendar extends Component {
         $(Calendar).fullCalendar('gotoDate', date);
         this.setState({ isChangeDate: false });
         this.props.changeDate(date);
+    }
+
+    // [예약수정/삭제]
+    patchSchedule(schedule, status) {
+        const { Calendar } = this;
+        const scheduleData = {
+            ...schedule,
+            source: {}
+        }
+        if (!_.isEmpty(status))
+            scheduleData.status = status;
+
+        this.props.patchSchedule(scheduleData).then((response) => {
+            if (response.updatedSchedule.success) {
+                //$(Calendar).fullCalendar('removeEvents', [response.updatedSchedule.data.id]);
+                this.props.guider('삭제 되었습니다');
+            }
+            else
+                this.props.guider('오류가 발생했습니다');
+        });
+        this.props.isModalConfirm({
+            condition: false
+        });
     }
 
     // 예약정보수정
@@ -1035,7 +1011,6 @@ class DailyCalendar extends Component {
             },
 
             eventClick(schedule, jsEvent, view) {
-                console.info(schedule);
                 component.setState({
                     selectedSchedule: schedule
                 });
@@ -1046,9 +1021,13 @@ class DailyCalendar extends Component {
                         component.editSchedule(schedule);
                     // *** 2_삭제 ***
                     else if (jsEvent.target.className === 'fc-ui-delete') {
-                        component.props.isModalConfirm('removeEvent');
-                        component.setState({
-                            isModalConfirm: true
+                        component.props.isModalConfirm({
+                            condition: true,
+                            options: {
+                                type: 'removeSchedule',
+                                schedule,
+                                confirm: () => component.patchSchedule(schedule, actions.ScheduleStatus.CANCELED),
+                            }
                         });
                     }
                 }
@@ -1146,7 +1125,8 @@ class DailyCalendar extends Component {
                 // ...
             },
             eventRender(schedule, element, view) {
-
+                if (schedule.status === actions.ScheduleStatus.CANCELED)
+                    return false;
             },
             // 캘린더 이벤트 day 렌더링시
             dayRender(d, cell) {
@@ -1364,10 +1344,6 @@ class DailyCalendar extends Component {
                 </dt>
                 <dd>{this.state.isDragging && 'true'}</dd>
                 <br />
-                <dt>modalConfirmOption :</dt>
-                <dd>{this.props.modalConfirmOptionComponent
-                    ? this.props.modalConfirmOptionComponent
-                    : ''}</dd>
                 <dt>editedDate:
                 </dt>
                 <dd>{this.state.editedDate
@@ -1427,7 +1403,7 @@ class DailyCalendar extends Component {
                     top: '0px',
                     zIndex: '10',
                     background: '#eee'
-                }} onClick={() => this.test()}
+                }} onClick={() => this.test('test~')}
             >
                 CLICK ME!
             </button>
@@ -1499,7 +1475,6 @@ class DailyCalendar extends Component {
                 <CreateOrderButtonQuick {...CreateOrderButtonQuickProps} />
                 {this.state.isChangeDate && DatePickerComponent}
                 {this.props.getUserCardComponent(this)}
-                {this.props.getModalConfirmComponent(this)}
                 {this.props.getRenderConfirmComponent(this, 'agendaDay')}
                 {/* viewstate */}
                 {test}
@@ -1527,7 +1502,6 @@ DailyCalendar.propTypes = {
 };
 
 const mapStateToProps = state => ({
-    modalConfirmOptionComponent: state.modalConfirm.optionComponent,
     requestReservation: state.notifier.requestReservation,
     newOrderConfig: state.newOrderConfig,
 });
@@ -1538,8 +1512,8 @@ const mapDispatchToProps = dispatch => ({
         dispatch(actions.userCardStaff(options.selectedStaff));
         dispatch(actions.userCardDate(options.selectedDate));
     },
-    isModalConfirm: (optionComponent) => {
-        dispatch(actions.modalConfirm(optionComponent));
+    isModalConfirm: (params) => {
+        dispatch(actions.modal(params));
     },
     guider: message => dispatch(actions.guider({ isGuider: true, message })),
     loading: condition => dispatch(actions.loading(condition)),

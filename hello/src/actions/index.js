@@ -18,9 +18,9 @@ export const userCardDate = options => ({
 });
 
 /**/
-export const modalConfirm = optionComponent => ({
-    type: types.MODAL_CONFIRM,
-    optionComponent
+export const modal = params => ({
+    type: types.MODAL,
+    params
 });
 
 /* NEW ORDER RELATED */

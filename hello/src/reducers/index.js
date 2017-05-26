@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux';
 import userCard from './userCard';
-import modalConfirm from './modalConfirm';
+import modal from './modal';
 import notifier from './notifier';
 import guider from './guider';
 import loading from './loading';
@@ -15,7 +15,7 @@ import guestReducer from './guest';
 
 const Reducers = combineReducers({
     userCard,
-    modalConfirm,
+    modal,
     notifier,
     guider,
     loading,

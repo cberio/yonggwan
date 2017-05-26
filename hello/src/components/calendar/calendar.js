@@ -6,7 +6,6 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 import 'fullcalendar/dist/fullcalendar.min.css';
 import * as actions from '../../actions';
-import ModalConfirm from './modal/modalConfirm';
 import RenderEventConfirm from './modal/renderEventConfirm';
 import ReservationCardContainer from '../userCard';
 // import Notifier from '../../components/notifier';
@@ -271,22 +270,6 @@ class Calendar extends Component {
             );
         };
 
-        const ModalConfirmComponent = (_this) => {
-            if (!_this.state.isModalConfirm) return '';
-            return (
-                <ModalConfirm
-                    options={_this.state.newSchedule}
-                    selectedEvent={_this.state.selectedEvent}
-                    editedDate={_this.state.editedDate}
-                    newScheduleID={_this.state.newScheduleID}
-                    unknownStart={_this.state.unknownStart}
-                    modalConfirmHide={_this.modalConfirmHide}
-                    renderNewSchedule={(bool, newScheduleID, type) => _this.renderNewSchedule(bool, newScheduleID, type)}
-                    removeEvent={_this.removeEvent}
-                />
-            );
-        };
-
         const RenderConfirmComponent = (_this, view) => {
             if (!_this.state.isRenderConfirm) return '';
             return (
@@ -354,7 +337,6 @@ class Calendar extends Component {
             runUserCardSlide(t, calSchedule, jsEvent, view) { this.runUserCardSlide(t, calSchedule, jsEvent, view); },
 
             getUserCardComponent(t) { return UserCardComponent(t); },
-            getModalConfirmComponent(t) { return ModalConfirmComponent(t); },
             getRenderConfirmComponent(t, view) { return RenderConfirmComponent(t, view); }
 
         };
@@ -421,23 +403,23 @@ class Calendar extends Component {
 
 Calendar.defaultProps = {
     staffs: {
-        isFetching: false, 
-        didInvalidate: false, 
+        isFetching: false,
+        didInvalidate: false,
         staffs: []
     },
     schedules: {
-        isFetching: false, 
-        didInvalidate: false, 
+        isFetching: false,
+        didInvalidate: false,
         schedules: []
     },
     services: {
-        isFetching: false, 
-        didInvalidate: false, 
+        isFetching: false,
+        didInvalidate: false,
         services: []
     },
     guests: {
-        isFetching: false, 
-        didInvalidate: false, 
+        isFetching: false,
+        didInvalidate: false,
         guests: []
     }
 };

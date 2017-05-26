@@ -1536,6 +1536,9 @@
 }
 .fc-agendaDay-view .fc-time-grid-container {
 }
+.fc-agendaDay-view .fc-time-grid .fc-bg {
+	z-index: 0;
+}
 .fc-agendaDay-view .fc-time-grid .fc-bg table {
 	/*border-top: 1px solid;*/
 }
@@ -1707,7 +1710,7 @@
 }
 
 /* 20분 이하 슬롯 스타일 */
-.fc-agendaDay-view .fc-event.fc-short:not(.off-time):not(.no-expand):hover{
+.fc-agendaDay-view .fc-event.fc-short:not(.no-expand):hover{
 	margin-bottom: -10px;
 }
 .fc-agendaDay-view .fc-event.fc-short .fc-content {
@@ -1900,7 +1903,7 @@
 	}
 
 	/* 20분 이하 슬롯 스타일 */
-	.fc-agendaDay-view .fc-event.fc-short:not(.no-expand):hover{
+	.fc-agendaDay-view .fc-event.fc-short:not(.off-time):not(.no-expand):hover{
 		margin-bottom: -22px;
 	}
 
