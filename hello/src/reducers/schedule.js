@@ -39,7 +39,7 @@ const schedules = (state = initialState, action) => {
                 didInvalidate: false,
             };
         case types.SCHEDULE_CREATED:
-            data = update(state.schedules.data, 
+            data = update(state.schedules.data,
                 { $push: [action.createdSchedule.data] }
             );
             return {
@@ -60,9 +60,14 @@ const schedules = (state = initialState, action) => {
                 didInvalidate: false,
             };
         case types.SCHEDULE_UPDATED:
-            data = update(state.schedules.data, 
-                { $push: [action.updatedSchedule.data] }
-            );
+            const idx = state.schedules.data.findIndex(x => x.id === action.updatedSchedule.data.id);
+            console.info(state.schedules.data);
+            console.info(action.updatedSchedule.data);
+            data = update(state.schedules.data, {
+                [idx]: {
+                    $set: { ...action.updatedSchedule.data }
+                }
+            });
             return {
                 ...state,
                 isFetching: false,
@@ -86,6 +91,8 @@ const scheduleReducer = (state = {}, action) => {
         case types.REQUEST_SCHEDULE:
         case types.CREATE_SCHEDULE:
         case types.SCHEDULE_CREATED:
+        case types.UPDATE_SCHEDULE:
+        case types.SCHEDULE_UPDATED:
             return {
                 ...state,
                 [action.shop]: schedules(state[action.shop], action)
