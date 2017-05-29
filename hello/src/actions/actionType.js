@@ -62,3 +62,7 @@ export const RECEIVE_SERVICE = 'RECEIVE_SERVICE';
 
 export const REQUEST_GUEST = 'REQUEST_GUEST';
 export const RECEIVE_GUEST = 'RECEIVE_GUEST';
+export const CREATE_GUEST = 'CREATE_GUEST';
+export const GUEST_CREATED = 'GUEST_CREATED';
+export const UPDATE_GUEST = 'UPDATE_GUEST';
+export const GUEST_UPDATED = 'GUEST_UPDATED';
