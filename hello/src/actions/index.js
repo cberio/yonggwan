@@ -140,6 +140,32 @@ export const receiveGuests = (shop, json) => ({
     receivedAt: Date.now(),
 });
 
+export const createGuest = (guestData, shop) => ({
+    type: types.CREATE_GUEST,
+    shop,
+    guests: guestData,
+});
+
+export const guestCreated = (json, getState) => ({
+    type: types.GUEST_CREATED,
+    shop: getState().selectedShopID,
+    createdGuest: json,
+    receivedAt: Date.now(),
+});
+
+export const updateGuest = (guestData, shop) => ({
+    type: types.UPDATE_GUEST,
+    shop,
+    guests: guestData
+});
+
+export const guestUpdated = (json, getState) => ({
+    type: types.GUEST_UPDATED,
+    shop: getState().selectedShopID,
+    updatedGuest: json,
+    receivedAt: Date.now(),
+});
+
 // SHOP RELATED ACTIONS
 export const selectShop = shop => ({
     type: types.SELECT_SHOP,
@@ -323,6 +349,38 @@ export const patchSchedule = scheduleData => (dispatch, getState) => {
             dispatch(loading(false));
 
             return dispatch(scheduleUpdated(json, getState));
+        });
+};
+
+export const saveGuest = guestData => (dispatch, getState) => {
+    const shopId = getState().selectedShopID;
+
+    dispatch(createGuest(guestData, shopId));
+    dispatch(loading(true));
+
+    return new Shop({ shopId })
+        .guests()
+        .create(guestData)
+        .then((json) => {
+            dispatch(loading(false));
+
+            return dispatch(guestCreated(json, getState));
+        });
+};
+
+export const patchGuest = guestData => (dispatch, getState) => {
+    const shopId = getState().selectedShopID;
+
+    dispatch(updateGuest(guestData, shopId));
+    dispatch(loading(true));
+
+    return new Shop({ shopId })
+        .guests()
+        .create(guestData)
+        .then((json) => {
+            dispatch(loading(false));
+
+            return dispatch(guestUpdated(json, getState));
         });
 };
 
