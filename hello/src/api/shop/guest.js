@@ -28,10 +28,10 @@ export default class Guest {
         }).then(ApiUtils.parseJSON);
     }
 
-    update(guestId, data) {
+    update(data) {
         this.method = 'PATCH';
 
-        return fetch(`${this.apiUrl}/${guestId}`, {
+        return fetch(`${this.apiUrl}/${data.id}`, {
             method: this.method,
             headers: ApiUtils.HTTP_HEADER(this.token),
             body: JSON.stringify(data)
