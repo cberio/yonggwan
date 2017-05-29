@@ -1640,7 +1640,7 @@ class WeeklyCalendar extends Component {
                 <CreateOrderButtonQuick />
                 {this.state.isChangeDate && DatePickerComponent}
                 {this.props.getUserCardComponent(this)}
-                {this.props.getModalConfirmComponent(this)}
+                {this.props.getModalComponent(this)}
                 {this.props.getRenderConfirmComponent(this, 'agendaWeekly')}
                 {/* viewstate*/}
                 {test}
@@ -1669,7 +1669,7 @@ const mapDispatchToProps = dispatch => ({
         dispatch(actions.userCardDate(options.selectedDate));
     },
     isModalConfirm: (optionComponent) => {
-        dispatch(actions.modalConfirm(optionComponent));
+        dispatch(actions.modal(optionComponent));
     },
     guider: message => dispatch(actions.guider({ isGuider: true, message })),
     loading: condition => dispatch(actions.loading(condition)),

@@ -68,7 +68,7 @@ class NewOrder extends Component {
     documentBinding() {
         const component = this;
         window.onbeforeunload = () => {
-            if (false) {
+            if (true) {
                 return '저장되지 않습니다~@!!!';
             }
         }
@@ -166,7 +166,7 @@ class NewOrder extends Component {
                 this.setState({ newOrderStep: 3 });
                 break;
             case 3 :
-                this.props.modalConfirm(true);
+                this.props.modal(true);
                 break;
             default:
                 break;
