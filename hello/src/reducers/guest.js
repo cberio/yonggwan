@@ -19,7 +19,7 @@ const guests = (state = initialState, action) => {
                 ...state,
                 isFetching: false,
                 didInvalidate: false,
-                guetss: action.guests,
+                guests: action.guests,
                 receivedAt: action.receivedAt,
             }
         default:

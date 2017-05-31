@@ -1,27 +1,12 @@
 import * as types from '../actions/actionType';
 import * as actions from '../actions';
 
-const configInitialState = {
+const initialState = {
     condition: false, // boolean
-    status: actions.NewOrderStatus.DIRECT,
-    staff: {}, // object
-    guest: {},  // object
-    savedSchedule: {} // object
-};
-const scheduleInitialState = {
-    id: -1,
-    guestName: '', // str
-    sex: 0, // int 0-2
-    phone: [], // array ( ['010','1234','1234'] )
-    service: {}, // object (service object)
-    staff: {}, // object
-    guest: {},  // object
-    start: '', // moment format
-    end: '', // moment format
-    time: '00:20' // HH:mm
+    status: '',
 };
 
-export const newOrderConfig = (state = configInitialState, action) => {
+export const newOrderConfig = (state = initialState, action) => {
     switch (action.type) {
         case types.NEW_ORDER_INIT :
             return {
@@ -30,35 +15,8 @@ export const newOrderConfig = (state = configInitialState, action) => {
                 condition: true
             };
         case types.NEW_ORDER_FINISH :
-            return {
-                condition: false
-            }
+            return initialState;
         default :
             return state;
     }
 }
-
-export const newOrderSchedule = (state = scheduleInitialState, action) => {
-    switch (action.type) {
-        case types.NEW_ORDER_GUEST_NAME :
-            return { ...state };
-        case types.NEW_ORDER_SEX :
-            return { ...state };
-        case types.NEW_ORDER_PHONE :
-            return { ...state };
-        case types.NEW_ORDER_SERVICE :
-            return { ...state };
-        case types.NEW_ORDER_STAFF :
-            return { ...state };
-        case types.NEW_ORDER_GUEST :
-            return { ...state };
-        case types.NEW_ORDER_START :
-            return { ...state };
-        case types.NEW_ORDER_END :
-            return { ...state };
-        case types.NEW_ORDER_TIMM :
-            return { ...state };
-        default :
-            return state;
-    }
-};
