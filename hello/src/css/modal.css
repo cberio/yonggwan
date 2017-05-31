@@ -1,0 +1,59 @@
+@charset "utf-8";
+
+/* modal style */
+.modal-layer {
+    width: 356px;margin: 0 auto;
+    border-radius: 5px; overflow: hidden;
+    background-color: #fff;
+    box-shadow: 5px 5px 20px 5px rgba(0,0,0, .2)
+}
+.modal-layer .confirm-content{
+    padding: 35px 25px 0; 
+    font-size: 16px;
+    line-height: 22px;
+    letter-spacing: -0.3px;
+    color: #808080;
+    text-align: center;
+    font-family: 'notokr-regular';
+}
+.modal-layer .confirm-content .block{
+    display: block;
+}
+.modal-layer .confirm-content .inline{
+    display: inline;
+}
+.modal-layer .confirm-content .black{
+    color: #000;
+}
+.modal-layer .confirm-content .bold{
+    font-family: 'notokr-bold';
+}
+.modal-layer .confirm-content .rating.VIP{color: #d37c00;}
+.modal-layer .confirm-content .rating.NEW{color: #05a609;}
+.modal-layer .confirm-content .rating.BAD{color: #b1282f;}
+
+.modal-layer .confirm-content .product.yellow{color: #cc8100;}
+.modal-layer .confirm-content .product.red{color: #d96441;}
+.modal-layer .confirm-content .product.green{color: #1f997e;}
+.modal-layer .confirm-content .product.purple{color: #7435b3;}
+.modal-layer .confirm-content .product.blue{color: #3550b3;}
+
+.modal-layer .confirm-content .change-date{margin-top: 30px;}
+
+/* UI BUTTON */
+.modal-layer .confirm-ui{
+    text-align: center; margin: 25px 0 35px 0;
+}
+.modal-layer .confirm-ui button{
+    display: inline-block; width: 34px; height: 34px;
+    overflow: hidden; background-color: #808080; margin: 0 6px;
+    border-radius: 50%; text-indent: -9999px;color: rgba(0,0,0,0);
+    background-position: center center; background-repeat: no-repeat;
+}
+.modal-layer .confirm-ui button.confirm {
+    background-color: #4d9854;
+    background-image: url(../image/common/bullet-check-white.png);
+}
+.modal-layer .confirm-ui button.cancel {    
+    background-image: url(../image/common/btn-close.png);
+}

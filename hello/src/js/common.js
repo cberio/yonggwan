@@ -38,8 +38,8 @@ export function millisecondsToMinute(ms) {
 
 /* int형의 분을, 00시간 00분 형식으로 반환 */
 export function minuteToTime(m) {
-    const hour = Math.floor(m / 60);
-    const minute = m % 60;
+    const hour = Math.floor(Number(m) / 60);
+    const minute = Number(m) % 60;
     if (hour > 0 && minute === 0)
         return `${hour}시간`;
     else if (hour === 0 && minute > 0)
@@ -48,7 +48,7 @@ export function minuteToTime(m) {
     return `${hour}시간 ${minute}분`;
 }
 
-/* milliseconds 를 인수로 받아 00시간 00분 형식으로 반환  (위의 두개의 함수를 병합한 셈)*/
+/* milliseconds 를 인수로 받아 00시간 00분 형식으로 반환 */
 export function millisecondsToTime(ms) {
     const duration = moment.duration(ms, 'milliseconds');
     const fromMinutes = Math.floor(duration.asMinutes());
@@ -66,19 +66,19 @@ export function millisecondsToTime(ms) {
 
 /* Return service object*/
 export function getService(serviceID, services) {
-    if (!services) return '';
+    if (!serviceID || !services) return {};
     return services.find(service => service.id == serviceID);
 }
 
 /* Return staff object*/
 export function getStaff(staffID, staffs) {
-    if (!staffs) return '';
+    if (!staffID || !staffs) return {};
     return staffs.find(staff => staff.id === staffID);
 }
 
 /* Return guest object*/
 export function getGuest(guestID, guests) {
-    if (!guests) return '';
+    if (!guestID || !guests) return {};
     return guests.find(guest => guest.id === guestID);
 }
 
@@ -96,7 +96,8 @@ export function getHistory(guestID, histories) {
 
 /* 숫자를 인수로 받아 3자리단위에 콤마삽입하여 반환 (금액 표현) */
 export function numberWithCommas(num) {
-    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    if (num)
+        return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
 
 /* 숫자를 인수로 받아 하이픈을 삽입하여 반환 (핸드폰번호 표현) */

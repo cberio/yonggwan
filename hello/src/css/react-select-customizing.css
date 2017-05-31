@@ -561,10 +561,13 @@
   width: 100%; max-width: none !important;
 }
 .search-customer .Select-value-label .label{
-  margin-right: 6px; font-size: 14px;font-family: 'notokr-medium';letter-spacing: -0.2px;color: #000;
-  float: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  max-width: 80%; margin-right: 6px; font-size: 14px;font-family: 'notokr-medium';letter-spacing: -0.2px;
+  float: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #777;
 }
-.search-customer .Select-value-label .label.is-guest {
+.search-customer .Select-value-label .label.has-value {
+  color: #000;
+}
+.search-customer .Select-value-label .label.has-phone {
   max-width: 45%;
 }
 .search-customer .Select-value-label .phone{

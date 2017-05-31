@@ -47,6 +47,7 @@ class CardContainer extends React.Component {
                 <Card
                     cardType={this.props.cardType}
                     schedule={this.props.schedule}
+                    services={this.props.services}
                 />
                 <div className="card-foot">
                     <button

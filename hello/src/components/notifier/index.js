@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import $ from 'jquery';
+import _ from 'lodash';
 import * as actions from '../../actions';
 import { connect } from 'react-redux';
 import CardContainer from './cardContainer';
-import Schedules from '../../data/schedules';
 import '../../css/notifier.css';
 import '../../lib/jquery-custom-scrollbar-master/jquery.custom-scrollbar.js';
 import '../../lib/jquery-custom-scrollbar-master/jquery.custom-scrollbar.css';
@@ -103,6 +103,7 @@ class Notifier extends Component {
     componentDidMount() {
         this.setScrolerHeight(true);
         $('body').addClass('opened-notifier');
+        debugger;
     }
 
     componentWillUnmount() {
@@ -126,20 +127,21 @@ class Notifier extends Component {
                             <button>닫기</button>
                         </div>
                         <div className="notifier-contents">
-                            {
-                Schedules.map((schedule, i) => {
-                    if (schedule.status == actions.ScheduleStatus.OFFTIME) return;
-                    return (
-                        <CardContainer
-                            schedule={schedule}
-                            key={i}
-                            index={i}
-                            cardType="요청"
-                            cardDistroy={this.cardDistroy}
-                        />
-                    );
-                })
-              }
+                            {!_.isEmpty(this.props.schedules) && this.props.schedules.map((schedule, i) => {
+                                if (schedule.status == actions.ScheduleStatus.OFFTIME)
+                                    return '';
+                                return (
+                                    <CardContainer
+                                        schedule={schedule}
+                                        services={this.props.services}
+                                        key={i}
+                                        index={i}
+                                        cardType="요청"
+                                        cardDistroy={this.cardDistroy}
+                                      />
+                                  );
+                              })
+                            }
                         </div>
                     </div>
                 </div>
@@ -147,4 +149,10 @@ class Notifier extends Component {
         );
     }
 }
-export default Notifier;
+
+const mapStateToProps = state => ({
+    services: state.serviceReducer[state.selectedShopID].services.data,
+    schedules: state.scheduleReducer[state.selectedShopID].schedules.data
+})
+
+export default connect(mapStateToProps)(Notifier);

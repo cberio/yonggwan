@@ -17,6 +17,7 @@ class OptionComponent extends React.Component {
         event.preventDefault();
         event.stopPropagation();
         this.props.onSelect(this.props.option, event);
+        console.info(this.props.option)
     }
     handleMouseEnter(event) {
         this.props.onFocus(this.props.option, event);
@@ -32,12 +33,12 @@ class OptionComponent extends React.Component {
                 onMouseDown={this.handleMouseDown}
                 onMouseEnter={this.handleMouseEnter}
                 onMouseMove={this.handleMouseMove}
-                title={this.props.option.title}
+                title={this.props.children}
             >
                 <div title={this.props.children}>
                     <i className="bullet" />
                     <span className="label">{this.props.children}</span>
-                    <span className="service-time">{Functions.minuteToTime(moment.duration(this.props.option.time, 'hh:mm').asMinutes())}</span>
+                    <span className="service-time">{Functions.minuteToTime(this.props.option.time)}</span>
                     <span className="price">{Functions.numberWithCommas(this.props.option.amount)} ￦</span>
                 </div>
             </div>
@@ -69,9 +70,9 @@ class GenderFilterComponent extends React.Component {
                             type="radio"
                             id="gender_all"
                             name="gender"
-                            value={0}
+                            value="0"
                             onChange={e => this.props.onChange(e)}
-                            defaultChecked={this.props.default === 0}
+                            defaultChecked={this.props.default === '0'}
                         />
                         <label htmlFor="gender_all">전체</label>
                     </div>
@@ -80,9 +81,9 @@ class GenderFilterComponent extends React.Component {
                             type="radio"
                             id="gender_male"
                             name="gender"
-                            value={1}
+                            value="1"
                             onChange={e => this.props.onChange(e)}
-                            defaultChecked={this.props.default === 1}
+                            defaultChecked={this.props.default === '1'}
                         />
                         <label htmlFor="gender_male">남성</label>
                     </div>
@@ -91,9 +92,9 @@ class GenderFilterComponent extends React.Component {
                             type="radio"
                             id="gender_female"
                             name="gender"
-                            value={2}
+                            value="2"
                             onChange={e => this.props.onChange(e)}
-                            defaultChecked={this.props.default === 2}
+                            defaultChecked={this.props.default === '2'}
                         />
                         <label htmlFor="gender_female">여성</label>
                     </div>
@@ -109,7 +110,7 @@ class SearchService extends React.Component {
         this.state = {
             options: this.props.options,
             value: this.props.value,
-            genderCode: 0
+            genderCode: '0'
         };
         this.setOptions = this.setOptions.bind(this);
         this.setGenderCode = this.setGenderCode.bind(this);
@@ -134,13 +135,13 @@ class SearchService extends React.Component {
     }
     setGenderCode(value) {
         this.setState({
-            genderCode: Number(value)
+            genderCode: value
         }, this.setOptions);
     }
     setOptions() {
         let options = this.props.options;
-        if (this.state.genderCode)
-            options = options.filter(option => option.sex === this.state.genderCode);
+        if (this.state.genderCode !== '0')
+            options = options.filter(option => option.sex == this.state.genderCode);
 
         this.setState({
             options
@@ -180,13 +181,14 @@ class SearchService extends React.Component {
                     placeholder={this.props.placeholder}
                     arrowRenderer={this.arrowRenderer}
                 />
-                {this.props.customFilterComponent
-					? <GenderFilterComponent
-    default={this.state.genderCode}
-    onChange={e => this.setGenderCode(e.target.value)}
-					/>
-					: ''
-				}
+                {this.props.customFilterComponent ? (
+                    <GenderFilterComponent
+                        default={this.state.genderCode}
+                        onChange={e => this.setGenderCode(e.target.value)}
+                    />
+                  )
+        					: ''
+        				}
             </div>
         );
     }

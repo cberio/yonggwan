@@ -204,6 +204,7 @@ class ReservationCardContainer extends Component {
               <div className="customer-head">
                 <Selectable
                   value={this.state.slideStaff}
+                  labelKey="nickname"
                   type="user-card"
                   selectType="selectable"
                   name="epxerts"

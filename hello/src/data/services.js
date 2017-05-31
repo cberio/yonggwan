@@ -6,7 +6,7 @@ const service = [
         name: '염색', // max 200|서비스명
         label: '염색', // max 200|서비스명
         amount: 25000.00, // decimal|상품 금액
-        time: '00:30', // max 50|소요시간|hh:mm
+        time: '30', // max 50|소요시간|hh:mm
         descriptions: '기본염색', // max 500|상품설명
         service_order: 2, // integer|순서
         sex: 0, // integer|서비스대상성별|0,1,2(구분없음,남성,여성)
@@ -25,7 +25,7 @@ const service = [
         name: '매직',
         label: '매직',
         amount: 70000.00,
-        time: '02:20',
+        time: '20',
         descriptions: '기본매직',
         service_order: 3,
         sex: 0,
@@ -44,7 +44,7 @@ const service = [
         name: '헤어커트',
         label: '헤어커트',
         amount: 10000.00,
-        time: '02:00',
+        time: '100',
         descriptions: '기본커트',
         service_order: 1,
         sex: 0,
@@ -63,7 +63,7 @@ const service = [
         name: '남성 드라이',
         label: '남성 드라이',
         amount: 10000.00,
-        time: '00:20',
+        time: '60',
         descriptions: '남성 전용 드라이',
         service_order: 4,
         sex: 1,
@@ -82,7 +82,7 @@ const service = [
         name: '여성 헤어컷',
         label: '여성 헤어컷',
         amount: 20000.00,
-        time: '01:10',
+        time: '20',
         descriptions: '여성 기본커트상품',
         service_order: 5,
         sex: 2,
@@ -101,7 +101,7 @@ const service = [
         name: '남성 볼륨펌',
         label: '남성 볼륨펌',
         amount: 60000.00,
-        time: '02:00',
+        time: '90',
         descriptions: '남성 볼륨펌',
         service_order: 6,
         sex: 1,
@@ -120,7 +120,7 @@ const service = [
         name: '삭발',
         label: '삭발',
         amount: 10000.00,
-        time: '00:20',
+        time: '20',
         descriptions: '바리깡 0mm 삭발 (민머리)',
         service_order: 7,
         sex: 0,
@@ -139,7 +139,7 @@ const service = [
         name: '남성 포마드컷+투블럭컷+댄디브라운',
         label: '남성 포마드컷+투블럭컷+댄디브라운',
         amount: 200000.00,
-        time: '02:40',
+        time: '40',
         descriptions: '3가지 상품을 동시에!',
         service_order: 8,
         sex: 1,
@@ -158,7 +158,7 @@ const service = [
         name: '여성 아이롱펌',
         label: '여성 아이롱펌',
         amount: 150000.00,
-        time: '02:20',
+        time: '20',
         descriptions: '아이롱퍼머 여성전용',
         service_order: 9,
         sex: 2,

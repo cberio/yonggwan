@@ -263,12 +263,13 @@ class ReservationCard extends Component {
             selectType="searchable"
             autoDropdown
             customFilterComponent
-            name="products"
+            name="service"
             id="change-product"
             className="change-product arrow-border-dark"
             placeholder="검색어를 입력하세요"
             noResultsText="결과가 없습니다"
             options={this.props.services}
+            labelKey="name"
             value={null}
             onChange={service => this.changeService(service)}
           />
