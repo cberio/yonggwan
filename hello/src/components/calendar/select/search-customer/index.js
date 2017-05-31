@@ -36,9 +36,9 @@ class OptionComponent extends React.Component {
                 title={this.props.option.title}
             >
                 <div title={this.props.children}>
-                    <span className="label">{this.props.children}</span>
+                    <span className="label">{this.props.children ? this.props.children : ''}</span>
                     {this.props.option.guest_class ?
-                        <span className={`rating ${this.props.option.guest_class}`}>{this.props.option.guest_class}</span>
+                        <span className={`rating ${this.props.option.guest_class.toUpperCase()}`}>{this.props.option.guest_class.toUpperCase()}</span>
 							: '' }
                     {this.props.option.guest_mobile ?
                         <span className={`phone ${this.props.option.guest_mobile}`}>
@@ -54,8 +54,10 @@ class OptionComponent extends React.Component {
 const ValueComponent = ({ children, value }) => (
     <div className="Select-value">
         <span className="Select-value-label">
-            <span className={`label${value.id ? ' is-guest' : ''}`}>{ children || ''}</span>
-            <span className={`rating ${value.guest_class ? value.guest_class : ''}`}>{value.guest_class ? value.guest_class : ''}</span>
+            <span className={`label${!_.isEmpty(value.guest_mobile) ? ' has-phone' : ''}${children ? ' has-value' : ''}`}>
+                { children ? children : '고객님의 이름을 입력해주세요' }
+            </span>
+            <span className={`rating ${value.guest_class ? value.guest_class.toUpperCase() : ''}`}>{value.guest_class ? value.guest_class.toUpperCase() : ''}</span>
             <span className="phone">{!_.isEmpty(value.guest_mobile) && Functions.getPhoneStr(value.guest_mobile)}</span>
             <i className="checked"><img src={Images.IMG_input_checked} alt="선택됨" /></i>
         </span>
@@ -73,13 +75,13 @@ class SearchGuest extends React.Component {
 
     setValue(value) {
         this.setState({ value });
-        this.props.onChange(value);
+        this.props.onChange(value, !_.isNumber(value.id));
     }
 
     arrowRenderer() {
-  	return (
-      <span>+</span>
-  	);
+        return (
+            <span>+</span>
+        );
     }
 
     render() {
@@ -106,8 +108,7 @@ class SearchGuest extends React.Component {
 }
 
 SearchGuest.propTypes = {
-    hint: PropTypes.string,
-    label: PropTypes.string,
+    onChange: PropTypes.func,
 };
 
 module.exports = SearchGuest;

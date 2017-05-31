@@ -4984,7 +4984,14 @@ Grid.mixin({
 			classes.push('fc-selected');
 		}
 
-		// 이하 수정: 추가 클래스
+		/****  이하 수정: 추가 클래스 ****/
+
+		console.info(thisService)
+		// service color
+		if (thisService) {
+			classes.push(thisService.color);
+		}
+		// 예약요청
 		if (seg.event.status == scheduleStatus.REQUESTED) {
 			classes.push('fc-request');
 		}
@@ -4992,14 +4999,15 @@ Grid.mixin({
 		if (seg.event.status == scheduleStatus.OFFTIME) {
 			classes.push('off-time');
 		}
-		// service color
-		if (thisService) {
-			classes.push(thisService.color);
+		// 예약생성중인 스케쥴
+		if (seg.event.status == scheduleStatus.TEMPORARY) {
+			classes.push('fc-temporary');
 		}
 		// 지난 예약건
 		if (isBefore) {
 			classes.push('disabled');
 		}
+		// 서비스시간 20분 이하의 예약건
 		if (isShort) {
 			classes.push('fc-short');
 		}

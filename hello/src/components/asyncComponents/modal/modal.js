@@ -32,18 +32,6 @@ import '../../../css/modal.css';
 */
 
 class Modal extends Component {
-
-    componentDidMount() {
-        const component = this;
-        // 접근성 - close
-        $(document).bind('keydown', (e) => {
-            if (e.which === 27) {
-                component.props.cancel();
-                $(document).unbind('keydown');
-            }
-        });
-    }
-
     render() {
         return (
             <div className='modal-mask mask-full'>

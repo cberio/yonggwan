@@ -30,13 +30,13 @@ class OptionComponent extends React.Component {
                 onMouseDown={this.handleMouseDown}
                 onMouseEnter={this.handleMouseEnter}
                 onMouseMove={this.handleMouseMove}
-                title={this.props.option.title}
-            >
+                title={this.props.children}
+              >
                 <div title={this.props.children}>
                     {this.props.option.picture ?
                         <span className="thumbnail"><img src={this.props.option.picture} alt={this.props.children} /></span> :
                         <span className="thumbnail no-image" />
-						}
+						         }
                     <span className="label">{this.props.children}</span>
                 </div>
             </div>
@@ -107,9 +107,12 @@ class Selectable extends React.Component {
     }
 }
 
+Selectable.defaultProps = {
+    lableKey: ''
+};
+
 Selectable.propTypes = {
-    hint: PropTypes.string,
-    label: PropTypes.string,
+    lableKey: PropTypes.string.isRequired
 };
 
 module.exports = Selectable;

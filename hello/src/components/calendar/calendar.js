@@ -46,6 +46,7 @@ class Calendar extends Component {
     test(e) {
         this.props.newOrder(!this.props.newOrderConfig.condition);
         this.props.toggleNotifier(!this.props.isModalNotifier);
+        debugger;
     }
 
     componentDidMount() {
@@ -495,8 +496,8 @@ const mapStateToProps = (state) => {
         schedules,
         staffs,
         services,
-        calendarConfig,
         guests,
+        calendarConfig,
         newOrderConfig,
     };
 };

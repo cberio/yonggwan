@@ -5,7 +5,6 @@ const staff = [
         user_id: 1500, // integer,nullable|staff user_id|
         position: '원장', // max 100|직책
         nickname: '원장', // max 100|닉네임
-        label: '원장', // max 100|닉네임
         auth: null, // max 10|권한
         work_start_dt: '2017-01-01', // max 10|근무시작일|YYYY-MM-DD
         work_end_dt: null, // max 10,nullable|근무종료일|YYYY-MM-DD
@@ -26,7 +25,6 @@ const staff = [
         user_id: 1501,
         position: '부원장',
         nickname: '부원장',
-        label: '부원장',
         auth: null,
         work_start_dt: '2017-01-01',
         work_end_dt: null,
@@ -47,7 +45,6 @@ const staff = [
         user_id: 1502,
         position: '신입디자이너',
         nickname: '디자이너B',
-        label: '디자이너B',
         auth: null,
         work_start_dt: '2017-01-01',
         work_end_dt: null,
@@ -68,7 +65,6 @@ const staff = [
         user_id: 1503,
         position: '견습디자이너',
         nickname: '디자이너C',
-        label: '디자이너C',
         auth: null,
         work_start_dt: '2017-01-01',
         work_end_dt: null,
@@ -89,7 +85,6 @@ const staff = [
         user_id: 1504,
         position: '막내디자이너',
         nickname: '디자이너D',
-        label: '디자이너D',
         auth: null,
         work_start_dt: '2017-01-01',
         work_end_dt: null,

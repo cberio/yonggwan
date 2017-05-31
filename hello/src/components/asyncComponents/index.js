@@ -19,11 +19,10 @@ class AsyncComponents extends Component {
 
         return (
             <div>
-                <div className="viewstate">{JSON.stringify(this.props)}</div>
                 {this.props.isModal && <Modal />}
                 {this.props.isModalNotifier && CardModalComponent}
                 {this.props.isGuider && <Guider />}
-                {/* this.props.isLoading && <Loading />*/}
+                {this.props.isLoading && <Loading />}
             </div>
         );
     }

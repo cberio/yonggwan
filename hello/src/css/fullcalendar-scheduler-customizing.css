@@ -627,11 +627,61 @@
 .fc-event.off-time:hover {
 	border-color: #c4c3c3;
 }
+.fc-event.off-time:not(.new-event):not(.fc-helper) .fc-content:after {
+	display: block;content:'';width: 200%;height: 100%;position: absolute;left: 0; top: 0;z-index: -1;
+	background: repeating-linear-gradient(-45deg, #fefefe, #fefefe 2px, transparent 2px, transparent 4px);
+    animation: roll 15s linear infinite;
+}
+.fc-event.off-time .fc-product,
+.fc-event.off-time .fc-time,
+.fc-event.off-time .fc-name{color: #4c4c4c;}
+.fc-event.off-time .fc-service-time,
+.fc-event.off-time .fc-comment{color: #a1a5b3; font-family: 'notokr-medium' !important;}
+.fc-event.off-time .fc-product {font-family: 'notokr-medium' !important;}
+.fc-event.off-time .fc-time-helper span{background-color: #999;}
+
+/* 예약요청카드*/
+.fc-event.fc-request:not(:hover) { border-left: 1px solid transparent; }
+.fc-event.fc-request:hover { border-width: 1px !important; }
+.fc-event.fc-request .fc-product,
+.fc-event.fc-request .fc-time,
+.fc-event.fc-request .fc-name,
+.fc-event.fc-request .fc-service-time,
+.fc-event.fc-request .fc-comment{color: #fff;}
+.fc-event.fc-request .fc-service-time,
+.fc-event.fc-request .fc-comment{opacity: .7;}
+
+.fc-event.fc-request:not(.fc-helper) .fc-content:after {
+	display: block;content:'';width: 200%;height: 100%;position: absolute;left: 0; top: 0;z-index: -1;
+	background: repeating-linear-gradient(-45deg, #000000, #000000 2px, transparent 2px, transparent 4px);
+    animation: roll 15s linear infinite; opacity: .04;
+}
 
 /* 신규 생성중인 이벤트 */
-.fc-event.fc-overlay {
+.fc-event.fc-temporary {
 	z-index: 3 !important;
+	border: 0 !important;
+	background-color: #4c4c4c;
+	-webkit-box-shadow: 0 5px 20px 5px rgba(0, 0, 0, 0.2);
+			box-shadow: 0 5px 20px 5px rgba(0, 0, 0, 0.2);
 }
+.fc-event.fc-temporary:not(.fc-helper) .fc-content:after {
+	display: block;content:'';width: 200%;height: 100%;position: absolute;left: 0; top: 0;z-index: -1;
+	background: repeating-linear-gradient(-45deg, #000000, #000000 2px, transparent 2px, transparent 4px);
+ 	 animation: roll 15s linear infinite; opacity: .07;
+}
+.fc-event.fc-temporary .fc-product,
+.fc-event.fc-temporary .fc-time,
+.fc-event.fc-temporary .fc-name,
+.fc-event.fc-temporary .fc-service-time,
+.fc-event.fc-temporary .fc-comment{color: #fff;}
+
+.fc-event.fc-temporary.yellow {background-color: rgb(229,184,69);}
+.fc-event.fc-temporary.red {background-color: rgb(245,151,122);}
+.fc-event.fc-temporary.green {background-color: rgb(92,191,168);}
+.fc-event.fc-temporary.purple {background-color: rgb(130,147,217);}
+.fc-event.fc-temporary.blue {background-color: rgb(130,147,217);}
+
 /* 신규 생성된 이벤트 */
 .fc-event.new-event {
 	z-index: 4 !important;
@@ -671,37 +721,6 @@
 .fc-event.new-event:not(.off-time) .fc-ui .fc-ui-delete{
 	display: none;
 }
-
-.fc-event.off-time:not(.new-event):not(.fc-helper) .fc-content:after {
-	display: block;content:'';width: 200%;height: 100%;position: absolute;left: 0; top: 0;z-index: -1;
-	background: repeating-linear-gradient(-45deg, #fefefe, #fefefe 2px, transparent 2px, transparent 4px);
-    animation: roll 15s linear infinite;
-}
-.fc-event.off-time .fc-product,
-.fc-event.off-time .fc-time,
-.fc-event.off-time .fc-name{color: #4c4c4c;}
-.fc-event.off-time .fc-service-time,
-.fc-event.off-time .fc-comment{color: #a1a5b3; font-family: 'notokr-medium' !important;}
-.fc-event.off-time .fc-product {font-family: 'notokr-medium' !important;}
-.fc-event.off-time .fc-time-helper span{background-color: #999;}
-
-/* 예약요청카드*/
-.fc-event.fc-request:not(:hover) { border-left: 1px solid transparent; }
-.fc-event.fc-request:hover { border-width: 1px !important; }
-.fc-event.fc-request .fc-product,
-.fc-event.fc-request .fc-time,
-.fc-event.fc-request .fc-name,
-.fc-event.fc-request .fc-service-time,
-.fc-event.fc-request .fc-comment{color: #fff;}
-.fc-event.fc-request .fc-service-time,
-.fc-event.fc-request .fc-comment{opacity: .7;}
-
-.fc-event.fc-request:not(.fc-helper) .fc-content:after {
-	display: block;content:'';width: 200%;height: 100%;position: absolute;left: 0; top: 0;z-index: -1;
-	background: repeating-linear-gradient(-45deg, #000000, #000000 2px, transparent 2px, transparent 4px);
-    animation: roll 15s linear infinite; opacity: .04;
-}
-
 
 /* 시간이 지난 slot style*/
 .fc-agendaWeekly-view .fc-event.disabled:not(.new-event):not(.fc-request):hover{border-left-width: 1px;padding-left: 1px;}
@@ -788,8 +807,8 @@
 
 
 .viewstate{
-	visibility: visible;position: fixed;left: 80px;top:70px;z-index: 1;border: 1px solid #999;
-	max-width:380px;-ms-word-break: break-all;font-size: 12px;font-style: normal !important;
+	visibility: visible;position: fixed;left: 80px;top:70px;z-index: 1;border: 1px solid #999;overflow: auto;
+	max-width:380px;-ms-word-break: break-all;font-size: 12px;font-style: normal !important;max-height: 400px;
 	word-break: break-all;background-color: #282c34;color: #d17e43;z-index: 55;padding: 5px;
 }
 .viewstate button{float: right;font-size: 10px;color: blue;border: 1px solid #fff;color: #fff;}
@@ -800,75 +819,18 @@
 .viewstate i:first-of-type{clear: both;}
 .viewstate p{float: left;text-indent: 3px;color: #d17e43;}
 
-.viewstate dt{display: block;padding: 0;font-size: 11px;color: #aba58f;}
-.viewstate dd{display: block;margin-bottom: 2px;padding: 0;font-family: 'notokr-bold';color: #d17e43;}
+.viewstate dt,
+.viewstate .th{display: block;padding: 0;font-size: 11px;color: #aba58f; width: 110px;}
+.viewstate dd,
+.viewstate td{display: block;margin-bottom: 2px;padding: 0;font-family: 'notokr-bold';color: #d17e43;}
 
 .viewstate.fc{right: 20px;left: auto;top: 70px;z-index: 99;padding: 5px;}
-.viewstate.order{top: 260px;}
+.viewstate.order{top: 260px; }
 .viewstate.viewContainer{background-color: #323232; top: 225px;}
 
-
-
-/* confirm modal style */
-.order-confirm {
-	width: 420px;margin: 0 auto;
-	background-color: #fff;
-}
-.order-confirm .confirm-content{
-	padding: 24px;min-height: 150px
-}
-.order-confirm .confirm-content p {
-	font-size: 18px;
-	line-height: 28px;
-	letter-spacing: -0.3px;
-	color: #666666;
-}
-.order-confirm .confirm-content p span {
-	font-family: 'notokr-bold';
-}
-.order-confirm .confirm-content .date {
-	color: #000;
-}
-.order-confirm .confirm-content .name {
-	color: #000;
-	padding-right: 5px;
-}
-.order-confirm .confirm-content .rating.VIP{color: #d37c00;}
-.order-confirm .confirm-content .rating.NEW{color: #05a609;}
-.order-confirm .confirm-content .rating.BAD{color: #b1282f;}
-
-.order-confirm .confirm-content .product.yellow{color: #cc8100;}
-.order-confirm .confirm-content .product.red{color: #d96441;}
-.order-confirm .confirm-content .product.green{color: #1f997e;}
-.order-confirm .confirm-content .product.purple{color: #7435b3;}
-.order-confirm .confirm-content .product.blue{color: #3550b3;}
-
-.order-confirm .confirm-content .change-date{margin-top: 30px;}
-
-.order-confirm .confirm-ui:after{
-	display: block;clear: both;content:'';
-}
-.order-confirm .confirm-ui button{
-	font-size: 16px;
-	color: #4c4c4c;
-	letter-spacing: -0.3px;
-	height: 50px;
-	line-height: 50px;
-	text-align: center;
-	font-family: 'notokr-medium';
-	float: right;
-	display: block;
-	width: 50%;
-	background-color: #d9d9d9;
-}
-.order-confirm .confirm-ui button:first-of-type {
-	border-left: 1px solid #fff;
-}
-.order-confirm .confirm-ui button:hover,
-.order-confirm .confirm-ui button:focus {
-	color: #fff;
-	background-color: #000;
-}
+.viewstate .table{width: 100%;display: table;background: none;}
+.viewstate .table-row{display: table-row;background: none;}
+.viewstate .table-cell{display: table-cell;background: none;padding-left: 10px;}
 
 /* 예약생성 버튼 */
 .create-order-wrap {
@@ -1640,7 +1602,7 @@
 }
 .fc-agendaDay-view .fc-event .fc-time{
   font-size: 20px;
-  font-family: 'notokr-black';
+  font-family: 'notokr-bold';
   line-height: 1;
   margin-bottom: 7px;
 }
