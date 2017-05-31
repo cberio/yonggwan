@@ -47,8 +47,8 @@ const schedules = (state = initialState, action) => {
                 isFetching: false,
                 didInvalidate: false,
                 schedules: {
-                    ...state.schedules,
                     data,
+                    ...state.schedules,
                 },
                 createdSchedule: action.createdSchedule,
                 receivedAt: action.receivedAt
@@ -60,18 +60,20 @@ const schedules = (state = initialState, action) => {
                 didInvalidate: false,
             };
         case types.SCHEDULE_UPDATED:
-            data = update(state.schedules.data, {
-                [state.schedules.data.findIndex(x => x.id === action.updatedSchedule.data.id)]: {
-                    $set: { ...action.updatedSchedule.data }
-                }
-            });
+            if (action.updatedSchedule.success) {
+                data = update(state.schedules.data, {
+                    [state.schedules.data.findIndex(x => x.id === action.updatedSchedule.data.id)]: {
+                        $set: { ...action.updatedSchedule.data }
+                    }
+                });
+            }
             return {
                 ...state,
                 isFetching: false,
                 didInvalidate: false,
                 schedules: {
-                    ...state.schedules,
                     data,
+                    ...state.schedules,
                 },
                 updatedSchedule: action.updatedSchedule,
                 receivedAt: action.receivedAt
