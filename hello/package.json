@@ -2,7 +2,7 @@
   "name": "hello",
   "version": "0.1.0",
   "private": true,
-  "proxy": "http://helloshop.app",
+  "proxy": "http://localhost:8000",
   "devDependencies": {
     "babel-core": "^6.18.2",
     "babel-loader": "^6.2.8",
