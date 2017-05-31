@@ -60,11 +60,8 @@ const schedules = (state = initialState, action) => {
                 didInvalidate: false,
             };
         case types.SCHEDULE_UPDATED:
-            const idx = state.schedules.data.findIndex(x => x.id === action.updatedSchedule.data.id);
-            console.info(state.schedules.data);
-            console.info(action.updatedSchedule.data);
             data = update(state.schedules.data, {
-                [idx]: {
+                [state.schedules.data.findIndex(x => x.id === action.updatedSchedule.data.id)]: {
                     $set: { ...action.updatedSchedule.data }
                 }
             });

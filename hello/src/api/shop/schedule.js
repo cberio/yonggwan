@@ -118,7 +118,7 @@ export default class Schedule {
 
         return fetch(`${this.apiUrl}`, {
             method: this.method,
-            headers: ApiUtils.HTTP_HEADER(this.token, ApiUtils.ContentType.json),
+            headers: ApiUtils.HTTP_HEADER(this.token),
             body: JSON.stringify(data),
         }).then(ApiUtils.parseJSON);
     }
