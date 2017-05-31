@@ -771,6 +771,10 @@ class DailyCalendar extends Component {
                 });
                 break;
             default :
+                scheduleData = {
+                    ...schedule,
+                    source: {}
+                }
                 break;
         }
 
@@ -1154,7 +1158,7 @@ class DailyCalendar extends Component {
                     staff_id
                 };
 
-                component.patchSchedule(scheduleData, actions.ScheduleStatus.CHANGED, revertFunc);
+                component.patchSchedule(scheduleData, schedule.status, revertFunc);
             },
             // 변경된 시간이 다를경우 실행
             eventResize(schedule, delta, revertFunc, jsEvent, ui, view) {

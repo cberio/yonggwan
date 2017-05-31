@@ -47,8 +47,8 @@ const schedules = (state = initialState, action) => {
                 isFetching: false,
                 didInvalidate: false,
                 schedules: {
-                    data,
                     ...state.schedules,
+                    data,
                 },
                 createdSchedule: action.createdSchedule,
                 receivedAt: action.receivedAt
@@ -66,7 +66,9 @@ const schedules = (state = initialState, action) => {
                         $set: { ...action.updatedSchedule.data }
                     }
                 });
-            }
+            } else
+                data = {};
+            // debugger;
             return {
                 ...state,
                 isFetching: false,
