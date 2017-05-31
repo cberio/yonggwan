@@ -18,19 +18,15 @@ export const userCardDate = options => ({
 });
 
 /**/
-export const modal = params => ({
+export const modal = options => ({
     type: types.MODAL,
-    params
+    options
 });
 
 /* NEW ORDER RELATED */
 export const newOrderInit = options => ({
     type: types.NEW_ORDER_INIT,
     options
-});
-export const newOrderSetScheduleInfo = schedule => ({
-    type: types.NEW_ORDER_SET_SCHEDULE_INFO,
-    schedule
 });
 export const newOrderFinish = () => ({
     type: types.NEW_ORDER_FINISH
@@ -368,8 +364,8 @@ export const ScheduleStatus = {
     CONFIRMED: '03', // 예약요청건 확인
     CHANGED: '04', // 예약수정건
     OFFTIME: '05', // 오프타임 (OFFTIME은 status가 변하지않음)
+    TEMPORARY: '06', // 예약생성중
     CANCELED: '99', //예약취소건
-    CREATING: '100', //임시(예약생성중)
 };
 
 export const GuestClass = {
