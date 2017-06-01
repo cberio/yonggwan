@@ -48,8 +48,8 @@ export const requestReservation = options => ({
     options
 });
 
-export const guider = options => ({
-    type: types.GUIDER,
+export const advise = options => ({
+    type: types.ADVISE,
     options
 });
 
@@ -420,7 +420,7 @@ export const ScheduleStatus = {
     CREATED: '01', // 지나지않은 예약건
     REQUESTED: '02', // 예약요청건
     CONFIRMED: '03', // 예약요청건 확인
-    CHANGED: '04', // 예약수정건
+    CHANGED: '04', // 예약요청건이 수정됬을경우
     OFFTIME: '05', // 오프타임 (OFFTIME은 status가 변하지않음)
     TEMPORARY: '06', // 예약생성중
     CANCELED: '99', //예약취소건

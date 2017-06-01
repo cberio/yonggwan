@@ -402,9 +402,9 @@ class WeeklyCalendar extends Component {
             selectedSchedule: undefined
         });
         if (schedule)
-            this.props.guider(`${schedule.name}님의 ${schedule.service} 예약이 삭제되었습니다!`);
+            this.props.advise(`${schedule.name}님의 ${schedule.service} 예약이 삭제되었습니다!`);
         else
-            this.props.guider(`${this.state.selectedSchedule.guest_name}님의 ${this.state.selectedSchedule.service} 예약이 삭제되었습니다!`);
+            this.props.advise(`${this.state.selectedSchedule.guest_name}님의 ${this.state.selectedSchedule.service} 예약이 삭제되었습니다!`);
     }
 
     // 생성 A___예약시작시간을 미리 '선택하지 않고' 예약생성할 경우__1 : 빈 예약타임의 슬롯을 활성화 시킨다
@@ -740,7 +740,7 @@ class WeeklyCalendar extends Component {
 
             $(`#ID_${insertOfftime.id}`).addClass('new-event');
             $('.create-order-wrap.fixed').removeClass('hidden');
-            component.props.guider('OFF TIME이 생성되었습니다!');
+            component.props.advise('OFF TIME이 생성되었습니다!');
             // component.state.isAbleBindRemoveEvent 가 true일경우 ESC key등의 이벤트 발생시 삭제가 가능하도록 접근성 바인딩을 합니다
             component.setState({
                 viewTypeOrder: undefined,
@@ -758,7 +758,7 @@ class WeeklyCalendar extends Component {
                             $('.full-calendar > .fc').append($('.create-order-wrap.timeline').hide());
                             $(Calendar).fullCalendar('removeEvents', [component.state.newScheduleID]);
                             component.setState({ isAbleBindRemoveEvent: false, newScheduleID: undefined });
-                            component.props.guider('OFF TIME이 삭제되었습니다!');
+                            component.props.advise('OFF TIME이 삭제되었습니다!');
                         }
                         $(document).unbind('keydown');
                     }
@@ -779,7 +779,7 @@ class WeeklyCalendar extends Component {
             $(Calendar).fullCalendar('renderEvent', insertOfftime, true); // stick?  true
             $(`#ID_${insertOfftime.id}`).addClass('new-event');
             $('.create-order-wrap.fixed').removeClass('hidden');
-            component.props.guider('OFF TIME이 생성되었습니다!');
+            component.props.advise('OFF TIME이 생성되었습니다!');
 
             // component.state.isAbleBindRemoveEvent 가 true일경우 ESC key등의 이벤트 발생시 삭제가 가능하도록 접근성 바인딩을 합니다
             component.setState({
@@ -795,7 +795,7 @@ class WeeklyCalendar extends Component {
                             $('.full-calendar > .fc').append($('.create-order-wrap.timeline').hide());
                             $(Calendar).fullCalendar('removeEvents', [component.state.newScheduleID]);
                             component.setState({ isAbleBindRemoveEvent: false, newScheduleID: undefined });
-                            component.props.guider('OFF TIME이 삭제되었습니다!');
+                            component.props.advise('OFF TIME이 삭제되었습니다!');
                         }
                         $(document).unbind('keydown');
                     }
@@ -1671,7 +1671,7 @@ const mapDispatchToProps = dispatch => ({
     isModalConfirm: (optionComponent) => {
         dispatch(actions.modal(optionComponent));
     },
-    guider: message => dispatch(actions.guider({ isGuider: true, message })),
+    advise: message => dispatch(actions.advise({ condition: true, message })),
     loading: condition => dispatch(actions.loading(condition)),
     finishRequestReservation: () => dispatch(actions.requestReservation({ condition: false, requestEvent: undefined }))
 });

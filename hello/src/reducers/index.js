@@ -2,7 +2,7 @@ import { combineReducers } from 'redux';
 import userCard from './userCard';
 import modal from './modal';
 import notifier from './notifier';
-import guider from './guider';
+import advise from './advise';
 import loading from './loading';
 import { newOrderConfig } from './newOrder';
 import { calendarConfig } from './calendar';
@@ -17,7 +17,7 @@ const Reducers = combineReducers({
     userCard,
     modal,
     notifier,
-    guider,
+    advise,
     loading,
     newOrderConfig,
     calendarConfig,
