@@ -7,11 +7,64 @@ const initialState = {
     schedules: {},
 };
 
-const schedules = (state = initialState, action) => {
-    // 등록/수정/삭제 등 기존 state의 변경에 따른
-    // schedules.data의 값을 대체하기 위한 변수
-    let data;
+const updateSchedulesWhenSucceed = (state, action) => {
+    if (action.updatedSchedule.success) {
+        const data = update(state.schedules.data, {
+            [state.schedules.data.findIndex(x => x.id === action.updatedSchedule.data.id)]: {
+                $set: { ...action.updatedSchedule.data }
+            }
+        });
 
+        return {
+            ...state,
+            isFetching: false,
+            didInvalidate: false,
+            schedules: {
+                ...state.schedules,
+                data,
+            },
+            updatedSchedule: action.updatedSchedule,
+            receivedAt: action.receivedAt
+        };
+    }
+
+    return {
+        ...state,
+        isFetching: false,
+        didInvalidate: false,
+        updatedSchedule: action.updatedSchedule,
+        receivedAt: action.receivedAt
+    };
+};
+
+const addScheduleWhenSucceed = (state, action) => {
+    if (action.createdSchedule.success) {
+        const data = update(state.schedules.data,
+            { $push: [action.createdSchedule.data] }
+        );
+        return {
+            ...state,
+            isFetching: false,
+            didInvalidate: false,
+            schedules: {
+                ...state.schedules,
+                data,
+            },
+            createdSchedule: action.createdSchedule,
+            receivedAt: action.receivedAt
+        };
+    }
+
+    return {
+        ...state,
+        isFetching: false,
+        didInvalidate: false,
+        createdSchedule: action.createdSchedule,
+        receivedAt: action.receivedAt
+    };
+};
+
+const schedules = (state = initialState, action) => {
     switch (action.type) {
         case types.INVALIDATE_SHOP:
             return {
@@ -39,20 +92,7 @@ const schedules = (state = initialState, action) => {
                 didInvalidate: false,
             };
         case types.SCHEDULE_CREATED:
-            data = update(state.schedules.data,
-                { $push: [action.createdSchedule.data] }
-            );
-            return {
-                ...state,
-                isFetching: false,
-                didInvalidate: false,
-                schedules: {
-                    ...state.schedules,
-                    data,
-                },
-                createdSchedule: action.createdSchedule,
-                receivedAt: action.receivedAt
-            };
+            return addScheduleWhenSucceed(state, action);
         case types.UPDATE_SCHEDULE:
             return {
                 ...state,
@@ -60,26 +100,7 @@ const schedules = (state = initialState, action) => {
                 didInvalidate: false,
             };
         case types.SCHEDULE_UPDATED:
-            if (action.updatedSchedule.success) {
-                data = update(state.schedules.data, {
-                    [state.schedules.data.findIndex(x => x.id === action.updatedSchedule.data.id)]: {
-                        $set: { ...action.updatedSchedule.data }
-                    }
-                });
-            } else
-                data = {};
-            // debugger;
-            return {
-                ...state,
-                isFetching: false,
-                didInvalidate: false,
-                schedules: {
-                    data,
-                    ...state.schedules,
-                },
-                updatedSchedule: action.updatedSchedule,
-                receivedAt: action.receivedAt
-            };
+            return updateSchedulesWhenSucceed(state, action);
         default:
             return state;
     }
