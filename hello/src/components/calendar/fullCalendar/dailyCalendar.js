@@ -697,6 +697,7 @@ class DailyCalendar extends Component {
         const component = this;
 
         // $(Calendar).fullCalendar('renderEvent', scheduleObject, true);
+        component.props.advise({ condition: true, success: false });
         this.props.saveSchedule(offtimeObject).then((response) => {
             if (!response.createdSchedule.success)
                 return;
@@ -704,10 +705,18 @@ class DailyCalendar extends Component {
             const createdSchedule = response.createdSchedule.data;
             const createdScheduleDom = $(`#ID_${createdSchedule.id}`);
 
-
             createdScheduleDom.addClass('new-event');
             // $('.create-order-wrap.fixed').removeClass('hidden');
-            component.props.guider('오프타임 생성!');
+            component.props.advise({
+                success: true,
+                htmls: [
+                    {
+                        text: 'OFFTIME 이 생성되었습니다.',
+                        classes: []
+                    }
+                ],
+                buttons: []
+            });
 
             // Todo: 함수 분리 필요
             // component.state.isAbleBindRemoveEvent 가 true일경우 ESC key등의 이벤트 발생시 삭제가 가능하도록 접근성 바인딩을 합니다
@@ -743,6 +752,7 @@ class DailyCalendar extends Component {
     // [예약수정/삭제]
     patchSchedule(schedule, status, revertFunc) {
         const { Calendar } = this;
+        const component = this;
         // 해당 이벤트를 일시적으로 시각적으로 숨긴다
         // $(Calendar).fullCalendar('removeEvents', [schedule.id]);
         let scheduleData;
@@ -778,17 +788,32 @@ class DailyCalendar extends Component {
                 break;
         }
 
+        this.props.modal({ condition: false });
+        this.props.advise({ condition: true });
         this.props.patchSchedule(scheduleData).then((response) => {
             if (response.updatedSchedule.success)
-                this.props.guider(msgSuccessed);
-            else {
-                this.props.guider(msgFaild);
+                this.props.advise({
+                    success: true,
+                    htmls: [
+                        {
+                            text: msgSuccessed,
+                            classes: []
+                        }
+                    ],
+                    buttons: [
+                        {
+                            text: '확인',
+                            autoFocus: true,
+                            classes: ['confirm'],
+                            click: function() {
+                                component.props.advise({ condition: false })
+                            }
+                        }
+                    ]
+                });
+            else
                 if (revertFunc)
                     revertFunc();
-            }
-        });
-        this.props.modal({
-            condition: false
         });
     }
 
@@ -799,7 +824,6 @@ class DailyCalendar extends Component {
             source: {},
             status: status ? status : schedule.status
         }
-        debugger;
         this.props.patchSchedule(scheduleObject).then((response) => {
             if (response.updatedSchedule.success) {
                 if (status === actions.ScheduleStatus.CANCELED)
@@ -1610,8 +1634,8 @@ const mapDispatchToProps = dispatch => ({
         dispatch(actions.userCardStaff(options.selectedStaff));
         dispatch(actions.userCardDate(options.selectedDate));
     },
-    modal: (options) => { dispatch(actions.modal(options)); },
-    guider: message => dispatch(actions.guider({ isGuider: true, message })),
+    modal: options => dispatch(actions.modal(options)),
+    advise: options => dispatch(actions.advise(options)),
     loading: condition => dispatch(actions.loading(condition)),
     finishRequestReservation: () => dispatch(actions.requestReservation({ condition: false, requestEvent: undefined })),
 

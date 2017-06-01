@@ -19,7 +19,7 @@ export const NOTIFIER = 'NOTIFIER';
 export const MODAL_NOTIFIER = 'MODAL_NOTIFIER';
 export const REQUEST_NOTIFIER = 'REQUEST_NOTIFIER';
 export const REQUEST_RESERVATION = 'REQUEST_RESERVATION';
-export const GUIDER = 'GUIDER';
+export const ADVISE = 'ADVISE';
 export const LOADING = 'LOADING';
 
 /**
