@@ -76,6 +76,8 @@ class SearchGuest extends React.Component {
     setValue(value) {
         this.setState({ value });
         this.props.onChange(value, !_.isNumber(value.id));
+        console.info(value);
+        console.info(!_.isNumber(value.id));
     }
 
     arrowRenderer() {

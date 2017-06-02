@@ -21,10 +21,7 @@ class NewOrder extends Component {
         this.state = {
             step: 1, // int 1-3
             schedule: this.props.schedule,
-            temporaryScheduleObject: {
-                guest_mobile: ['', '', ''],
-                guest_sex: undefined
-            }
+            isNewGuest: false
         };
         this.initEditEvent = this.initEditEvent.bind(this);
         this.insertComponent = this.insertComponent.bind(this);
@@ -71,10 +68,7 @@ class NewOrder extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        // 예약생성중 Guest를 변경했을경우 state를 변경한 Guest의 object로 update
-        console.info(this.props);
-        console.info(nextProps);
-        if (this.props.schedule.guest_id !== nextProps.schedule.guest_id) {
+        if (JSON.stringify(this.props.schedule) !== JSON.stringify(nextProps.schedule)) {
             this.setState({
                 schedule: nextProps.schedule
             })
@@ -85,13 +79,16 @@ class NewOrder extends Component {
     /* *************************************************
       예약생성 관련
     ************************************************* */
-    updateSchedule(object) {
+    // [예약 patch]
+    updateSchedule(object, noPatch) {
+        // noPatch: boolean ( true ? state에만 업데이트한다. :  next step 으로 이동할때 패치하게된다)
         const component = this;
         const updatedSchedule = Object.assign({}, this.state.schedule, object);
         this.setState({
             schedule: updatedSchedule
         }, () => {
-            component.props.updateSchedule(updatedSchedule);
+            if (!noPatch)
+                component.props.updateSchedule(updatedSchedule);
         });
     }
 
@@ -171,7 +168,7 @@ class NewOrder extends Component {
 
     autoFocus(e, idx) {
         const mobile = this.state.schedule.guest_mobile;
-        if (!_.isEmpty(mobile), mobile.length === 3) {
+        if (!_.isEmpty(mobile) && mobile.length === 3) {
             if (idx === 2) {
                 if (mobile[0].length >= 3 &&
                     mobile[1].length >= 4 &&
@@ -203,34 +200,31 @@ class NewOrder extends Component {
             staff_id: staff.id
         })
     }
-    inputChangePhone(e, index) {
-        const component = this;
-        const mobile = update(this.state.temporaryScheduleObject.guest_mobile, {
-            [index]: { $set: e.target.value }
-        })
-        // this.updateSchedule({
-        //     guest_mobile: mobile
-        // })
+    inputChangePhone(value) {
+        this.updateSchedule({
+            guest_mobile: value
+        }, true)
         // component.autoFocus(e, index);
     }
     inputChangeGuest(guest, isNewGuest) {
         const component = this;
-        const object = {
-            guest_name: guest.guest_name
-        };
 
         // 신규고객을 입력한경우
         if (isNewGuest) {
-            // ...
+            this.updateSchedule({
+                guest_name: guest.guest_name,
+                guest_class: 'NEW',
+            }, true); // true = patch를 하지않습니다
+            this.setState({ isNewGuest: true });
         }
         else {
-            object.guest_id = guest.id;
-            object.guest_class = guest.guest_class;
-            object.guest_mobile = guest.guest_mobile;
+            this.updateSchedule({
+                guest_id: guest.id,
+                guest_name: guest.guest_name,
+                guest_class: guest.guest_class,
+                guest_mobile: guest.guest_mobile,
+            }, true) // true = patch를 하지않습니다
         }
-        // else if (!_.isEmpty(guest))
-        //     component.phone1.focus();
-        this.updateSchedule(object)
     }
     inputChangeSex(e) { this.updateSchedule({ __guest_sex: e.target.value }); }
     inputChangeOrderStart(e) { this.updateSchedule({ __start: e.target.value }); }
@@ -275,7 +269,14 @@ class NewOrder extends Component {
         const component = this;
         switch (this.state.step) {
             case 1 :
-                this.changeStep(2);
+                if (this.state.isNewGuest) {
+                    if (this.props.createGuest(this.state.schedule)) {
+                        console.info('성공');
+                        this.changeStep(2);
+                    }
+                    else
+                        console.info('실패');
+                  }
                 break;
             case 2 :
                 switch (this.props.status) {
@@ -291,7 +292,7 @@ class NewOrder extends Component {
                 this.setState({ step: 3 });
                 break;
             case 3 :
-                this.props.modal(true);
+                // this.props.modal(true);
                 break;
             default:
                 break;
@@ -344,48 +345,61 @@ class NewOrder extends Component {
             );
         }
         /* *********************************************/
+        const isEmpties = {
+            guest_id: _.isEmpty(this.state.schedule.guest_id),
+            guest_mobile: _.isEmpty(this.state.schedule.guest_mobile),
+            staff_id: _.isEmpty(this.state.schedule.staff_id),
+            shop_service_id: _.isEmpty(this.state.schedule.shop_service_id),
+            guest_sex: _.isEmpty(this.state.schedule.guest_sex)
+        }
 
         return (
-            <div ref={(c) => { this.Container = c; }} className={classes.join(' ')}>
-                <button onClick={this.test} style={{ position: 'fixed', left: '280px', top: '111px', zIndex: '1111', background: 'rgb(123, 111, 238)' }}>
-                    테스트!
-                </button>
-                <div className="viewstate order" style={{ display: 'block', top: '400px' }}>
-                    <button onClick={() => { $('.viewstate.order').hide(); }}>X</button>
-                    <h3>SCHEDULE</h3>
-                    <div className="table">
-                        {mapToComponentStates(this.state.schedule)}
-                    </div>
-                </div>
-                <CSSTransitionGroup
-                    transitionName="new-order"
-                    transitionAppear
-                    transitionEnter={false}
-                    transitionLeave={false}
-                    transitionAppearTimeout={200}
-                >
-                    <Draggable>
-                        <div className="new-order">
-                            <Head title={title} handleClick={this.newOrderCancel} />
-                            <Body
-                                schedule={this.state.schedule}
-                                temporaryScheduleObject={this.state.temporaryScheduleObject}
-                                step={this.state.step}
-                                guests={this.props.guests}
-                                services={this.props.services}
-                                staffs={this.props.staffs}
-                                changeStep={this.changeStep}
-                                inputChangeGuest={this.inputChangeGuest}
-                                inputChangePhone={this.inputChangePhone}
-                                inputChangeSex={this.inputChangeSex}
-                                inputChangeService={this.inputChangeService}
-                                inputChangeStaff={this.inputChangeStaff}
-                            />
-                            <Foot />
-                        </div>
-                    </Draggable>
-                </CSSTransitionGroup>
-            </div>
+          <div ref={(c) => { this.Container = c; }} className={classes.join(' ')}>
+              <button onClick={this.test} style={{ position: 'fixed', left: '280px', top: '111px', zIndex: '1111', background: 'rgb(123, 111, 238)' }}>
+                  테스트!
+              </button>
+              <div className="viewstate order" style={{ display: 'block', top: '400px' }}>
+                  <button onClick={() => { $('.viewstate.order').hide(); }}>X</button>
+                  <h3>SCHEDULE</h3>
+                  <div className="table">
+                      {mapToComponentStates(this.state.schedule)}
+                  </div>
+              </div>
+              <CSSTransitionGroup
+                  transitionName="new-order"
+                  transitionAppear
+                  transitionEnter={false}
+                  transitionLeave={false}
+                  transitionAppearTimeout={200}
+              >
+                  <Draggable>
+                      <div className="new-order">
+                          <Head title={title} handleClick={this.newOrderCancel} />
+                          <Body
+                              schedule={this.state.schedule}
+                              isEmpties={isEmpties}
+                              step={this.state.step}
+                              guests={this.props.guests}
+                              services={this.props.services}
+                              staffs={this.props.staffs}
+                              changeStep={this.changeStep}
+                              inputChangeGuest={this.inputChangeGuest}
+                              inputChangePhone={this.inputChangePhone}
+                              inputChangeSex={this.inputChangeSex}
+                              inputChangeService={this.inputChangeService}
+                              inputChangeStaff={this.inputChangeStaff}
+                          />
+                          <Foot
+                              step={this.state.step}
+                              isEmpties={isEmpties}
+                              nextStep={this.nextStep}
+                              cancel={this.newOrderCancel}
+                              delete={this.newOrderCancel}
+                          />
+                      </div>
+                  </Draggable>
+              </CSSTransitionGroup>
+          </div>
         );
     }
 }

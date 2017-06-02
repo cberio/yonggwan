@@ -23,7 +23,7 @@ class Advise extends React.Component {
 
     componentWillReceiveProps(nextProps) {
         const component = this;
-
+        
         if(nextProps.condition) {
             component.setAnimationStatus('S');
             setAdviseStart = setTimeout(() => {

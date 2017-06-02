@@ -91,7 +91,7 @@
 .new-order-body .service-input .customer-phone:after{display: block;clear: both;content:'';}
 .new-order-body .service-input .customer-phone input{background-color: #f7f7f7;border: 1px solid #d9d9d9;border-radius: 7px;width: 107px;height: 34px;line-height: 34px;vertical-align: middle;float: left;color: #000;font-family: 'notokr-bold';text-align: center;font-size: 16px;}
 .new-order-body .service-input .customer-phone input:nth-of-type(1){width: 76px;}
-.new-order-body .service-input .customer-phone input.null-value{color: #e0e0e0; }
+.new-order-body .service-input .customer-phone input.null-value{opacity: .5; border-color: #AAA; background: #fff;}
 .new-order-body .service-input .customer-phone i{width: 8px;height: 2px;margin: 16px 4px 0;display: block;float: left;text-indent: -999px;overflow: hidden;background-color: #b3b3b3;}
 
 .render-confirm-inner {text-align: center;padding: 15px 0;position: absolute;left: 0; top: 100%; right: 0;width: 100%;}

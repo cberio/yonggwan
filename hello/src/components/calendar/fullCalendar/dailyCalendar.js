@@ -69,6 +69,7 @@ class DailyCalendar extends Component {
         this.saveSchedule = this.saveSchedule.bind(this);
         this.patchSchedule = this.patchSchedule.bind(this);
         this.updateSchedule = this.updateSchedule.bind(this);
+        this.saveGuest = this.saveGuest.bind(this);
         this.editSchedule = this.editSchedule.bind(this);
         this.removeSchedule = this.removeSchedule.bind(this);
         this.removeConfirm = this.removeConfirm.bind(this);
@@ -830,6 +831,27 @@ class DailyCalendar extends Component {
         });
     }
 
+    // [게스트 생성] (예약생성 프로세스 진행중에서의 게스트 생성)
+    saveGuest(schedule, createGuestObject) {
+        this.props.saveGuest(createGuestObject).then((response) => {
+            if (response.createdGuest.success) {
+                const { id, guest_name, guest_class, guest_mobile } = response.createdGuest.data;
+                this.props.newOrderInit({
+                    schedule: {
+                        ...schedule,
+                        guest_id: id,
+                        guest_name,
+                        guest_class,
+                        guest_mobile
+                    }
+                });
+                return true;
+            }
+            else
+                return false;
+        });
+    }
+
     // 예약정보수정
     editSchedule(schedule) {
         const { Calendar } = this;
@@ -1532,6 +1554,7 @@ class DailyCalendar extends Component {
                 services={this.props.services}
                 newOrderFinish={this.newOrderFinish}
                 updateSchedule={this.updateSchedule}
+                createGuest={this.saveGuest}
                 changeView={this.changeView}
                 backToOrder={this.backToOrder}
                 isEditEvent={this.state.isEditEvent}
@@ -1637,6 +1660,7 @@ const mapDispatchToProps = dispatch => ({
 
     saveSchedule: scheduleData => dispatch(actions.saveSchedule(scheduleData)),
     patchSchedule: scheduleData => dispatch(actions.patchSchedule(scheduleData)),
+    saveGuest: guestData => dispatch(actions.saveGuest(guestData)),
 
     newOrderInit: options => dispatch(actions.newOrderInit(options)),
     newOrderFinish: () => dispatch(actions.newOrderFinish())

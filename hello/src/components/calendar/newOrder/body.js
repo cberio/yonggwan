@@ -34,7 +34,7 @@ export class Body extends React.Component {
                     />
                     {_.isEmpty(Functions.getGuest(props.schedule.guest_id, props.guests).guest_mobile) ? (
                         <MobileInputElements
-                            value={props.temporaryScheduleObject.guest_mobile}
+                            value={props.schedule.guest_mobile}
                             handleChange={props.inputChangePhone}
                         />
                       )
@@ -117,9 +117,11 @@ export class Body extends React.Component {
             <div className="new-order-body">
                 <div className="service-input-wrap">
                     <h3 className={props.step === 1 ? 'active' : ''}>
-                        <span className="step-index has-values">1</span>
-                        <span className="step-index">1</span>
-                        <button onClick={() => { props.changeStep(1); }} disabled={false}>
+                        <span className={`step-index${props.step !== 1 ? ' has-values' : ''}`}>1</span>
+                        <button
+                            style={{ cursor: props.step !== 1 ? 'pointer' : 'default' }}
+                            onClick={() => { props.changeStep(1); }}
+                        >
                           고객정보 입력
                         </button>
                     </h3>
@@ -135,7 +137,10 @@ export class Body extends React.Component {
                               <span className="step-index">2</span>
                           )
                         }
-                        <button onClick={() => { props.changeStep(2); }} disabled={false}>
+                        <button
+                            onClick={() => { props.changeStep(2); }}
+                            disabled={props.isEmpties.guest_id}
+                        >
                           서비스 선택
                         </button>
                     </h3>

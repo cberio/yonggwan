@@ -102,6 +102,7 @@ export function numberWithCommas(num) {
 
 /* 숫자를 인수로 받아 하이픈을 삽입하여 반환 (핸드폰번호 표현) */
 export function getPhoneStr(num) { // num = 01012345678
+    if(!num) return '';
     const num_all = num.replace(/(^02.{0}|^01.{1}|[0-9]{3})([0-9]+)([0-9]{4})/, '$1-$2-$3'); // 010-1234-5678
     const num_first = num.replace(/(^02.{0}|^01.{1}|[0-9]{3})([0-9]+)([0-9]{4})/, '$1'); // 010
     const num_middle = num.replace(/(^02.{0}|^01.{1}|[0-9]{3})([0-9]+)([0-9]{4})/, '$2'); // 1234
